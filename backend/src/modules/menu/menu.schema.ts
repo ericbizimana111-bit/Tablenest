@@ -44,7 +44,7 @@ export const MenuItemSchema = SchemaFactory.createForClass(MenuItem);
 @Schema({ timestamps: true })
 
 export class MenuCategory {
-  
+
   @Prop({ required: true })
   restaurantId: Types.ObjectId;
 
