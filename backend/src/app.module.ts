@@ -21,6 +21,8 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { SupportModule } from './modules/support/support.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
 
+
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
@@ -53,6 +55,8 @@ import { UploadsModule } from './modules/uploads/uploads.module';
     AnalyticsModule,
     SupportModule,
     UploadsModule,
+   
+   
   ],
 })
 export class AppModule {}

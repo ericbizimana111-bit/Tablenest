@@ -36,8 +36,18 @@ export class Table {
   @Prop({ default: null })
   qrCode: string;
 
-  @Prop({ default: null })
-  position: { x: number; y: number };
+  @Prop({
+    type: {
+      x:Number,
+      y:Number,
+    }
+  })
+
+  postion:{
+    x:number,
+    y:number,
+  }
+
 }
 
 export const TableSchema = SchemaFactory.createForClass(Table);
