@@ -18,6 +18,7 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
+    "strictPropertyInitialization": false,
     "noFallthroughCasesInSwitch": false,
     "target": "ES2023",
     "experimentalDecorators": true,

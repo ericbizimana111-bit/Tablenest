@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
 export type MenuItemDocument = MenuItem & Document;
+export type MenuCategoryDocument = MenuCategory & Document;
 
 @Schema({ timestamps: true })
 
