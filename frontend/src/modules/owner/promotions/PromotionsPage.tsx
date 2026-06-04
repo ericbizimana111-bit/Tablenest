@@ -1,5 +1,4 @@
 
-cat > /home/claude / tablenest / frontend / src / modules / owner / promotions / PromotionsPage.tsx << 'EOF'
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Pencil, Trash2, Tag } from 'lucide-react';
