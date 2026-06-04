@@ -42,23 +42,3 @@ export class TablesService {
         return { tables, stats };
     }
 }
-EOF
-
-cat > /home/claude / tablenest / backend / src / modules / tables / tables.controller.ts << 'EOF'
-
-EOF
-
-cat > /home/claude / tablenest / backend / src / modules / tables / tables.module.ts << 'EOF'
-import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { TablesController } from './tables.controller';
-import { TablesService } from './tables.service';
-import { Table, TableSchema } from './table.schema';
-
-@Module({
-    imports: [MongooseModule.forFeature([{ name: Table.name, schema: TableSchema }])],
-    controllers: [TablesController],
-    providers: [TablesService],
-    exports: [TablesService],
-})
-export class TablesModule { }
