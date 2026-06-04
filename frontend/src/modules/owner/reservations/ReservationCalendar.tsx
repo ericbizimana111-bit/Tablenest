@@ -1,5 +1,4 @@
-# Create all remaining owner pages efficiently
-cat > /home/claude / tablenest / frontend / src / modules / owner / reservations / ReservationCalendar.tsx << 'EOF'
+
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, Plus, Printer } from 'lucide-react';
@@ -164,11 +163,3 @@ const DEMO_RES = [
     { _id: '3', customerName: 'Sarah Rogers', status: 'confirmed', time: '18:45', guests: 3, tableNumber: 'Booth 4' },
 ];
 const DEMO_CAL: Record<string, any> = { '1': { confirmed: 12, pending: 3 }, '2': { confirmed: 18, pending: 5 }, '3': { confirmed: 24 }, '5': { confirmed: 8 }, '6': { pending: 2 }, '8': { confirmed: 14 } };
-EOF
-
-echo "Reservation calendar done"
-Output
-
-Reservation calendar done
-
-Create 
