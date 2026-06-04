@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Promotion, PromotionDocument } from './promotion.schema';
@@ -26,6 +26,7 @@ export class PromotionsService {
 
     async toggle(id: string) {
         const promo = await this.promotionModel.findById(id);
+        if (!promo) throw new NotFoundException('Promotion not found');
         return this.promotionModel.findByIdAndUpdate(id, { isActive: !promo.isActive }, { new: true });
     }
 }

@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { Order, OrderDocument, OrderStatus } from '../orders/order.schema';
 import { Reservation, ReservationDocument } from '../reservations/reservation.schema';
 import { User, UserDocument } from '../users/user.schema';
-import { Restaurant, RestaurantDocument } from '../restaurants/restaurant.schema';
+import { Restaurant, RestaurantDocument, RestaurantStatus } from '../restaurants/restaurant.schema';
 
 @Injectable()
 export class AnalyticsService {
@@ -26,7 +26,7 @@ export class AnalyticsService {
                 { $group: { _id: null, total: { $sum: '$total' } } },
             ]),
         ]);
-        const pending = await this.restaurantModel.countDocuments({ status: 'pending' });
+        const pending = await this.restaurantModel.countDocuments({ status: RestaurantStatus.PENDING });
         return { restaurants, users, bookings, orders, revenue: revenue[0]?.total || 0, pending };
     }
 
@@ -65,13 +65,21 @@ export class AnalyticsService {
 
         const [todayReservations, pendingOrders, monthRevenue, rating, activeTables] = await Promise.all([
             this.reservationModel.countDocuments({ restaurantId, date: { $gte: today, $lte: todayEnd } }),
-            this.orderModel.countDocuments({ restaurantId, status: { $in: ['placed', 'confirmed', 'preparing'] } }),
+            this.orderModel.countDocuments({
+                restaurantId,
+                status: { $in: [OrderStatus.PLACED, OrderStatus.CONFIRMED, OrderStatus.PREPARING] },
+            }),
             this.orderModel.aggregate([
                 { $match: { restaurantId, status: OrderStatus.DELIVERED, createdAt: { $gte: monthStart } } },
                 { $group: { _id: null, total: { $sum: '$total' } } },
             ]),
             this.restaurantModel.findById(restaurantId).select('rating totalReviews'),
-            this.orderModel.countDocuments({ restaurantId, status: { $in: ['placed', 'confirmed', 'preparing', 'ready'] } }),
+            this.orderModel.countDocuments({
+                restaurantId,
+                status: {
+                    $in: [OrderStatus.PLACED, OrderStatus.CONFIRMED, OrderStatus.PREPARING, OrderStatus.READY],
+                },
+            }),
         ]);
 
         const revenueLastWeek = await this.orderModel.aggregate([
