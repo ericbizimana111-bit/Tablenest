@@ -1,12 +1,32 @@
-import { Controller, Get } from '@nestjs/common';
-import { UploadsService } from './uploads.service';
+import { Controller, Post, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import * as path from 'path';
 
 @Controller('uploads')
+@UseGuards(AuthGuard('jwt'))
 export class UploadsController {
-  constructor(private readonly uploadsService: UploadsService) {}
-
-  @Get('health')
-  health() {
-    return this.uploadsService.getUploadHealth();
+  @Post('image')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, cb) => {
+          const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, unique + path.extname(file.originalname));
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
+          return cb(new Error('Only image files allowed'), false);
+        }
+        cb(null, true);
+      },
+      limits: { fileSize: 5 * 1024 * 1024 },
+    }),
+  )
+  uploadImage(@UploadedFile() file: Express.Multer.File) {
+    return { url: `/uploads/${file.filename}`, filename: file.filename };
   }
 }

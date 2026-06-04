@@ -22,15 +22,11 @@ import { SupportModule } from './modules/support/support.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
 
 @Module({
-
-  //@Module is a decorator
-
-  
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
+      useFactory: (configService: ConfigService) => ({
         uri: configService.get<string>('MONGODB_URI', 'mongodb://localhost:27017/tablenest'),
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -57,10 +53,6 @@ import { UploadsModule } from './modules/uploads/uploads.module';
     AnalyticsModule,
     SupportModule,
     UploadsModule,
-
-
   ],
 })
-
-
-export class AppModule { }
+export class AppModule {}
