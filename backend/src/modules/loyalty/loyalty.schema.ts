@@ -16,4 +16,3 @@ export class Loyalty {
 }
 
 export const LoyaltySchema = SchemaFactory.createForClass(Loyalty);
-``
