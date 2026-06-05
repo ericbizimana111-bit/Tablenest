@@ -14,7 +14,7 @@ export class AnalyticsService {
         @InjectModel(User.name) private userModel: Model<UserDocument>,
         @InjectModel(Restaurant.name) private restaurantModel: Model<RestaurantDocument>,
     ) { }
-
+    
     async getPlatformOverview() {
         const [restaurants, users, bookings, orders, revenue] = await Promise.all([
             this.restaurantModel.countDocuments(),
@@ -62,7 +62,6 @@ export class AnalyticsService {
         const today = new Date(); today.setHours(0, 0, 0, 0);
         const todayEnd = new Date(); todayEnd.setHours(23, 59, 59, 999);
         const monthStart = new Date(); monthStart.setDate(1); monthStart.setHours(0, 0, 0, 0);
-
         const [todayReservations, pendingOrders, monthRevenue, rating, activeTables] = await Promise.all([
             this.reservationModel.countDocuments({ restaurantId, date: { $gte: today, $lte: todayEnd } }),
             this.orderModel.countDocuments({
