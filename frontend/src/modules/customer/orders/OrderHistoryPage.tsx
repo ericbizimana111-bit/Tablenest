@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Calendar, Filter, RefreshCw, Star, Headphones } from 'lucide-react';
-import { ordersAPI } from '../../../services/api';
+import { ordersAPI } from '../../../shared/services/api';
 import { Spinner, StatusBadge, Pagination } from '../../../shared/components/ui/index';
 import toast from 'react-hot-toast';
 

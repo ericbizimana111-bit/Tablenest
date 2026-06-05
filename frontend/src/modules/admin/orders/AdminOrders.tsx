@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { ordersAPI } from '../../../services/api';
+import { ordersAPI } from '../../../shared/services/api';
 import { Spinner, StatusBadge, Pagination, StatCard } from '../../../shared/components/ui/index';
 import { DollarSign, ShoppingBag, Users, TrendingUp } from 'lucide-react';
 

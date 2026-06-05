@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { tablesAPI, restaurantsAPI } from '../../../services/api';
-import { useAuthStore } from '../../../store/authStore';
+import { tablesAPI, restaurantsAPI } from '../../../shared/services/api';
+import { useAuthStore } from '../../../shared/store/authStore';
 import { X } from 'lucide-react';
 import toast from 'react-hot-toast';
 

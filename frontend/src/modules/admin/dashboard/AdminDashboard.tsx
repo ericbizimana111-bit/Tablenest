@@ -2,7 +2,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import { Utensils, Users, Calendar, ShoppingBag, Clock, DollarSign, Pencil, Trash2 } from 'lucide-react';
-import { analyticsAPI, restaurantsAPI } from '../../../services/api';
+import { analyticsAPI, restaurantsAPI } from '../../../shared/services/api';
 import { StatCard, Spinner, StatusBadge } from '../../../shared/components/ui/index';
 import { useNavigate } from 'react-router-dom';
 

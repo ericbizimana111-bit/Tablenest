@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { restaurantsAPI } from '../../../services/api';
-import { useAuthStore } from '../../../store/authStore';
+import { restaurantsAPI } from '../../../shared/services/api';
+import { useAuthStore } from '../../../shared/store/authStore';
 import toast from 'react-hot-toast';
 
 const STEPS = ['Account', 'Business', 'Operations', 'Media'];

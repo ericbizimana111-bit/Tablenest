@@ -1,8 +1,8 @@
 
 
 import React, { useState } from 'react';
-import { useAuthStore } from '../../../store/authStore';
-import { usersAPI } from '../../../services/api';
+import { useAuthStore } from '../../../shared/store/authStore';
+import { usersAPI } from '../../../shared/services/api';
 import toast from 'react-hot-toast';
 
 export default function OwnerSettings() {

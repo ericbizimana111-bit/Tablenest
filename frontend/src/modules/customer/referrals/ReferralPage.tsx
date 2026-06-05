@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { referralsAPI, loyaltyAPI } from '../../../services/api';
+import { referralsAPI, loyaltyAPI } from '../../../shared/services/api';
 import { Share2, Mail, Copy, QrCode, Megaphone, Tag, TrendingUp, CheckCircle } from 'lucide-react';
 import { Spinner, StatusBadge } from '../../../shared/components/ui/index';
 import toast from 'react-hot-toast';

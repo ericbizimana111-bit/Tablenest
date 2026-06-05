@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Camera, User, Mail, Phone, MapPin, Lock, Bell, AlertTriangle, CreditCard } from 'lucide-react';
-import { useAuthStore } from '../../../store/authStore';
-import { usersAPI, authAPI } from '../../../services/api';
+import { useAuthStore } from '../../../shared/store/authStore';
+import { usersAPI, authAPI } from '../../../shared/services/api';
 import { Toggle } from '../../../shared/components/ui/index';
 import { useQuery } from '@tanstack/react-query';
-import { loyaltyAPI } from '../../../services/api';
+import { loyaltyAPI } from '../../../shared/services/api';
 import toast from 'react-hot-toast';
 
 export default function AccountSettingsPage() {

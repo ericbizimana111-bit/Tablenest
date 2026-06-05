@@ -2,8 +2,8 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, Plus, Printer } from 'lucide-react';
-import { reservationsAPI } from '../../../services/api';
-import { useAuthStore } from '../../../store/authStore';
+import { reservationsAPI } from '../../../shared/services/api';
+import { useAuthStore } from '../../../shared/store/authStore';
 import { StatusBadge, Spinner } from '../../../shared/components/ui/index';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, isSameDay, isToday } from 'date-fns';
 import toast from 'react-hot-toast';

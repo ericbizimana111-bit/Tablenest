@@ -2,8 +2,8 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Pencil, Trash2, Tag } from 'lucide-react';
-import { promotionsAPI, restaurantsAPI } from '../../../services/api';
-import { useAuthStore } from '../../../store/authStore';
+import { promotionsAPI, restaurantsAPI } from '../../../shared/services/api';
+import { useAuthStore } from '../../../shared/store/authStore';
 import { Modal, Toggle, StatusBadge } from '../../../shared/components/ui/index';
 import toast from 'react-hot-toast';
 

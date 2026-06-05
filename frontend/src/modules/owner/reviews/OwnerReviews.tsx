@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Star, MessageSquare } from 'lucide-react';
-import { reviewsAPI, restaurantsAPI } from '../../../services/api';
-import { useAuthStore } from '../../../store/authStore';
+import { reviewsAPI, restaurantsAPI } from '../../../shared/services/api';
+import { useAuthStore } from '../../../shared/store/authStore';
 import { Spinner, Modal } from '../../../shared/components/ui/index';
 import toast from 'react-hot-toast';
 

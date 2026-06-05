@@ -2,8 +2,8 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Calendar, ShoppingBag, DollarSign, Star, Grid3X3, Clock } from 'lucide-react';
-import { analyticsAPI, ordersAPI, reservationsAPI } from '../../../services/api';
-import { useAuthStore } from '../../../store/authStore';
+import { analyticsAPI, ordersAPI, reservationsAPI } from '../../../shared/services/api';
+import { useAuthStore } from '../../../shared/store/authStore';
 import { StatCard, Spinner, StatusBadge } from '../../../shared/components/ui/index';
 
 const RED = '#B91C1C';

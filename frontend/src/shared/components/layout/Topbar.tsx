@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Bell, Settings, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../../../store/authStore';
-import { notificationsAPI } from '../../../services/api';
+import { useAuthStore } from '../../store/authStore';
+import { notificationsAPI } from '../../services/api';
 
 interface TopbarProps {
     placeholder?: string;

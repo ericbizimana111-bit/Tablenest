@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { tablesAPI, restaurantsAPI } from '../../../services/api';
-import { useAuthStore } from '../../../store/authStore';
+import { tablesAPI, restaurantsAPI } from '../../../shared/services/api';
+import { useAuthStore } from '../../../shared/store/authStore';
 import { useQuery } from '@tanstack/react-query';
 import { Download, Printer, RefreshCw, Plus } from 'lucide-react';
 import { Toggle } from '../../../shared/components/ui/index';

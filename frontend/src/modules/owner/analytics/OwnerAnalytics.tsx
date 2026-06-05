@@ -1,9 +1,9 @@
 
 import React, { useState } from 'react';
 import { BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { ordersAPI, reservationsAPI, reviewsAPI, restaurantsAPI } from '../../../services/api';
+import { ordersAPI, reservationsAPI, reviewsAPI, restaurantsAPI } from '../../../shared/services/api';
 import { useQuery } from '@tanstack/react-query';
-import { useAuthStore } from '../../../store/authStore';
+import { useAuthStore } from '../../../shared/store/authStore';
 import { StatCard } from '../../../shared/components/ui/index';
 import { DollarSign, ShoppingBag, Star, Users } from 'lucide-react';
 

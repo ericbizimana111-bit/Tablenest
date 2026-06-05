@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Lock, Eye, EyeOff, ChefHat } from 'lucide-react';
-import { useAuthStore } from '../../store/authStore';
+import { useAuthStore } from '../../../shared/store/authStore';
 import toast from 'react-hot-toast';
-import { authAPI } from '../../services/api';
+import { authAPI } from '../../../shared/services/api';
 
 // ── RegisterPage ──
 export function RegisterPage() {

@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ChevronLeft, CheckCircle, Circle, Clock, Phone, MessageSquare, AlertTriangle, XCircle, MapPin } from 'lucide-react';
-import { ordersAPI } from '../../../services/api';
+import { ordersAPI } from '../../../shared/services/api';
 import { Spinner } from '../../../shared/components/ui/index';
 
 const STATUS_STEPS = [

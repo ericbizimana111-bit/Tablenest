@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Calendar, Clock, Users, MapPin, CheckCircle, XCircle, Pencil } from 'lucide-react';
-import { reservationsAPI } from '../../../services/api';
+import { reservationsAPI } from '../../../shared/services/api';
 import { StatusBadge, Spinner, Modal } from '../../../shared/components/ui/index';
 import toast from 'react-hot-toast';
 

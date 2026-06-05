@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { loyaltyAPI } from '../../../services/api';
+import { loyaltyAPI } from '../../../shared/services/api';
 import { Award, Star, TrendingUp, Gift, Clock } from 'lucide-react';
 import { Spinner } from '../../../shared/components/ui/index';
 

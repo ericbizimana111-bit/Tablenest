@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ShoppingBag, Calendar, Tag, Settings, CheckCheck, Trash2, Bell, Star } from 'lucide-react';
-import { notificationsAPI } from '../../../services/api';
+import { notificationsAPI } from '../../../shared/services/api';
 import { Spinner } from '../../../shared/components/ui/index';
 import toast from 'react-hot-toast';
 

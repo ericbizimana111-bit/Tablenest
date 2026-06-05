@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, AreaChart, Area } from 'recharts';
-import { analyticsAPI } from '../../../services/api';
+import { analyticsAPI } from '../../../shared/services/api';
 import { Spinner } from '../../../shared/components/ui/index';
 import { DollarSign, TrendingUp, Download } from 'lucide-react';
 

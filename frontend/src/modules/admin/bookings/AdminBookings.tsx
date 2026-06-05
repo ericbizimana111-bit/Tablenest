@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { reservationsAPI } from '../../../services/api';
+import { reservationsAPI } from '../../../shared/services/api';
 import { Spinner, StatusBadge, Pagination, StatCard } from '../../../shared/components/ui/index';
 import { Calendar, Users, CheckCircle, Clock } from 'lucide-react';
 

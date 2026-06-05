@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Eye, Reply, Filter, Plus } from 'lucide-react';
-import { supportAPI } from '../../../services/api';
+import { supportAPI } from '../../../shared/services/api';
 import { StatCard, Spinner, StatusBadge, Modal, Pagination } from '../../../shared/components/ui/index';
 import toast from 'react-hot-toast';
 

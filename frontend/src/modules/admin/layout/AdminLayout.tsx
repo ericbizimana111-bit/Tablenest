@@ -4,7 +4,7 @@ import { Home, Utensils, Users, ShieldCheck, ShoppingBag, Calendar, BarChart2, A
 import Sidebar from '../../../shared/components/layout/Sidebar';
 import Topbar from '../../../shared/components/layout/Topbar';
 import { useQuery } from '@tanstack/react-query';
-import { restaurantsAPI } from '../../../services/api';
+import { restaurantsAPI } from '../../../shared/services/api';
 
 export default function AdminLayout() {
     const { data: pending } = useQuery({
