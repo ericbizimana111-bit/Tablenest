@@ -1,6 +1,3 @@
-
-# Fix ResetPasswordPage and NotFoundPage stubs
-cat > /home/claude / tablenest / frontend / src / modules / public / ResetPasswordPage.tsx << 'EOF'
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Lock, Eye, EyeOff, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
