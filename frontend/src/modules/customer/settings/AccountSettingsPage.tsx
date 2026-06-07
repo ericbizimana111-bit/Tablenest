@@ -10,16 +10,28 @@ import type { NotificationPrefs } from '../../../shared/types/auth.types';
 import toast from 'react-hot-toast';
 
 export default function AccountSettingsPage() {
+    type ProfileForm = {
+        fullName: string;
+        email: string;
+        phone: string;
+        address: string;
+    };
+
+    type PasswordForm = {
+        currentPassword: string;
+        newPassword: string;
+    };
+
     const navigate = useNavigate();
     const { user, setUser, logout } = useAuthStore();
-    const [form, setForm] = useState({
+    const [form, setForm] = useState<ProfileForm>({
         fullName: user?.fullName || '',
         email: user?.email || '',
         phone: user?.phone || '',
         address: user?.address || '',
     });
-    const [pwForm, setPwForm] = useState({ currentPassword: '', newPassword: '' });
-    const [notifPrefs, setNotifPrefs] = useState(user?.notificationPrefs || { bookingConfirmation: true, marketing: false, orderTracking: true });
+    const [pwForm, setPwForm] = useState<PasswordForm>({ currentPassword: '', newPassword: '' });
+    const [notifPrefs, setNotifPrefs] = useState<NotificationPrefs>(user?.notificationPrefs || { bookingConfirmation: true, marketing: false, orderTracking: true });
     const [saving, setSaving] = useState(false);
     const [pwSaving, setPwSaving] = useState(false);
 
@@ -50,13 +62,13 @@ export default function AccountSettingsPage() {
         finally { setPwSaving(false); }
     };
 
-    const saveNotifs = async (key: string, val: boolean) => {
+    const saveNotifs = async (key: keyof NotificationPrefs, val: boolean) => {
         const updated = { ...notifPrefs, [key]: val };
         setNotifPrefs(updated);
         await usersAPI.updateNotificationPrefs(updated).catch(() => { });
     };
 
-    const up = (key: string, val: string) => setForm(f => ({ ...f, [key]: val }));
+    const up = <K extends keyof ProfileForm>(key: K, val: ProfileForm[K]) => setForm(f => ({ ...f, [key]: val }));
 
     return (
         <div className="fade-in">
@@ -104,7 +116,7 @@ export default function AccountSettingsPage() {
                                         <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)' }}>{f.icon}</span>
                                         <input
                                             type={f.type}
-                                            value={(form as any)[f.key]}
+                                            value={form[f.key]}
                                             onChange={e => up(f.key, e.target.value)}
                                             style={{ width: '100%', padding: '10px 12px 10px 34px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }}
                                             onFocus={e => (e.target.style.borderColor = '#B91C1C')}
@@ -161,7 +173,7 @@ export default function AccountSettingsPage() {
                                     <div style={{ fontWeight: 500, fontSize: 14 }}>{n.label}</div>
                                     <div style={{ fontSize: 12, color: '#9CA3AF' }}>{n.desc}</div>
                                 </div>
-                                <Toggle checked={(notifPrefs as any)[n.key]} onChange={() => saveNotifs(n.key, !(notifPrefs as any)[n.key])} />
+                                <Toggle checked={notifPrefs[n.key]} onChange={() => saveNotifs(n.key, !notifPrefs[n.key])} />
                             </div>
                         ))}
                     </div>

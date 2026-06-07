@@ -7,16 +7,30 @@ import toast from 'react-hot-toast';
 const STEPS = ['Account', 'Business', 'Operations', 'Media'];
 const CUISINES = ['Italian', 'Japanese', 'French', 'Mexican', 'American', 'Chinese', 'Indian', 'Mediterranean', 'Seafood', 'Steakhouse', 'Modern European', 'British Modern', 'Other'];
 
+type PartnerForm = {
+    fullName: string;
+    email: string;
+    password: string;
+    restaurantName: string;
+    cuisineType: string;
+    description: string;
+    seatingCapacity: string;
+    priceRange: string;
+    address: string;
+    dineIn: boolean;
+    delivery: boolean;
+};
+
 export default function PartnerRegistration() {
     const navigate = useNavigate();
     const { register, isAuthenticated } = useAuthStore();
     const [step, setStep] = useState(1);
-    const [form, setForm] = useState({
+    const [form, setForm] = useState<PartnerForm>({
         fullName: '', email: '', password: '', restaurantName: '', cuisineType: 'Italian',
         description: '', seatingCapacity: '', priceRange: '$$', address: '', dineIn: true, delivery: false,
     });
 
-    const up = (key: string, val: any) => setForm(f => ({ ...f, [key]: val }));
+    const up = <K extends keyof PartnerForm>(key: K, val: PartnerForm[K]) => setForm(f => ({ ...f, [key]: val }));
 
     const submit = async () => {
         try {
@@ -30,8 +44,9 @@ export default function PartnerRegistration() {
             });
             toast.success('Application submitted! Await approval.');
             navigate('/owner');
-        } catch (e: any) {
-            toast.error(e?.response?.data?.message || 'Submission failed');
+        } catch (unknownError) {
+            const error = unknownError as { response?: { data?: { message?: string } } };
+            toast.error(error.response?.data?.message || 'Submission failed');
         }
     };
 
@@ -57,14 +72,14 @@ export default function PartnerRegistration() {
                             <div>
                                 <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 6 }}>Partner with TableNest</h2>
                                 <p style={{ fontSize: 13, color: '#6B7280', marginBottom: 24 }}>Join our exclusive network of top-tier culinary destinations.</p>
-                                {[
+                                {([
                                     { label: 'Full Name', key: 'fullName', type: 'text', placeholder: 'Your name' },
                                     { label: 'Email', key: 'email', type: 'email', placeholder: 'restaurant@email.com' },
                                     { label: 'Password', key: 'password', type: 'password', placeholder: '••••••••' },
-                                ].map(f => (
+                                ] as const).map(f => (
                                     <div key={f.key} style={{ marginBottom: 16 }}>
                                         <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>{f.label}</label>
-                                        <input type={f.type} placeholder={f.placeholder} value={(form as any)[f.key]} onChange={e => up(f.key, e.target.value)}
+                                        <input type={f.type} placeholder={f.placeholder} value={form[f.key]} onChange={e => up(f.key, e.target.value)}
                                             style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
                                     </div>
                                 ))}
@@ -123,9 +138,9 @@ export default function PartnerRegistration() {
                                 <div style={{ marginBottom: 16 }}>
                                     <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 8 }}>Services Offered</label>
                                     <div style={{ display: 'flex', gap: 16 }}>
-                                        {[{ key: 'dineIn', label: 'Dine-in' }, { key: 'delivery', label: 'Delivery' }].map(s => (
+                                        {([{ key: 'dineIn', label: 'Dine-in' }, { key: 'delivery', label: 'Delivery' }] as const).map(s => (
                                             <label key={s.key} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 14 }}>
-                                                <input type="checkbox" checked={(form as any)[s.key]} onChange={e => up(s.key, e.target.checked)} style={{ width: 16, height: 16, accentColor: '#B91C1C' }} />
+                                                <input type="checkbox" checked={form[s.key]} onChange={e => up(s.key, e.target.checked)} style={{ width: 16, height: 16, accentColor: '#B91C1C' }} />
                                                 {s.label}
                                             </label>
                                         ))}

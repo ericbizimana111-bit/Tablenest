@@ -1,23 +1,47 @@
 import React, { useState } from 'react';
 import { Home, Briefcase, Plus, Pencil, Trash2, CreditCard, Star } from 'lucide-react';
+import type { Address, PaymentMethod } from '../../../shared/types/user.types';
 import toast from 'react-hot-toast';
 
-const DEMO_ADDRESSES = [
+type DisplayAddress = {
+    id: string;
+    label: string;
+    icon: 'home' | 'work' | 'other';
+    address: string;
+    city: string;
+    country: string;
+    isDefault: boolean;
+};
+
+type DisplayCard = {
+    id: string;
+    last4: string;
+    holder: string;
+    expiry: string;
+    brand: 'Visa' | 'Mastercard' | 'Amex' | 'Card';
+    isPrimary: boolean;
+};
+
+type AddressForm = { label: string; street: string; apt: string; city: string; postalCode: string };
+
+type CardForm = { number: string; name: string; expiry: string; cvv: string; zip: string };
+
+const DEMO_ADDRESSES: DisplayAddress[] = [
     { id: '1', label: 'Home', icon: 'home', address: '123 Culinary Lane, Apartment 4B', city: 'Gourmet District, NY 10012', country: 'United States', isDefault: true },
     { id: '2', label: 'Work', icon: 'work', address: '456 Operational Plaza, Suite 200', city: 'Business Hub, NY 10001', country: 'United States', isDefault: false },
 ];
-const DEMO_CARDS = [
+const DEMO_CARDS: DisplayCard[] = [
     { id: '1', last4: '4242', holder: 'ALEXANDER DUPONT', expiry: '12/26', brand: 'Visa', isPrimary: true },
     { id: '2', last4: '8891', holder: 'ALEX THOMPSON', expiry: '08/24', brand: 'Mastercard', isPrimary: false },
 ];
 
 export default function AddressesPaymentsPage() {
-    const [addresses, setAddresses] = useState(DEMO_ADDRESSES);
-    const [cards, setCards] = useState(DEMO_CARDS);
+    const [addresses, setAddresses] = useState<DisplayAddress[]>(DEMO_ADDRESSES);
+    const [cards, setCards] = useState<DisplayCard[]>(DEMO_CARDS);
     const [showAddrForm, setShowAddrForm] = useState(false);
     const [showCardForm, setShowCardForm] = useState(false);
-    const [addrForm, setAddrForm] = useState({ label: '', street: '', apt: '', city: '', postalCode: '' });
-    const [cardForm, setCardForm] = useState({ number: '', name: '', expiry: '', cvv: '', zip: '' });
+    const [addrForm, setAddrForm] = useState<AddressForm>({ label: '', street: '', apt: '', city: '', postalCode: '' });
+    const [cardForm, setCardForm] = useState<CardForm>({ number: '', name: '', expiry: '', cvv: '', zip: '' });
 
     const addAddress = () => {
         setAddresses(a => [...a, { id: Date.now().toString(), label: addrForm.label, icon: 'home', address: `${addrForm.street}${addrForm.apt ? ', ' + addrForm.apt : ''}`, city: `${addrForm.city} ${addrForm.postalCode}`, country: 'United States', isDefault: false }]);
@@ -192,10 +216,14 @@ export default function AddressesPaymentsPage() {
                             </div>
                         </div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 16 }}>
-                            {[{ label: 'Expiry Date', key: 'expiry', placeholder: 'MM/YY' }, { label: 'CVV', key: 'cvv', placeholder: '***' }, { label: 'Billing ZIP', key: 'zip', placeholder: '10001' }].map(f => (
+                            {([
+                                { label: 'Expiry Date', key: 'expiry', placeholder: 'MM/YY' },
+                                { label: 'CVV', key: 'cvv', placeholder: '***' },
+                                { label: 'Billing ZIP', key: 'zip', placeholder: '10001' },
+                            ] as Array<{ label: string; key: keyof CardForm; placeholder: string }>).map(f => (
                                 <div key={f.key}>
                                     <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>{f.label}</label>
-                                    <input value={(cardForm as any)[f.key]} onChange={e => setCardForm(p => ({ ...p, [f.key]: e.target.value }))} placeholder={f.placeholder}
+                                    <input value={cardForm[f.key]} onChange={e => setCardForm(p => ({ ...p, [f.key]: e.target.value }))} placeholder={f.placeholder}
                                         style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
                                 </div>
                             ))}

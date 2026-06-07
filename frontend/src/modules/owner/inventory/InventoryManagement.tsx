@@ -6,20 +6,41 @@ import { useAuthStore } from '../../../shared/store/authStore';
 import { Modal } from '../../../shared/components/ui/index';
 import toast from 'react-hot-toast';
 
+interface InventoryItem {
+    _id: string;
+    name: string;
+    unit: string;
+    quantity: number;
+    minQuantity: number;
+    supplier?: string;
+    cost?: number;
+}
+
+interface InventoryForm {
+    name: string;
+    unit: string;
+    quantity: string;
+    minQuantity: string;
+    supplier: string;
+    cost: string;
+}
+
 export default function InventoryManagement() {
     const { user } = useAuthStore();
     const qc = useQueryClient();
-    const [restaurantId, setRestaurantId] = useState('');
     const [showModal, setShowModal] = useState(false);
-    const [editItem, setEditItem] = useState<any>(null);
-    const [form, setForm] = useState({ name: '', unit: 'units', quantity: '', minQuantity: '', supplier: '', cost: '' });
+    const [editItem, setEditItem] = useState<InventoryItem | null>(null);
+    const [form, setForm] = useState<InventoryForm>({ name: '', unit: 'units', quantity: '', minQuantity: '', supplier: '', cost: '' });
 
-    React.useEffect(() => {
-        if (user?.restaurantId) setRestaurantId(user.restaurantId.toString());
-        else restaurantsAPI.getMyRestaurant().then(r => r.data?._id && setRestaurantId(r.data._id)).catch(() => { });
-    }, [user]);
+    const { data: myRestaurant } = useQuery({
+        queryKey: ['my-restaurant'],
+        queryFn: () => restaurantsAPI.getMyRestaurant().then(r => r.data),
+        enabled: !user?.restaurantId,
+    });
 
-    const { data: items = [] } = useQuery({
+    const restaurantId = user?.restaurantId?.toString() || myRestaurant?._id || '';
+
+    const { data: items = DEMO_INVENTORY } = useQuery<InventoryItem[]>({
         queryKey: ['inventory', restaurantId],
         queryFn: () => inventoryAPI.getByRestaurant(restaurantId).then(r => r.data),
         enabled: !!restaurantId,
@@ -27,23 +48,49 @@ export default function InventoryManagement() {
     });
 
     const saveMut = useMutation({
-        mutationFn: (data: any) => editItem ? inventoryAPI.update(editItem._id, data) : inventoryAPI.create({ ...data, restaurantId }),
-        onSuccess: () => { qc.invalidateQueries({ queryKey: ['inventory'] }); setShowModal(false); toast.success(editItem ? 'Updated' : 'Item added'); },
+        mutationFn: (data: InventoryForm) => {
+            const payload = {
+                name: data.name,
+                unit: data.unit,
+                quantity: Number(data.quantity),
+                minQuantity: Number(data.minQuantity),
+                supplier: data.supplier,
+                cost: Number(data.cost) || 0,
+            };
+            return editItem ? inventoryAPI.update(editItem._id, payload) : inventoryAPI.create({ ...payload, restaurantId });
+        },
+        onSuccess: () => {
+            qc.invalidateQueries({ queryKey: ['inventory', restaurantId] });
+            setShowModal(false);
+            toast.success(editItem ? 'Updated' : 'Item added');
+        },
     });
 
     const deleteMut = useMutation({
         mutationFn: (id: string) => inventoryAPI.delete(id),
-        onSuccess: () => { qc.invalidateQueries({ queryKey: ['inventory'] }); toast.success('Item removed'); },
+        onSuccess: () => {
+            qc.invalidateQueries({ queryKey: ['inventory', restaurantId] });
+            toast.success('Item removed');
+        },
     });
 
-    const openEdit = (item: any) => {
+    const setFormField = <K extends keyof InventoryForm>(key: K, value: InventoryForm[K]) => setForm(prev => ({ ...prev, [key]: value }));
+
+    const openEdit = (item: InventoryItem) => {
         setEditItem(item);
-        setForm({ name: item.name, unit: item.unit, quantity: item.quantity, minQuantity: item.minQuantity, supplier: item.supplier || '', cost: item.cost || '' });
+        setForm({
+            name: item.name,
+            unit: item.unit,
+            quantity: item.quantity.toString(),
+            minQuantity: item.minQuantity.toString(),
+            supplier: item.supplier || '',
+            cost: item.cost?.toString() || '',
+        });
         setShowModal(true);
     };
 
     const allItems = items.length ? items : DEMO_INVENTORY;
-    const lowStock = allItems.filter((i: any) => i.quantity <= i.minQuantity);
+    const lowStock = allItems.filter(i => i.quantity <= i.minQuantity);
 
     return (
         <div className="fade-in">
@@ -107,10 +154,11 @@ export default function InventoryManagement() {
                     {[
                         { label: 'Item Name', key: 'name', placeholder: 'e.g. Truffle Oil' },
                         { label: 'Supplier', key: 'supplier', placeholder: 'Supplier name' },
-                    ].map(f => (
+                    ] as const.map(f => (
                         <div key={f.key}>
                             <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>{f.label}</label>
-                            <input placeholder={f.placeholder} value={(form as any)[f.key]} onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
+                            <input placeholder={f.placeholder} value={form[f.key]}
+                                onChange={e => setFormField(f.key, e.target.value)}
                                 style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
                         </div>
                     ))}

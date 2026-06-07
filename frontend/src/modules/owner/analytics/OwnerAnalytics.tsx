@@ -1,9 +1,6 @@
 
 import React, { useState } from 'react';
-import { BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { ordersAPI, reservationsAPI, reviewsAPI, restaurantsAPI } from '../../../shared/services/api';
-import { useQuery } from '@tanstack/react-query';
-import { useAuthStore } from '../../../shared/store/authStore';
+import { BarChart, Bar, AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { StatCard } from '../../../shared/components/ui/index';
 import { DollarSign, ShoppingBag, Star, Users } from 'lucide-react';
 
@@ -12,9 +9,7 @@ const COLORS = [RED, '#D97706', '#16A34A', '#2563EB', '#7C3AED'];
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 export default function OwnerAnalytics() {
-    const { user } = useAuthStore();
     const [period, setPeriod] = useState('7');
-    const restaurantId = user?.restaurantId?.toString() || '';
 
     const revenue = DAYS.map((d, i) => ({ day: d, revenue: [8200, 12400, 10800, 15600, 13200, 21800, 17400][i], orders: [28, 42, 36, 55, 47, 78, 62][i] }));
     const topItems = [
@@ -61,7 +56,7 @@ export default function OwnerAnalytics() {
                             </defs>
                             <XAxis dataKey="day" tick={{ fontSize: 11, fontFamily: 'Poppins' }} axisLine={false} tickLine={false} />
                             <YAxis hide />
-                            <Tooltip formatter={(v: any) => [`$${v.toLocaleString()}`, 'Revenue']} contentStyle={{ fontFamily: 'Poppins', fontSize: 12, borderRadius: 8 }} />
+                            <Tooltip formatter={(value) => [`$${Number(value).toLocaleString()}`, 'Revenue']} contentStyle={{ fontFamily: 'Poppins', fontSize: 12, borderRadius: 8 }} />
                             <Area type="monotone" dataKey="revenue" stroke={RED} strokeWidth={2.5} fill="url(#revG)" />
                         </AreaChart>
                     </ResponsiveContainer>
