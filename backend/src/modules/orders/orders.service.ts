@@ -1,15 +1,34 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, isValidObjectId } from 'mongoose';
 import { Order, OrderDocument, OrderStatus } from './order.schema';
+import { CreateOrderDto } from './dto/create-order.dto';
 
 @Injectable()
 export class OrdersService {
   constructor(@InjectModel(Order.name) private orderModel: Model<OrderDocument>) {}
 
-  async create(customerId: string, data: any) {
+  private assertValidId(value: string, field: string) {
+    if (!isValidObjectId(value)) {
+      throw new BadRequestException(`Invalid ${field}: ${value}`);
+    }
+  }
+
+  async create(customerId: string, data: CreateOrderDto) {
+    const { userId, ...orderData } = data;
+    if (!data.restaurantId) {
+      throw new BadRequestException('restaurantId is required');
+    }
+    this.assertValidId(data.restaurantId, 'restaurantId');
+    if (data.userId !== customerId) {
+      throw new BadRequestException('userId must match authenticated user');
+    }
+    if (!Array.isArray(data.items) || data.items.length === 0) {
+      throw new BadRequestException('items is required and must contain at least one item');
+    }
+
     const order = await this.orderModel.create({
-      ...data,
+      ...orderData,
       customerId,
       status: OrderStatus.PLACED,
       statusHistory: [{ status: OrderStatus.PLACED, time: new Date(), note: 'Order placed' }],
@@ -21,8 +40,14 @@ export class OrdersService {
     const { page = 1, limit = 20, status, restaurantId, customerId } = query;
     const filter: any = {};
     if (status) filter.status = status;
-    if (restaurantId) filter.restaurantId = restaurantId;
-    if (customerId) filter.customerId = customerId;
+    if (restaurantId) {
+      this.assertValidId(restaurantId, 'restaurantId');
+      filter.restaurantId = restaurantId;
+    }
+    if (customerId) {
+      this.assertValidId(customerId, 'customerId');
+      filter.customerId = customerId;
+    }
     const skip = (page - 1) * limit;
     const [orders, total] = await Promise.all([
       this.orderModel.find(filter).skip(skip).limit(+limit).sort({ createdAt: -1 }),
@@ -32,12 +57,14 @@ export class OrdersService {
   }
 
   async findById(id: string) {
+    this.assertValidId(id, 'id');
     const order = await this.orderModel.findById(id);
     if (!order) throw new NotFoundException('Order not found');
     return order;
   }
 
   async findByCustomer(customerId: string, query: any = {}) {
+    this.assertValidId(customerId, 'customerId');
     const { status, page = 1, limit = 10 } = query;
     const filter: any = { customerId };
     if (status && status !== 'all') filter.status = status;
@@ -50,6 +77,7 @@ export class OrdersService {
   }
 
   async findByRestaurant(restaurantId: string, query: any = {}) {
+    this.assertValidId(restaurantId, 'restaurantId');
     const { status, page = 1, limit = 20 } = query;
     const filter: any = { restaurantId };
     if (status) filter.status = status;
@@ -62,13 +90,14 @@ export class OrdersService {
   }
 
   async updateStatus(id: string, status: OrderStatus, note?: string) {
+    this.assertValidId(id, 'id');
     const order = await this.orderModel.findByIdAndUpdate(
       id,
       {
         status,
         $push: { statusHistory: { status, time: new Date(), note: note || '' } },
       },
-      { new: true },
+      { returnDocument: 'after' },
     );
     if (!order) throw new NotFoundException('Order not found');
     return order;
@@ -80,7 +109,9 @@ export class OrdersService {
 
   async getStats(restaurantId?: string) {
     const match: any = {};
-    if (restaurantId) match.restaurantId = restaurantId;
+    if (restaurantId) {
+      this.assertValidId(restaurantId, 'restaurantId');
+      match.restaurantId = restaurantId;
     const [total, delivered, active, cancelled, revenue] = await Promise.all([
       this.orderModel.countDocuments(match),
       this.orderModel.countDocuments({ ...match, status: OrderStatus.DELIVERED }),
@@ -95,6 +126,9 @@ export class OrdersService {
   }
 
   async getRevenueByDay(restaurantId: string, days = 7) {
+    if (restaurantId) {
+      this.assertValidId(restaurantId, 'restaurantId');
+    }
     const since = new Date();
     since.setDate(since.getDate() - days);
     return this.orderModel.aggregate([

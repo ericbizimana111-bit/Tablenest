@@ -2,6 +2,8 @@ import { Controller, Get, Post, Patch, Body, Param, Query, UseGuards, Request } 
 import { AuthGuard } from '@nestjs/passport';
 import { OrdersService } from './orders.service';
 import { OrderStatus } from './order.schema';
+import { CreateOrderDto } from './dto/create-order.dto';
+import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
 
 @Controller('orders')
 @UseGuards(AuthGuard('jwt'))
@@ -29,22 +31,22 @@ export class OrdersController {
   }
 
   @Get('restaurant/:restaurantId')
-  getByRestaurant(@Param('restaurantId') restaurantId: string, @Query() query: any) {
+  getByRestaurant(@Param('restaurantId', MongoIdValidationPipe) restaurantId: string, @Query() query: any) {
     return this.ordersService.findByRestaurant(restaurantId, query);
   }
 
   @Get(':id')
-  findById(@Param('id') id: string) {
+  findById(@Param('id', MongoIdValidationPipe) id: string) {
     return this.ordersService.findById(id);
   }
 
   @Post()
-  create(@Request() req, @Body() data: any) {
+  create(@Request() req, @Body() data: CreateOrderDto) {
     return this.ordersService.create(req.user._id.toString(), data);
   }
 
   @Patch(':id/status')
-  updateStatus(@Param('id') id: string, @Body() body: { status: OrderStatus; note?: string }) {
+  updateStatus(@Param('id', MongoIdValidationPipe) id: string, @Body() body: { status: OrderStatus; note?: string }) {
     return this.ordersService.updateStatus(id, body.status, body.note);
   }
 
