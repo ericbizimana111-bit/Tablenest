@@ -18,7 +18,7 @@ export default function OrderTrackingPage() {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const { data: order, isLoading } = useQuery({
+    const { data: order, isLoading } = useQuery<Order>({
         queryKey: ['order', id],
         queryFn: () => ordersAPI.getById(id!).then(r => r.data),
         enabled: !!id,
