@@ -29,9 +29,10 @@ import { UploadsModule } from './modules/uploads/uploads.module';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_URI', 'mongodb://localhost:27017/tablenest'),
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
+        uri: configService.get<string>(
+          'MONGODB_URI',
+          'mongodb://localhost:27017/tablenest',
+        ),
       }),
       inject: [ConfigService],
     }),
