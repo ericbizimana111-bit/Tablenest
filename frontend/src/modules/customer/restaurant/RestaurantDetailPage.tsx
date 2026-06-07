@@ -192,12 +192,6 @@ function RestaurantListItem({ restaurant: r, onClick }: any) {
     );
 }
 
-const FOOD_IMG_IDS = [
-    '1414235077428-338989a2e8c0', '1555396273-367ea4eb4db5',
-    '1546069901-ba9599a7e63c', '1579871494447-9811cf80d66c',
-    '1565299585323-38d6b0865b47', '1544025162-d76694265947',
-    '1485921325833-c519f76c4927', '1565958011703-44f9829ba187',
-];
 
 const DEMO_RESTAURANTS = [
     { _id: '1', name: "L'Atelier de Joël", cuisineType: 'Modern French', priceRange: '$$$$', status: 'active', rating: 4.9, city: '0.4 miles' },

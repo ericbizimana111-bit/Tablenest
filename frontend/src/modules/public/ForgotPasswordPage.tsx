@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, ArrowLeft, Send, CheckCircle } from 'lucide-react';
-import { authAPI } from '../../services/api';
+import { authAPI } from '../../shared/services/api';
 import toast from 'react-hot-toast';
 
 export default function ForgotPasswordPage() {
