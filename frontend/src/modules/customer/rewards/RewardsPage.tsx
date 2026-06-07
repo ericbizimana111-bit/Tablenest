@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { loyaltyAPI } from '../../../shared/services/api';
 import { Award, Star, TrendingUp, Gift, Clock } from 'lucide-react';
 import { Spinner } from '../../../shared/components/ui/index';
+import type { Loyalty, LoyaltyTransaction } from '../../../shared/types/user.types';
 
 const TIERS = [
     { name: 'Bronze', min: 0, max: 1000, color: '#CD7F32', bg: '#FEF3C7' },
@@ -116,7 +117,7 @@ export default function RewardsPage() {
                 {/* Transaction history */}
                 <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden' }}>
                     <div style={{ padding: '16px 20px', borderBottom: '1px solid #E5E7EB', fontWeight: 600, fontSize: 15 }}>Points History</div>
-                    {(loyalty?.transactions || DEMO_TRANSACTIONS).map((tx: any, i: number) => (
+                    {(loyalty?.transactions || DEMO_TRANSACTIONS).map((tx: LoyaltyTransaction, i: number) => (
                         <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 20px', borderBottom: '1px solid #F3F4F6' }}>
                             <div>
                                 <div style={{ fontSize: 13, fontWeight: 500 }}>{tx.description}</div>
