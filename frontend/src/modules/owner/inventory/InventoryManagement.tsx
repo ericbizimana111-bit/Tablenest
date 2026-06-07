@@ -155,12 +155,12 @@ export default function InventoryManagement() {
                         { label: 'Item Name', key: 'name', placeholder: 'e.g. Truffle Oil' },
                         { label: 'Supplier', key: 'supplier', placeholder: 'Supplier name' },
                     ] as const.map(f => (
-                        <div key={f.key}>
-                            <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>{f.label}</label>
-                            <input placeholder={f.placeholder} value={form[f.key]}
-                                onChange={e => setFormField(f.key, e.target.value)}
-                                style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
-                        </div>
+                    <div key={f.key}>
+                        <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>{f.label}</label>
+                        <input placeholder={f.placeholder} value={form[f.key]}
+                            onChange={e => setFormField(f.key, e.target.value)}
+                            style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
+                    </div>
                     ))}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }}>
                         {[
