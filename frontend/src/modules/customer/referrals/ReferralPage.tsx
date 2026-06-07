@@ -109,7 +109,7 @@ export default function ReferralPage() {
                         </tr>
                     </thead>
                     <tbody>
-                        {referrals.map((r: any, i: number) => (
+                        {referrals.map((r: ReferralRecord, i: number) => (
                             <tr key={r._id || i}>
                                 <td>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
