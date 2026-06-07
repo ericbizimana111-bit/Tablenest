@@ -6,6 +6,7 @@ import { usersAPI, authAPI } from '../../../shared/services/api';
 import { Toggle } from '../../../shared/components/ui/index';
 import { useQuery } from '@tanstack/react-query';
 import { loyaltyAPI } from '../../../shared/services/api';
+import type { NotificationPrefs } from '../../../shared/types/auth.types';
 import toast from 'react-hot-toast';
 
 export default function AccountSettingsPage() {
