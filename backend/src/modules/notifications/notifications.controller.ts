@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
+import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
 import { AuthGuard } from '@nestjs/passport';
 import { NotificationsService } from './notifications.service';
 
@@ -23,7 +24,7 @@ export class NotificationsController {
   }
 
   @Patch(':id/read')
-  markRead(@Param('id') id: string) {
+  markRead(@Param('id', MongoIdValidationPipe) id: string) {
     return this.notificationsService.markRead(id);
   }
 

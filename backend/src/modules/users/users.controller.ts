@@ -1,4 +1,5 @@
 import { Controller, Get, Put, Patch, Delete, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
+import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
 import { AuthGuard } from '@nestjs/passport';
 import { UsersService } from './users.service';
 
@@ -18,7 +19,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  findById(@Param('id') id: string) {
+  findById(@Param('id', MongoIdValidationPipe) id: string) {
     return this.usersService.findById(id);
   }
 
@@ -33,12 +34,12 @@ export class UsersController {
   }
 
   @Patch(':id/suspend')
-  suspend(@Param('id') id: string) {
+  suspend(@Param('id', MongoIdValidationPipe) id: string) {
     return this.usersService.suspend(id);
   }
 
   @Patch(':id/activate')
-  activate(@Param('id') id: string) {
+  activate(@Param('id', MongoIdValidationPipe) id: string) {
     return this.usersService.activate(id);
   }
 

@@ -15,7 +15,7 @@ export class LoyaltyService {
         return this.loyaltyModel.findOneAndUpdate(
             { userId },
             { $inc: { points }, $push: { transactions: { type: 'earn', points, description, date: new Date() } } },
-            { new: true, upsert: true },
+            { returnDocument: 'after', upsert: true },
         );
     }
 
@@ -23,7 +23,7 @@ export class LoyaltyService {
         return this.loyaltyModel.findOneAndUpdate(
             { userId },
             { $inc: { points: -points }, $push: { transactions: { type: 'redeem', points: -points, description, date: new Date() } } },
-            { new: true },
+            { returnDocument: 'after' },
         );
     }
 }

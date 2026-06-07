@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Put, Patch, Delete, Body, Param, UseGuards } from '@nestjs/common';
+import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
 import { AuthGuard } from '@nestjs/passport';
 import { PromotionsService } from './promotions.service';
 
@@ -8,7 +9,7 @@ export class PromotionsController {
     constructor(private promotionsService: PromotionsService) { }
 
     @Get('restaurant/:restaurantId')
-    findByRestaurant(@Param('restaurantId') restaurantId: string) {
+    findByRestaurant(@Param('restaurantId', MongoIdValidationPipe) restaurantId: string) {
         return this.promotionsService.findByRestaurant(restaurantId);
     }
 
@@ -16,11 +17,11 @@ export class PromotionsController {
     create(@Body() data: any) { return this.promotionsService.create(data.restaurantId, data); }
 
     @Put(':id')
-    update(@Param('id') id: string, @Body() data: any) { return this.promotionsService.update(id, data); }
+    update(@Param('id', MongoIdValidationPipe) id: string, @Body() data: any) { return this.promotionsService.update(id, data); }
 
     @Patch(':id/toggle')
-    toggle(@Param('id') id: string) { return this.promotionsService.toggle(id); }
+    toggle(@Param('id', MongoIdValidationPipe) id: string) { return this.promotionsService.toggle(id); }
 
     @Delete(':id')
-    delete(@Param('id') id: string) { return this.promotionsService.delete(id); }
+    delete(@Param('id', MongoIdValidationPipe) id: string) { return this.promotionsService.delete(id); }
 }

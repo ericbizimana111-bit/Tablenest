@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
 import { AuthGuard } from '@nestjs/passport';
 import { MessagesService } from './messages.service';
 
@@ -13,7 +14,7 @@ export class MessagesController {
     }
 
     @Get('conversations/:id')
-    getMessages(@Param('id') id: string) {
+    getMessages(@Param('id', MongoIdValidationPipe) id: string) {
         return this.messagesService.getMessages(id);
     }
 

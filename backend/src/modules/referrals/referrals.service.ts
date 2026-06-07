@@ -15,7 +15,7 @@ export class ReferralsService {
         return this.referralModel.findOneAndUpdate(
             { code },
             { $push: { referrals: { ...referredUser, status: 'pending', invitedAt: new Date() } } },
-            { new: true },
+            { returnDocument: 'after' },
         );
     }
 
@@ -23,7 +23,7 @@ export class ReferralsService {
         return this.referralModel.findOneAndUpdate(
             { code, 'referrals.referredUserId': referredUserId },
             { $set: { 'referrals.$.status': 'successful', 'referrals.$.reward': 500 }, $inc: { totalEarned: 500 } },
-            { new: true },
+            { returnDocument: 'after' },
         );
     }
 }

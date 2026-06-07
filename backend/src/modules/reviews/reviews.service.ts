@@ -26,7 +26,7 @@ export class ReviewsService {
     }
 
     async replyToReview(id: string, reply: string) {
-        return this.reviewModel.findByIdAndUpdate(id, { ownerReply: reply, ownerRepliedAt: new Date() }, { new: true });
+        return this.reviewModel.findByIdAndUpdate(id, { ownerReply: reply, ownerRepliedAt: new Date() }, { returnDocument: 'after' });
     }
 
     async delete(id: string) {

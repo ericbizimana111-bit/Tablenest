@@ -40,14 +40,14 @@ export class SupportService {
     }
 
     async updateStatus(id: string, status: TicketStatus) {
-        return this.ticketModel.findByIdAndUpdate(id, { status }, { new: true });
+        return this.ticketModel.findByIdAndUpdate(id, { status }, { returnDocument: 'after' });
     }
 
     async addResponse(id: string, authorId: string, message: string) {
         return this.ticketModel.findByIdAndUpdate(
             id,
             { $push: { responses: { authorId, message, createdAt: new Date() } } },
-            { new: true },
+            { returnDocument: 'after' },
         );
     }
 

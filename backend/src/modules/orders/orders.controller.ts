@@ -51,7 +51,7 @@ export class OrdersController {
   }
 
   @Patch(':id/cancel')
-  cancel(@Param('id') id: string) {
+  cancel(@Param('id', MongoIdValidationPipe) id: string) {
     return this.ordersService.cancel(id);
   }
 }

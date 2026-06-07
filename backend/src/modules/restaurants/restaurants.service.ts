@@ -61,14 +61,14 @@ export class RestaurantsService {
     const restaurant = await this.restaurantModel.findById(id);
     if (!restaurant) throw new NotFoundException('Restaurant not found');
     if (restaurant.ownerId.toString() !== ownerId) throw new ForbiddenException();
-    return this.restaurantModel.findByIdAndUpdate(id, { $set: data }, { new: true });
+    return this.restaurantModel.findByIdAndUpdate(id, { $set: data }, { returnDocument: 'after' });
   }
 
   async approve(id: string) {
     return this.restaurantModel.findByIdAndUpdate(
       id,
       { status: RestaurantStatus.ACTIVE, approvedAt: new Date() },
-      { new: true },
+      { returnDocument: 'after' },
     );
   }
 
@@ -76,7 +76,7 @@ export class RestaurantsService {
     return this.restaurantModel.findByIdAndUpdate(
       id,
       { status: RestaurantStatus.REJECTED, rejectionReason: reason },
-      { new: true },
+      { returnDocument: 'after' },
     );
   }
 
@@ -84,7 +84,7 @@ export class RestaurantsService {
     return this.restaurantModel.findByIdAndUpdate(
       id,
       { status: RestaurantStatus.SUSPENDED },
-      { new: true },
+      { returnDocument: 'after' },
     );
   }
 

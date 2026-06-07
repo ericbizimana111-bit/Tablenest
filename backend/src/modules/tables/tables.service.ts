@@ -16,14 +16,14 @@ export class TablesService {
     }
 
     async update(id: string, data: any) {
-        return this.tableModel.findByIdAndUpdate(id, { $set: data }, { new: true });
+        return this.tableModel.findByIdAndUpdate(id, { $set: data }, { returnDocument: 'after' });
     }
 
     async updateStatus(id: string, status: TableStatus, guestId?: string) {
         const update: any = { status };
         if (guestId) { update.currentGuestId = guestId; update.seatedAt = new Date(); }
         if (status === TableStatus.AVAILABLE) { update.currentGuestId = null; update.seatedAt = null; update.serverNotes = null; }
-        return this.tableModel.findByIdAndUpdate(id, update, { new: true });
+        return this.tableModel.findByIdAndUpdate(id, update, { returnDocument: 'after' });
     }
 
     async delete(id: string) {

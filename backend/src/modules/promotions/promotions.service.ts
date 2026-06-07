@@ -16,7 +16,7 @@ export class PromotionsService {
     }
 
     async update(id: string, data: any) {
-        return this.promotionModel.findByIdAndUpdate(id, { $set: data }, { new: true });
+        return this.promotionModel.findByIdAndUpdate(id, { $set: data }, { returnDocument: 'after' });
     }
 
     async delete(id: string) {
@@ -27,6 +27,6 @@ export class PromotionsService {
     async toggle(id: string) {
         const promo = await this.promotionModel.findById(id);
         if (!promo) throw new NotFoundException('Promotion not found');
-        return this.promotionModel.findByIdAndUpdate(id, { isActive: !promo.isActive }, { new: true });
+        return this.promotionModel.findByIdAndUpdate(id, { isActive: !promo.isActive }, { returnDocument: 'after' });
     }
 }

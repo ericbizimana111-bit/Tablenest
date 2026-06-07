@@ -34,7 +34,7 @@ export class UsersService {
     const updated = await this.userModel.findByIdAndUpdate(
       userId,
       { $set: data },
-      { new: true },
+      { returnDocument: 'after' },
     ).select('-password');
     if (!updated) throw new NotFoundException('User not found');
     return updated;
@@ -44,16 +44,16 @@ export class UsersService {
     return this.userModel.findByIdAndUpdate(
       userId,
       { $set: { notificationPrefs: prefs } },
-      { new: true },
+      { returnDocument: 'after' },
     ).select('-password');
   }
 
   async suspend(id: string) {
-    return this.userModel.findByIdAndUpdate(id, { isActive: false }, { new: true }).select('-password');
+    return this.userModel.findByIdAndUpdate(id, { isActive: false }, { returnDocument: 'after' }).select('-password');
   }
 
   async activate(id: string) {
-    return this.userModel.findByIdAndUpdate(id, { isActive: true }, { new: true }).select('-password');
+    return this.userModel.findByIdAndUpdate(id, { isActive: true }, { returnDocument: 'after' }).select('-password');
   }
 
   async deleteAccount(userId: string) {

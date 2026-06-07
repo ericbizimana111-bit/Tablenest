@@ -19,7 +19,7 @@ export class MenuService {
   }
 
   async updateCategory(id: string, data: any) {
-    return this.categoryModel.findByIdAndUpdate(id, { $set: data }, { new: true });
+    return this.categoryModel.findByIdAndUpdate(id, { $set: data }, { returnDocument: 'after' });
   }
 
   async deleteCategory(id: string) {
@@ -44,7 +44,7 @@ export class MenuService {
   }
 
   async updateItem(id: string, data: any) {
-    return this.menuItemModel.findByIdAndUpdate(id, { $set: data }, { new: true });
+    return this.menuItemModel.findByIdAndUpdate(id, { $set: data }, { returnDocument: 'after' });
   }
 
   async toggleAvailability(id: string) {
@@ -53,7 +53,7 @@ export class MenuService {
     return this.menuItemModel.findByIdAndUpdate(
       id,
       { isAvailable: !item.isAvailable },
-      { new: true },
+      { returnDocument: 'after' },
     );
   }
 

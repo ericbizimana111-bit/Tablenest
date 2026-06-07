@@ -16,7 +16,7 @@ export class StaffService {
     }
 
     async update(id: string, data: any) {
-        return this.staffModel.findByIdAndUpdate(id, { $set: data }, { new: true });
+        return this.staffModel.findByIdAndUpdate(id, { $set: data }, { returnDocument: 'after' });
     }
 
     async delete(id: string) {

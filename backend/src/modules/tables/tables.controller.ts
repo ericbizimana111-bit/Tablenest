@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Put, Patch, Delete, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
 import { AuthGuard } from '@nestjs/passport';
 import { TablesService } from './tables.service';
 import { TableStatus } from './table.schema';
@@ -9,12 +10,12 @@ export class TablesController {
     constructor(private tablesService: TablesService) { }
 
     @Get('restaurant/:restaurantId')
-    findByRestaurant(@Param('restaurantId') restaurantId: string) {
+    findByRestaurant(@Param('restaurantId', MongoIdValidationPipe) restaurantId: string) {
         return this.tablesService.findByRestaurant(restaurantId);
     }
 
     @Get('floor-plan/:restaurantId')
-    getFloorPlan(@Param('restaurantId') restaurantId: string) {
+    getFloorPlan(@Param('restaurantId', MongoIdValidationPipe) restaurantId: string) {
         return this.tablesService.getFloorPlan(restaurantId);
     }
 
@@ -24,17 +25,17 @@ export class TablesController {
     }
 
     @Put(':id')
-    update(@Param('id') id: string, @Body() data: any) {
+    update(@Param('id', MongoIdValidationPipe) id: string, @Body() data: any) {
         return this.tablesService.update(id, data);
     }
 
     @Patch(':id/status')
-    updateStatus(@Param('id') id: string, @Body() body: { status: TableStatus; guestId?: string }) {
+    updateStatus(@Param('id', MongoIdValidationPipe) id: string, @Body() body: { status: TableStatus; guestId?: string }) {
         return this.tablesService.updateStatus(id, body.status, body.guestId);
     }
 
     @Delete(':id')
-    delete(@Param('id') id: string) {
+    delete(@Param('id', MongoIdValidationPipe) id: string) {
         return this.tablesService.delete(id);
     }
 }

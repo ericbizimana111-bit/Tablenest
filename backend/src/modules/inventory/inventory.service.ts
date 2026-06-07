@@ -20,7 +20,7 @@ export class InventoryService {
     }
 
     async update(id: string, data: any) {
-        return this.inventoryModel.findByIdAndUpdate(id, { $set: data }, { new: true });
+        return this.inventoryModel.findByIdAndUpdate(id, { $set: data }, { returnDocument: 'after' });
     }
 
     async delete(id: string) {

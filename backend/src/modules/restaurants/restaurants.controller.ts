@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Put, Patch, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
+import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
 import { AuthGuard } from '@nestjs/passport';
 import { RestaurantsService } from './restaurants.service';
 
@@ -12,7 +13,7 @@ export class RestaurantsController {
   }
 
   @Get('public/:id')
-  findPublicById(@Param('id') id: string) {
+  findPublicById(@Param('id', MongoIdValidationPipe) id: string) {
     return this.restaurantsService.findById(id);
   }
 
@@ -42,7 +43,7 @@ export class RestaurantsController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get(':id')
-  findById(@Param('id') id: string) {
+  findById(@Param('id', MongoIdValidationPipe) id: string) {
     return this.restaurantsService.findById(id);
   }
 
@@ -54,25 +55,25 @@ export class RestaurantsController {
 
   @UseGuards(AuthGuard('jwt'))
   @Put(':id')
-  update(@Request() req, @Param('id') id: string, @Body() data: any) {
+  update(@Request() req, @Param('id', MongoIdValidationPipe) id: string, @Body() data: any) {
     return this.restaurantsService.update(id, req.user._id.toString(), data);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Patch(':id/approve')
-  approve(@Param('id') id: string) {
+  approve(@Param('id', MongoIdValidationPipe) id: string) {
     return this.restaurantsService.approve(id);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Patch(':id/reject')
-  reject(@Param('id') id: string, @Body() body: { reason: string }) {
+  reject(@Param('id', MongoIdValidationPipe) id: string, @Body() body: { reason: string }) {
     return this.restaurantsService.reject(id, body.reason);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Patch(':id/suspend')
-  suspend(@Param('id') id: string) {
+  suspend(@Param('id', MongoIdValidationPipe) id: string) {
     return this.restaurantsService.suspend(id);
   }
 }
