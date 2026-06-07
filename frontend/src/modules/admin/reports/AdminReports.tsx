@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, AreaChart, Area } from 'recharts';
 import { analyticsAPI } from '../../../shared/services/api';
-import { Spinner } from '../../../shared/components/ui/index';
-import { DollarSign, TrendingUp, Download } from 'lucide-react';
+import { Download } from 'lucide-react';
 
 const RED = '#B91C1C';
 
@@ -13,10 +12,6 @@ export default function AdminReports() {
     const { data: signups = [] } = useQuery({
         queryKey: ['report-signups', period],
         queryFn: () => analyticsAPI.getSignups(+period).then(r => r.data),
-    });
-    const { data: bookings = [] } = useQuery({
-        queryKey: ['report-bookings', period],
-        queryFn: () => analyticsAPI.getBookingsByDay(+period).then(r => r.data),
     });
 
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];

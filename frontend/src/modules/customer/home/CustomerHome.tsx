@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, MapPin, Calendar, Star, ArrowRight, TrendingUp, Clock, Utensils } from 'lucide-react';
+import { Search, Calendar, Star, ArrowRight, Clock } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { restaurantsAPI } from '../../../shared/services/api';
 import { useAuthStore } from '../../../shared/store/authStore';

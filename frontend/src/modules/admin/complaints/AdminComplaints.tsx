@@ -1,9 +1,27 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Eye, Reply, Filter, Plus } from 'lucide-react';
+import { Eye, Reply, Filter } from 'lucide-react';
 import { supportAPI } from '../../../shared/services/api';
 import { StatCard, Spinner, StatusBadge, Modal, Pagination } from '../../../shared/components/ui/index';
 import toast from 'react-hot-toast';
+
+interface SupportTicket {
+    _id: string;
+    ticketId: string;
+    type: string;
+    priority: string;
+    status: string;
+    subject: string;
+    customer: string;
+    createdAt: string;
+    responses: string[];
+}
+
+interface SupportStats {
+    open: number;
+    resolved: number;
+    pending: number;
+}
 
 const TYPE_COLORS: Record<string, string> = {
     technical: '#DBEAFE', order: '#FEF9C3', booking: '#E0E7FF', payment: '#FEE2E2', other: '#F3F4F6',
@@ -16,31 +34,30 @@ export default function AdminComplaints() {
     const qc = useQueryClient();
     const [page, setPage] = useState(1);
     const [tab, setTab] = useState('all');
-    const [selectedTicket, setSelectedTicket] = useState<any>(null);
+    const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
     const [reply, setReply] = useState('');
-    const [showNewModal, setShowNewModal] = useState(false);
 
     const { data, isLoading } = useQuery({
         queryKey: ['support-tickets', page, tab],
         queryFn: () => supportAPI.getAll({ page, limit: 10, priority: tab === 'priority' ? 'high' : undefined }).then(r => r.data),
     });
 
-    const { data: stats } = useQuery({
+    const { data: stats } = useQuery<SupportStats>({
         queryKey: ['support-stats'],
         queryFn: () => supportAPI.getStats().then(r => r.data),
     });
 
     const updateStatusMut = useMutation({
-        mutationFn: ({ id, status }: any) => supportAPI.updateStatus(id, status),
+        mutationFn: ({ id, status }: { id: string; status: string }) => supportAPI.updateStatus(id, status),
         onSuccess: () => { qc.invalidateQueries({ queryKey: ['support-tickets'] }); toast.success('Status updated'); },
     });
 
     const respondMut = useMutation({
-        mutationFn: ({ id, message }: any) => supportAPI.addResponse(id, message),
+        mutationFn: ({ id, message }: { id: string; message: string }) => supportAPI.addResponse(id, message),
         onSuccess: () => { qc.invalidateQueries({ queryKey: ['support-tickets'] }); toast.success('Response sent'); setReply(''); },
     });
 
-    const tickets = data?.tickets || DEMO_TICKETS;
+    const tickets: SupportTicket[] = (data as { tickets?: SupportTicket[] } | undefined)?.tickets || DEMO_TICKETS;
 
     return (
         <div className="fade-in">
@@ -90,37 +107,36 @@ export default function AdminComplaints() {
                                 ))}
                             </tr>
                         </thead>
-                        <tbody>
-                            {tickets.map((t: any) => (
-                                <tr key={t._id || t.ticketId}>
-                                    <td style={{ color: '#B91C1C', fontWeight: 600, fontSize: 13 }}>{t.ticketId || `#TK-${t._id?.slice(-5).toUpperCase()}`}</td>
-                                    <td>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                            <div style={{ width: 32, height: 32, borderRadius: '50%', background: `hsl(${(t.userName || t.userId || '').charCodeAt(0) * 7},60%,70%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: 'white', flexShrink: 0 }}>
-                                                {(t.userName || 'U')[0]}
-                                            </div>
-                                            <span style={{ fontSize: 13 }}>{t.userName || 'Unknown User'}</span>
+                        <tbody>\n                            {tickets.map((t) => (
+                            <tr key={t._id || t.ticketId}>
+                                <td style={{ color: '#B91C1C', fontWeight: 600, fontSize: 13 }}>{t.ticketId || `#TK-${t._id?.slice(-5).toUpperCase()}`}</td>
+                                <td>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: `hsl(${(t.userName || t.userId || '').charCodeAt(0) * 7},60%,70%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: 'white', flexShrink: 0 }}>
+                                            {(t.userName || 'U')[0]}
                                         </div>
-                                    </td>
-                                    <td>
-                                        <div style={{ fontWeight: 500, fontSize: 13 }}>{t.subject}</div>
-                                        <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 2 }}>{t.description?.slice(0, 40)}...</div>
-                                    </td>
-                                    <td>
-                                        <span style={{ background: TYPE_COLORS[t.type] || '#F3F4F6', color: TYPE_TEXT[t.type] || '#6B7280', padding: '3px 10px', borderRadius: 9999, fontSize: 12, fontWeight: 500, textTransform: 'capitalize' }}>
-                                            {t.type}
-                                        </span>
-                                    </td>
-                                    <td><StatusBadge status={t.status} /></td>
-                                    <td style={{ fontSize: 12, color: '#6B7280' }}>{new Date(t.createdAt || t.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</td>
-                                    <td>
-                                        <div style={{ display: 'flex', gap: 8 }}>
-                                            <button onClick={() => setSelectedTicket(t)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6B7280', padding: 4 }} title="View"><Eye size={15} /></button>
-                                            <button onClick={() => setSelectedTicket(t)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6B7280', padding: 4 }} title="Reply"><Reply size={15} /></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
+                                        <span style={{ fontSize: 13 }}>{t.userName || 'Unknown User'}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style={{ fontWeight: 500, fontSize: 13 }}>{t.subject}</div>
+                                    <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 2 }}>{t.description?.slice(0, 40)}...</div>
+                                </td>
+                                <td>
+                                    <span style={{ background: TYPE_COLORS[t.type] || '#F3F4F6', color: TYPE_TEXT[t.type] || '#6B7280', padding: '3px 10px', borderRadius: 9999, fontSize: 12, fontWeight: 500, textTransform: 'capitalize' }}>
+                                        {t.type}
+                                    </span>
+                                </td>
+                                <td><StatusBadge status={t.status} /></td>
+                                <td style={{ fontSize: 12, color: '#6B7280' }}>{new Date(t.createdAt || t.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</td>
+                                <td>
+                                    <div style={{ display: 'flex', gap: 8 }}>
+                                        <button onClick={() => setSelectedTicket(t)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6B7280', padding: 4 }} title="View"><Eye size={15} /></button>
+                                        <button onClick={() => setSelectedTicket(t)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6B7280', padding: 4 }} title="Reply"><Reply size={15} /></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
                         </tbody>
                     </table>
                 )}

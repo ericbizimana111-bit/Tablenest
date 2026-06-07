@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Search, Star, MapPin, SlidersHorizontal, X } from 'lucide-react';
+import { Search, Star, SlidersHorizontal } from 'lucide-react';
 import { restaurantsAPI } from '../../../shared/services/api';
 import { Spinner, Pagination } from '../../../shared/components/ui/index';
 

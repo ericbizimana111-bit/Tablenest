@@ -5,6 +5,18 @@ import { ordersAPI } from '../../../shared/services/api';
 import { Spinner, StatusBadge, Pagination, StatCard } from '../../../shared/components/ui/index';
 import { DollarSign, ShoppingBag, Users, TrendingUp } from 'lucide-react';
 
+interface Order {
+    _id: string;
+    orderId?: string;
+    restaurantName?: string;
+    restaurantId?: string;
+    customerName?: string;
+    customerId?: string;
+    status?: string;
+    items?: unknown[];
+    total?: number;
+}
+
 export default function AdminOrders() {
     const [page, setPage] = useState(1);
     const [status, setStatus] = useState('');
@@ -18,7 +30,7 @@ export default function AdminOrders() {
         queryFn: () => ordersAPI.getStats().then(r => r.data),
     });
 
-    const orders = data?.orders || DEMO_ORDERS;
+    const orders: Order[] = (data as { orders?: Order[] } | undefined)?.orders || DEMO_ORDERS;
 
     return (
         <div className="fade-in">
@@ -56,7 +68,7 @@ export default function AdminOrders() {
                     <table className="data-table">
                         <thead><tr>{['Order ID', 'Restaurant', 'Customer', 'Status', 'Items', 'Total', 'Actions'].map(h => <th key={h}>{h}</th>)}</tr></thead>
                         <tbody>
-                            {orders.map((o: any) => (
+                            {orders.map((o) => (
                                 <tr key={o._id}>
                                     <td style={{ color: '#B91C1C', fontWeight: 600, fontSize: 13 }}>#TN-{o._id?.slice(-4).toUpperCase() || o.orderId}</td>
                                     <td style={{ fontSize: 13 }}>{o.restaurantName || o.restaurantId}</td>

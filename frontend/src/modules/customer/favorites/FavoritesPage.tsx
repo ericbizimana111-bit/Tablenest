@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Star, MapPin, Trash2, Calendar } from 'lucide-react';
+import { Heart, Star, MapPin, Calendar } from 'lucide-react';
 
 const DEMO_FAVORITES = [
     { _id: '1', name: "L'Atelier de Joël", cuisineType: 'Modern French', rating: 4.9, city: '0.4 miles', img: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=80', status: 'active' },

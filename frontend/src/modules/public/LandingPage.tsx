@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, Utensils, Calendar, Search, Star, ArrowRight, ChevronRight } from 'lucide-react';
+import { MapPin, Utensils, Calendar, Search, Star, ArrowRight } from 'lucide-react';
 import Footer from '../../shared/components/layout/Footer';
 
 const CUISINES = ['Healthy', 'Italian', 'Japanese', 'Mexican', 'American', 'Chinese', 'Indian', 'French'];

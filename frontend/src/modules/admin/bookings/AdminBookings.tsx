@@ -4,6 +4,19 @@ import { reservationsAPI } from '../../../shared/services/api';
 import { Spinner, StatusBadge, Pagination, StatCard } from '../../../shared/components/ui/index';
 import { Calendar, Users, CheckCircle, Clock } from 'lucide-react';
 
+interface Reservation {
+    _id: string;
+    bookingRef?: string;
+    restaurantName?: string;
+    restaurantId?: string;
+    customerName?: string;
+    customerId?: string;
+    date?: string;
+    time?: string;
+    guests?: number;
+    status?: string;
+}
+
 export default function AdminBookings() {
     const [page, setPage] = useState(1);
 
@@ -16,7 +29,7 @@ export default function AdminBookings() {
         queryFn: () => reservationsAPI.getStats().then(r => r.data),
     });
 
-    const reservations = data?.reservations || DEMO_RESERVATIONS;
+    const reservations: Reservation[] = (data as { reservations?: Reservation[] } | undefined)?.reservations || DEMO_RESERVATIONS;
 
     return (
         <div className="fade-in">
@@ -38,7 +51,7 @@ export default function AdminBookings() {
                     <table className="data-table">
                         <thead><tr>{['Booking Ref', 'Restaurant', 'Customer', 'Date', 'Time', 'Guests', 'Status'].map(h => <th key={h}>{h}</th>)}</tr></thead>
                         <tbody>
-                            {reservations.map((r: any) => (
+                            {reservations.map((r) => (
                                 <tr key={r._id}>
                                     <td style={{ color: '#B91C1C', fontWeight: 600, fontSize: 13 }}>{r.bookingRef || '#TN-7729'}</td>
                                     <td style={{ fontSize: 13 }}>{r.restaurantName || r.restaurantId}</td>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ShoppingBag, Calendar, Tag, Settings, CheckCheck, Trash2, Bell, Star } from 'lucide-react';
 import { notificationsAPI } from '../../../shared/services/api';
@@ -23,6 +23,8 @@ const TYPE_BG: Partial<Record<Notification['type'], string>> = {
 
 type NotificationTab = (typeof TABS)[number];
 
+const TIME_UPDATE_INTERVAL = 60000; // 1 minute
+
 export default function NotificationsPage() {
     const qc = useQueryClient();
     const [tab, setTab] = useState<NotificationTab>('All');
@@ -37,6 +39,7 @@ export default function NotificationsPage() {
         queryKey: ['notifications', currentType],
         queryFn: () => notificationsAPI.getAll({ type: currentType, limit: 20 }).then(r => r.data),
         initialData: { notifications: DEMO_NOTIFICATIONS, unread: 3 } as { notifications: Notification[]; unread: number },
+        refetchInterval: TIME_UPDATE_INTERVAL,
     });
 
     const markAllMut = useMutation({
@@ -53,12 +56,12 @@ export default function NotificationsPage() {
     });
 
     const notifications = data?.notifications || DEMO_NOTIFICATIONS;
-    const filtered = currentType ? notifications.filter((n: Notification) => n.type === currentType) : notifications;
+    const filtered = currentType ? notifications.filter((n) => n.type === currentType) : notifications;
 
     const getTimeLabel = (createdAt: string) => {
         if (!createdAt) return '';
-        const diff = Date.now() - new Date(createdAt).getTime();
-        const mins = Math.floor(diff / 60000);
+        const diffMs = new Date().getTime() - new Date(createdAt).getTime();
+        const mins = Math.floor(diffMs / 60000);
         if (mins < 60) return `${mins} mins ago`;
         const hrs = Math.floor(mins / 60);
         if (hrs < 24) return `${hrs} hour${hrs > 1 ? 's' : ''} ago`;

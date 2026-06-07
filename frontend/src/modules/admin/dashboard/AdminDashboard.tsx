@@ -1,10 +1,35 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
+import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import { Utensils, Users, Calendar, ShoppingBag, Clock, DollarSign, Pencil, Trash2 } from 'lucide-react';
 import { analyticsAPI, restaurantsAPI } from '../../../shared/services/api';
 import { StatCard, Spinner, StatusBadge } from '../../../shared/components/ui/index';
 import { useNavigate } from 'react-router-dom';
+
+interface SignupData {
+    count: number;
+}
+
+interface BookingData {
+    _id: string;
+    count: number;
+}
+
+interface CuisineData {
+    _id: string;
+    count: number;
+}
+
+interface ChartEntry {
+    day: string;
+    count: number;
+}
+
+interface CuisineChartEntry extends ChartEntry {
+    name: string;
+    value: number;
+    color: string;
+}
 
 const RED = '#B91C1C';
 const COLORS = [RED, '#92400E', '#D97706', '#F9A8D4', '#FBBF24'];
@@ -38,10 +63,23 @@ export default function AdminDashboard() {
     });
 
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    const signupChart = days.map((d, i) => ({ day: d, count: signups[i]?.count || Math.floor(Math.random() * 80 + 20) }));
-    const bookingChart = bookingsByDay.map((b: any) => ({ day: b._id?.slice(5), count: b.count }));
-    const cuisineChart = cuisines.map((c: any, i: number) => ({ name: c._id, value: c.count, color: COLORS[i % COLORS.length] }));
-    const total = cuisineChart.reduce((s: number, c: any) => s + c.value, 0);
+
+    const signupChart = useMemo<ChartEntry[]>(() => {
+        const fallback = Array.from({ length: 7 }, (_, i) => ({ day: days[i], count: 50 + i * 5 }));
+        return days.map((d, i) => ({ day: d, count: (signups[i] as SignupData | undefined)?.count || fallback[i].count }));
+    }, [signups]);
+
+    const bookingChart = useMemo<ChartEntry[]>(() =>
+        (bookingsByDay as BookingData[]).map((b) => ({ day: b._id?.slice(5) || '', count: b.count })),
+        [bookingsByDay]
+    );
+
+    const cuisineChart = useMemo<CuisineChartEntry[]>(() =>
+        (cuisines as CuisineData[]).map((c, i) => ({ name: c._id, day: c._id, value: c.count, count: c.count, color: COLORS[i % COLORS.length] })),
+        [cuisines]
+    );
+
+    const total = useMemo(() => cuisineChart.reduce((s: number, c: CuisineChartEntry) => s + c.value, 0), [cuisineChart]);
     const topCuisine = cuisineChart[0];
 
     if (isLoading) return <Spinner />;
@@ -93,7 +131,7 @@ export default function AdminDashboard() {
                     <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 4 }}>Bookings by Day</div>
                     {bookingChart.length > 0 && (
                         <div style={{ fontSize: 13, color: RED, fontWeight: 600, marginBottom: 10 }}>
-                            Peak Day {bookingChart.reduce((a: any, b: any) => a.count > b.count ? a : b)?.day || 'Sat'}, 8 PM
+                            Peak Day {bookingChart.reduce((a, b) => a.count > b.count ? a : b)?.day || 'Sat'}, 8 PM
                         </div>
                     )}
                     <ResponsiveContainer width="100%" height={160}>
@@ -121,7 +159,7 @@ export default function AdminDashboard() {
                                 <PieChart>
                                     <Pie data={cuisineChart.length ? cuisineChart : [{ name: 'Italian', value: 62 }, { name: 'French', value: 18 }, { name: 'Japanese', value: 12 }, { name: 'Fusion', value: 8 }]}
                                         cx="50%" cy="50%" innerRadius={38} outerRadius={55} dataKey="value" stroke="none">
-                                        {(cuisineChart.length ? cuisineChart : COLORS).map((_: any, i: number) => (
+                                        {(cuisineChart.length ? cuisineChart : COLORS).map((_, i) => (
                                             <Cell key={i} fill={COLORS[i % COLORS.length]} />
                                         ))}
                                     </Pie>
@@ -133,9 +171,9 @@ export default function AdminDashboard() {
                             </div>
                         </div>
                         <div style={{ flex: 1 }}>
-                            {(cuisineChart.length ? cuisineChart : [{ name: 'Italian', color: RED }, { name: 'French', color: '#92400E' }, { name: 'Japanese', color: '#D97706' }, { name: 'Fusion', color: '#F9A8D4' }]).slice(0, 4).map((c: any, i: number) => (
+                            {(cuisineChart.length ? cuisineChart : [{ name: 'Italian', color: RED }, { name: 'French', color: '#92400E' }, { name: 'Japanese', color: '#D97706' }, { name: 'Fusion', color: '#F9A8D4' }]).slice(0, 4).map((c) => (
                                 <div key={c.name} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-                                    <div style={{ width: 10, height: 10, borderRadius: 2, background: c.color || COLORS[i] }} />
+                                    <div style={{ width: 10, height: 10, borderRadius: 2, background: c.color || COLORS[0] }} />
                                     <span style={{ fontSize: 12, color: '#374151' }}>{c.name}</span>
                                 </div>
                             ))}
@@ -156,7 +194,7 @@ export default function AdminDashboard() {
                 <table className="data-table">
                     <thead>
                         <tr>
-                            {['ID', 'Name', 'Owner', 'City', 'Cuisine', 'Status', 'Date Added', 'Actions'].map(h => (
+                            {['ID', 'Name', 'Owner', 'City', 'Cuisine', 'Status', 'Date Added', 'Actions'].map((h: string) => (
                                 <th key={h}>{h}</th>
                             ))}
                         </tr>
