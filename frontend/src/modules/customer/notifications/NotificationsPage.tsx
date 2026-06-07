@@ -3,31 +3,40 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ShoppingBag, Calendar, Tag, Settings, CheckCheck, Trash2, Bell, Star } from 'lucide-react';
 import { notificationsAPI } from '../../../shared/services/api';
 import { Spinner } from '../../../shared/components/ui/index';
+import type { Notification } from '../../../shared/types/user.types';
 import toast from 'react-hot-toast';
 
-const TABS = ['All', 'Orders', 'Bookings', 'Promotions', 'System'];
-const TYPE_ICONS: Record<string, React.ReactNode> = {
+const TABS = ['All', 'Orders', 'Bookings', 'Promotions', 'System'] as const;
+const TYPE_ICONS: Partial<Record<Notification['type'], React.ReactNode>> = {
     order: <ShoppingBag size={18} />,
     booking: <Calendar size={18} />,
     promotion: <Tag size={18} />,
     system: <Settings size={18} />,
     review: <Star size={18} />,
 };
-const TYPE_COLORS: Record<string, string> = {
+const TYPE_COLORS: Partial<Record<Notification['type'], string>> = {
     order: '#B91C1C', booking: '#D97706', promotion: '#D97706', system: '#6B7280', review: '#2563EB',
 };
-const TYPE_BG: Record<string, string> = {
+const TYPE_BG: Partial<Record<Notification['type'], string>> = {
     order: '#FEE2E2', booking: '#FEF9C3', promotion: '#FEF3C7', system: '#F3F4F6', review: '#DBEAFE',
 };
 
+type NotificationTab = (typeof TABS)[number];
+
 export default function NotificationsPage() {
     const qc = useQueryClient();
-    const [tab, setTab] = useState('All');
+    const [tab, setTab] = useState<NotificationTab>('All');
+
+    const currentType = tab === 'All' ? undefined :
+        tab === 'Orders' ? 'order' :
+            tab === 'Bookings' ? 'booking' :
+                tab === 'Promotions' ? 'promotion' :
+                    tab === 'System' ? 'system' : undefined;
 
     const { data, isLoading } = useQuery({
-        queryKey: ['notifications', tab],
-        queryFn: () => notificationsAPI.getAll({ type: tab === 'All' ? undefined : tab.toLowerCase(), limit: 20 }).then(r => r.data),
-        initialData: { notifications: DEMO_NOTIFICATIONS, unread: 3 },
+        queryKey: ['notifications', currentType],
+        queryFn: () => notificationsAPI.getAll({ type: currentType, limit: 20 }).then(r => r.data),
+        initialData: { notifications: DEMO_NOTIFICATIONS, unread: 3 } as { notifications: Notification[]; unread: number },
     });
 
     const markAllMut = useMutation({
@@ -44,7 +53,7 @@ export default function NotificationsPage() {
     });
 
     const notifications = data?.notifications || DEMO_NOTIFICATIONS;
-    const filtered = tab === 'All' ? notifications : notifications.filter((n: any) => n.type === tab.toLowerCase());
+    const filtered = currentType ? notifications.filter((n: Notification) => n.type === currentType) : notifications;
 
     const getTimeLabel = (createdAt: string) => {
         if (!createdAt) return '';
@@ -114,7 +123,7 @@ export default function NotificationsPage() {
                                 <p style={{ fontSize: 13, color: '#6B7280', lineHeight: 1.5, marginBottom: 8 }}>{n.message}</p>
                                 {n.actions && (
                                     <div style={{ display: 'flex', gap: 12 }}>
-                                        {n.actions.map((a: any, ai: number) => (
+                                        {n.actions.map((a: string, ai: number) => (
                                             <span key={ai} style={{ fontSize: 13, color: ai === 0 ? '#B91C1C' : '#6B7280', fontWeight: 500, cursor: 'pointer' }}>{a}</span>
                                         ))}
                                     </div>

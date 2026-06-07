@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 
 interface UseApiState<T> {

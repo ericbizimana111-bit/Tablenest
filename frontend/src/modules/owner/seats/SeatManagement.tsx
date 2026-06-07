@@ -1,25 +1,36 @@
 
 import React, { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { tablesAPI, restaurantsAPI } from '../../../shared/services/api';
 import { useAuthStore } from '../../../shared/store/authStore';
 import { X } from 'lucide-react';
-import toast from 'react-hot-toast';
 
-const STATUS_COLORS: Record<string, string> = { available: '#16A34A', occupied: '#DC2626', reserved: '#D97706', blocked: '#9CA3AF' };
-const STATUS_BG: Record<string, string> = { available: '#16A34A', occupied: '#DC2626', reserved: '#D97706', blocked: '#9CA3AF' };
+type SeatTableStatus = 'available' | 'occupied' | 'reserved' | 'blocked';
+
+type SeatTable = {
+    _id: string;
+    tableNumber: string;
+    capacity: number;
+    status: SeatTableStatus;
+    serverNotes?: string;
+};
+
+const STATUS_COLORS: Record<SeatTableStatus, string> = { available: '#16A34A', occupied: '#DC2626', reserved: '#D97706', blocked: '#9CA3AF' };
+const STATUS_BG: Record<SeatTableStatus, string> = { available: '#DCFCE7', occupied: '#FEE2E2', reserved: '#FEF3C7', blocked: '#E5E7EB' };
 
 export default function SeatManagement() {
     const { user } = useAuthStore();
-    const qc = useQueryClient();
-    const [restaurantId, setRestaurantId] = useState('');
-    const [selectedTable, setSelectedTable] = useState<any>(null);
+    const [selectedTable, setSelectedTable] = useState<SeatTable | null>(null);
+    const userRestaurantId = user?.restaurantId?.toString();
 
-    React.useEffect(() => {
-        if (user?.restaurantId) setRestaurantId(user.restaurantId.toString());
-        else restaurantsAPI.getMyRestaurant().then(r => r.data?._id && setRestaurantId(r.data._id)).catch(() => { });
-    }, [user]);
+    const restaurantQuery = useQuery({
+        queryKey: ['my-restaurant'],
+        queryFn: () => restaurantsAPI.getMyRestaurant().then(r => r.data),
+        enabled: !userRestaurantId,
+        staleTime: 1000 * 60 * 5,
+    });
 
+    const restaurantId = userRestaurantId ?? restaurantQuery.data?._id ?? '';
     const { data } = useQuery({
         queryKey: ['floor-plan', restaurantId],
         queryFn: () => tablesAPI.getFloorPlan(restaurantId).then(r => r.data),
@@ -67,8 +78,8 @@ export default function SeatManagement() {
                         ))}
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
-                        {tables.map((t: any) => (
-                            <div key={t._id || t.tableNumber} onClick={() => setSelectedTable(t)}
+                        {tables.map((t: SeatTable) => (
+                            <div key={t._id} onClick={() => setSelectedTable(t)}
                                 style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', padding: 8, borderRadius: 8, border: selectedTable?.tableNumber === t.tableNumber ? '2px solid #B91C1C' : '2px solid transparent', background: selectedTable?.tableNumber === t.tableNumber ? '#FFF7F7' : 'transparent' }}>
                                 <div style={{ position: 'relative' }}>
                                     <div style={{ width: 52, height: 52, borderRadius: '50%', background: STATUS_BG[t.status] || '#9CA3AF', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>

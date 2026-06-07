@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ChevronLeft, CheckCircle, Circle, Clock, Phone, MessageSquare, AlertTriangle, XCircle, MapPin } from 'lucide-react';
 import { ordersAPI } from '../../../shared/services/api';
 import { Spinner } from '../../../shared/components/ui/index';
+import type { Order, OrderItem } from '../../../shared/types/order.types';
 
 const STATUS_STEPS = [
     { key: 'placed', label: 'Order Placed', icon: <CheckCircle size={18} /> },

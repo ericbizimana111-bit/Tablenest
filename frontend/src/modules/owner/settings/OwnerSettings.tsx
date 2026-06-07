@@ -38,7 +38,7 @@ export default function OwnerSettings() {
                     ].map(f => (
                         <div key={f.key} style={{ marginBottom: 14 }}>
                             <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>{f.label}</label>
-                            <input type={f.type} value={(form as any)[f.key]} onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
+                            <input type={f.type} value={form[f.key as keyof SettingsForm]} onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value } as SettingsForm))}
                                 style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
                         </div>
                     ))}

@@ -5,6 +5,7 @@ import { Calendar, Filter, RefreshCw, Star, Headphones } from 'lucide-react';
 import { ordersAPI } from '../../../shared/services/api';
 import { Spinner, StatusBadge, Pagination } from '../../../shared/components/ui/index';
 import { useAuthStore } from '../../../shared/store/authStore';
+import type { Order, OrderItem } from '../../../shared/types/order.types';
 import toast from 'react-hot-toast';
 
 const TABS = ['All', 'Delivered', 'Active', 'Cancelled'];
@@ -24,16 +25,16 @@ export default function OrderHistoryPage() {
     });
 
     const reorderMut = useMutation({
-        mutationFn: (order: any) => ordersAPI.create({
+        mutationFn: (order: Order) => ordersAPI.create({
             restaurantId: order.restaurantId,
-            userId: user?._id || order.customerId || order.userId,
+            userId: user?._id || order.customerId,
             items: order.items,
             total: order.total,
         }),
         onSuccess: () => { qc.invalidateQueries({ queryKey: ['my-orders'] }); toast.success('Order placed!'); },
     });
 
-    const orders = data?.orders || DEMO_ORDERS;
+    const orders = (data?.orders as Order[]) || DEMO_ORDERS;
 
     return (
         <div className="fade-in">
@@ -75,7 +76,7 @@ export default function OrderHistoryPage() {
                                     <Calendar size={11} /> {new Date(order.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · {new Date(order.createdAt || Date.now()).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                                 </div>
                                 <div style={{ fontSize: 13, color: '#6B7280' }}>
-                                    {(order.items || []).map((i: any) => `${i.quantity || 1}x ${i.name}`).join(', ')}
+                                    {order.items.map((i: OrderItem) => `${i.quantity || 1}x ${i.name}`).join(', ')}
                                 </div>
                                 <div style={{ fontWeight: 700, color: '#B91C1C', fontSize: 16, marginTop: 8 }}>
                                     ${order.total?.toFixed(2)}
@@ -115,8 +116,8 @@ export default function OrderHistoryPage() {
     );
 }
 
-const DEMO_ORDERS = [
-    { _id: '64e1f45d5b8e4f6a8d2a1b01', restaurantName: "L'Osteria di Roma", status: 'delivered', total: 124.50, createdAt: '2024-10-12T07:30:00Z', items: [{ name: 'Truffle Fettuccine', quantity: 2 }, { name: 'Tiramisu', quantity: 1 }, { name: 'Pinot Grigio', quantity: 1 }] },
-    { _id: '64e1f45d5b8e4f6a8d2a1b02', restaurantName: 'Sakura Sushi & Grill', status: 'placed', total: 88.20, createdAt: '2024-10-08T06:15:00Z', items: [{ name: "Chef's Selection Platter", quantity: 1 }, { name: 'Miso Soup', quantity: 2 }, { name: 'Green Tea', quantity: 1 }] },
-    { _id: '64e1f45d5b8e4f6a8d2a1b03', restaurantName: 'The Burger Collective', status: 'cancelled', total: 64.00, createdAt: '2024-10-01T01:20:00Z', items: [{ name: 'Signature BBQ Burger', quantity: 3 }, { name: 'Truffle Fries', quantity: 2 }] },
+const DEMO_ORDERS: Order[] = [
+    { _id: '64e1f45d5b8e4f6a8d2a1b01', restaurantId: 'rest1', customerId: 'user1', restaurantName: "L'Osteria di Roma", status: 'delivered', total: 124.50, createdAt: '2024-10-12T07:30:00Z', items: [{ menuItemId: 'm1', name: 'Truffle Fettuccine', price: 32.00, quantity: 2 }, { menuItemId: 'm2', name: 'Tiramisu', price: 12.50, quantity: 1 }, { menuItemId: 'm3', name: 'Pinot Grigio', price: 12.50, quantity: 1 }] },
+    { _id: '64e1f45d5b8e4f6a8d2a1b02', restaurantId: 'rest2', customerId: 'user1', restaurantName: 'Sakura Sushi & Grill', status: 'placed', total: 88.20, createdAt: '2024-10-08T06:15:00Z', items: [{ menuItemId: 'm4', name: "Chef's Selection Platter", price: 42.00, quantity: 1 }, { menuItemId: 'm5', name: 'Miso Soup', price: 6.10, quantity: 2 }, { menuItemId: 'm6', name: 'Green Tea', price: 4.00, quantity: 1 }] },
+    { _id: '64e1f45d5b8e4f6a8d2a1b03', restaurantId: 'rest3', customerId: 'user1', restaurantName: 'The Burger Collective', status: 'cancelled', total: 64.00, createdAt: '2024-10-01T01:20:00Z', items: [{ menuItemId: 'm7', name: 'Signature BBQ Burger', price: 18.00, quantity: 3 }, { menuItemId: 'm8', name: 'Truffle Fries', price: 10.00, quantity: 2 }] },
 ];
