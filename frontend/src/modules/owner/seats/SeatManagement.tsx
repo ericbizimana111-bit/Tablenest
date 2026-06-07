@@ -1,5 +1,4 @@
-# Create all remaining owner pages as full implementations
-cat > /home/claude / tablenest / frontend / src / modules / owner / seats / SeatManagement.tsx << 'EOF'
+
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { tablesAPI, restaurantsAPI } from '../../../shared/services/api';
