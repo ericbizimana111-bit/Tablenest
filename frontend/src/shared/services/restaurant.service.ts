@@ -1,4 +1,4 @@
-import api from '../../services/api';
+import api from './api';
 import type { Restaurant, MenuItem, MenuCategory, Table, Review, Promotion, InventoryItem, Staff } from '../types/restaurant.types';
 
 export const RestaurantService = {

@@ -1,4 +1,4 @@
-import api from '../../services/api';
+import api from './api';
 import type { Order, OrderStatus, Reservation, ReservationStatus, Cart } from '../types/order.types';
 
 export const OrderService = {
