@@ -149,7 +149,7 @@ async function seed() {
     ]);
     console.log('✓ Support tickets created');
 
-    console.log('\n✅ Database seeded successfully!\n');
+    console.log('\nDatabase seeded successfully!\n');
     console.log('Demo Accounts:');
     console.log('  Super Admin:  admin@tablenest.com     / admin123');
     console.log('  Owner:        owner@tablenest.com     / owner123');
