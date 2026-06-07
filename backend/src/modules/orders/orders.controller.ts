@@ -8,7 +8,7 @@ import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
 @Controller('orders')
 @UseGuards(AuthGuard('jwt'))
 export class OrdersController {
-  constructor(private ordersService: OrdersService) {}
+  constructor(private ordersService: OrdersService) { }
 
   @Get()
   findAll(@Query() query: any) {

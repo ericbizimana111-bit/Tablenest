@@ -1,14 +1,24 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { isValidObjectId, Model } from 'mongoose';
 import { Reservation, ReservationDocument, ReservationStatus } from './reservation.schema';
 import * as crypto from 'crypto';
 
 @Injectable()
 export class ReservationsService {
-  constructor(@InjectModel(Reservation.name) private reservationModel: Model<ReservationDocument>) {}
+  private assertValidId(value: string, field: string) {
+    if (!isValidObjectId(value)) {
+      throw new BadRequestException(`Invalid ${field}: ${value}`);
+    }
+  }
+  constructor(@InjectModel(Reservation.name) private reservationModel: Model<ReservationDocument>) { }
 
   async create(customerId: string, data: any) {
+    if (!data.restaurantId) {
+      throw new BadRequestException('restaurantId is required');
+    }
+    this.assertValidId(data.restaurantId, 'restaurantId');
+
     const bookingRef = 'TN-' + crypto.randomBytes(4).toString('hex').toUpperCase();
     return this.reservationModel.create({ ...data, customerId, bookingRef, status: ReservationStatus.PENDING });
   }
@@ -17,8 +27,14 @@ export class ReservationsService {
     const { page = 1, limit = 20, status, restaurantId, customerId, date } = query;
     const filter: any = {};
     if (status) filter.status = status;
-    if (restaurantId) filter.restaurantId = restaurantId;
-    if (customerId) filter.customerId = customerId;
+    if (restaurantId) {
+      this.assertValidId(restaurantId, 'restaurantId');
+      filter.restaurantId = restaurantId;
+    }
+    if (customerId) {
+      this.assertValidId(customerId, 'customerId');
+      filter.customerId = customerId;
+    }
     if (date) {
       const start = new Date(date); start.setHours(0, 0, 0, 0);
       const end = new Date(date); end.setHours(23, 59, 59, 999);
@@ -33,6 +49,7 @@ export class ReservationsService {
   }
 
   async findById(id: string) {
+    this.assertValidId(id, 'id');
     const r = await this.reservationModel.findById(id);
     if (!r) throw new NotFoundException('Reservation not found');
     return r;
@@ -47,18 +64,22 @@ export class ReservationsService {
   }
 
   async confirm(id: string) {
-    return this.reservationModel.findByIdAndUpdate(id, { status: ReservationStatus.CONFIRMED }, { new: true });
+    this.assertValidId(id, 'id');
+    return this.reservationModel.findByIdAndUpdate(id, { status: ReservationStatus.CONFIRMED }, { returnDocument: 'after' });
   }
 
   async cancel(id: string) {
-    return this.reservationModel.findByIdAndUpdate(id, { status: ReservationStatus.CANCELLED }, { new: true });
+    this.assertValidId(id, 'id');
+    return this.reservationModel.findByIdAndUpdate(id, { status: ReservationStatus.CANCELLED }, { returnDocument: 'after' });
   }
 
   async markArrived(id: string) {
-    return this.reservationModel.findByIdAndUpdate(id, { status: ReservationStatus.ARRIVED }, { new: true });
+    this.assertValidId(id, 'id');
+    return this.reservationModel.findByIdAndUpdate(id, { status: ReservationStatus.ARRIVED }, { returnDocument: 'after' });
   }
 
   async getCalendarData(restaurantId: string, month: number, year: number) {
+    this.assertValidId(restaurantId, 'restaurantId');
     const start = new Date(year, month - 1, 1);
     const end = new Date(year, month, 0);
     const reservations = await this.reservationModel.find({
@@ -79,7 +100,10 @@ export class ReservationsService {
 
   async getStats(restaurantId?: string) {
     const match: any = {};
-    if (restaurantId) match.restaurantId = restaurantId;
+    if (restaurantId) {
+      this.assertValidId(restaurantId, 'restaurantId');
+      match.restaurantId = restaurantId;
+    }
     const today = new Date(); today.setHours(0, 0, 0, 0);
     const todayEnd = new Date(); todayEnd.setHours(23, 59, 59, 999);
     const [total, todayTotal, confirmed, pending] = await Promise.all([

@@ -1,11 +1,12 @@
 import { Controller, Get, Post, Patch, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ReservationsService } from './reservations.service';
+import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
 
 @Controller('reservations')
 @UseGuards(AuthGuard('jwt'))
 export class ReservationsController {
-  constructor(private reservationsService: ReservationsService) {}
+  constructor(private reservationsService: ReservationsService) { }
 
   @Get()
   findAll(@Query() query: any) {
@@ -32,12 +33,12 @@ export class ReservationsController {
   }
 
   @Get('restaurant/:restaurantId')
-  getByRestaurant(@Param('restaurantId') restaurantId: string, @Query() query: any) {
+  getByRestaurant(@Param('restaurantId', MongoIdValidationPipe) restaurantId: string, @Query() query: any) {
     return this.reservationsService.findByRestaurant(restaurantId, query);
   }
 
   @Get(':id')
-  findById(@Param('id') id: string) {
+  findById(@Param('id', MongoIdValidationPipe) id: string) {
     return this.reservationsService.findById(id);
   }
 
@@ -47,17 +48,17 @@ export class ReservationsController {
   }
 
   @Patch(':id/confirm')
-  confirm(@Param('id') id: string) {
+  confirm(@Param('id', MongoIdValidationPipe) id: string) {
     return this.reservationsService.confirm(id);
   }
 
   @Patch(':id/cancel')
-  cancel(@Param('id') id: string) {
+  cancel(@Param('id', MongoIdValidationPipe) id: string) {
     return this.reservationsService.cancel(id);
   }
 
   @Patch(':id/arrived')
-  markArrived(@Param('id') id: string) {
+  markArrived(@Param('id', MongoIdValidationPipe) id: string) {
     return this.reservationsService.markArrived(id);
   }
 }

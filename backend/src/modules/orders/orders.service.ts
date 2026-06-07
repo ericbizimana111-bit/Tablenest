@@ -6,7 +6,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 
 @Injectable()
 export class OrdersService {
-  constructor(@InjectModel(Order.name) private orderModel: Model<OrderDocument>) {}
+  constructor(@InjectModel(Order.name) private orderModel: Model<OrderDocument>) { }
 
   private assertValidId(value: string, field: string) {
     if (!isValidObjectId(value)) {
@@ -112,29 +112,29 @@ export class OrdersService {
     if (restaurantId) {
       this.assertValidId(restaurantId, 'restaurantId');
       match.restaurantId = restaurantId;
-    const [total, delivered, active, cancelled, revenue] = await Promise.all([
-      this.orderModel.countDocuments(match),
-      this.orderModel.countDocuments({ ...match, status: OrderStatus.DELIVERED }),
-      this.orderModel.countDocuments({ ...match, status: { $in: [OrderStatus.PLACED, OrderStatus.CONFIRMED, OrderStatus.PREPARING, OrderStatus.OUT_FOR_DELIVERY] } }),
-      this.orderModel.countDocuments({ ...match, status: OrderStatus.CANCELLED }),
-      this.orderModel.aggregate([
-        { $match: { ...match, status: OrderStatus.DELIVERED } },
-        { $group: { _id: null, total: { $sum: '$total' } } },
-      ]),
-    ]);
-    return { total, delivered, active, cancelled, revenue: revenue[0]?.total || 0 };
-  }
+      const [total, delivered, active, cancelled, revenue] = await Promise.all([
+        this.orderModel.countDocuments(match),
+        this.orderModel.countDocuments({ ...match, status: OrderStatus.DELIVERED }),
+        this.orderModel.countDocuments({ ...match, status: { $in: [OrderStatus.PLACED, OrderStatus.CONFIRMED, OrderStatus.PREPARING, OrderStatus.OUT_FOR_DELIVERY] } }),
+        this.orderModel.countDocuments({ ...match, status: OrderStatus.CANCELLED }),
+        this.orderModel.aggregate([
+          { $match: { ...match, status: OrderStatus.DELIVERED } },
+          { $group: { _id: null, total: { $sum: '$total' } } },
+        ]),
+      ]);
+      return { total, delivered, active, cancelled, revenue: revenue[0]?.total || 0 };
+    }
 
   async getRevenueByDay(restaurantId: string, days = 7) {
-    if (restaurantId) {
-      this.assertValidId(restaurantId, 'restaurantId');
+      if (restaurantId) {
+        this.assertValidId(restaurantId, 'restaurantId');
+      }
+      const since = new Date();
+      since.setDate(since.getDate() - days);
+      return this.orderModel.aggregate([
+        { $match: { restaurantId, status: OrderStatus.DELIVERED, createdAt: { $gte: since } } },
+        { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }, revenue: { $sum: '$total' }, count: { $sum: 1 } } },
+        { $sort: { _id: 1 } },
+      ]);
     }
-    const since = new Date();
-    since.setDate(since.getDate() - days);
-    return this.orderModel.aggregate([
-      { $match: { restaurantId, status: OrderStatus.DELIVERED, createdAt: { $gte: since } } },
-      { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }, revenue: { $sum: '$total' }, count: { $sum: 1 } } },
-      { $sort: { _id: 1 } },
-    ]);
   }
-}

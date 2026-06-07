@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Calendar, Filter, RefreshCw, Star, Headphones } from 'lucide-react';
 import { ordersAPI } from '../../../shared/services/api';
 import { Spinner, StatusBadge, Pagination } from '../../../shared/components/ui/index';
+import { useAuthStore } from '../../../shared/store/authStore';
 import toast from 'react-hot-toast';
 
 const TABS = ['All', 'Delivered', 'Active', 'Cancelled'];
@@ -12,6 +13,7 @@ const FOOD_IMG = 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w
 export default function OrderHistoryPage() {
     const navigate = useNavigate();
     const qc = useQueryClient();
+    const { user } = useAuthStore();
     const [tab, setTab] = useState('All');
     const [page, setPage] = useState(1);
 
@@ -22,7 +24,12 @@ export default function OrderHistoryPage() {
     });
 
     const reorderMut = useMutation({
-        mutationFn: (order: any) => ordersAPI.create({ restaurantId: order.restaurantId, items: order.items, total: order.total }),
+        mutationFn: (order: any) => ordersAPI.create({
+            restaurantId: order.restaurantId,
+            userId: user?._id || order.customerId || order.userId,
+            items: order.items,
+            total: order.total,
+        }),
         onSuccess: () => { qc.invalidateQueries({ queryKey: ['my-orders'] }); toast.success('Order placed!'); },
     });
 
@@ -109,7 +116,7 @@ export default function OrderHistoryPage() {
 }
 
 const DEMO_ORDERS = [
-    { _id: '1', restaurantName: "L'Osteria di Roma", status: 'delivered', total: 124.50, createdAt: '2024-10-12T07:30:00Z', items: [{ name: 'Truffle Fettuccine', quantity: 2 }, { name: 'Tiramisu', quantity: 1 }, { name: 'Pinot Grigio', quantity: 1 }] },
-    { _id: '2', restaurantName: 'Sakura Sushi & Grill', status: 'placed', total: 88.20, createdAt: '2024-10-08T06:15:00Z', items: [{ name: "Chef's Selection Platter", quantity: 1 }, { name: 'Miso Soup', quantity: 2 }, { name: 'Green Tea', quantity: 1 }] },
-    { _id: '3', restaurantName: 'The Burger Collective', status: 'cancelled', total: 64.00, createdAt: '2024-10-01T01:20:00Z', items: [{ name: 'Signature BBQ Burger', quantity: 3 }, { name: 'Truffle Fries', quantity: 2 }] },
+    { _id: '64e1f45d5b8e4f6a8d2a1b01', restaurantName: "L'Osteria di Roma", status: 'delivered', total: 124.50, createdAt: '2024-10-12T07:30:00Z', items: [{ name: 'Truffle Fettuccine', quantity: 2 }, { name: 'Tiramisu', quantity: 1 }, { name: 'Pinot Grigio', quantity: 1 }] },
+    { _id: '64e1f45d5b8e4f6a8d2a1b02', restaurantName: 'Sakura Sushi & Grill', status: 'placed', total: 88.20, createdAt: '2024-10-08T06:15:00Z', items: [{ name: "Chef's Selection Platter", quantity: 1 }, { name: 'Miso Soup', quantity: 2 }, { name: 'Green Tea', quantity: 1 }] },
+    { _id: '64e1f45d5b8e4f6a8d2a1b03', restaurantName: 'The Burger Collective', status: 'cancelled', total: 64.00, createdAt: '2024-10-01T01:20:00Z', items: [{ name: 'Signature BBQ Burger', quantity: 3 }, { name: 'Truffle Fries', quantity: 2 }] },
 ];
