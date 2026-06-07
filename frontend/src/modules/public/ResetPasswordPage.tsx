@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Lock, Eye, EyeOff, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
-import { authAPI } from '../../services/api';
+import { authAPI } from '../../shared/services/api';
 import toast from 'react-hot-toast';
 
 export default function ResetPasswordPage() {
@@ -39,7 +39,7 @@ export default function ResetPasswordPage() {
     return (
         <div style={{ display: 'flex', minHeight: '100vh', fontFamily: 'Poppins, sans-serif' }}>
             {/* Left panel */}
-            <div style={{ flex: 1, background: 'linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)), url(https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=900&q=80) center/cover', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: 48, color: 'white' }}>
+            <div >
                 <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>TableNest</div>
                 <h2 style={{ fontSize: 28, fontWeight: 700, lineHeight: 1.3, marginBottom: 12 }}>Culinary artistry meets<br />operational precision.</h2>
                 <p style={{ fontSize: 14, opacity: 0.8 }}>Secure your access to the most exclusive dining floor plans and management tools.</p>

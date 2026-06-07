@@ -31,7 +31,14 @@ export default function ForgotPasswordPage() {
             </div>
 
             {/* Right panel */}
-            <div style={{ width: 460, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '48px 52px', background: '#FAF7F5' }}>
+            <div style={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                padding: '48px 52px',
+                background: '#FAF7F5'
+            }}>
                 {!sent ? (
                     <>
                         <div style={{ marginBottom: 32 }}>
