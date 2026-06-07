@@ -6,17 +6,26 @@ import { Download, Printer, RefreshCw, Plus } from 'lucide-react';
 import { Toggle } from '../../../shared/components/ui/index';
 import toast from 'react-hot-toast';
 
+type TableInfo = { _id?: string; tableNumber?: string; number?: string; isActive?: boolean; capacity?: number };
+
 const COLORS = ['#B91C1C', '#1F1F1F', '#92400E', '#C2410C'];
 
 export default function QRCodeManager() {
     const { user } = useAuthStore();
-    const [restaurantId, setRestaurantId] = useState('');
+    const [apiRestaurantId, setApiRestaurantId] = useState('');
     const [primaryColor, setPrimaryColor] = useState('#B91C1C');
     const [outputSize, setOutputSize] = useState('Standard (1024 × 1024 px)');
+    const restaurantId = user?.restaurantId?.toString() || apiRestaurantId;
 
     React.useEffect(() => {
-        if (user?.restaurantId) setRestaurantId(user.restaurantId.toString());
-        else restaurantsAPI.getMyRestaurant().then(r => r.data?._id && setRestaurantId(r.data._id)).catch(() => { });
+        if (!user?.restaurantId) {
+            let active = true;
+            restaurantsAPI.getMyRestaurant()
+                .then(r => { if (active && r.data?._id) setApiRestaurantId(r.data._id); })
+                .catch(() => { });
+            return () => { active = false; };
+        }
+        return undefined;
     }, [user]);
 
     const { data: tables = [] } = useQuery({
@@ -78,7 +87,7 @@ export default function QRCodeManager() {
 
                     {/* Table QR grid */}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14 }}>
-                        {(tables.length ? tables : DEMO_TABLES).map((t: any) => (
+                        {(tables.length ? tables : DEMO_TABLES).map((t: TableInfo) => (
                             <div key={t._id} style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 14 }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
                                     <span style={{ fontWeight: 700, fontSize: 14 }}>T-{t.tableNumber || t.number}</span>

@@ -9,7 +9,8 @@ import { authAPI } from '../../shared/services/api';
 export function RegisterPage() {
     const navigate = useNavigate();
     const { register, isLoading } = useAuthStore();
-    const [form, setForm] = useState({ fullName: '', email: '', password: '', confirm: '' });
+    type RegisterForm = { fullName: string; email: string; password: string; confirm: string };
+    const [form, setForm] = useState<RegisterForm>({ fullName: '', email: '', password: '', confirm: '' });
     const [show, setShow] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -20,8 +21,9 @@ export function RegisterPage() {
             await register({ fullName: form.fullName, email: form.email, password: form.password, role: 'customer' });
             navigate('/home');
             toast.success('Welcome to TableNest!');
-        } catch (err: any) {
-            toast.error(err?.response?.data?.message || 'Registration failed');
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : 'Registration failed';
+            toast.error(message);
         }
     };
 
@@ -46,7 +48,7 @@ export function RegisterPage() {
                             <label style={{ fontSize: 13, fontWeight: 500, color: '#374151', display: 'block', marginBottom: 5 }}>{f.label}</label>
                             <div style={{ position: 'relative' }}>
                                 <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)' }}>{f.icon}</span>
-                                <input type={f.type} placeholder={f.placeholder} value={(form as any)[f.key]} onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
+                                <input type={f.type} placeholder={f.placeholder} value={form[f.key as keyof RegisterForm]} onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value } as RegisterForm))}
                                     style={{ width: '100%', padding: '10px 12px 10px 36px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none', background: 'white' }}
                                     onFocus={e => (e.target.style.borderColor = '#B91C1C')} onBlur={e => (e.target.style.borderColor = '#E5E7EB')} />
                             </div>
@@ -60,7 +62,7 @@ export function RegisterPage() {
                             <label style={{ fontSize: 13, fontWeight: 500, color: '#374151', display: 'block', marginBottom: 5 }}>{f.label}</label>
                             <div style={{ position: 'relative' }}>
                                 <Lock size={15} color="#9CA3AF" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)' }} />
-                                <input type={show ? 'text' : 'password'} placeholder={f.placeholder} value={(form as any)[f.key]} onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
+                                <input type={show ? 'text' : 'password'} placeholder={f.placeholder} value={form[f.key as keyof RegisterForm]} onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value } as RegisterForm))}
                                     style={{ width: '100%', padding: '10px 36px 10px 36px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none', background: 'white' }}
                                     onFocus={e => (e.target.style.borderColor = '#B91C1C')} onBlur={e => (e.target.style.borderColor = '#E5E7EB')} />
                                 <button type="button" onClick={() => setShow(!show)} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF' }}>

@@ -57,7 +57,7 @@ export function usePagination(options: UsePaginationOptions = {}): UsePagination
         if (pages <= maxVisible) return Array.from({ length: pages }, (_, i) => i + 1);
         const half = Math.floor(maxVisible / 2);
         let start = Math.max(1, page - half);
-        let end = Math.min(pages, start + maxVisible - 1);
+        const end = Math.min(pages, start + maxVisible - 1);
         if (end - start < maxVisible - 1) start = Math.max(1, end - maxVisible + 1);
         return Array.from({ length: end - start + 1 }, (_, i) => start + i);
     }, [page, pages]);

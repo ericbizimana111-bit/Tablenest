@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { LogOut } from 'lucide-react';
 
@@ -19,7 +19,6 @@ interface SidebarProps {
 
 export default function Sidebar({ title, subtitle, navItems, bottomUser = true }: SidebarProps) {
     const { user, logout } = useAuthStore();
-    const navigate = useNavigate();
 
     return (
         <aside style={{

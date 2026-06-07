@@ -6,20 +6,31 @@ import { useAuthStore } from '../../../shared/store/authStore';
 import { Modal, Spinner, Toggle } from '../../../shared/components/ui/index';
 import toast from 'react-hot-toast';
 
+type MenuCategory = { _id: string; name: string; count?: number };
+type MenuItem = { _id: string; name: string; price?: string | number; description?: string; image?: string; categoryId?: string; isSoldOut?: boolean };
+type ItemForm = { name: string; price: string; description: string; image: string };
+
 export default function MenuManagement() {
     const { user } = useAuthStore();
     const qc = useQueryClient();
-    const [restaurantId, setRestaurantId] = useState('');
-    const [activeCategory, setActiveCategory] = useState<any>(null);
+    const [apiRestaurantId, setApiRestaurantId] = useState('');
+    const [activeCategory, setActiveCategory] = useState<MenuCategory | null>(null);
     const [showItemModal, setShowItemModal] = useState(false);
     const [showCatModal, setShowCatModal] = useState(false);
-    const [editItem, setEditItem] = useState<any>(null);
-    const [itemForm, setItemForm] = useState({ name: '', price: '', description: '', image: '' });
+    const [editItem, setEditItem] = useState<MenuItem | null>(null);
+    const [itemForm, setItemForm] = useState<ItemForm>({ name: '', price: '', description: '', image: '' });
     const [catName, setCatName] = useState('');
+    const restaurantId = user?.restaurantId?.toString() || apiRestaurantId;
 
     React.useEffect(() => {
-        if (user?.restaurantId) setRestaurantId(user.restaurantId.toString());
-        else restaurantsAPI.getMyRestaurant().then(r => { if (r.data?._id) setRestaurantId(r.data._id); }).catch(() => { });
+        if (!user?.restaurantId) {
+            let active = true;
+            restaurantsAPI.getMyRestaurant()
+                .then(r => { if (active && r.data?._id) setApiRestaurantId(r.data._id); })
+                .catch(() => { });
+            return () => { active = false; };
+        }
+        return undefined;
     }, [user]);
 
     const { data: categories = [] } = useQuery({
@@ -45,7 +56,7 @@ export default function MenuManagement() {
     });
 
     const saveItemMut = useMutation({
-        mutationFn: (data: any) => editItem
+        mutationFn: (data: ItemForm) => editItem
             ? menuAPI.updateItem(editItem._id, data)
             : menuAPI.createItem({ ...data, restaurantId, categoryId: activeCategory?._id }),
         onSuccess: () => {
@@ -62,13 +73,13 @@ export default function MenuManagement() {
         onSuccess: () => { qc.invalidateQueries({ queryKey: ['menu-categories'] }); setShowCatModal(false); setCatName(''); toast.success('Category added'); },
     });
 
-    const openEdit = (item: any) => {
+    const openEdit = (item: MenuItem) => {
         setEditItem(item);
-        setItemForm({ name: item.name, price: item.price, description: item.description || '', image: item.image || '' });
+        setItemForm({ name: item.name, price: item.price?.toString() || '', description: item.description || '', image: item.image || '' });
         setShowItemModal(true);
     };
 
-    const allItems = (items.length ? items : DEMO_ITEMS).filter((i: any) =>
+    const allItems = (items.length ? items : DEMO_ITEMS).filter((i: MenuItem) =>
         !activeCategory || i.categoryId === activeCategory._id || !activeCategory._id
     );
     const allCategories = categories.length ? categories : DEMO_CATS;
@@ -96,7 +107,7 @@ export default function MenuManagement() {
                 {/* Category sidebar */}
                 <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 12, height: 'fit-content' }}>
                     <div style={{ fontSize: 11, fontWeight: 700, color: '#9CA3AF', letterSpacing: '0.08em', padding: '4px 8px', marginBottom: 6 }}>CATEGORIES</div>
-                    {allCategories.map((cat: any) => {
+                    {allCategories.map((cat: MenuCategory) => {
                         const count = DEMO_ITEMS.filter(i => i.categoryId === cat._id).length || cat.count || 0;
                         const isActive = activeCategory?._id === cat._id || (!activeCategory && cat._id === allCategories[0]?._id);
                         return (
@@ -112,7 +123,7 @@ export default function MenuManagement() {
                 {/* Items grid */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
                     {isLoading ? <Spinner /> : (
-                        (allItems.length ? allItems : DEMO_ITEMS).map((item: any) => (
+                        (allItems.length ? allItems : DEMO_ITEMS).map((item: MenuItem) => (
                             <div key={item._id} style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden' }}>
                                 <div style={{ position: 'relative' }}>
                                     <img src={item.image || `https://images.unsplash.com/photo-${FOOD_IMGS[item.name?.charCodeAt(0) % FOOD_IMGS.length]}?w=400&q=80`}
@@ -156,7 +167,7 @@ export default function MenuManagement() {
                     ].map(f => (
                         <div key={f.key}>
                             <label style={{ fontSize: 13, fontWeight: 500, color: '#374151', display: 'block', marginBottom: 5 }}>{f.label}</label>
-                            <input type={f.type} placeholder={f.placeholder} value={(itemForm as any)[f.key]} onChange={e => setItemForm(p => ({ ...p, [f.key]: e.target.value }))}
+                            <input type={f.type} placeholder={f.placeholder} value={itemForm[f.key as keyof ItemForm]} onChange={e => setItemForm(p => ({ ...p, [f.key]: e.target.value } as ItemForm))}
                                 style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
                         </div>
                     ))}

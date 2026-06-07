@@ -58,7 +58,7 @@ export interface Notification {
     type: 'order' | 'booking' | 'promotion' | 'system' | 'review' | 'payment';
     isRead: boolean;
     link?: string;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
     actions?: string[];
     cta?: string;
     time?: string;

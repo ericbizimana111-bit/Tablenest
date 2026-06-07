@@ -4,21 +4,48 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Pencil, Trash2, Tag } from 'lucide-react';
 import { promotionsAPI, restaurantsAPI } from '../../../shared/services/api';
 import { useAuthStore } from '../../../shared/store/authStore';
-import { Modal, Toggle, StatusBadge } from '../../../shared/components/ui/index';
+import { Modal, Toggle } from '../../../shared/components/ui/index';
 import toast from 'react-hot-toast';
+
+type Promotion = {
+    _id: string;
+    name: string;
+    discountType: 'percentage' | 'flat';
+    discountValue: string;
+    startDate?: string;
+    endDate?: string;
+    applicableCategories?: string[];
+    isActive?: boolean;
+};
+
+type PromoForm = {
+    name: string;
+    discountType: 'percentage' | 'flat';
+    discountValue: string;
+    startDate: string;
+    endDate: string;
+    applicableCategories: string[];
+};
 
 export default function PromotionsPage() {
     const { user } = useAuthStore();
     const qc = useQueryClient();
-    const [restaurantId, setRestaurantId] = useState('');
+    const [apiRestaurantId, setApiRestaurantId] = useState('');
     const [showModal, setShowModal] = useState(false);
-    const [editPromo, setEditPromo] = useState<any>(null);
-    const [form, setForm] = useState({ name: '', discountType: 'percentage', discountValue: '', startDate: '', endDate: '', applicableCategories: [] as string[] });
+    const [editPromo, setEditPromo] = useState<Promotion | null>(null);
+    const [form, setForm] = useState<PromoForm>({ name: '', discountType: 'percentage', discountValue: '', startDate: '', endDate: '', applicableCategories: [] });
     const [catInput, setCatInput] = useState('');
+    const restaurantId = user?.restaurantId?.toString() || apiRestaurantId;
 
     React.useEffect(() => {
-        if (user?.restaurantId) setRestaurantId(user.restaurantId.toString());
-        else restaurantsAPI.getMyRestaurant().then(r => r.data?._id && setRestaurantId(r.data._id)).catch(() => { });
+        if (!user?.restaurantId) {
+            let active = true;
+            restaurantsAPI.getMyRestaurant()
+                .then(r => { if (active && r.data?._id) setApiRestaurantId(r.data._id); })
+                .catch(() => { });
+            return () => { active = false; };
+        }
+        return undefined;
     }, [user]);
 
     const { data: promos = [] } = useQuery({
@@ -29,7 +56,7 @@ export default function PromotionsPage() {
     });
 
     const saveMut = useMutation({
-        mutationFn: (data: any) => editPromo
+        mutationFn: (data: PromoForm) => editPromo
             ? promotionsAPI.update(editPromo._id, data)
             : promotionsAPI.create({ ...data, restaurantId }),
         onSuccess: () => { qc.invalidateQueries({ queryKey: ['promotions'] }); setShowModal(false); setEditPromo(null); toast.success('Promotion saved!'); },
@@ -45,7 +72,7 @@ export default function PromotionsPage() {
         onSuccess: () => { qc.invalidateQueries({ queryKey: ['promotions'] }); toast.success('Deleted'); },
     });
 
-    const openEdit = (p: any) => {
+    const openEdit = (p: Promotion) => {
         setEditPromo(p);
         setForm({ name: p.name, discountType: p.discountType, discountValue: p.discountValue, startDate: p.startDate?.slice(0, 10) || '', endDate: p.endDate?.slice(0, 10) || '', applicableCategories: p.applicableCategories || [] });
         setShowModal(true);
@@ -68,7 +95,7 @@ export default function PromotionsPage() {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
-                {(promos.length ? promos : DEMO_PROMOS).map((p: any) => (
+                {(promos.length ? promos : DEMO_PROMOS).map((p: Promotion) => (
                     <div key={p._id} style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden' }}>
                         <div style={{ background: p.isActive ? '#B91C1C' : '#9CA3AF', padding: '14px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

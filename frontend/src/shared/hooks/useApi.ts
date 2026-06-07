@@ -9,12 +9,12 @@ interface UseApiState<T> {
 }
 
 interface UseApiReturn<T> extends UseApiState<T> {
-    execute: (...args: any[]) => Promise<T | null>;
+    execute: (...args: unknown[]) => Promise<T | null>;
     reset: () => void;
 }
 
-export function useApi<T = any>(
-    apiFunction: (...args: any[]) => Promise<{ data: T }>,
+export function useApi<T = unknown>(
+    apiFunction: (...args: unknown[]) => Promise<{ data: T }>,
     options?: {
         onSuccess?: (data: T) => void;
         onError?: (error: string) => void;
@@ -28,7 +28,7 @@ export function useApi<T = any>(
         error: null,
     });
 
-    const execute = useCallback(async (...args: any[]): Promise<T | null> => {
+    const execute = useCallback(async (...args: unknown[]): Promise<T | null> => {
         setState(s => ({ ...s, loading: true, error: null }));
         try {
             const response = await apiFunction(...args);
@@ -37,11 +37,11 @@ export function useApi<T = any>(
             if (options?.onSuccess) options.onSuccess(data);
             if (options?.showSuccessToast) toast.success(options.showSuccessToast);
             return data;
-        } catch (err: any) {
+        } catch (err: unknown) {
             const message =
-                err?.response?.data?.message ||
-                err?.message ||
-                'An unexpected error occurred';
+                err instanceof Error ? err.message :
+                    (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+                    'An unexpected error occurred';
             setState(s => ({ ...s, loading: false, error: message }));
             if (options?.showErrorToast !== false) toast.error(message);
             if (options?.onError) options.onError(message);
@@ -56,8 +56,8 @@ export function useApi<T = any>(
     return { ...state, execute, reset };
 }
 
-export function useApiMutation<T = any>(
-    apiFunction: (...args: any[]) => Promise<{ data: T }>,
+export function useApiMutation<T = unknown>(
+    apiFunction: (...args: unknown[]) => Promise<{ data: T }>,
     options?: {
         onSuccess?: (data: T) => void;
         onError?: (error: string) => void;
@@ -68,7 +68,7 @@ export function useApiMutation<T = any>(
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const mutate = useCallback(async (...args: any[]): Promise<T | null> => {
+    const mutate = useCallback(async (...args: unknown[]): Promise<T | null> => {
         setLoading(true);
         setError(null);
         try {
@@ -78,8 +78,10 @@ export function useApiMutation<T = any>(
             if (options?.onSuccess) options.onSuccess(data);
             setLoading(false);
             return data;
-        } catch (err: any) {
-            const message = err?.response?.data?.message || err?.message || 'An error occurred';
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message :
+                (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+                'An error occurred';
             setError(message);
             setLoading(false);
             if (options?.showErrorToast !== false) toast.error(message);

@@ -3,19 +3,39 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Star, MessageSquare } from 'lucide-react';
 import { reviewsAPI, restaurantsAPI } from '../../../shared/services/api';
 import { useAuthStore } from '../../../shared/store/authStore';
-import { Spinner, Modal } from '../../../shared/components/ui/index';
+import { Modal } from '../../../shared/components/ui/index';
 import toast from 'react-hot-toast';
+
+type ReviewItem = {
+    _id: string;
+    rating: number;
+    customerName?: string;
+    createdAt?: string;
+    date?: string;
+    comment?: string;
+    ownerReply?: string;
+    status?: string;
+};
+
+type ReplyPayload = { id: string; reply: string };
 
 export default function OwnerReviews() {
     const { user } = useAuthStore();
     const qc = useQueryClient();
-    const [restaurantId, setRestaurantId] = useState('');
-    const [replyModal, setReplyModal] = useState<any>(null);
+    const [apiRestaurantId, setApiRestaurantId] = useState('');
+    const [replyModal, setReplyModal] = useState<ReviewItem | null>(null);
     const [replyText, setReplyText] = useState('');
+    const restaurantId = user?.restaurantId?.toString() || apiRestaurantId;
 
     React.useEffect(() => {
-        if (user?.restaurantId) setRestaurantId(user.restaurantId.toString());
-        else restaurantsAPI.getMyRestaurant().then(r => r.data?._id && setRestaurantId(r.data._id)).catch(() => { });
+        if (!user?.restaurantId) {
+            let active = true;
+            restaurantsAPI.getMyRestaurant()
+                .then(r => { if (active && r.data?._id) setApiRestaurantId(r.data._id); })
+                .catch(() => { });
+            return () => { active = false; };
+        }
+        return undefined;
     }, [user]);
 
     const { data } = useQuery({
@@ -26,7 +46,7 @@ export default function OwnerReviews() {
     });
 
     const replyMut = useMutation({
-        mutationFn: ({ id, reply }: any) => reviewsAPI.reply(id, reply),
+        mutationFn: ({ id, reply }: ReplyPayload) => reviewsAPI.reply(id, reply),
         onSuccess: () => { qc.invalidateQueries({ queryKey: ['owner-reviews'] }); setReplyModal(null); setReplyText(''); toast.success('Reply sent!'); },
     });
 
@@ -34,7 +54,7 @@ export default function OwnerReviews() {
 
     const ratingDist = [5, 4, 3, 2, 1].map(r => ({
         star: r,
-        count: reviews.filter((rev: any) => Math.round(rev.rating) === r).length || (r === 5 ? 18 : r === 4 ? 8 : r === 3 ? 2 : 1),
+        count: reviews.filter((rev: ReviewItem) => Math.round(rev.rating) === r).length || (r === 5 ? 18 : r === 4 ? 8 : r === 3 ? 2 : 1),
     }));
     const total = ratingDist.reduce((s, r) => s + r.count, 0);
 
@@ -69,7 +89,7 @@ export default function OwnerReviews() {
 
                 {/* Reviews list */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                    {reviews.map((r: any) => (
+                    {reviews.map((r: ReviewItem) => (
                         <div key={r._id} style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 18 }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>

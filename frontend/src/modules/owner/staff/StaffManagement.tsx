@@ -6,20 +6,38 @@ import { useAuthStore } from '../../../store/authStore';
 import { Modal, StatusBadge } from '../../../shared/components/ui/index';
 import toast from 'react-hot-toast';
 
+type StaffMember = {
+    _id: string;
+    name?: string;
+    email?: string;
+    phone?: string;
+    role?: string;
+    isActive?: boolean;
+};
+
+type StaffForm = { name: string; email: string; phone: string; role: string };
+
 const ROLES = ['Manager', 'Chef', 'Sous Chef', 'Server', 'Host', 'Bartender', 'Cashier', 'Cleaner'];
 
 export default function StaffManagement() {
     const { user } = useAuthStore();
     const qc = useQueryClient();
-    const [restaurantId, setRestaurantId] = useState('');
+    const [apiRestaurantId, setApiRestaurantId] = useState('');
     const [showModal, setShowModal] = useState(false);
-    const [editStaff, setEditStaff] = useState<any>(null);
-    const [form, setForm] = useState({ name: '', email: '', phone: '', role: 'Server' });
+    const [editStaff, setEditStaff] = useState<StaffMember | null>(null);
+    const [form, setForm] = useState<StaffForm>({ name: '', email: '', phone: '', role: 'Server' });
     const [search, setSearch] = useState('');
+    const restaurantId = user?.restaurantId?.toString() || apiRestaurantId;
 
     React.useEffect(() => {
-        if (user?.restaurantId) setRestaurantId(user.restaurantId.toString());
-        else restaurantsAPI.getMyRestaurant().then(r => r.data?._id && setRestaurantId(r.data._id)).catch(() => { });
+        if (!user?.restaurantId) {
+            let active = true;
+            restaurantsAPI.getMyRestaurant()
+                .then(r => { if (active && r.data?._id) setApiRestaurantId(r.data._id); })
+                .catch(() => { });
+            return () => { active = false; };
+        }
+        return undefined;
     }, [user]);
 
     const { data: staff = [] } = useQuery({
@@ -30,7 +48,7 @@ export default function StaffManagement() {
     });
 
     const saveMut = useMutation({
-        mutationFn: (data: any) => editStaff ? staffAPI.update(editStaff._id, data) : staffAPI.create({ ...data, restaurantId }),
+        mutationFn: (data: StaffForm) => editStaff ? staffAPI.update(editStaff._id, data) : staffAPI.create({ ...data, restaurantId }),
         onSuccess: () => { qc.invalidateQueries({ queryKey: ['staff'] }); setShowModal(false); setEditStaff(null); toast.success(editStaff ? 'Staff updated' : 'Staff member added'); },
     });
     const deleteMut = useMutation({
@@ -38,10 +56,10 @@ export default function StaffManagement() {
         onSuccess: () => { qc.invalidateQueries({ queryKey: ['staff'] }); toast.success('Staff member removed'); },
     });
 
-    const openEdit = (s: any) => { setEditStaff(s); setForm({ name: s.name, email: s.email, phone: s.phone || '', role: s.role }); setShowModal(true); };
+    const openEdit = (s: StaffMember) => { setEditStaff(s); setForm({ name: s.name || '', email: s.email || '', phone: s.phone || '', role: s.role || 'Server' }); setShowModal(true); };
     const openAdd = () => { setEditStaff(null); setForm({ name: '', email: '', phone: '', role: 'Server' }); setShowModal(true); };
-    const allStaff = (Array.isArray(staff) ? staff : DEMO_STAFF);
-    const filtered = allStaff.filter((s: any) =>
+    const allStaff = (Array.isArray(staff) ? staff : DEMO_STAFF) as StaffMember[];
+    const filtered = allStaff.filter((s: StaffMember) =>
         !search || s.name?.toLowerCase().includes(search.toLowerCase()) || s.role?.toLowerCase().includes(search.toLowerCase())
     );
 
@@ -71,9 +89,9 @@ export default function StaffManagement() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 22 }}>
                 {[
                     { label: 'Total Staff', value: allStaff.length, color: '#B91C1C' },
-                    { label: 'Active', value: allStaff.filter((s: any) => s.isActive !== false).length, color: '#16A34A' },
-                    { label: 'Managers', value: allStaff.filter((s: any) => s.role === 'Manager').length, color: '#7C3AED' },
-                    { label: 'Kitchen', value: allStaff.filter((s: any) => ['Chef', 'Sous Chef'].includes(s.role)).length, color: '#D97706' },
+                    { label: 'Active', value: allStaff.filter((s: StaffMember) => s.isActive !== false).length, color: '#16A34A' },
+                    { label: 'Managers', value: allStaff.filter((s: StaffMember) => s.role === 'Manager').length, color: '#7C3AED' },
+                    { label: 'Kitchen', value: allStaff.filter((s: StaffMember) => ['Chef', 'Sous Chef'].includes(s.role)).length, color: '#D97706' },
                 ].map(s => (
                     <div key={s.label} style={{ background: 'white', borderRadius: 10, border: '1px solid #E5E7EB', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 12 }}>
                         <div style={{ background: `${s.color}15`, color: s.color, padding: 10, borderRadius: 10 }}>
@@ -105,7 +123,7 @@ export default function StaffManagement() {
                         </tr>
                     </thead>
                     <tbody>
-                        {filtered.map((s: any) => (
+                        {filtered.map((s: StaffMember) => (
                             <tr key={s._id}>
                                 <td>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -150,8 +168,8 @@ export default function StaffManagement() {
                     ].map(f => (
                         <div key={f.key}>
                             <label style={{ fontSize: 13, fontWeight: 500, color: '#374151', display: 'block', marginBottom: 5 }}>{f.label}</label>
-                            <input type={f.type} placeholder={f.placeholder} value={(form as any)[f.key]}
-                                onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
+                            <input type={f.type} placeholder={f.placeholder} value={form[f.key as keyof StaffForm]}
+                                onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value } as StaffForm))}
                                 style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }}
                                 onFocus={e => (e.target.style.borderColor = '#B91C1C')}
                                 onBlur={e => (e.target.style.borderColor = '#E5E7EB')} />

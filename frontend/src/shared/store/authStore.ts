@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { authAPI } from '../services/api';
 
+type NotificationPrefs = Record<string, unknown>;
+
 interface User {
     _id: string;
     fullName: string;
@@ -11,7 +13,7 @@ interface User {
     address?: string;
     restaurantId?: string;
     activePlan?: string;
-    notificationPrefs?: any;
+    notificationPrefs?: NotificationPrefs;
 }
 
 interface AuthState {
@@ -20,7 +22,7 @@ interface AuthState {
     isLoading: boolean;
     isAuthenticated: boolean;
     login: (email: string, password: string) => Promise<void>;
-    register: (data: any) => Promise<void>;
+    register: (data: Record<string, unknown>) => Promise<void>;
     logout: () => void;
     setUser: (user: User) => void;
     refreshUser: () => Promise<void>;
@@ -48,7 +50,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         }
     },
 
-    register: async (data) => {
+    register: async (data: Record<string, unknown>) => {
         set({ isLoading: true });
         try {
             const res = await authAPI.register(data);

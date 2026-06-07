@@ -21,7 +21,7 @@ export const RestaurantService = {
     },
 
     // Authenticated
-    getAll: async (params?: any) => {
+    getAll: async (params?: Record<string, unknown>) => {
         const res = await api.get('/restaurants', { params });
         return res.data;
     },
@@ -134,7 +134,7 @@ export const RestaurantService = {
     },
 
     // Reviews
-    getReviews: async (restaurantId: string, params?: any) => {
+    getReviews: async (restaurantId: string, params?: Record<string, unknown>) => {
         const res = await api.get(`/reviews/restaurant/${restaurantId}`, { params });
         return res.data;
     },

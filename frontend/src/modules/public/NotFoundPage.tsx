@@ -71,7 +71,11 @@ export default function NotFoundPage() {
                     <div style={{ color: 'white', fontWeight: 700, fontSize: 16, marginBottom: 8 }}>TableNest</div>
                     <p style={{ color: '#9CA3AF', fontSize: 12, lineHeight: 1.6 }}>Culinary artistry meets operational precision. We connect diners with the world's most exceptional tables.</p>
                 </div>
-                {[['Quick Links', ['Browse Restaurants', 'Table Specials', 'Gift Cards']], ['For Restaurants', ['List Your Venue', 'Partner Dashboard', 'Resources']], ['Contact Info', ['support@tablenest.com', '1-800-NEST-RES', '123 Culinary Way']]].map(([title, items]: any) => (
+                {([
+                    ['Quick Links', ['Browse Restaurants', 'Table Specials', 'Gift Cards']],
+                    ['For Restaurants', ['List Your Venue', 'Partner Dashboard', 'Resources']],
+                    ['Contact Info', ['support@tablenest.com', '1-800-NEST-RES', '123 Culinary Way']],
+                ] as Array<[string, string[]]>).map(([title, items]) => (
                     <div key={title}>
                         <div style={{ color: 'white', fontWeight: 600, fontSize: 13, marginBottom: 10 }}>{title}</div>
                         {items.map((i: string) => <div key={i} style={{ color: '#9CA3AF', fontSize: 12, marginBottom: 6 }}>{i}</div>)}

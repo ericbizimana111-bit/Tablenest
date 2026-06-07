@@ -5,9 +5,11 @@ import { useAuthStore } from '../../../shared/store/authStore';
 import { usersAPI } from '../../../shared/services/api';
 import toast from 'react-hot-toast';
 
+type SettingsForm = { fullName: string; email: string; phone: string };
+
 export default function OwnerSettings() {
     const { user, setUser } = useAuthStore();
-    const [form, setForm] = useState({ fullName: user?.fullName || '', email: user?.email || '', phone: user?.phone || '' });
+    const [form, setForm] = useState<SettingsForm>({ fullName: user?.fullName || '', email: user?.email || '', phone: user?.phone || '' });
     const [saving, setSaving] = useState(false);
 
     const save = async () => {

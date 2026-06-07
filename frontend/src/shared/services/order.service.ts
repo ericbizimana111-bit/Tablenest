@@ -80,10 +80,10 @@ export const OrderService = {
 
     getCalendar: async (restaurantId: string, month: number, year: number) => {
         const res = await api.get('/reservations/calendar', { params: { restaurantId, month, year } });
-        return res.data as Record<string, any>;
+        return res.data as Record<string, unknown>;
     },
 
-    getReservationsByRestaurant: async (restaurantId: string, params?: any) => {
+    getReservationsByRestaurant: async (restaurantId: string, params?: Record<string, unknown>) => {
         const res = await api.get(`/reservations/restaurant/${restaurantId}`, { params });
         return res.data;
     },

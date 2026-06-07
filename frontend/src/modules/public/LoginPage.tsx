@@ -21,8 +21,9 @@ export default function LoginPage() {
             else if (user.role === 'owner') navigate('/owner');
             else navigate('/home');
             toast.success('Welcome back!');
-        } catch (err: any) {
-            toast.error(err?.response?.data?.message || 'Invalid credentials');
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : 'Invalid credentials';
+            toast.error(message);
         }
     };
 
