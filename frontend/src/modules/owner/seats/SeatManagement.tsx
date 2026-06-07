@@ -152,9 +152,3 @@ const DEMO_TABLES = [
     { _id: '11', tableNumber: '11', capacity: 2, status: 'available' },
     { _id: '12', tableNumber: '12', capacity: 6, status: 'reserved' },
 ];
-EOF
-echo "Seat management done"
-Output
-
-Seat management done
-Done
