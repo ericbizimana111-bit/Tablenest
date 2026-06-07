@@ -53,7 +53,7 @@ export default function OrderTrackingPage() {
                             <div style={{ fontWeight: 700, fontSize: 20, color: '#B91C1C' }}>${o.total?.toFixed(2) || '124.50'}</div>
                         </div>
                         <div style={{ borderTop: '1px solid #E5E7EB', paddingTop: 12 }}>
-                            {(o.items || DEMO_ORDER.items).map((item: any, i: number) => (
+                            {(o.items || DEMO_ORDER.items).map((item: OrderItem, i: number) => (
                                 <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', fontSize: 13 }}>
                                     <span>{item.quantity || 1}x {item.name}</span>
                                     <span style={{ color: '#6B7280' }}>${item.price?.toFixed(2)}</span>
