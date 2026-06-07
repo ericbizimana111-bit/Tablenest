@@ -3,18 +3,19 @@ import { useQuery } from '@tanstack/react-query';
 import { referralsAPI, loyaltyAPI } from '../../../shared/services/api';
 import { Share2, Mail, Copy, QrCode, Megaphone, Tag, TrendingUp, CheckCircle } from 'lucide-react';
 import { Spinner, StatusBadge } from '../../../shared/components/ui/index';
+import type { Referral, ReferralRecord, Loyalty } from '../../../shared/types/user.types';
 import toast from 'react-hot-toast';
 
 export default function ReferralPage() {
-    const { data: referral, isLoading } = useQuery({
+    const { data: referral, isLoading } = useQuery<Referral>({
         queryKey: ['referrals'],
         queryFn: () => referralsAPI.get().then(r => r.data),
         initialData: DEMO_REFERRAL,
     });
-    const { data: loyalty } = useQuery({
+    const { data: loyalty } = useQuery<Loyalty>({
         queryKey: ['loyalty'],
         queryFn: () => loyaltyAPI.get().then(r => r.data),
-        initialData: { points: 9000 },
+        initialData: { points: 9000, transactions: [] },
     });
 
     const code = referral?.code || 'NEST-GOLD-2024';
@@ -22,7 +23,7 @@ export default function ReferralPage() {
 
     const referrals = referral?.referrals || DEMO_REFERRALS;
     const sentCount = referrals.length;
-    const successCount = referrals.filter((r: any) => r.status === 'successful').length;
+    const successCount = referrals.filter((r: ReferralRecord) => r.status === 'successful').length;
     const totalPoints = loyalty?.points || 9000;
 
     return (
