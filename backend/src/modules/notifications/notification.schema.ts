@@ -13,10 +13,8 @@ export enum NotificationType {
 }
 
 @Schema({ timestamps: true })
-
 export class Notification {
-
-  @Prop({ required: true })
+  @Prop({ required: true, type: Types.ObjectId })
   userId: Types.ObjectId;
 
   @Prop({ required: true })
@@ -25,7 +23,10 @@ export class Notification {
   @Prop({ required: true })
   message: string;
 
-  @Prop({ default: NotificationType.SYSTEM, enum: NotificationType })
+  @Prop({
+    default: NotificationType.SYSTEM,
+    enum: NotificationType,
+  })
   type: NotificationType;
 
   @Prop({ default: false })
@@ -34,8 +35,12 @@ export class Notification {
   @Prop({ default: null })
   link: string;
 
-  @Prop({ default: null })
+  @Prop({
+    type: Object,
+    default: {},
+  })
   metadata: Record<string, any>;
 }
 
-export const NotificationSchema = SchemaFactory.createForClass(Notification);
+export const NotificationSchema =
+  SchemaFactory.createForClass(Notification);

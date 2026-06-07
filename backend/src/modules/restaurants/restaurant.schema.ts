@@ -10,12 +10,23 @@ export enum RestaurantStatus {
   REJECTED = 'rejected',
 }
 
+@Schema({ _id: false })
+export class Location {
+  @Prop({ required: true, default: 0 })
+  latitude: number;
+
+  @Prop({ required: true, default: 0 })
+  longitude: number;
+}
+
+export const LocationSchema = SchemaFactory.createForClass(Location);
+
 @Schema({ timestamps: true })
 export class Restaurant {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: Types.ObjectId })
   ownerId: Types.ObjectId;
 
   @Prop({ default: null })
@@ -27,7 +38,7 @@ export class Restaurant {
   @Prop({ default: null })
   logo: string;
 
-  @Prop({ default: [] })
+  @Prop({ type: [String], default: [] })
   images: string[];
 
   @Prop({ required: true })
@@ -48,10 +59,16 @@ export class Restaurant {
   @Prop({ default: 0 })
   seatingCapacity: number;
 
-  @Prop({ default: '$$', enum: ['$', '$$', '$$$', '$$$$'] })
+  @Prop({
+    default: '$$',
+    enum: ['$', '$$', '$$$', '$$$$'],
+  })
   priceRange: string;
 
-  @Prop({ default: RestaurantStatus.PENDING, enum: RestaurantStatus })
+  @Prop({
+    default: RestaurantStatus.PENDING,
+    enum: RestaurantStatus,
+  })
   status: RestaurantStatus;
 
   @Prop({ default: 0 })
@@ -60,8 +77,18 @@ export class Restaurant {
   @Prop({ default: 0 })
   totalReviews: number;
 
-  @Prop({ type: Object, default: {} })
-  openingHours: Record<string, { open: string; close: string; closed: boolean }>;
+  @Prop({
+    type: Object,
+    default: {},
+  })
+  openingHours: Record<
+    string,
+    {
+      open: string;
+      close: string;
+      closed: boolean;
+    }
+  >;
 
   @Prop({ default: true })
   dineIn: boolean;
@@ -72,8 +99,14 @@ export class Restaurant {
   @Prop({ default: null })
   commissionRate: number;
 
-  @Prop({ default: null })
-  location: { lat: number; lng: number };
+  @Prop({
+    type: LocationSchema,
+    default: () => ({
+      latitude: 0,
+      longitude: 0,
+    }),
+  })
+  location: Location;
 
   @Prop({ default: null })
   approvedAt: Date;
@@ -82,4 +115,5 @@ export class Restaurant {
   rejectionReason: string;
 }
 
-export const RestaurantSchema = SchemaFactory.createForClass(Restaurant);
+export const RestaurantSchema =
+  SchemaFactory.createForClass(Restaurant);
