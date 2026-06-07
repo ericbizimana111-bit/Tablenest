@@ -4,6 +4,18 @@ import { useQuery } from '@tanstack/react-query';
 import { Search, Star, MapPin, SlidersHorizontal, X } from 'lucide-react';
 import { restaurantsAPI } from '../../../shared/services/api';
 import { Spinner, Pagination } from '../../../shared/components/ui/index';
+import type { Restaurant } from '../../../shared/types/restaurant.types';
+
+type BrowseRestaurant = Partial<Restaurant> & {
+    _id: string;
+    name: string;
+    cuisineType?: string;
+    priceRange?: string;
+    status?: string;
+    rating?: number;
+    city?: string;
+    images?: string[];
+};
 
 const CUISINES = ['All', 'Italian', 'Japanese', 'French', 'Mexican', 'American', 'Chinese', 'Indian', 'Seafood', 'Steakhouse'];
 const PRICE_RANGES = ['$', '$$', '$$$', '$$$$'];
@@ -24,7 +36,7 @@ export default function BrowsePage() {
     const [page, setPage] = useState(1);
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-    const { data, isLoading } = useQuery({
+    const { data, isLoading } = useQuery<{ restaurants: BrowseRestaurant[]; total: number; pages: number }>({
         queryKey: ['browse-restaurants', search, cuisine, priceRange, page],
         queryFn: () => restaurantsAPI.getPublic({
             search,
@@ -124,8 +136,8 @@ export default function BrowsePage() {
     );
 }
 
-function RestaurantCard({ restaurant: r, onClick }: any) {
-    const imgId = FOOD_IMG_IDS[r.name?.charCodeAt(0) % FOOD_IMG_IDS.length];
+function RestaurantCard({ restaurant: r, onClick }: { restaurant: BrowseRestaurant; onClick: () => void }) {
+    const imgId = FOOD_IMG_IDS[(r.name?.charCodeAt(0) ?? 0) % FOOD_IMG_IDS.length];
     return (
         <div onClick={onClick}
             style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden', cursor: 'pointer' }}
@@ -159,8 +171,8 @@ function RestaurantCard({ restaurant: r, onClick }: any) {
     );
 }
 
-function RestaurantListItem({ restaurant: r, onClick }: any) {
-    const imgId = FOOD_IMG_IDS[r.name?.charCodeAt(0) % FOOD_IMG_IDS.length];
+function RestaurantListItem({ restaurant: r, onClick }: { restaurant: BrowseRestaurant; onClick: () => void }) {
+    const imgId = FOOD_IMG_IDS[(r.name?.charCodeAt(0) ?? 0) % FOOD_IMG_IDS.length];
     return (
         <div onClick={onClick}
             style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 16, display: 'flex', gap: 16, cursor: 'pointer' }}
