@@ -1,3 +1,5 @@
+import React from 'react';
+import { X } from 'lucide-react';
 interface ModalProps {
     isOpen: boolean;
     onClose: () => void;

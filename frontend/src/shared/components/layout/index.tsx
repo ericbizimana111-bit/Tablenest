@@ -3,36 +3,6 @@ import { X, TrendingUp, TrendingDown } from 'lucide-react';
 
 
 
-// ── Spinner ──
-export function Spinner({ size = 32 }: { size?: number }) {
-    return (
-        <div style= {{ display: 'flex', justifyContent: 'center', padding: 40 }
-}>
-    <div style={
-    {
-        width: size, height: size,
-            border: '3px solid #FEE2E2',
-                borderTop: '3px solid #B91C1C',
-                    borderRadius: '50%',
-                        animation: 'spin 0.8s linear infinite',
-      }
-} />
-    < style > {`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-        </div>
-  );
-}
-
-// ── EmptyState ──
-export function EmptyState({ icon, title, message }: { icon?: React.ReactNode; title: string; message?: string }) {
-    return (
-        <div style= {{ textAlign: 'center', padding: '60px 20px', color: '#9CA3AF' }
-}>
-    { icon && <div style={ { marginBottom: 16, opacity: 0.4 } }> { icon } </div>}
-<div style={ { fontSize: 16, fontWeight: 600, color: '#6B7280', marginBottom: 6 } }> { title } </div>
-{ message && <div style={ { fontSize: 14 } }> { message } </div> }
-</div>
-  );
-}
 
 // ── Pagination ──
 interface PaginationProps {
