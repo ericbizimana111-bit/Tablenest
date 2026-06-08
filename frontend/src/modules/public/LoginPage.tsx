@@ -22,9 +22,9 @@ export default function LoginPage() {
         }
 
         try {
-            const user = await login(email, password);
+            await login(email, password);
 
-
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
 
             if (user.role === 'super_admin') navigate('/admin');
             else if (user.role === 'owner') navigate('/owner');
@@ -40,11 +40,6 @@ export default function LoginPage() {
             toast.error(message);
         }
     };
-
-
-
-
-
 
     return (
         <div

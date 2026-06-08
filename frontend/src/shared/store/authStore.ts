@@ -12,7 +12,7 @@ interface User {
     phone?: string;
     address?: string;
     restaurantId?: string;
-    actaivePlan?: string;
+    activePlan?: string;
     notificationPrefs?: NotificationPrefs;
 }
 
@@ -44,15 +44,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             localStorage.setItem('token', accessToken);
             localStorage.setItem('user', JSON.stringify(user));
             set({ user, token: accessToken, isAuthenticated: true, isLoading: false });
-
-            return user;
         } catch (e) {
             set({ isLoading: false });
             throw e;
         }
     },
-
-
 
     register: async (data: Record<string, unknown>) => {
         set({ isLoading: true });
