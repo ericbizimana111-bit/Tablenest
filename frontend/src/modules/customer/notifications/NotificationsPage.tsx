@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ShoppingBag, Calendar, Tag, Settings, CheckCheck, Trash2, Bell, Star } from 'lucide-react';
 import { notificationsAPI } from '../../../shared/services/api';
@@ -105,7 +105,7 @@ export default function NotificationsPage() {
                             <div style={{ fontSize: 16, fontWeight: 600, color: '#6B7280', marginBottom: 6 }}>No notifications</div>
                             <div style={{ fontSize: 14 }}>You're all caught up!</div>
                         </div>
-                    ) : filtered.map((n: any, i: number) => (
+                    ) : filtered.map((n: Notification, i: number) => (
                         <div key={n._id || i}
                             onClick={() => !n.isRead && markOneMut.mutate(n._id)}
                             style={{

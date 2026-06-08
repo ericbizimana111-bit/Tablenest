@@ -7,8 +7,15 @@ import {
 const RED = '#B91C1C';
 const COLORS = [RED, '#D97706', '#16A34A', '#2563EB', '#7C3AED', '#F9A8D4'];
 
+interface ChartDataPoint {
+    label: string;
+    orders?: number;
+    value?: number;
+    name?: string;
+}
+
 interface OrdersChartProps {
-    data: Array<{ label: string; orders?: number; value?: number;[key: string]: any }>;
+    data: ChartDataPoint[];
     type?: 'line' | 'bar' | 'pie' | 'donut';
     height?: number;
     color?: string;
@@ -17,7 +24,13 @@ interface OrdersChartProps {
     multiSeries?: Array<{ key: string; label: string; color: string }>;
 }
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+interface TooltipContentProps {
+    active?: boolean;
+    label?: string;
+    payload?: Array<{ name?: string; value?: number; color?: string }>;
+}
+
+const CustomTooltip = ({ active, payload, label }: TooltipContentProps) => {
     if (active && payload && payload.length) {
         return (
             <div style={{
@@ -26,7 +39,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                 fontFamily: 'Poppins, sans-serif', fontSize: 13,
             }}>
                 {label && <p style={{ color: '#6B7280', marginBottom: 4, fontSize: 11 }}>{label}</p>}
-                {payload.map((p: any, i: number) => (
+                {payload.map((p, i: number) => (
                     <p key={i} style={{ color: p.color || RED, fontWeight: 600 }}>
                         {p.name}: {p.value?.toLocaleString()}
                     </p>

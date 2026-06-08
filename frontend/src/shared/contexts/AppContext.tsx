@@ -1,12 +1,6 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useState, useCallback, ReactNode } from 'react';
 
-interface Toast {
-    id: string;
-    message: string;
-    type: 'success' | 'error' | 'info' | 'warning';
-}
-
-interface AppContextValue {
+export interface AppContextValue {
     sidebarCollapsed: boolean;
     setSidebarCollapsed: (v: boolean) => void;
     toggleSidebar: () => void;
@@ -37,12 +31,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
             {children}
         </AppContext.Provider>
     );
-}
-
-export function useAppContext(): AppContextValue {
-    const ctx = useContext(AppContext);
-    if (!ctx) throw new Error('useAppContext must be used within AppProvider');
-    return ctx;
 }
 
 export default AppContext;

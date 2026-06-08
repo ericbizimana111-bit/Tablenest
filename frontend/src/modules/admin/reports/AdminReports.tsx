@@ -50,7 +50,7 @@ export default function AdminReports() {
                             </defs>
                             <XAxis dataKey="day" tick={{ fontSize: 11, fontFamily: 'Poppins' }} axisLine={false} tickLine={false} />
                             <YAxis hide />
-                            <Tooltip formatter={(v: any) => [`$${v.toLocaleString()}`, 'Revenue']} contentStyle={{ fontFamily: 'Poppins', fontSize: 12, borderRadius: 8 }} />
+                            <Tooltip formatter={(v: number) => [`$${Number(v).toLocaleString()}`, 'Revenue']} contentStyle={{ fontFamily: 'Poppins', fontSize: 12, borderRadius: 8 }} />
                             <Area type="monotone" dataKey="revenue" stroke={RED} strokeWidth={2.5} fill="url(#revGrad)" />
                         </AreaChart>
                     </ResponsiveContainer>
@@ -72,7 +72,7 @@ export default function AdminReports() {
             <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 20 }}>
                 <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 16 }}>New User Signups</div>
                 <ResponsiveContainer width="100%" height={180}>
-                    <LineChart data={signups.length ? signups.map((s: any) => ({ day: s._id?.slice(5), count: s.count })) : days.map((d, i) => ({ day: d, count: [28, 45, 38, 62, 55, 80, 70][i] }))}>
+                    <LineChart data={signups.length ? signups.map((s: { _id?: string; count: number }) => ({ day: s._id?.slice(5), count: s.count })) : days.map((d, i) => ({ day: d, count: [28, 45, 38, 62, 55, 80, 70][i] }))}>
                         <XAxis dataKey="day" tick={{ fontSize: 11, fontFamily: 'Poppins' }} axisLine={false} tickLine={false} />
                         <YAxis hide />
                         <Tooltip contentStyle={{ fontFamily: 'Poppins', fontSize: 12, borderRadius: 8 }} />

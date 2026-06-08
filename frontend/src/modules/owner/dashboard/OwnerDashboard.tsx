@@ -1,15 +1,22 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { Calendar, ShoppingBag, DollarSign, Star, Grid3X3, Clock } from 'lucide-react';
+import { Calendar, ShoppingBag, DollarSign, Star, Grid3X3, MoreHorizontal } from 'lucide-react';
 import { analyticsAPI, ordersAPI, reservationsAPI } from '../../../shared/services/api';
 import { useAuthStore } from '../../../shared/store/authStore';
 import { StatCard, Spinner, StatusBadge } from '../../../shared/components/ui/index';
 
 const RED = '#B91C1C';
+const DEMO_HEATMAP = [3, 5, 2, 7, 4, 6, 1, 8, 2, 4, 5, 3, 6, 7, 2, 1, 4, 5, 8, 3, 2, 6, 4, 7, 1, 5, 3, 8, 2, 4, 6, 7, 3, 1, 5, 2, 8, 4, 6, 3, 7, 2, 5, 1, 4, 8, 3, 6, 2, 7, 5, 4, 1, 3, 8, 6, 2, 5, 7, 4, 3, 1, 8, 2, 6, 5, 4, 7, 3, 1, 8, 2, 6, 5, 4, 7, 3, 1, 8, 2, 6, 5, 4, 7];
 
-const HEATMAP_HOURS = Array.from({ length: 12 }, (_, i) => `${10 + i}:00`);
-const HEATMAP_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+interface DashboardReservation {
+    _id?: string;
+    customerName?: string;
+    name?: string;
+    time?: string;
+    guests?: number;
+    status?: string;
+}
 
 export default function OwnerDashboard() {
     const { user } = useAuthStore();
@@ -38,9 +45,7 @@ export default function OwnerDashboard() {
         revenue: revenueData[i]?.revenue || DEMO_REVENUE[i],
     }));
 
-    const heatmapData = Array.from({ length: 7 }, (_, d) =>
-        Array.from({ length: 12 }, (_, h) => Math.floor(Math.random() * 10))
-    );
+    const heatmapData = DEMO_HEATMAP;
 
     if (isLoading) return <Spinner />;
 
@@ -74,7 +79,7 @@ export default function OwnerDashboard() {
                         <BarChart data={chartData} barSize={22}>
                             <XAxis dataKey="day" tick={{ fontSize: 11, fontFamily: 'Poppins' }} axisLine={false} tickLine={false} />
                             <YAxis hide />
-                            <Tooltip formatter={(v: any) => [`$${v.toLocaleString()}`, 'Revenue']} contentStyle={{ fontFamily: 'Poppins', fontSize: 12, borderRadius: 8 }} />
+                            <Tooltip formatter={(v: number) => [`$${Number(v).toLocaleString()}`, 'Revenue']} contentStyle={{ fontFamily: 'Poppins', fontSize: 12, borderRadius: 8 }} />
                             <Bar dataKey="revenue" radius={[4, 4, 0, 0]}>
                                 {chartData.map((_, i) => (
                                     <Cell key={i} fill={i === 5 ? RED : `${RED}55`} />
@@ -96,7 +101,7 @@ export default function OwnerDashboard() {
                     </div>
                     <div style={{ overflowX: 'auto' }}>
                         <div style={{ display: 'grid', gridTemplateColumns: `repeat(12, 1fr)`, gap: 3 }}>
-                            {heatmapData.flat().map((v, i) => (
+                            {heatmapData.map((v, i) => (
                                 <div key={i} style={{ width: '100%', paddingBottom: '100%', borderRadius: 3, background: v === 0 ? '#F3F4F6' : `rgba(185,28,28,${v / 10})` }} />
                             ))}
                         </div>
@@ -116,14 +121,14 @@ export default function OwnerDashboard() {
                     <table className="data-table">
                         <thead><tr>{['Customer', 'Time', 'Guests', 'Status', 'Action'].map(h => <th key={h}>{h}</th>)}</tr></thead>
                         <tbody>
-                            {(todayReservations?.reservations || DEMO_RES).slice(0, 4).map((r: any, i: number) => (
+                            {(todayReservations?.reservations || DEMO_RES).slice(0, 4).map((r: DashboardReservation, i: number) => (
                                 <tr key={r._id || i}>
                                     <td style={{ fontWeight: 500, fontSize: 13 }}>{r.customerName || r.name}</td>
                                     <td style={{ fontSize: 13 }}>{r.time}</td>
                                     <td style={{ fontSize: 13 }}>{r.guests} Pax</td>
                                     <td><StatusBadge status={r.status} /></td>
                                     <td>
-                                        <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6B7280', fontSize: 18 }}>⋯</button>
+                                        <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6B7280', padding: 4 }} title="More options"><MoreHorizontal size={16} /></button>
                                     </td>
                                 </tr>
                             ))}

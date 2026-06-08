@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Heart, Star, MapPin, Calendar } from 'lucide-react';
+import { getRestaurantBookPath, getRestaurantMenuPath } from '../../../shared/utils/restaurantNavigation';
 
 const DEMO_FAVORITES = [
     { _id: '1', name: "L'Atelier de Joël", cuisineType: 'Modern French', rating: 4.9, city: '0.4 miles', img: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=80', status: 'active' },
@@ -66,11 +67,11 @@ export default function FavoritesPage() {
                                     <MapPin size={11} /> {r.cuisineType} · {r.city}
                                 </div>
                                 <div style={{ display: 'flex', gap: 8 }}>
-                                    <button onClick={() => navigate(`/restaurants/${r._id}`)}
+                                    <button onClick={(e) => { e.stopPropagation(); navigate(getRestaurantMenuPath(r._id)); }}
                                         style={{ flex: 1, padding: '8px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
                                         <Star size={12} /> Menu
                                     </button>
-                                    <button onClick={() => navigate(`/restaurants/${r._id}`)}
+                                    <button onClick={(e) => { e.stopPropagation(); navigate(getRestaurantBookPath(r._id)); }}
                                         style={{ flex: 1, padding: '8px', border: 'none', borderRadius: 8, background: '#B91C1C', color: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
                                         <Calendar size={12} /> Book
                                     </button>

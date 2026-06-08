@@ -1,9 +1,9 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { loyaltyAPI } from '../../../shared/services/api';
-import { Award, Star, TrendingUp, Gift, Clock } from 'lucide-react';
+import { Award, Star, Gift, Clock } from 'lucide-react';
 import { Spinner } from '../../../shared/components/ui/index';
-import type { Loyalty, LoyaltyTransaction } from '../../../shared/types/user.types';
+import type { LoyaltyTransaction } from '../../../shared/types/user.types';
 
 const TIERS = [
     { name: 'Bronze', min: 0, max: 1000, color: '#CD7F32', bg: '#FEF3C7' },

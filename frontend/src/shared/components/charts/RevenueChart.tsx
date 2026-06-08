@@ -9,7 +9,7 @@ const RED = '#B91C1C';
 interface DataPoint {
     label: string;
     value: number;
-    [key: string]: any;
+    name?: string;
 }
 
 interface RevenueChartProps {
@@ -24,7 +24,15 @@ interface RevenueChartProps {
     subtitle?: string;
 }
 
-const CustomTooltip = ({ active, payload, label, prefix = '$', suffix = '' }: any) => {
+interface RevenueTooltipProps {
+    active?: boolean;
+    label?: string;
+    payload?: Array<{ value?: number }>;
+    prefix?: string;
+    suffix?: string;
+}
+
+const CustomTooltip = ({ active, payload, label, prefix = '$', suffix = '' }: RevenueTooltipProps) => {
     if (active && payload && payload.length) {
         return (
             <div style={{

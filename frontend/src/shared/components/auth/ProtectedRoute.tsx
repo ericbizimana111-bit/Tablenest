@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuthContext';
 import type { UserRole } from '../../types/auth.types';
 import { getRoleHomePath } from '../../utils/auth.utils';
 import { Spinner } from '../ui/index';

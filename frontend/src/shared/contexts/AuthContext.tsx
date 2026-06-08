@@ -1,7 +1,6 @@
 import React, {
     createContext,
     useCallback,
-    useContext,
     useEffect,
     useMemo,
     useState,
@@ -16,7 +15,7 @@ import {
     clearAuthStorage,
 } from '../utils/auth.utils';
 
-interface AuthContextValue {
+export interface AuthContextValue {
     user: User | null;
     token: string | null;
     isLoading: boolean;
@@ -45,39 +44,34 @@ function persistAuth(user: User, accessToken: string): void {
     setAuthToken(accessToken);
 }
 
+function getInitialSession(): { user: User | null; token: string | null } {
+    const storedToken = localStorage.getItem(AUTH_TOKEN_KEY);
+    const storedUser = readStoredUser();
+
+    if (storedToken && storedUser) {
+        setAuthToken(storedToken);
+        return { user: storedUser, token: storedToken };
+    }
+
+    clearAuthStorage();
+    setAuthToken(null);
+    return { user: null, token: null };
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const [user, setUserState] = useState<User | null>(null);
-    const [token, setTokenState] = useState<string | null>(null);
-    const [isHydrating, setIsHydrating] = useState(true);
+    const [{ user, token }, setSession] = useState(getInitialSession);
     const [isActionLoading, setIsActionLoading] = useState(false);
 
     const clearAuth = useCallback(() => {
         clearAuthStorage();
         setAuthToken(null);
-        setUserState(null);
-        setTokenState(null);
+        setSession({ user: null, token: null });
     }, []);
 
     const logout = useCallback(() => {
         clearAuth();
         window.location.href = '/login';
     }, [clearAuth]);
-
-    useEffect(() => {
-        const storedToken = localStorage.getItem(AUTH_TOKEN_KEY);
-        const storedUser = readStoredUser();
-
-        if (storedToken && storedUser) {
-            setAuthToken(storedToken);
-            setTokenState(storedToken);
-            setUserState(storedUser);
-        } else {
-            clearAuthStorage();
-            setAuthToken(null);
-        }
-
-        setIsHydrating(false);
-    }, []);
 
     useEffect(() => {
         setUnauthorizedHandler(() => {
@@ -90,8 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const applySession = useCallback((nextUser: User, accessToken: string) => {
         persistAuth(nextUser, accessToken);
-        setUserState(nextUser);
-        setTokenState(accessToken);
+        setSession({ user: nextUser, token: accessToken });
     }, []);
 
     const login = useCallback(async (email: string, password: string) => {
@@ -120,7 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const setUser = useCallback((nextUser: User) => {
         localStorage.setItem(AUTH_USER_KEY, JSON.stringify(nextUser));
-        setUserState(nextUser);
+        setSession((current) => ({ ...current, user: nextUser }));
     }, []);
 
     const refreshUser = useCallback(async () => {
@@ -131,7 +124,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const value = useMemo<AuthContextValue>(() => ({
         user,
         token,
-        isLoading: isHydrating,
+        isLoading: false,
         isSubmitting: isActionLoading,
         isAuthenticated: Boolean(user && token),
         login,
@@ -139,21 +132,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         logout,
         setUser,
         refreshUser,
-    }), [user, token, isHydrating, isActionLoading, login, register, logout, setUser, refreshUser]);
+    }), [user, token, isActionLoading, login, register, logout, setUser, refreshUser]);
 
     return (
         <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
     );
-}
-
-export function useAuth(): AuthContextValue {
-    const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error('useAuth must be used within AuthProvider');
-    }
-    return context;
 }
 
 export default AuthContext;

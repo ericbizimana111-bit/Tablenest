@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ordersAPI } from '../../../shared/services/api';
 import { Spinner, StatusBadge, Pagination, StatCard } from '../../../shared/components/ui/index';
-import { DollarSign, ShoppingBag, Users, TrendingUp } from 'lucide-react';
+import { DollarSign, ShoppingBag, Users, TrendingUp, Eye } from 'lucide-react';
 
 interface Order {
     _id: string;
@@ -76,7 +76,7 @@ export default function AdminOrders() {
                                     <td><StatusBadge status={o.status} /></td>
                                     <td style={{ fontSize: 13, color: '#6B7280' }}>{o.items?.length || 1}x items</td>
                                     <td style={{ fontWeight: 600, fontSize: 13 }}>${o.total?.toFixed(2) || o.total}</td>
-                                    <td><button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6B7280', padding: 4, fontSize: 18 }}>👁</button></td>
+                                    <td><button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6B7280', padding: 4 }} title="View order"><Eye size={16} /></button></td>
                                 </tr>
                             ))}
                         </tbody>

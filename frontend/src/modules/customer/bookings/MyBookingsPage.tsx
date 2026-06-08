@@ -3,14 +3,21 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Calendar, Clock, Users, XCircle, Pencil } from 'lucide-react';
 import { reservationsAPI } from '../../../shared/services/api';
 import { StatusBadge, Spinner, Modal } from '../../../shared/components/ui/index';
+import type { Reservation } from '../../../shared/types/order.types';
 import toast from 'react-hot-toast';
 
 const TABS = ['Upcoming', 'Past', 'Cancelled'];
 
+interface ModifyModalState extends Reservation {
+    newDate?: string;
+    newTime?: string;
+    newGuests?: number;
+}
+
 export default function MyBookingsPage() {
     const qc = useQueryClient();
     const [tab, setTab] = useState('Upcoming');
-    const [modifyModal, setModifyModal] = useState<any>(null);
+    const [modifyModal, setModifyModal] = useState<ModifyModalState | null>(null);
 
     const { data = [], isLoading } = useQuery({
         queryKey: ['my-reservations'],
@@ -23,12 +30,16 @@ export default function MyBookingsPage() {
         onSuccess: () => { qc.invalidateQueries({ queryKey: ['my-reservations'] }); toast.success('Reservation cancelled'); },
     });
 
-    const reservations = Array.isArray(data) ? data : data;
-    const upcoming = reservations.filter((r: any) => ['pending', 'confirmed', 'arrived'].includes(r.status));
-    const past = reservations.filter((r: any) => r.status === 'completed');
-    const cancelled = reservations.filter((r: any) => r.status === 'cancelled');
+    const reservations: Reservation[] = Array.isArray(data) ? data : (data as { reservations?: Reservation[] }).reservations || DEMO_RESERVATIONS;
+    const upcoming = reservations.filter((r) => ['pending', 'confirmed', 'arrived'].includes(r.status));
+    const past = reservations.filter((r) => r.status === 'completed');
+    const cancelled = reservations.filter((r) => r.status === 'cancelled');
 
-    const tabData: Record<string, any[]> = { Upcoming: upcoming.length ? upcoming : DEMO_RESERVATIONS.filter(r => r.status === 'confirmed' || r.status === 'pending'), Past: past.length ? past : DEMO_RESERVATIONS.filter(r => r.status === 'completed'), Cancelled: cancelled };
+    const tabData: Record<string, Reservation[]> = {
+        Upcoming: upcoming.length ? upcoming : DEMO_RESERVATIONS.filter(r => r.status === 'confirmed' || r.status === 'pending'),
+        Past: past.length ? past : DEMO_RESERVATIONS.filter(r => r.status === 'completed'),
+        Cancelled: cancelled,
+    };
     const list = tabData[tab] || [];
 
     return (
@@ -55,7 +66,7 @@ export default function MyBookingsPage() {
                 </div>
             ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                    {list.map((r: any) => (
+                    {list.map((r: Reservation) => (
                         <div key={r._id} style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden' }}>
                             <div style={{ display: 'flex' }}>
                                 <img

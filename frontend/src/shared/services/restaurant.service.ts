@@ -1,5 +1,5 @@
 import api from './api';
-import type { Restaurant, MenuItem, MenuCategory, Table, Review, Promotion, InventoryItem, Staff } from '../types/restaurant.types';
+import type { Restaurant, MenuItem, MenuCategory, Table, Review, InventoryItem, Staff } from '../types/restaurant.types';
 
 export const RestaurantService = {
     // Public

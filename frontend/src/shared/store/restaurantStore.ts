@@ -22,7 +22,7 @@ interface RestaurantState {
     setMenuCategories: (categories: MenuCategory[]) => void;
     setActiveCategory: (categoryId: string | null) => void;
     setSearchQuery: (query: string) => void;
-    setFilter: (key: keyof RestaurantState['filters'], value: any) => void;
+    setFilter: (key: keyof RestaurantState['filters'], value: string | boolean) => void;
     clearFilters: () => void;
     setLoading: (loading: boolean) => void;
 

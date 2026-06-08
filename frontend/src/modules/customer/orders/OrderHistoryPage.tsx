@@ -11,6 +11,17 @@ import toast from 'react-hot-toast';
 const TABS = ['All', 'Delivered', 'Active', 'Cancelled'];
 const FOOD_IMG = 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=120&q=80';
 
+function formatOrderDateTime(createdAt?: string): { date: string; time: string } {
+    const parsed = createdAt ? new Date(createdAt) : null;
+    if (!parsed || Number.isNaN(parsed.getTime())) {
+        return { date: '—', time: '' };
+    }
+    return {
+        date: parsed.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        time: parsed.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+    };
+}
+
 export default function OrderHistoryPage() {
     const navigate = useNavigate();
     const qc = useQueryClient();
@@ -64,7 +75,9 @@ export default function OrderHistoryPage() {
             {/* Order list */}
             {isLoading ? <Spinner /> : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                    {orders.map((order: any) => (
+                    {orders.map((order: Order) => {
+                        const { date, time } = formatOrderDateTime(order.createdAt);
+                        return (
                         <div key={order._id} style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: '18px 20px', display: 'flex', gap: 16, alignItems: 'center' }}>
                             <img src={order.restaurantImage || FOOD_IMG} alt="" style={{ width: 72, height: 72, objectFit: 'cover', borderRadius: 8, flexShrink: 0 }} />
                             <div style={{ flex: 1 }}>
@@ -73,7 +86,7 @@ export default function OrderHistoryPage() {
                                     <StatusBadge status={order.status} />
                                 </div>
                                 <div style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 4 }}>
-                                    <Calendar size={11} /> {new Date(order.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · {new Date(order.createdAt || Date.now()).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                                    <Calendar size={11} /> {date}{time ? ` · ${time}` : ''}
                                 </div>
                                 <div style={{ fontSize: 13, color: '#6B7280' }}>
                                     {order.items.map((i: OrderItem) => `${i.quantity || 1}x ${i.name}`).join(', ')}
@@ -105,7 +118,8 @@ export default function OrderHistoryPage() {
                                 </button>
                             </div>
                         </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
 

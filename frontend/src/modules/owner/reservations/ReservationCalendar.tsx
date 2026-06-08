@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ChevronLeft, ChevronRight, Plus, Printer } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Printer, Clock, Users, Armchair, MoreHorizontal } from 'lucide-react';
 import { reservationsAPI } from '../../../shared/services/api';
 import { useAuthStore } from '../../../shared/store/authStore';
 import { StatusBadge } from '../../../shared/components/ui/index';
@@ -139,12 +139,12 @@ export default function ReservationCalendar() {
                                         <StatusBadge status={r.status} />
                                     </div>
                                 </div>
-                                <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF', fontSize: 18 }}>⋯</button>
+                                <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF', padding: 4 }} title="More options"><MoreHorizontal size={16} /></button>
                             </div>
-                            <div style={{ fontSize: 12, color: '#6B7280', display: 'flex', gap: 12 }}>
-                                <span>🕐 {r.time}</span>
-                                <span>👥 {r.guests} Guests</span>
-                                <span>🪑 {r.tableNumber || 'Table #12'}</span>
+                            <div style={{ fontSize: 12, color: '#6B7280', display: 'flex', gap: 12, alignItems: 'center' }}>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={12} /> {r.time}</span>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Users size={12} /> {r.guests} Guests</span>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Armchair size={12} /> {r.tableNumber || 'Table #12'}</span>
                             </div>
                             {r.status === 'pending' && (
                                 <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>

@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Search, Ban, CheckCircle, Eye } from 'lucide-react';
 import { usersAPI } from '../../../shared/services/api';
 import { Spinner, StatusBadge, Pagination, StatCard } from '../../../shared/components/ui/index';
+import type { User } from '../../../shared/types/auth.types';
 import toast from 'react-hot-toast';
 
 export default function AdminUsers() {
@@ -65,7 +66,7 @@ export default function AdminUsers() {
                     <table className="data-table">
                         <thead><tr>{['User', 'Email', 'Role', 'Plan', 'Status', 'Joined', 'Actions'].map(h => <th key={h}>{h}</th>)}</tr></thead>
                         <tbody>
-                            {users.map((u: any) => (
+                            {users.map((u: User) => (
                                 <tr key={u._id}>
                                     <td>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

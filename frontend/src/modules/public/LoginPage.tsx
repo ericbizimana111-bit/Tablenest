@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
-import { useAuth } from '../../shared/contexts/AuthContext';
+import { useAuth } from '../../shared/hooks/useAuthContext';
 import { getRoleHomePath } from '../../shared/utils/auth.utils';
 import toast from 'react-hot-toast';
 

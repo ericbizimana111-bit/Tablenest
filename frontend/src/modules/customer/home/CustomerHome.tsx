@@ -4,6 +4,10 @@ import { Search, Calendar, Star, ArrowRight, Clock } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { restaurantsAPI } from '../../../shared/services/api';
 import { useAuthStore } from '../../../shared/store/authStore';
+import type { Restaurant } from '../../../shared/types/restaurant.types';
+import { getRestaurantBookPath, getRestaurantMenuPath } from '../../../shared/utils/restaurantNavigation';
+
+type HomeRestaurant = Partial<Restaurant> & { _id: string; name: string; cuisineType?: string; priceRange?: string; status?: string; rating?: number; images?: string[]; logo?: string };
 
 const CUISINES = ['All', 'Italian', 'Japanese', 'French', 'Mexican', 'American', 'Chinese', 'Indian'];
 
@@ -107,7 +111,7 @@ export default function CustomerHome() {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }}>
-                {restaurants.map((r: any) => (
+                {(restaurants as HomeRestaurant[]).map((r) => (
                     <div key={r._id}
                         onClick={() => navigate(`/restaurants/${r._id}`)}
                         style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden', cursor: 'pointer' }}
@@ -138,13 +142,13 @@ export default function CustomerHome() {
                             </div>
                             <div style={{ display: 'flex', gap: 8 }}>
                                 <button
-                                    onClick={e => { e.stopPropagation(); navigate(`/restaurants/${r._id}`); }}
+                                    onClick={e => { e.stopPropagation(); navigate(getRestaurantMenuPath(r._id)); }}
                                     style={{ flex: 1, padding: '7px', border: '1.5px solid #E5E7EB', borderRadius: 6, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500, color: '#374151' }}
                                 >
                                     View Menu
                                 </button>
                                 <button
-                                    onClick={e => { e.stopPropagation(); navigate(`/restaurants/${r._id}`); }}
+                                    onClick={e => { e.stopPropagation(); navigate(getRestaurantBookPath(r._id)); }}
                                     style={{ flex: 1, padding: '7px', border: 'none', borderRadius: 6, background: '#B91C1C', color: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 600 }}
                                 >
                                     Book

@@ -4,6 +4,7 @@ import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveCo
 import { Utensils, Users, Calendar, ShoppingBag, Clock, DollarSign, Pencil, Trash2 } from 'lucide-react';
 import { analyticsAPI, restaurantsAPI } from '../../../shared/services/api';
 import { StatCard, Spinner, StatusBadge } from '../../../shared/components/ui/index';
+import type { Restaurant } from '../../../shared/types/restaurant.types';
 import { useNavigate } from 'react-router-dom';
 
 interface SignupData {
@@ -32,6 +33,7 @@ interface CuisineChartEntry extends ChartEntry {
 }
 
 const RED = '#B91C1C';
+const WEEK_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const COLORS = [RED, '#92400E', '#D97706', '#F9A8D4', '#FBBF24'];
 
 export default function AdminDashboard() {
@@ -62,12 +64,12 @@ export default function AdminDashboard() {
         queryFn: () => restaurantsAPI.getAll({ limit: 5 }).then(r => r.data),
     });
 
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const days = WEEK_DAYS;
 
     const signupChart = useMemo<ChartEntry[]>(() => {
         const fallback = Array.from({ length: 7 }, (_, i) => ({ day: days[i], count: 50 + i * 5 }));
         return days.map((d, i) => ({ day: d, count: (signups[i] as SignupData | undefined)?.count || fallback[i].count }));
-    }, [signups]);
+    }, [signups, days]);
 
     const bookingChart = useMemo<ChartEntry[]>(() =>
         (bookingsByDay as BookingData[]).map((b) => ({ day: b._id?.slice(5) || '', count: b.count })),
@@ -204,7 +206,7 @@ export default function AdminDashboard() {
                             { _id: '1', name: 'Osteria Bella', ownerId: 'Marco V.', city: 'Florence', cuisineType: 'Italian', status: 'active', createdAt: '2023-10-12' },
                             { _id: '2', name: 'The Gilded Fork', ownerId: 'Sarah Jenkins', city: 'London', cuisineType: 'British Modern', status: 'active', createdAt: '2023-11-04' },
                             { _id: '3', name: 'Azure Coastal', ownerId: 'James Liu', city: 'Sydney', cuisineType: 'Seafood', status: 'pending', createdAt: '2024-01-15' },
-                        ]).map((r: any, i: number) => (
+                        ]).map((r: Restaurant, i: number) => (
                             <tr key={r._id}>
                                 <td style={{ color: RED, fontWeight: 600, fontSize: 13 }}>#TR-{1024 + i}</td>
                                 <td>

@@ -1,1 +1,1 @@
-export { useAuth as useAuthStore } from '../contexts/AuthContext';
+export { useAuth as useAuthStore } from '../hooks/useAuthContext';

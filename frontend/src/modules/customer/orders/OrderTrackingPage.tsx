@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ChevronLeft, CheckCircle, Circle, Clock, Phone, MessageSquare, AlertTriangle, XCircle, MapPin } from 'lucide-react';
+import { ChevronLeft, CheckCircle, Circle, Clock, Phone, MessageSquare, AlertTriangle, MapPin, Star } from 'lucide-react';
 import { ordersAPI } from '../../../shared/services/api';
 import { Spinner } from '../../../shared/components/ui/index';
 import type { Order, OrderItem } from '../../../shared/types/order.types';
@@ -113,7 +113,7 @@ export default function OrderTrackingPage() {
                                     <div>
                                         <div style={{ fontWeight: 600, fontSize: 14 }}>Marcus Thompson</div>
                                         <div style={{ fontSize: 12, color: '#9CA3AF', display: 'flex', alignItems: 'center', gap: 4 }}>
-                                            <span style={{ color: '#F59E0B' }}>★</span> 4.9 · Delivery Pro
+                                            <Star size={12} fill="#F59E0B" color="#F59E0B" /> 4.9 · Delivery Pro
                                         </div>
                                     </div>
                                 </div>

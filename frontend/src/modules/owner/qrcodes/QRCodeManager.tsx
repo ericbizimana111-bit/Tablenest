@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { tablesAPI, restaurantsAPI } from '../../../shared/services/api';
 import { useAuthStore } from '../../../shared/store/authStore';
 import { useQuery } from '@tanstack/react-query';
-import { Download, Printer, RefreshCw, Plus } from 'lucide-react';
+import { Download, Printer, RefreshCw, Plus, Palette, Pencil } from 'lucide-react';
 import { Toggle } from '../../../shared/components/ui/index';
 import toast from 'react-hot-toast';
 
@@ -127,7 +127,7 @@ export default function QRCodeManager() {
 
                 {/* Customization panel */}
                 <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 20 }}>
-                    <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 16 }}>🎨 Customization</div>
+                    <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}><Palette size={16} /> Customization</div>
                     <div style={{ fontWeight: 500, fontSize: 13, marginBottom: 8 }}>Live Preview</div>
                     <div style={{ background: '#F9FAFB', borderRadius: 10, padding: 20, textAlign: 'center', marginBottom: 16 }}>
                         <svg viewBox="0 0 100 100" width="80" height="80" style={{ margin: '0 auto 8px' }}>
@@ -150,7 +150,7 @@ export default function QRCodeManager() {
                                 <button key={c} onClick={() => setPrimaryColor(c)}
                                     style={{ width: 28, height: 28, borderRadius: '50%', background: c, border: primaryColor === c ? '3px solid #374151' : '2px solid white', cursor: 'pointer', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
                             ))}
-                            <button style={{ width: 28, height: 28, borderRadius: '50%', background: '#F3F4F6', border: '1.5px solid #E5E7EB', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>✎</button>
+                            <button style={{ width: 28, height: 28, borderRadius: '50%', background: '#F3F4F6', border: '1.5px solid #E5E7EB', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Edit color"><Pencil size={14} color="#6B7280" /></button>
                         </div>
                     </div>
                     <div style={{ marginBottom: 14 }}>

@@ -116,7 +116,7 @@ export default function InventoryManagement() {
                 <table className="data-table">
                     <thead><tr>{['Item Name', 'Unit', 'Quantity', 'Min. Stock', 'Supplier', 'Cost/Unit', 'Status', 'Actions'].map(h => <th key={h}>{h}</th>)}</tr></thead>
                     <tbody>
-                        {allItems.map((item: any) => {
+                        {allItems.map((item: InventoryItem) => {
                             const isLow = item.quantity <= item.minQuantity;
                             return (
                                 <tr key={item._id}>
@@ -164,14 +164,14 @@ export default function InventoryManagement() {
                     ))}
 
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }}>
-                        {[
-                            { label: 'Quantity', key: 'quantity', placeholder: '0' },
-                            { label: 'Min. Qty', key: 'minQuantity', placeholder: '5' },
-                            { label: 'Cost', key: 'cost', placeholder: '0.00' },
-                        ].map(f => (
+                        {([
+                            { label: 'Quantity', key: 'quantity' as const, placeholder: '0' },
+                            { label: 'Min. Qty', key: 'minQuantity' as const, placeholder: '5' },
+                            { label: 'Cost', key: 'cost' as const, placeholder: '0.00' },
+                        ]).map((f) => (
                             <div key={f.key}>
                                 <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>{f.label}</label>
-                                <input type="number" placeholder={f.placeholder} value={(form as any)[f.key]} onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
+                                <input type="number" placeholder={f.placeholder} value={form[f.key]} onChange={e => setFormField(f.key, e.target.value)}
                                     style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
                             </div>
                         ))}

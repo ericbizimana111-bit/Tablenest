@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { restaurantsAPI } from '../../../shared/services/api';
-import { useAuth } from '../../../shared/contexts/AuthContext';
+import { useAuth } from '../../../shared/hooks/useAuthContext';
 import { getRoleHomePath } from '../../../shared/utils/auth.utils';
 import toast from 'react-hot-toast';
+import { CheckCircle, Image, PartyPopper } from 'lucide-react';
 
 const STEPS = ['Account', 'Business', 'Operations', 'Media'];
 const CUISINES = ['Italian', 'Japanese', 'French', 'Mexican', 'American', 'Chinese', 'Indian', 'Mediterranean', 'Seafood', 'Steakhouse', 'Modern European', 'British Modern', 'Other'];
@@ -159,12 +160,12 @@ export default function PartnerRegistration() {
                                 <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 6 }}>Media & Branding</h2>
                                 <p style={{ fontSize: 13, color: '#6B7280', marginBottom: 24 }}>Upload your restaurant logo and photos.</p>
                                 <div style={{ border: '2px dashed #E5E7EB', borderRadius: 10, padding: 40, textAlign: 'center', marginBottom: 16 }}>
-                                    <div style={{ fontSize: 32, marginBottom: 8 }}>🖼️</div>
+                                    <Image size={32} color="#9CA3AF" style={{ marginBottom: 8 }} />
                                     <div style={{ fontWeight: 500, fontSize: 14, marginBottom: 4 }}>Upload Restaurant Logo</div>
                                     <div style={{ fontSize: 12, color: '#9CA3AF' }}>PNG, JPG up to 5MB</div>
                                 </div>
                                 <div style={{ background: '#F0FDF4', border: '1px solid #16A34A', borderRadius: 10, padding: 16, textAlign: 'center' }}>
-                                    <div style={{ fontWeight: 600, color: '#16A34A', marginBottom: 4 }}>🎉 Ready to Submit!</div>
+                                    <div style={{ fontWeight: 600, color: '#16A34A', marginBottom: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}><PartyPopper size={16} /> Ready to Submit!</div>
                                     <p style={{ fontSize: 13, color: '#374151' }}>Review your details and submit your application for approval.</p>
                                 </div>
                             </div>
@@ -194,7 +195,7 @@ export default function PartnerRegistration() {
                         <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 12 }}>Why Partner With Us?</div>
                         {['Reach 42,000+ active diners', 'Real-time reservation management', 'Powerful analytics dashboard', '24/7 dedicated support'].map(b => (
                             <div key={b} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, fontSize: 13 }}>
-                                <span style={{ color: '#16A34A' }}>✓</span>{b}
+                                <span style={{ color: '#16A34A', display: 'inline-flex' }}><CheckCircle size={14} /></span>{b}
                             </div>
                         ))}
                     </div>

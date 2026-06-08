@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Camera, User, Mail, Phone, MapPin, Lock, Bell, AlertTriangle, CreditCard } from 'lucide-react';
+import { Camera, User, Mail, Phone, MapPin, Lock, AlertTriangle, CreditCard } from 'lucide-react';
 import { useAuthStore } from '../../../shared/store/authStore';
 import { usersAPI, authAPI } from '../../../shared/services/api';
 import { Toggle } from '../../../shared/components/ui/index';
@@ -58,7 +58,12 @@ export default function AccountSettingsPage() {
             await authAPI.changePassword(pwForm);
             toast.success('Password updated!');
             setPwForm({ currentPassword: '', newPassword: '' });
-        } catch (e: any) { toast.error(e?.response?.data?.message || 'Password update failed'); }
+        } catch (e: unknown) {
+            const message = e && typeof e === 'object' && 'response' in e
+                ? (e as { response?: { data?: { message?: string } } }).response?.data?.message
+                : undefined;
+            toast.error(message || 'Password update failed');
+        }
         finally { setPwSaving(false); }
     };
 

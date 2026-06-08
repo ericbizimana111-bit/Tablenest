@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth as useAuthContext } from '../contexts/AuthContext';
+import { useAuth as useAuthContext } from '../hooks/useAuthContext';
 import type { UserRole } from '../types/auth.types';
 import { getRoleHomePath } from '../utils/auth.utils';
 

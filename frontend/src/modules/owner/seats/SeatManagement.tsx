@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { tablesAPI, restaurantsAPI } from '../../../shared/services/api';
 import { useAuthStore } from '../../../shared/store/authStore';
-import { X } from 'lucide-react';
+import { X, Armchair, CheckCircle, Users, Bookmark } from 'lucide-react';
 
 type SeatTableStatus = 'available' | 'occupied' | 'reserved' | 'blocked';
 
@@ -51,13 +51,13 @@ export default function SeatManagement() {
             {/* Stats */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 18 }}>
                 {[
-                    { label: 'Total Tables', value: stats.total, icon: '🪑' },
-                    { label: 'Available', value: stats.available, icon: '✅', color: '#16A34A' },
-                    { label: 'Occupied', value: stats.occupied, icon: '👥', color: '#DC2626' },
-                    { label: 'Reserved', value: stats.reserved, icon: '🔖', color: '#D97706' },
+                    { label: 'Total Tables', value: stats.total, icon: <Armchair size={22} color="#6B7280" /> },
+                    { label: 'Available', value: stats.available, icon: <CheckCircle size={22} color="#16A34A" />, color: '#16A34A' },
+                    { label: 'Occupied', value: stats.occupied, icon: <Users size={22} color="#DC2626" />, color: '#DC2626' },
+                    { label: 'Reserved', value: stats.reserved, icon: <Bookmark size={22} color="#D97706" />, color: '#D97706' },
                 ].map(s => (
                     <div key={s.label} style={{ background: 'white', borderRadius: 10, border: '1px solid #E5E7EB', padding: '16px' }}>
-                        <div style={{ fontSize: 22, marginBottom: 6 }}>{s.icon}</div>
+                        <div style={{ marginBottom: 6 }}>{s.icon}</div>
                         <div style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 2 }}>{s.label}</div>
                         <div style={{ fontSize: 26, fontWeight: 700, color: s.color || '#111827' }}>{s.value}</div>
                     </div>
@@ -83,7 +83,7 @@ export default function SeatManagement() {
                                 style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', padding: 8, borderRadius: 8, border: selectedTable?.tableNumber === t.tableNumber ? '2px solid #B91C1C' : '2px solid transparent', background: selectedTable?.tableNumber === t.tableNumber ? '#FFF7F7' : 'transparent' }}>
                                 <div style={{ position: 'relative' }}>
                                     <div style={{ width: 52, height: 52, borderRadius: '50%', background: STATUS_BG[t.status] || '#9CA3AF', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
-                                        <span style={{ fontSize: 18 }}>🪑</span>
+                                        <Armchair size={18} color="white" />
                                     </div>
                                     <div style={{ position: 'absolute', top: -6, right: -4, background: t.status === 'available' ? '#16A34A' : '#DC2626', color: 'white', borderRadius: 9999, fontSize: 9, fontWeight: 700, padding: '1px 5px' }}>{t.capacity}p</div>
                                 </div>

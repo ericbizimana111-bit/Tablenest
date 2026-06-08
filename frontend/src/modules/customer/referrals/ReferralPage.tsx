@@ -1,13 +1,13 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { referralsAPI, loyaltyAPI } from '../../../shared/services/api';
-import { Share2, Mail, Copy, QrCode, Megaphone, Tag, TrendingUp, CheckCircle } from 'lucide-react';
-import { Spinner, StatusBadge } from '../../../shared/components/ui/index';
+import { Share2, Mail, QrCode, Megaphone, Tag, TrendingUp, CheckCircle } from 'lucide-react';
+import { StatusBadge } from '../../../shared/components/ui/index';
 import type { Referral, ReferralRecord, Loyalty } from '../../../shared/types/user.types';
 import toast from 'react-hot-toast';
 
 export default function ReferralPage() {
-    const { data: referral, isLoading } = useQuery<Referral>({
+    const { data: referral } = useQuery<Referral>({
         queryKey: ['referrals'],
         queryFn: () => referralsAPI.get().then(r => r.data),
         initialData: DEMO_REFERRAL,

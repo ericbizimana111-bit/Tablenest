@@ -1,9 +1,22 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Search, Star, SlidersHorizontal } from 'lucide-react';
+import { LayoutGrid, List, Search, Star, SlidersHorizontal } from 'lucide-react';
 import { restaurantsAPI } from '../../../shared/services/api';
 import { Spinner, Pagination } from '../../../shared/components/ui/index';
+import type { Restaurant } from '../../../shared/types/restaurant.types';
+import { getRestaurantBookPath, getRestaurantMenuPath } from '../../../shared/utils/restaurantNavigation';
+
+type BrowseRestaurant = Partial<Restaurant> & {
+    _id: string;
+    name: string;
+    cuisineType?: string;
+    priceRange?: string;
+    status?: string;
+    rating?: number;
+    city?: string;
+    images?: string[];
+};
 
 const CUISINES = ['All', 'Italian', 'Japanese', 'French', 'Mexican', 'American', 'Chinese', 'Indian', 'Seafood', 'Steakhouse'];
 const PRICE_RANGES = ['$', '$$', '$$$', '$$$$'];
@@ -68,7 +81,7 @@ export default function BrowsePage() {
                     {(['grid', 'list'] as const).map(v => (
                         <button key={v} onClick={() => setViewMode(v)}
                             style={{ padding: '9px 14px', border: 'none', background: viewMode === v ? '#B91C1C' : 'white', color: viewMode === v ? 'white' : '#6B7280', cursor: 'pointer', fontSize: 12, fontFamily: 'Poppins' }}>
-                            {v === 'grid' ? '⊞' : '≡'}
+                            {v === 'grid' ? <LayoutGrid size={14} /> : <List size={14} />}
                         </button>
                     ))}
                 </div>
@@ -107,14 +120,26 @@ export default function BrowsePage() {
             {/* Grid / List view */}
             {isLoading ? <Spinner /> : viewMode === 'grid' ? (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 18, marginBottom: 24 }}>
-                    {restaurants.map((r: any) => (
-                        <RestaurantCard key={r._id} restaurant={r} onClick={() => navigate(`/restaurants/${r._id}`)} />
+                    {restaurants.map((r: BrowseRestaurant) => (
+                        <RestaurantCard
+                            key={r._id}
+                            restaurant={r}
+                            onClick={() => navigate(`/restaurants/${r._id}`)}
+                            onMenu={() => navigate(getRestaurantMenuPath(r._id))}
+                            onBook={() => navigate(getRestaurantBookPath(r._id))}
+                        />
                     ))}
                 </div>
             ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24 }}>
-                    {restaurants.map((r: any) => (
-                        <RestaurantListItem key={r._id} restaurant={r} onClick={() => navigate(`/restaurants/${r._id}`)} />
+                    {restaurants.map((r: BrowseRestaurant) => (
+                        <RestaurantListItem
+                            key={r._id}
+                            restaurant={r}
+                            onClick={() => navigate(`/restaurants/${r._id}`)}
+                            onMenu={() => navigate(getRestaurantMenuPath(r._id))}
+                            onBook={() => navigate(getRestaurantBookPath(r._id))}
+                        />
                     ))}
                 </div>
             )}
@@ -124,8 +149,13 @@ export default function BrowsePage() {
     );
 }
 
-function RestaurantCard({ restaurant: r, onClick }: any) {
-    const imgId = FOOD_IMG_IDS[r.name?.charCodeAt(0) % FOOD_IMG_IDS.length];
+function RestaurantCard({ restaurant: r, onClick, onMenu, onBook }: {
+    restaurant: BrowseRestaurant;
+    onClick: () => void;
+    onMenu: () => void;
+    onBook: () => void;
+}) {
+    const imgId = FOOD_IMG_IDS[(r.name?.charCodeAt(0) ?? 0) % FOOD_IMG_IDS.length];
     return (
         <div onClick={onClick}
             style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden', cursor: 'pointer' }}
@@ -151,16 +181,27 @@ function RestaurantCard({ restaurant: r, onClick }: any) {
                 </div>
                 <div style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 12 }}>{r.cuisineType} · {r.priceRange || '$$'} · {r.city || '0.8 miles'}</div>
                 <div style={{ display: 'flex', gap: 8 }}>
-                    <button style={{ flex: 1, padding: '8px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500 }}>View Menu</button>
-                    <button style={{ flex: 1, padding: '8px', border: 'none', borderRadius: 8, background: '#B91C1C', color: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 600 }}>Book</button>
+                    <button
+                        onClick={(e) => { e.stopPropagation(); onMenu(); }}
+                        style={{ flex: 1, padding: '8px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500 }}
+                    >View Menu</button>
+                    <button
+                        onClick={(e) => { e.stopPropagation(); onBook(); }}
+                        style={{ flex: 1, padding: '8px', border: 'none', borderRadius: 8, background: '#B91C1C', color: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 600 }}
+                    >Book</button>
                 </div>
             </div>
         </div>
     );
 }
 
-function RestaurantListItem({ restaurant: r, onClick }: any) {
-    const imgId = FOOD_IMG_IDS[r.name?.charCodeAt(0) % FOOD_IMG_IDS.length];
+function RestaurantListItem({ restaurant: r, onClick, onMenu, onBook }: {
+    restaurant: BrowseRestaurant;
+    onClick: () => void;
+    onMenu: () => void;
+    onBook: () => void;
+}) {
+    const imgId = FOOD_IMG_IDS[(r.name?.charCodeAt(0) ?? 0) % FOOD_IMG_IDS.length];
     return (
         <div onClick={onClick}
             style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 16, display: 'flex', gap: 16, cursor: 'pointer' }}
@@ -185,8 +226,14 @@ function RestaurantListItem({ restaurant: r, onClick }: any) {
                 </span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
-                <button style={{ padding: '7px 16px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500 }}>Menu</button>
-                <button style={{ padding: '7px 16px', border: 'none', borderRadius: 8, background: '#B91C1C', color: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 600 }}>Book</button>
+                <button
+                    onClick={(e) => { e.stopPropagation(); onMenu(); }}
+                    style={{ padding: '7px 16px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500 }}
+                >Menu</button>
+                <button
+                    onClick={(e) => { e.stopPropagation(); onBook(); }}
+                    style={{ padding: '7px 16px', border: 'none', borderRadius: 8, background: '#B91C1C', color: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 600 }}
+                >Book</button>
             </div>
         </div>
     );

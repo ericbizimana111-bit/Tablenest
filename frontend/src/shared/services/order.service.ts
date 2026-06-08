@@ -1,5 +1,5 @@
 import api from './api';
-import type { Order, OrderStatus, Reservation, ReservationStatus, Cart } from '../types/order.types';
+import type { Order, OrderStatus, Reservation } from '../types/order.types';
 
 export const OrderService = {
     // Orders
