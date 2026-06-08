@@ -1,41 +1,7 @@
-import axios from 'axios';
+import api from './axios';
 
 type ApiPayload = Record<string, unknown>;
 type ApiParams = Record<string, unknown> | undefined;
-
-const api = axios.create({
-    baseURL: '/api',
-    timeout: 15000,
-    headers: { 'Content-Type': 'application/json' },
-});
-
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-});
-
-
-
-let logoutTriggered = false;
-
-api.interceptors.response.use(
-    (res) => res,
-    (error) => {
-        if (error.response?.status === 401 && !logoutTriggered) {
-            logoutTriggered = true;
-
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-
-            window.location.href = '/login';
-        }
-
-        return Promise.reject(error);
-    }
-);
-
-
 
 export default api;
 

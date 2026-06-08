@@ -14,7 +14,7 @@ export default function AdminLayout() {
     });
 
     const NAV = [
-        { label: 'Home', path: '/admin', icon: <Home size={18} /> },
+        { label: 'Home', path: '/admin/dashboard', icon: <Home size={18} /> },
         { label: 'Restaurant Management', path: '/admin/restaurants', icon: <Utensils size={18} /> },
         { label: 'User Management', path: '/admin/users', icon: <Users size={18} /> },
         { label: 'Pending Approvals', path: '/admin/restaurants/pending', icon: <ShieldCheck size={18} />, badge: pending },

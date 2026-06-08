@@ -2,7 +2,8 @@ import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
-import { useAuthStore } from './shared/store/authStore';
+import { AuthProvider } from './shared/contexts/AuthContext';
+import ProtectedRoute from './shared/components/auth/ProtectedRoute';
 
 // Public pages
 const LandingPage = lazy(() => import('./modules/public/LandingPage'));
@@ -57,24 +58,6 @@ const AdminSettings = lazy(() => import('./modules/admin/settings/AdminSettings'
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: 30000 } } });
 
-function ProtectedRoute({ children, allowedRoles }) {
-  const user = JSON.parse(localStorage.getItem('user') || 'null');
-  const token = localStorage.getItem('token');
-
-  if (!token || !user) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
-    if (user.role === 'super_admin') return <Navigate to="/admin" replace />;
-    if (user.role === 'owner') return <Navigate to="/owner" replace />;
-    return <Navigate to="/home" replace />;
-  }
-
-  return <>{children}</>;
-}
-
-
 const Loader = () => (
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#FAF7F5' }}>
     <div style={{ width: 40, height: 40, border: '3px solid #FEE2E2', borderTop: '3px solid #B91C1C', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
@@ -84,67 +67,71 @@ const Loader = () => (
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Toaster position="top-right" toastOptions={{ style: { fontFamily: 'Poppins, sans-serif', fontSize: '14px' } }} />
-        <Suspense fallback={<Loader />}>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />
-            <Route path="/partner/register" element={<PartnerRegistration />} />
-            <Route path="/restaurants" element={<BrowsePage />} />
-            <Route path="/restaurants/:id" element={<RestaurantDetailPage />} />
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <Toaster position="top-right" toastOptions={{ style: { fontFamily: 'Poppins, sans-serif', fontSize: '14px' } }} />
+          <Suspense fallback={<Loader />}>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route path="/partner/register" element={<PartnerRegistration />} />
+              <Route path="/restaurants" element={<BrowsePage />} />
+              <Route path="/restaurants/:id" element={<RestaurantDetailPage />} />
 
-            <Route element={<ProtectedRoute allowedRoles={['customer']}><CustomerLayout /></ProtectedRoute>}>
-              <Route path="/home" element={<CustomerHome />} />
-              <Route path="/browse" element={<BrowsePage />} />
-              <Route path="/my-orders" element={<OrderHistoryPage />} />
-              <Route path="/my-orders/:id/track" element={<OrderTrackingPage />} />
-              <Route path="/my-bookings" element={<MyBookingsPage />} />
-              <Route path="/notifications" element={<NotificationsPage />} />
-              <Route path="/favorites" element={<FavoritesPage />} />
-              <Route path="/referrals" element={<ReferralPage />} />
-              <Route path="/rewards" element={<RewardsPage />} />
-              <Route path="/settings" element={<AccountSettingsPage />} />
-              <Route path="/settings/addresses" element={<AddressesPaymentsPage />} />
-            </Route>
+              <Route element={<ProtectedRoute allowedRoles={['customer']} />}>
+                <Route element={<CustomerLayout />}>
+                  <Route path="/home" element={<CustomerHome />} />
+                  <Route path="/browse" element={<BrowsePage />} />
+                  <Route path="/my-orders" element={<OrderHistoryPage />} />
+                  <Route path="/my-orders/:id/track" element={<OrderTrackingPage />} />
+                  <Route path="/my-bookings" element={<MyBookingsPage />} />
+                  <Route path="/notifications" element={<NotificationsPage />} />
+                  <Route path="/favorites" element={<FavoritesPage />} />
+                  <Route path="/referrals" element={<ReferralPage />} />
+                  <Route path="/rewards" element={<RewardsPage />} />
+                  <Route path="/settings" element={<AccountSettingsPage />} />
+                  <Route path="/settings/addresses" element={<AddressesPaymentsPage />} />
+                </Route>
+              </Route>
 
-            <Route path="/owner" element={<ProtectedRoute allowedRoles={['owner']}><OwnerLayout /></ProtectedRoute>}>
-              <Route index element={<OwnerDashboard />} />
-              <Route path="menu" element={<MenuManagement />} />
-              <Route path="reservations" element={<ReservationCalendar />} />
-              <Route path="seats" element={<SeatManagement />} />
-              <Route path="kitchen" element={<KitchenDisplay />} />
-              <Route path="staff" element={<StaffManagement />} />
-              <Route path="inventory" element={<InventoryManagement />} />
-              <Route path="promotions" element={<PromotionsPage />} />
-              <Route path="qrcodes" element={<QRCodeManager />} />
-              <Route path="analytics" element={<OwnerAnalytics />} />
-              <Route path="reviews" element={<OwnerReviews />} />
-              <Route path="settings" element={<OwnerSettings />} />
-            </Route>
+              <Route path="/owner" element={<ProtectedRoute allowedRoles={['owner']}><OwnerLayout /></ProtectedRoute>}>
+                <Route index element={<Navigate to="dashboard" replace />} />
+                <Route path="dashboard" element={<OwnerDashboard />} />
+                <Route path="menu" element={<MenuManagement />} />
+                <Route path="reservations" element={<ReservationCalendar />} />
+                <Route path="seats" element={<SeatManagement />} />
+                <Route path="kitchen" element={<KitchenDisplay />} />
+                <Route path="staff" element={<StaffManagement />} />
+                <Route path="inventory" element={<InventoryManagement />} />
+                <Route path="promotions" element={<PromotionsPage />} />
+                <Route path="qrcodes" element={<QRCodeManager />} />
+                <Route path="analytics" element={<OwnerAnalytics />} />
+                <Route path="reviews" element={<OwnerReviews />} />
+                <Route path="settings" element={<OwnerSettings />} />
+              </Route>
 
-            <Route path="/admin" element={<ProtectedRoute allowedRoles={['super_admin']}><AdminLayout /></ProtectedRoute>}>
-              <Route index element={<AdminDashboard />} />
-              <Route path="restaurants" element={<AdminRestaurants />} />
-              <Route path="restaurants/pending" element={<AdminPendingApprovals />} />
-              <Route path="users" element={<AdminUsers />} />
-              <Route path="orders" element={<AdminOrders />} />
-              <Route path="bookings" element={<AdminBookings />} />
-              <Route path="reports" element={<AdminReports />} />
-              <Route path="complaints" element={<AdminComplaints />} />
-              <Route path="settings" element={<AdminSettings />} />
-            </Route>
+              <Route path="/admin" element={<ProtectedRoute allowedRoles={['super_admin']}><AdminLayout /></ProtectedRoute>}>
+                <Route index element={<Navigate to="dashboard" replace />} />
+                <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="restaurants" element={<AdminRestaurants />} />
+                <Route path="restaurants/pending" element={<AdminPendingApprovals />} />
+                <Route path="users" element={<AdminUsers />} />
+                <Route path="orders" element={<AdminOrders />} />
+                <Route path="bookings" element={<AdminBookings />} />
+                <Route path="reports" element={<AdminReports />} />
+                <Route path="complaints" element={<AdminComplaints />} />
+                <Route path="settings" element={<AdminSettings />} />
+              </Route>
 
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </Suspense>
-      </BrowserRouter>
-    </QueryClientProvider>
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Suspense>
+        </BrowserRouter>
+      </QueryClientProvider>
+    </AuthProvider>
   );
 }
-
-

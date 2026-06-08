@@ -5,7 +5,7 @@ import Sidebar from '../../../shared/components/layout/Sidebar';
 import Topbar from '../../../shared/components/layout/Topbar';
 
 const NAV = [
-    { label: 'Dashboard', path: '/owner', icon: <Home size={18} /> },
+    { label: 'Dashboard', path: '/owner/dashboard', icon: <Home size={18} /> },
     { label: 'Menu Management', path: '/owner/menu', icon: <Utensils size={18} /> },
     { label: 'Reservations', path: '/owner/reservations', icon: <Calendar size={18} /> },
     { label: 'Seat Management', path: '/owner/seats', icon: <Grid size={18} /> },

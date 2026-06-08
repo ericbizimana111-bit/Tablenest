@@ -151,17 +151,18 @@ export default function InventoryManagement() {
 
             <Modal isOpen={showModal} onClose={() => setShowModal(false)} title={editItem ? 'Edit Item' : 'Add Inventory Item'} width={460}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                    {[
+                    {([
                         { label: 'Item Name', key: 'name', placeholder: 'e.g. Truffle Oil' },
                         { label: 'Supplier', key: 'supplier', placeholder: 'Supplier name' },
-                    ] as const.map(f => (
-                    <div key={f.key}>
-                        <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>{f.label}</label>
-                        <input placeholder={f.placeholder} value={form[f.key]}
-                            onChange={e => setFormField(f.key, e.target.value)}
-                            style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
-                    </div>
+                    ] as const).map(f => (
+                        <div key={f.key}>
+                            <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>{f.label}</label>
+                            <input placeholder={f.placeholder} value={form[f.key]}
+                                onChange={e => setFormField(f.key, e.target.value)}
+                                style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
+                        </div>
                     ))}
+
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }}>
                         {[
                             { label: 'Quantity', key: 'quantity', placeholder: '0' },
@@ -184,7 +185,7 @@ export default function InventoryManagement() {
                     </div>
                     <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
                         <button onClick={() => setShowModal(false)} style={{ flex: 1, padding: '10px', border: '1px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 14, cursor: 'pointer', fontFamily: 'Poppins' }}>Cancel</button>
-                        <button onClick={() => saveMut.mutate({ ...form, quantity: +form.quantity, minQuantity: +form.minQuantity, cost: +form.cost })}
+                        <button onClick={() => saveMut.mutate(form)}
                             style={{ flex: 1, padding: '10px', background: '#B91C1C', color: 'white', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>
                             {editItem ? 'Update' : 'Add Item'}
                         </button>

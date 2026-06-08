@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Pencil, Trash2, Search, Users } from 'lucide-react';
-import { staffAPI, restaurantsAPI } from '../../../services/api';
-import { useAuthStore } from '../../../store/authStore';
+import { staffAPI, restaurantsAPI } from '../../../shared/services/api';
+import { useAuthStore } from '../../../shared/store/authStore';
 import { Modal, StatusBadge } from '../../../shared/components/ui/index';
 import toast from 'react-hot-toast';
 

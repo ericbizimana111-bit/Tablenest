@@ -38,7 +38,7 @@ export default function Sidebar({ title, subtitle, navItems, bottomUser = true }
                     <NavLink
                         key={item.path}
                         to={item.path}
-                        end={item.path.endsWith('/admin') || item.path.endsWith('/owner')}
+                        end={item.path.endsWith('/dashboard')}
                         style={({ isActive }) => ({
                             display: 'flex', alignItems: 'center', gap: 10,
                             padding: '10px 14px', borderRadius: 8,

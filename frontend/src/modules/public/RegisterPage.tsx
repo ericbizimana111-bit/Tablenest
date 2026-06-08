@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
-import { useAuthStore } from '../../shared/store/authStore';
+import { useAuth } from '../../shared/contexts/AuthContext';
+import { getRoleHomePath } from '../../shared/utils/auth.utils';
 import toast from 'react-hot-toast';
 
 export function RegisterPage() {
     const navigate = useNavigate();
-    const { register, isLoading } = useAuthStore();
+    const { register, isSubmitting } = useAuth();
 
     type RegisterForm = {
         fullName: string;
@@ -43,7 +44,7 @@ export function RegisterPage() {
         }
 
         try {
-            await register({
+            const user = await register({
                 fullName: form.fullName,
                 email: form.email,
                 password: form.password,
@@ -51,7 +52,7 @@ export function RegisterPage() {
             });
 
             toast.success('Welcome to TableNest!');
-            navigate('/home');
+            navigate(getRoleHomePath(user.role), { replace: true });
         } catch (err: unknown) {
             const message = err instanceof Error ? err.message : 'Registration failed';
             toast.error(message);
@@ -280,7 +281,7 @@ export function RegisterPage() {
                         {/* BUTTON */}
                         <button
                             type="submit"
-                            disabled={isLoading}
+                            disabled={isSubmitting}
                             style={{
                                 height: 54,
                                 background: '#B91C1C',
@@ -291,10 +292,10 @@ export function RegisterPage() {
                                 fontWeight: 600,
                                 cursor: 'pointer',
                                 marginTop: 6,
-                                opacity: isLoading ? 0.7 : 1
+                                opacity: isSubmitting ? 0.7 : 1
                             }}
                         >
-                            {isLoading ? 'Creating account...' : 'Create Account'}
+                            {isSubmitting ? 'Creating account...' : 'Create Account'}
                         </button>
 
                         <p style={{ textAlign: 'center', fontSize: 14, color: '#6B7280' }}>

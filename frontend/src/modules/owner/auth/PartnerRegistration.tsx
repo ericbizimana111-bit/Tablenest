@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { restaurantsAPI } from '../../../shared/services/api';
-import { useAuthStore } from '../../../shared/store/authStore';
+import { useAuth } from '../../../shared/contexts/AuthContext';
+import { getRoleHomePath } from '../../../shared/utils/auth.utils';
 import toast from 'react-hot-toast';
 
 const STEPS = ['Account', 'Business', 'Operations', 'Media'];
@@ -23,7 +24,7 @@ type PartnerForm = {
 
 export default function PartnerRegistration() {
     const navigate = useNavigate();
-    const { register, isAuthenticated } = useAuthStore();
+    const { register, isAuthenticated } = useAuth();
     const [step, setStep] = useState(1);
     const [form, setForm] = useState<PartnerForm>({
         fullName: '', email: '', password: '', restaurantName: '', cuisineType: 'Italian',
@@ -43,7 +44,7 @@ export default function PartnerRegistration() {
                 address: form.address, dineIn: form.dineIn, delivery: form.delivery,
             });
             toast.success('Application submitted! Await approval.');
-            navigate('/owner');
+            navigate(getRoleHomePath('owner'), { replace: true });
         } catch (unknownError) {
             const error = unknownError as { response?: { data?: { message?: string } } };
             toast.error(error.response?.data?.message || 'Submission failed');

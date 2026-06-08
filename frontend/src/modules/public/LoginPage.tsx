@@ -2,12 +2,13 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
-import { useAuthStore } from '../../shared/store/authStore';
+import { useAuth } from '../../shared/contexts/AuthContext';
+import { getRoleHomePath } from '../../shared/utils/auth.utils';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
     const navigate = useNavigate();
-    const { login, isLoading } = useAuthStore();
+    const { login, isSubmitting } = useAuth();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -22,14 +23,8 @@ export default function LoginPage() {
         }
 
         try {
-            await login(email, password);
-
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
-
-            if (user.role === 'super_admin') navigate('/admin');
-            else if (user.role === 'owner') navigate('/owner');
-            else navigate('/home');
-
+            const loggedInUser = await login(email, password);
+            navigate(getRoleHomePath(loggedInUser.role), { replace: true });
             toast.success('Welcome back!');
         } catch (err: unknown) {
             const message =
@@ -303,7 +298,7 @@ export default function LoginPage() {
 
                         <button
                             type="submit"
-                            disabled={isLoading}
+                            disabled={isSubmitting}
                             style={{
                                 height: 54,
                                 background: '#B91C1C',
@@ -314,10 +309,10 @@ export default function LoginPage() {
                                 fontWeight: 600,
                                 cursor: 'pointer',
                                 opacity:
-                                    isLoading ? 0.7 : 1,
+                                    isSubmitting ? 0.7 : 1,
                             }}
                         >
-                            {isLoading
+                            {isSubmitting
                                 ? 'Signing in...'
                                 : 'Sign In'}
                         </button>

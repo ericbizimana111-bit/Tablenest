@@ -1,53 +1,56 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
+import { useAuth as useAuthContext } from '../contexts/AuthContext';
 import type { UserRole } from '../types/auth.types';
+import { getRoleHomePath } from '../utils/auth.utils';
 
 export function useAuth() {
     const navigate = useNavigate();
-    const { user, token, isAuthenticated, isLoading, login, register, logout } = useAuthStore();
+    const auth = useAuthContext();
 
     const requireAuth = useCallback((redirectTo = '/login') => {
-        if (!isAuthenticated) {
+        if (auth.isLoading) {
+            return false;
+        }
+        if (!auth.isAuthenticated) {
             navigate(redirectTo);
             return false;
         }
         return true;
-    }, [isAuthenticated, navigate]);
+    }, [auth.isAuthenticated, auth.isLoading, navigate]);
 
     const requireRole = useCallback((roles: UserRole[]) => {
-        if (!isAuthenticated) { navigate('/login'); return false; }
-        if (!user || !roles.includes(user.role)) {
-            if (user?.role === 'super_admin') navigate('/admin');
-            else if (user?.role === 'owner') navigate('/owner');
-            else navigate('/home');
+        if (auth.isLoading) {
+            return false;
+        }
+        if (!auth.isAuthenticated || !auth.user) {
+            navigate('/login');
+            return false;
+        }
+        if (!roles.includes(auth.user.role)) {
+            navigate(getRoleHomePath(auth.user.role));
             return false;
         }
         return true;
-    }, [isAuthenticated, user, navigate]);
+    }, [auth.isAuthenticated, auth.isLoading, auth.user, navigate]);
 
     const redirectByRole = useCallback(() => {
-        if (!user) { navigate('/login'); return; }
-        if (user.role === 'super_admin') navigate('/admin');
-        else if (user.role === 'owner') navigate('/owner');
-        else navigate('/home');
-    }, [user, navigate]);
+        if (!auth.user) {
+            navigate('/login');
+            return;
+        }
+        navigate(getRoleHomePath(auth.user.role));
+    }, [auth.user, navigate]);
 
-    const isAdmin = user?.role === 'super_admin';
-    const isOwner = user?.role === 'owner';
-    const isCustomer = user?.role === 'customer';
+    const isAdmin = auth.user?.role === 'super_admin';
+    const isOwner = auth.user?.role === 'owner';
+    const isCustomer = auth.user?.role === 'customer';
 
     return {
-        user,
-        token,
-        isAuthenticated,
-        isLoading,
+        ...auth,
         isAdmin,
         isOwner,
         isCustomer,
-        login,
-        register,
-        logout,
         requireAuth,
         requireRole,
         redirectByRole,
