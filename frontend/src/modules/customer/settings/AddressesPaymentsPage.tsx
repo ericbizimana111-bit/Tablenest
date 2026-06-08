@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { Home, Briefcase, Plus, Pencil, Trash2, CreditCard, Star } from 'lucide-react';
 import type { Address, PaymentMethod } from '../../../shared/types/user.types';
 import toast from 'react-hot-toast';
+// Re-export from the existing AddressesPaymentsPage (plural)
+// This file exists to match the spec's folder structure which uses 'AddressesPaymentPage'
+
+
 
 type DisplayAddress = {
     id: string;

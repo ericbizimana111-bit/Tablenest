@@ -57,16 +57,23 @@ const AdminSettings = lazy(() => import('./modules/admin/settings/AdminSettings'
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: 30000 } } });
 
-function ProtectedRoute({ children, allowedRoles }: { children: React.ReactNode; allowedRoles?: string[] }) {
-  const { isAuthenticated, user } = useAuthStore();
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
-  if (allowedRoles && user && !allowedRoles.includes(user.role)) {
+function ProtectedRoute({ children, allowedRoles }) {
+  const user = JSON.parse(localStorage.getItem('user') || 'null');
+  const token = localStorage.getItem('token');
+
+  if (!token || !user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
     if (user.role === 'super_admin') return <Navigate to="/admin" replace />;
     if (user.role === 'owner') return <Navigate to="/owner" replace />;
     return <Navigate to="/home" replace />;
   }
+
   return <>{children}</>;
 }
+
 
 const Loader = () => (
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#FAF7F5' }}>

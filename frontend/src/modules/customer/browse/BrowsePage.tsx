@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Search, Star, SlidersHorizontal } from 'lucide-react';
@@ -33,7 +33,7 @@ export default function BrowsePage() {
             page, limit: 12,
         }).then(r => r.data),
         initialData: { restaurants: DEMO_RESTAURANTS, total: 12, pages: 1 },
-        keepPreviousData: true,
+        placeholderData: (previous) => previous,
     });
 
     const restaurants = data?.restaurants || DEMO_RESTAURANTS;

@@ -15,17 +15,27 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+
+
+let logoutTriggered = false;
+
 api.interceptors.response.use(
     (res) => res,
     (error) => {
-        if (error.response?.status === 401) {
+        if (error.response?.status === 401 && !logoutTriggered) {
+            logoutTriggered = true;
+
             localStorage.removeItem('token');
             localStorage.removeItem('user');
+
             window.location.href = '/login';
         }
+
         return Promise.reject(error);
     }
 );
+
+
 
 export default api;
 
