@@ -304,11 +304,13 @@ export function RegisterPage() {
                                 Sign in
                             </Link>
                         </p>
+                        
                         <div style={{ textAlign: 'center', fontSize: 13, color: '#9CA3AF' }}>
                             Are you a restaurant owner?{' '}
-                            <Link to="/partner/register" style={{ color: '#B91C1C', fontWeight: 500, textDecoration: 'none' }}>Register here</Link>
+                            <Link to="/partner/register" style={{ color: '#B91C1C', fontWeight: 500, textDecoration: 'none' }}>
+                                Register here
+                            </Link>
                         </div>
-
 
                     </form>
                 </div>

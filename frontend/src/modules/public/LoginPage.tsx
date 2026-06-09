@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
@@ -52,52 +51,113 @@ export default function LoginPage() {
                 style={{
                     width: '50%',
                     background:
-                        'linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url(https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&q=80)',
+                        'linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&q=80)', // Slightly darkened the overlay for better overall contrast
                     backgroundPosition: 'center',
                     backgroundSize: 'cover',
                     backgroundRepeat: 'no-repeat',
                     display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: 'flex-end',
+                    justifyContent: 'space-between',
                     padding: '60px',
                     color: '#fff',
+                    boxSizing: 'border-box'
                 }}
             >
-                <div
+                {/* BRAND LOGO - HIGH VISIBILITY UPGRADE */}
+                <Link
+                    to="/"
                     style={{
-                        fontSize: 22,
-                        fontWeight: 700,
-                        marginBottom: 12,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 14,
+                        textDecoration: 'none',
+                        cursor: 'pointer',
+                        width: 'fit-content',
+                        background: 'rgba(255, 255, 255, 0.07)', // Glassmorphism backdrop to isolate it from image noise
+                        backdropFilter: 'blur(8px)',
+                        WebkitBackdropFilter: 'blur(8px)',
+                        padding: '10px 20px',
+                        borderRadius: '14px',
+                        border: '1px solid rgba(255, 255, 255, 0.15)',
+                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+                        transition: 'all 0.2s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)';
+                        e.currentTarget.style.transform = 'translateY(-1px)';
+                    }}
+                    onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.07)';
+                        e.currentTarget.style.transform = 'translateY(0)';
                     }}
                 >
-                    TableNest
+                    <div
+                        style={{
+                            width: 40, // Expanded slightly for better visual presence
+                            height: 40,
+                            background: '#B91C1C',
+                            borderRadius: 10,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 4px 12px rgba(185, 28, 28, 0.5)', // Stronger brand glow
+                        }}
+                    >
+                        <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="white"
+                            strokeWidth="2.2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        >
+                            <path d="M6 18h12a2 2 0 0 1 2 2v1H4v-1a2 2 0 0 1 2-2z" />
+                            <path d="M18 18a4 4 0 0 0-1.23-7.79 4.36 4.36 0 0 0-9.54 0A4 4 0 0 0 6 18" />
+                        </svg>
+                    </div>
+                    <span
+                        style={{
+                            color: '#ffffff',
+                            fontWeight: 800,
+                            fontSize: 23,
+                            letterSpacing: '-0.5px',
+                            textShadow: '0 2px 4px rgba(0,0,0,0.2)', // Adds a crisp text boundary layer
+                        }}
+                    >
+                        TableNest
+                    </span>
+                </Link>
+
+                {/* SLOGAN & MARKETING TEXT */}
+                <div style={{ marginTop: 'auto' }}>
+                    <h2
+                        style={{
+                            fontSize: 40,
+                            fontWeight: 700,
+                            lineHeight: 1.2,
+                            marginBottom: 16,
+                            maxWidth: 500,
+                        }}
+                    >
+                        Culinary artistry meets
+                        <br />
+                        operational precision.
+                    </h2>
+
+                    <p
+                        style={{
+                            fontSize: 16,
+                            lineHeight: 1.7,
+                            opacity: 0.9,
+                            maxWidth: 500,
+                        }}
+                    >
+                        Secure your access to the most exclusive dining floor
+                        plans and management tools.
+                    </p>
                 </div>
-
-                <h2
-                    style={{
-                        fontSize: 40,
-                        fontWeight: 700,
-                        lineHeight: 1.2,
-                        marginBottom: 16,
-                        maxWidth: 500,
-                    }}
-                >
-                    Culinary artistry meets
-                    <br />
-                    operational precision.
-                </h2>
-
-                <p
-                    style={{
-                        fontSize: 16,
-                        lineHeight: 1.7,
-                        opacity: 0.9,
-                        maxWidth: 500,
-                    }}
-                >
-                    Secure your access to the most exclusive dining floor
-                    plans and management tools.
-                </p>
             </div>
 
             {/* RIGHT SIDE */}
@@ -109,6 +169,7 @@ export default function LoginPage() {
                     alignItems: 'center',
                     background: '#FAF7F5',
                     padding: '60px',
+                    boxSizing: 'border-box'
                 }}
             >
                 <div
@@ -167,8 +228,7 @@ export default function LoginPage() {
                                         position: 'absolute',
                                         left: 14,
                                         top: '50%',
-                                        transform:
-                                            'translateY(-50%)',
+                                        transform: 'translateY(-50%)',
                                         color: '#9CA3AF',
                                     }}
                                 />
@@ -176,16 +236,13 @@ export default function LoginPage() {
                                 <input
                                     type="email"
                                     value={email}
-                                    onChange={(e) =>
-                                        setEmail(e.target.value)
-                                    }
+                                    onChange={(e) => setEmail(e.target.value)}
                                     placeholder="you@example.com"
                                     style={{
                                         width: '100%',
                                         height: 52,
                                         paddingLeft: 44,
-                                        border:
-                                            '1.5px solid #E5E7EB',
+                                        border: '1.5px solid #E5E7EB',
                                         borderRadius: 12,
                                         fontSize: 14,
                                         background: '#fff',
@@ -200,8 +257,7 @@ export default function LoginPage() {
                             <div
                                 style={{
                                     display: 'flex',
-                                    justifyContent:
-                                        'space-between',
+                                    justifyContent: 'space-between',
                                     marginBottom: 8,
                                 }}
                             >
@@ -234,32 +290,22 @@ export default function LoginPage() {
                                         position: 'absolute',
                                         left: 14,
                                         top: '50%',
-                                        transform:
-                                            'translateY(-50%)',
+                                        transform: 'translateY(-50%)',
                                         color: '#9CA3AF',
                                     }}
                                 />
 
                                 <input
-                                    type={
-                                        showPass
-                                            ? 'text'
-                                            : 'password'
-                                    }
+                                    type={showPass ? 'text' : 'password'}
                                     value={password}
-                                    onChange={(e) =>
-                                        setPassword(
-                                            e.target.value
-                                        )
-                                    }
+                                    onChange={(e) => setPassword(e.target.value)}
                                     placeholder="••••••••"
                                     style={{
                                         width: '100%',
                                         height: 52,
                                         paddingLeft: 44,
                                         paddingRight: 44,
-                                        border:
-                                            '1.5px solid #E5E7EB',
+                                        border: '1.5px solid #E5E7EB',
                                         borderRadius: 12,
                                         fontSize: 14,
                                         background: '#fff',
@@ -270,28 +316,19 @@ export default function LoginPage() {
 
                                 <button
                                     type="button"
-                                    onClick={() =>
-                                        setShowPass(
-                                            !showPass
-                                        )
-                                    }
+                                    onClick={() => setShowPass(!showPass)}
                                     style={{
                                         position: 'absolute',
                                         right: 14,
                                         top: '50%',
-                                        transform:
-                                            'translateY(-50%)',
+                                        transform: 'translateY(-50%)',
                                         background: 'none',
                                         border: 'none',
                                         cursor: 'pointer',
                                         color: '#9CA3AF',
                                     }}
                                 >
-                                    {showPass ? (
-                                        <EyeOff size={18} />
-                                    ) : (
-                                        <Eye size={18} />
-                                    )}
+                                    {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
                                 </button>
                             </div>
                         </div>
@@ -308,13 +345,10 @@ export default function LoginPage() {
                                 fontSize: 15,
                                 fontWeight: 600,
                                 cursor: 'pointer',
-                                opacity:
-                                    isSubmitting ? 0.7 : 1,
+                                opacity: isSubmitting ? 0.7 : 1,
                             }}
                         >
-                            {isSubmitting
-                                ? 'Signing in...'
-                                : 'Sign In'}
+                            {isSubmitting ? 'Signing in...' : 'Sign In'}
                         </button>
 
                         <div
@@ -336,23 +370,9 @@ export default function LoginPage() {
                                 Demo Accounts
                             </div>
 
-                            <div>
-                                Admin:
-                                admin@tablenest.com /
-                                admin123
-                            </div>
-
-                            <div>
-                                Owner:
-                                owner@tablenest.com /
-                                owner123
-                            </div>
-
-                            <div>
-                                Customer:
-                                customer@tablenest.com /
-                                customer123
-                            </div>
+                            <div>Admin: admin@tablenest.com / admin123</div>
+                            <div>Owner: owner@tablenest.com / owner123</div>
+                            <div>Customer: customer@tablenest.com / customer123</div>
                         </div>
 
                         <p
@@ -368,8 +388,7 @@ export default function LoginPage() {
                                 style={{
                                     color: '#B91C1C',
                                     fontWeight: 600,
-                                    textDecoration:
-                                        'none',
+                                    textDecoration: 'none',
                                 }}
                             >
                                 Sign up
