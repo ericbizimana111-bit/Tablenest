@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { authAPI } from '../../shared/services/api';
 import toast from 'react-hot-toast';
+import Header from 
 
 export default function ResetPasswordPage() {
     const navigate = useNavigate();
@@ -152,7 +153,7 @@ export default function ResetPasswordPage() {
                                     border: '1.5px solid #E5E7EB',
                                     borderRadius: 12,
                                     fontSize: 14,
-                                    background: '#fff',
+                                    background: '#fff',                                                                                                                                                                                                                                                                                                     
                                     outline: 'none',
                                     boxSizing: 'border-box'
                                 }}

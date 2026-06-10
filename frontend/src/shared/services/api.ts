@@ -267,6 +267,7 @@ export const paymentsAPI = {
     create: (data: Payload) => api.post('/payments', data),
 };
 
+
 /* =================================================================
    CALENDAR (getCalendarData alias used in some components)
 ================================================================= */
