@@ -44,12 +44,10 @@ async function seed() {
     ]);
     console.log('✓ Cleared existing data');
 
-    const adminPw = await bcrypt.hash('admin123', 12);
     const ownerPw = await bcrypt.hash('owner123', 12);
     const custPw = await bcrypt.hash('customer123', 12);
 
-    // Create users
-    const admin = await User.create({ fullName: 'Super Admin', email: 'admin@tablenest.com', password: adminPw, role: 'super_admin', activePlan: 'Enterprise' });
+    // Create users;
     const owner = await User.create({ fullName: 'Alex Rivera', email: 'owner@tablenest.com', password: ownerPw, role: 'owner', activePlan: 'Business' });
     const customer = await User.create({ fullName: 'Alex Thompson', email: 'customer@tablenest.com', password: custPw, role: 'customer', activePlan: 'Gourmet Pro' });
     console.log('✓ Users created');

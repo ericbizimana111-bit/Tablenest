@@ -38,15 +38,23 @@ export default function Header({ activeTab, setActiveTab }) {
 
                 {/* Centered Navigation Links */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 36, position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
-                    {['Home', 'Restaurants', 'How It Works', 'About Us'].map(l => (
+                    {['Home', 'Restaurants', 'How It Works', 'About Us', 'FAQ'].map(l => (
                         <span key={l} className="nav-link"
                             style={{ fontSize: 15, color: activeTab === l ? '#B91C1C' : '#4B5563', cursor: 'pointer', fontWeight: activeTab === l ? 700 : 500, position: 'relative', padding: '4px 0' }}
+
+
                             onClick={() => {
                                 if (setActiveTab) setActiveTab(l);
+
                                 if (l === 'Restaurants') navigate('/restaurants');
                                 if (l === 'Home') navigate('/');
+                                if (l === 'How It Works') navigate('/');
+                                if (l === 'About Us') navigate('/about-us');
+                                if (l === 'FAQ') navigate('/faq');
                             }}>
                             {l}
+
+
                             {activeTab === l && <span style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 2, background: '#B91C1C', borderRadius: 2 }} />}
                         </span>
                     ))}

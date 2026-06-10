@@ -12,6 +12,10 @@ const RegisterPage = lazy(() => import('./modules/public/RegisterPage'));
 const ForgotPasswordPage = lazy(() => import('./modules/public/ForgotPasswordPage'));
 const ResetPasswordPage = lazy(() => import('./modules/public/ResetPasswordPage'));
 const NotFoundPage = lazy(() => import('./modules/public/NotFoundPage'));
+const AboutUsPage = lazy(() => import('./modules/public/AboutUsPage'));
+const FAQPage = lazy(() => import('./modules/public/FAQPage'));
+
+
 
 // Customer
 const CustomerLayout = lazy(() => import('./modules/customer/layout/CustomerLayout'));
@@ -81,6 +85,8 @@ export default function App() {
               <Route path="/partner/register" element={<PartnerRegistration />} />
               <Route path="/restaurants" element={<BrowsePage />} />
               <Route path="/restaurants/:id" element={<RestaurantDetailPage />} />
+              <Route path="/about-us" element={<AboutUsPage/>} />
+              <Route path="/faq" element={<FAQPage />} />
 
               <Route element={<ProtectedRoute allowedRoles={['customer']} />}>
                 <Route element={<CustomerLayout />}>

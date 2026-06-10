@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { LayoutGrid, List, Search, Star, SlidersHorizontal, Globe, Utensils, Calendar } from 'lucide-react';
+import { LayoutGrid, List, Search, Star, SlidersHorizontal } from 'lucide-react';
 import { restaurantsAPI } from '../../../shared/services/api';
 import { Spinner, Pagination } from '../../../shared/components/ui/index';
 import type { Restaurant } from '../../../shared/types/restaurant.types';
@@ -56,8 +56,8 @@ export default function BrowsePage() {
     return (
         <div className="fade-in" style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#FAFAFA', minHeight: '100vh' }}>
 
-                
-           <Header  />
+
+            <Header />
 
             {/* MAIN CONTENT AREA */}
             <main style={{ maxWidth: 1200, margin: '0 auto', padding: '40px 24px' }}>

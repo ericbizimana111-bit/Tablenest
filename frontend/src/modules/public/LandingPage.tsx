@@ -158,6 +158,8 @@ export default function LandingPage() {
                 </div>
             </section>
 
+            
+
             {/* How It Works */}
             <section className="animate-rain-fade" style={{ padding: '80px 80px', background: '#F9F6F4', animationDelay: '0.2s' }}>
                 <h2 style={{ textAlign: 'center', fontSize: 32, fontWeight: 800, marginBottom: 60, color: '#111827', letterSpacing: '-0.5px' }}>How It Works</h2>
@@ -173,16 +175,24 @@ export default function LandingPage() {
                 </div>
             </section>
 
+
+
             {/* Featured Restaurants */}
             <section className="animate-rain-fade" style={{ padding: '80px 80px', background: 'white', animationDelay: '0.3s' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 36 }}>
                     <h2 style={{ fontSize: 32, fontWeight: 800, color: '#111827', letterSpacing: '-0.5px' }}>Popular Near You</h2>
                     <span onClick={() => navigate('/restaurants')} className="nav-link" style={{ color: '#B91C1C', fontSize: 15, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontWeight: 600 }}>View All <ArrowRight size={16} /></span>
                 </div>
+
+
+
+
+
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 24 }}>
                     {FEATURED.map(r => (
-                        <div key={r.name} className="hover-card" style={{ border: '1px solid #E5E7EB', borderRadius: 16, overflow: 'hidden', cursor: 'pointer', background: 'white', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }} onClick={() => navigate('/restaurants')}>
+                        <div key={r.name} className="hover-card" style={{ border: '1px solid #E5E7EB', borderRadius: 16, overflow: 'hidden', cursor: 'pointer', background: 'white', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }} onClick={() => navigate('/restaurants/booking')}>
                             <div style={{ position: 'relative' }}>
+
                                 <img src={r.img} alt={r.name} style={{ width: '100%', height: 180, objectFit: 'cover' }} />
                                 <span style={{ position: 'absolute', top: 12, left: 12, background: r.isOpen ? '#10B981' : '#EF4444', color: 'white', fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 9999, backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', gap: 4 }}>
                                     <span style={{ fontSize: 8 }}>●</span> {r.isOpen ? 'Open' : 'Closed'}
@@ -202,6 +212,12 @@ export default function LandingPage() {
                         </div>
                     ))}
                 </div>
+
+
+
+
+
+
             </section>
 
             {/* Cuisines Infinite Moving Carousel */}
