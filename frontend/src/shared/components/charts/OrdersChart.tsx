@@ -12,7 +12,7 @@ interface ChartDataPoint {
     orders?: number;
     value?: number;
     name?: string;
-    email?: string;
+   
 }
 
 interface OrdersChartProps {
