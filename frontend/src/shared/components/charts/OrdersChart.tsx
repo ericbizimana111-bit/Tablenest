@@ -4,7 +4,7 @@ import {
     XAxis, YAxis, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts';
 
-const RED = '#B91C1C';
+
 const COLORS = [RED, '#D97706', '#16A34A', '#2563EB', '#7C3AED', '#F9A8D4'];
 
 interface ChartDataPoint {
