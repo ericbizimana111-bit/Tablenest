@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Patch, Delete, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
 import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
 import { AuthGuard } from '@nestjs/passport';
 import { NotificationsService } from './notifications.service';
@@ -18,14 +18,9 @@ export class NotificationsController {
     return this.notificationsService.getUnreadCount(req.user._id.toString());
   }
 
-  @Post()
-  create(@Body() body: any) {
-    return this.notificationsService.create(body.userId, body);
-  }
-
   @Patch(':id/read')
-  markRead(@Param('id', MongoIdValidationPipe) id: string) {
-    return this.notificationsService.markRead(id);
+  markRead(@Request() req, @Param('id', MongoIdValidationPipe) id: string) {
+    return this.notificationsService.markReadForUser(req.user._id.toString(), id);
   }
 
   @Patch('mark-all-read')

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { SupportTicket, SupportTicketDocument, TicketStatus } from './support.schema';
@@ -32,6 +32,14 @@ export class SupportService {
     async findById(id: string) {
         const ticket = await this.ticketModel.findById(id);
         if (!ticket) throw new NotFoundException('Ticket not found');
+        return ticket;
+    }
+
+    async findByIdForUser(id: string, user: { _id: { toString(): string }; role: string }) {
+        const ticket = await this.findById(id);
+        if (user.role !== 'super_admin' && ticket.userId.toString() !== user._id.toString()) {
+            throw new ForbiddenException('Access denied');
+        }
         return ticket;
     }
 

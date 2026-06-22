@@ -1,7 +1,7 @@
 import { Controller, Post, Get, Body, UseGuards, Request, Patch } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
-import { RegisterDto, LoginDto, ForgotPasswordDto, ResetPasswordDto, ChangePasswordDto } from './auth.dto';
+import { RegisterDto, LoginDto, ForgotPasswordDto, ResetPasswordDto, ChangePasswordDto, RegisterOwnerDto } from './auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -10,6 +10,11 @@ export class AuthController {
   @Post('register')
   register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
+  }
+
+  @Post('register-owner')
+  registerOwner(@Body() dto: RegisterOwnerDto) {
+    return this.authService.registerOwner(dto);
   }
 
   @Post('login')

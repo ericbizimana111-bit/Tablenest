@@ -28,6 +28,14 @@ export class NotificationsService {
     return this.notificationModel.findByIdAndUpdate(id, { isRead: true }, { returnDocument: 'after' });
   }
 
+  async markReadForUser(userId: string, id: string) {
+    return this.notificationModel.findOneAndUpdate(
+      { _id: id, userId },
+      { isRead: true },
+      { returnDocument: 'after' },
+    );
+  }
+
   async markAllRead(userId: string) {
     await this.notificationModel.updateMany({ userId, isRead: false }, { isRead: true });
     return { message: 'All notifications marked as read' };

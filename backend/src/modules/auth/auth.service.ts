@@ -8,7 +8,7 @@ import * as crypto from 'crypto';
 import { User, UserDocument, UserRole } from '../users/user.schema';
 import { Loyalty, LoyaltyDocument } from '../loyalty/loyalty.schema';
 import { Referral, ReferralDocument } from '../referrals/referral.schema';
-import { RegisterDto, LoginDto, ResetPasswordDto, ChangePasswordDto } from './auth.dto';
+import { RegisterDto, LoginDto, ResetPasswordDto, ChangePasswordDto, RegisterOwnerDto } from './auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -26,15 +26,38 @@ export class AuthService {
 
     const hashed = await bcrypt.hash(dto.password, 12);
     const user = await this.userModel.create({
-      ...dto,
+      fullName: dto.fullName,
+      email: dto.email,
       password: hashed,
-      role: dto.role || UserRole.CUSTOMER,
+      role: UserRole.CUSTOMER,
     });
 
     // Create loyalty account
     await this.loyaltyModel.create({ userId: user._id, points: 0 });
 
     // Create referral code
+    const code = 'NEST-' + user.fullName.toUpperCase().slice(0, 4) + '-' + Date.now().toString(36).toUpperCase();
+    await this.referralModel.create({ userId: user._id, code });
+
+    const tokens = await this.generateTokens(user);
+    return { user: this.sanitize(user), ...tokens };
+  }
+
+  async registerOwner(dto: RegisterOwnerDto) {
+    const exists = await this.userModel.findOne({ email: dto.email });
+    if (exists) throw new BadRequestException('Email already registered');
+
+    const hashed = await bcrypt.hash(dto.password, 12);
+    const user = await this.userModel.create({
+      fullName: dto.fullName,
+      email: dto.email,
+      password: hashed,
+      phone: dto.phone,
+      role: UserRole.OWNER,
+      activePlan: 'Business',
+    });
+
+    await this.loyaltyModel.create({ userId: user._id, points: 0 });
     const code = 'NEST-' + user.fullName.toUpperCase().slice(0, 4) + '-' + Date.now().toString(36).toUpperCase();
     await this.referralModel.create({ userId: user._id, code });
 
@@ -65,7 +88,7 @@ export class AuthService {
       resetPasswordExpires: expires,
     });
 
-    return { message: 'Password reset link sent', token }; // In prod: send email
+    return { message: 'Password reset link sent' };
   }
 
   async resetPassword(dto: ResetPasswordDto) {

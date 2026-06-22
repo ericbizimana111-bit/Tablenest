@@ -1,11 +1,20 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Order, OrderDocument, OrderStatus } from './order.schema';
+import { NotificationsService } from '../notifications/notifications.service';
+import { LoyaltyService } from '../loyalty/loyalty.service';
+import { NotificationType } from '../notifications/notification.schema';
+import { AccessControlService } from '../../common/services/access-control.service';
 
 @Injectable()
 export class OrdersService {
-  constructor(@InjectModel(Order.name) private orderModel: Model<OrderDocument>) {}
+  constructor(
+    @InjectModel(Order.name) private orderModel: Model<OrderDocument>,
+    private notificationsService: NotificationsService,
+    private loyaltyService: LoyaltyService,
+    private accessControl: AccessControlService,
+  ) {}
 
   async create(customerId: string, data: any) {
     const order = await this.orderModel.create({
@@ -14,6 +23,14 @@ export class OrdersService {
       status: OrderStatus.PLACED,
       statusHistory: [{ status: OrderStatus.PLACED, time: new Date(), note: 'Order placed' }],
     });
+
+    await this.notificationsService.create(customerId, {
+      title: 'Order Placed',
+      message: `Your order has been placed successfully. Total: $${data.total?.toFixed?.(2) ?? data.total}`,
+      type: NotificationType.ORDER,
+      link: `/my-orders/${order._id}/track`,
+    });
+
     return order;
   }
 
@@ -61,7 +78,14 @@ export class OrdersService {
     return { orders, total, page: +page, pages: Math.ceil(total / limit) };
   }
 
-  async updateStatus(id: string, status: OrderStatus, note?: string) {
+  async updateStatus(id: string, status: OrderStatus, note?: string, actor?: any) {
+    const existing = await this.orderModel.findById(id);
+    if (!existing) throw new NotFoundException('Order not found');
+
+    if (actor) {
+      await this.accessControl.assertRestaurantOwner(actor, existing.restaurantId.toString());
+    }
+
     const order = await this.orderModel.findByIdAndUpdate(
       id,
       {
@@ -70,11 +94,47 @@ export class OrdersService {
       },
       { new: true },
     );
-    if (!order) throw new NotFoundException('Order not found');
+
+    if (order) {
+      await this.notificationsService.create(order.customerId.toString(), {
+        title: 'Order Update',
+        message: `Your order status is now: ${status.replace(/_/g, ' ')}`,
+        type: NotificationType.ORDER,
+        link: `/my-orders/${order._id}/track`,
+      });
+
+      if (status === OrderStatus.DELIVERED) {
+        const points = Math.floor(order.total / 10);
+        if (points > 0) {
+          await this.loyaltyService.addPoints(order.customerId.toString(), points, `Order reward - $${order.total}`);
+        }
+      }
+    }
+
     return order;
   }
 
-  async cancel(id: string) {
+  async cancel(id: string, user?: any) {
+    const order = await this.orderModel.findById(id);
+    if (!order) throw new NotFoundException('Order not found');
+
+    if (user) {
+      const isCustomer = order.customerId.toString() === user._id.toString();
+      const isAdmin = user.role === 'super_admin';
+      let isOwner = false;
+      if (user.role === 'owner') {
+        try {
+          await this.accessControl.assertRestaurantOwner(user, order.restaurantId.toString());
+          isOwner = true;
+        } catch {
+          isOwner = false;
+        }
+      }
+      if (!isCustomer && !isAdmin && !isOwner) {
+        throw new ForbiddenException('Cannot cancel this order');
+      }
+    }
+
     return this.updateStatus(id, OrderStatus.CANCELLED, 'Order cancelled');
   }
 

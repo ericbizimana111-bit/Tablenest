@@ -25,7 +25,7 @@ type PartnerForm = {
 
 export default function PartnerRegistration() {
     const navigate = useNavigate();
-    const { register, isAuthenticated } = useAuth();
+    const { registerOwner, isAuthenticated } = useAuth();
     const [step, setStep] = useState(1);
     const [form, setForm] = useState<PartnerForm>({
         fullName: '', email: '', password: '', restaurantName: '', cuisineType: 'Italian',
@@ -37,7 +37,7 @@ export default function PartnerRegistration() {
     const submit = async () => {
         try {
             if (!isAuthenticated) {
-                await register({ fullName: form.fullName, email: form.email, password: form.password, role: 'owner' });
+                await registerOwner({ fullName: form.fullName, email: form.email, password: form.password });
             }
             await restaurantsAPI.create({
                 name: form.restaurantName, cuisineType: form.cuisineType, description: form.description,

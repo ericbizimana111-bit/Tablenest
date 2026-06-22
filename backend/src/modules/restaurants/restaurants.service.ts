@@ -49,6 +49,12 @@ export class RestaurantsService {
     return restaurant;
   }
 
+  async findPublicById(id: string) {
+    const restaurant = await this.restaurantModel.findOne({ _id: id, status: RestaurantStatus.ACTIVE });
+    if (!restaurant) throw new NotFoundException('Restaurant not found');
+    return restaurant;
+  }
+
   async findByOwner(ownerId: string) {
     return this.restaurantModel.findOne({ ownerId });
   }
@@ -61,7 +67,12 @@ export class RestaurantsService {
     const restaurant = await this.restaurantModel.findById(id);
     if (!restaurant) throw new NotFoundException('Restaurant not found');
     if (restaurant.ownerId.toString() !== ownerId) throw new ForbiddenException();
-    return this.restaurantModel.findByIdAndUpdate(id, { $set: data }, { returnDocument: 'after' });
+    const allowed = ['name', 'description', 'cuisineType', 'address', 'city', 'country', 'phone', 'priceRange', 'seatingCapacity', 'dineIn', 'delivery', 'images', 'openingHours'];
+    const update: Record<string, unknown> = {};
+    for (const key of allowed) {
+      if (data[key] !== undefined) update[key] = data[key];
+    }
+    return this.restaurantModel.findByIdAndUpdate(id, { $set: update }, { returnDocument: 'after' });
   }
 
   async approve(id: string) {

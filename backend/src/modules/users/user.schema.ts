@@ -59,6 +59,47 @@ export class User {
 
   @Prop({ default: null })
   resetPasswordExpires: Date;
+
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Restaurant' }], default: [] })
+  favoriteRestaurantIds: Types.ObjectId[];
+
+  @Prop({
+    type: [{
+      label: String,
+      street: String,
+      city: String,
+      state: String,
+      zip: String,
+      isDefault: { type: Boolean, default: false },
+    }],
+    default: [],
+  })
+  addresses: Array<{
+    label: string;
+    street: string;
+    city: string;
+    state: string;
+    zip: string;
+    isDefault: boolean;
+  }>;
+
+  @Prop({
+    type: [{
+      brand: String,
+      last4: String,
+      expiryMonth: String,
+      expiryYear: String,
+      isDefault: { type: Boolean, default: false },
+    }],
+    default: [],
+  })
+  paymentMethods: Array<{
+    brand: string;
+    last4: string;
+    expiryMonth: string;
+    expiryYear: string;
+    isDefault: boolean;
+  }>;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

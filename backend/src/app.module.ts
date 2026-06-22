@@ -20,12 +20,12 @@ import { StaffModule } from './modules/staff/staff.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { SupportModule } from './modules/support/support.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
-
-
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
+    CommonModule,
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -56,8 +56,6 @@ import { UploadsModule } from './modules/uploads/uploads.module';
     AnalyticsModule,
     SupportModule,
     UploadsModule,
-   
-   
   ],
 })
 export class AppModule {}

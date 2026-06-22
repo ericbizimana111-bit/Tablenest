@@ -1,4 +1,4 @@
-import { IsEmail, IsString, MinLength, IsOptional, IsEnum } from 'class-validator';
+import { IsEmail, IsString, MinLength, IsOptional } from 'class-validator';
 import { UserRole } from '../users/user.schema';
 
 export class RegisterDto {
@@ -11,10 +11,12 @@ export class RegisterDto {
   @IsString()
   @MinLength(6)
   password: string;
+}
 
+export class RegisterOwnerDto extends RegisterDto {
   @IsOptional()
-  @IsEnum(UserRole)
-  role?: UserRole;
+  @IsString()
+  phone?: string;
 }
 
 export class LoginDto {

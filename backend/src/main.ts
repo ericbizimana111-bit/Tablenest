@@ -4,9 +4,13 @@ import { ValidationPipe } from "@nestjs/common";
 import { AppModule } from "./app.module";
 import * as helmet from "helmet";
 import * as rateLimit from "express-rate-limit";
+import { NestExpressApplication } from "@nestjs/platform-express";
+import { join } from "path";
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule, { cors: false });
+    const app = await NestFactory.create<NestExpressApplication>(AppModule, { cors: false });
+
+    app.useStaticAssets(join(process.cwd(), "uploads"), { prefix: "/uploads/" });
 
     // Security
     app.use(

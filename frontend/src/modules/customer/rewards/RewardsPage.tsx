@@ -1,9 +1,10 @@
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { loyaltyAPI } from '../../../shared/services/api';
 import { Award, Star, Gift, Clock } from 'lucide-react';
 import { Spinner } from '../../../shared/components/ui/index';
 import type { LoyaltyTransaction } from '../../../shared/types/user.types';
+import toast from 'react-hot-toast';
 
 const TIERS = [
     { name: 'Bronze', min: 0, max: 1000, color: '#CD7F32', bg: '#FEF3C7' },
@@ -21,15 +22,26 @@ const REWARDS = [
 ];
 
 export default function RewardsPage() {
+    const queryClient = useQueryClient();
     const { data: loyalty, isLoading } = useQuery({
         queryKey: ['loyalty'],
         queryFn: () => loyaltyAPI.get().then(r => r.data),
-        initialData: { points: 9000, transactions: DEMO_TRANSACTIONS },
+    });
+
+    const redeemMut = useMutation({
+        mutationFn: ({ points, description }: { points: number; description: string }) =>
+            loyaltyAPI.redeemPoints(points, description),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['loyalty'] });
+            toast.success('Reward redeemed!');
+        },
+        onError: (err: { response?: { data?: { message?: string } } }) =>
+            toast.error(err.response?.data?.message || 'Could not redeem reward'),
     });
 
     if (isLoading) return <Spinner />;
 
-    const points = loyalty?.points || 9000;
+    const points = loyalty?.points || 0;
     const currentTier = TIERS.find(t => points >= t.min && points < t.max) || TIERS[2];
     const nextTier = TIERS[TIERS.indexOf(currentTier) + 1];
     const progress = nextTier ? ((points - currentTier.min) / (nextTier.min - currentTier.min)) * 100 : 100;
@@ -103,7 +115,9 @@ export default function RewardsPage() {
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontWeight: 700, color: '#B91C1C', fontSize: 14 }}>
                                             <Star size={12} fill="#B91C1C" color="#B91C1C" /> {reward.points.toLocaleString()} pts
                                         </div>
-                                        <button disabled={!canRedeem}
+                                        <button
+                                            disabled={!canRedeem || redeemMut.isPending}
+                                            onClick={() => redeemMut.mutate({ points: reward.points, description: reward.title })}
                                             style={{ padding: '6px 14px', background: canRedeem ? '#B91C1C' : '#F3F4F6', color: canRedeem ? 'white' : '#9CA3AF', border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: canRedeem ? 'pointer' : 'not-allowed', fontFamily: 'Poppins' }}>
                                             {canRedeem ? 'Redeem' : 'Not enough pts'}
                                         </button>
@@ -117,7 +131,7 @@ export default function RewardsPage() {
                 {/* Transaction history */}
                 <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden' }}>
                     <div style={{ padding: '16px 20px', borderBottom: '1px solid #E5E7EB', fontWeight: 600, fontSize: 15 }}>Points History</div>
-                    {(loyalty?.transactions || DEMO_TRANSACTIONS).map((tx: LoyaltyTransaction, i: number) => (
+                    {(loyalty?.transactions || []).map((tx: LoyaltyTransaction, i: number) => (
                         <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 20px', borderBottom: '1px solid #F3F4F6' }}>
                             <div>
                                 <div style={{ fontSize: 13, fontWeight: 500 }}>{tx.description}</div>
@@ -134,10 +148,3 @@ export default function RewardsPage() {
     );
 }
 
-const DEMO_TRANSACTIONS = [
-    { type: 'earn', points: 500, description: 'Referral Reward — Alex', dateLabel: 'Oct 24, 2023' },
-    { type: 'earn', points: 200, description: 'Dining at L\'Osteria', dateLabel: 'Oct 20, 2023' },
-    { type: 'redeem', points: -500, description: '10% Off Discount Redeemed', dateLabel: 'Oct 15, 2023' },
-    { type: 'earn', points: 500, description: 'Referral Reward — James', dateLabel: 'Nov 15, 2023' },
-    { type: 'earn', points: 150, description: 'Dining at Sakura Sushi', dateLabel: 'Nov 18, 2023' },
-];

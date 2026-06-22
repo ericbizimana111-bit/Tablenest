@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { Home, Search, Calendar, ShoppingBag, Heart, Bell, Settings, Users } from 'lucide-react';
+import { Home, Search, Calendar, ShoppingBag, Heart, Bell, Settings, Users, Award } from 'lucide-react';
 import Sidebar from '../../../shared/components/layout/Sidebar';
 import Topbar from '../../../shared/components/layout/Topbar';
 
@@ -12,6 +12,7 @@ const NAV = [
     { label: 'Favorites', path: '/favorites', icon: <Heart size={18} /> },
     { label: 'Notifications', path: '/notifications', icon: <Bell size={18} /> },
     { label: 'Referrals', path: '/referrals', icon: <Users size={18} /> },
+    { label: 'Rewards', path: '/rewards', icon: <Award size={18} /> },
     { label: 'Settings', path: '/settings', icon: <Settings size={18} /> },
 ];
 

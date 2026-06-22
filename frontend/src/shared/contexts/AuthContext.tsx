@@ -23,6 +23,7 @@ export interface AuthContextValue {
     isAuthenticated: boolean;
     login: (email: string, password: string) => Promise<User>;
     register: (data: RegisterPayload) => Promise<User>;
+    registerOwner: (data: RegisterPayload) => Promise<User>;
     logout: () => void;
     setUser: (user: User) => void;
     refreshUser: () => Promise<void>;
@@ -102,7 +103,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const register = useCallback(async (data: RegisterPayload) => {
         setIsActionLoading(true);
         try {
-            const res = await authAPI.register(data);
+            const res = await authAPI.register(data as Record<string, unknown>);
+            const { user: nextUser, accessToken } = res.data;
+            applySession(nextUser, accessToken);
+            return nextUser;
+        } finally {
+            setIsActionLoading(false);
+        }
+    }, [applySession]);
+
+    const registerOwner = useCallback(async (data: RegisterPayload) => {
+        setIsActionLoading(true);
+        try {
+            const res = await authAPI.registerOwner(data as Record<string, unknown>);
             const { user: nextUser, accessToken } = res.data;
             applySession(nextUser, accessToken);
             return nextUser;
@@ -129,10 +142,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAuthenticated: Boolean(user && token),
         login,
         register,
+        registerOwner,
         logout,
         setUser,
         refreshUser,
-    }), [user, token, isActionLoading, login, register, logout, setUser, refreshUser]);
+    }), [user, token, isActionLoading, login, register, registerOwner, logout, setUser, refreshUser]);
 
     return (
         <AuthContext.Provider value={value}>

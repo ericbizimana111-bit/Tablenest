@@ -13,6 +13,7 @@
     "composite": true,
     "declaration": true,
     "noEmit": false,
+    "emitDeclarationOnly": true,
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
