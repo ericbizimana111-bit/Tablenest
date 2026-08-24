@@ -15,7 +15,7 @@ export default function ReferralPage() {
     const { data: loyalty } = useQuery<Loyalty>({
         queryKey: ['loyalty'],
         queryFn: () => loyaltyAPI.get().then(r => r.data),
-        initialData: { points: 9000, transactions: [] },
+        initialData: { userId: 'demo', points: 9000, transactions: [] },
     });
 
     const code = referral?.code || 'NEST-GOLD-2024';
@@ -110,7 +110,7 @@ export default function ReferralPage() {
                     </thead>
                     <tbody>
                         {referrals.map((r: ReferralRecord, i: number) => (
-                            <tr key={r._id || i}>
+                            <tr key={i}>
                                 <td>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                                         <div style={{ width: 34, height: 34, borderRadius: '50%', background: '#E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 12, color: '#374151' }}>
@@ -141,7 +141,7 @@ export default function ReferralPage() {
     );
 }
 
-const DEMO_REFERRAL = { code: 'NEST-GOLD-2024', totalEarned: 1500 };
+const DEMO_REFERRAL: Referral = { userId: 'demo', code: 'NEST-GOLD-2024', referrals: DEMO_REFERRALS, totalEarned: 1500 };
 const DEMO_REFERRALS = [
     { _id: '1', name: 'Alex Sterling', email: 'alex.s@email.com', status: 'successful', reward: 500, date: 'Oct 24, 2023' },
     { _id: '2', name: 'Maria Lopez', email: 'm.lopez@email.com', status: 'pending', reward: 0, date: 'Nov 02, 2023' },

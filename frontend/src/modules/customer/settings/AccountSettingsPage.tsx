@@ -110,10 +110,10 @@ export default function AccountSettingsPage() {
 
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
                             {[
-                                { label: 'Full Name', key: 'fullName', icon: <User size={14} color="#9CA3AF" />, type: 'text' },
-                                { label: 'Email Address', key: 'email', icon: <Mail size={14} color="#9CA3AF" />, type: 'email' },
-                                { label: 'Phone Number', key: 'phone', icon: <Phone size={14} color="#9CA3AF" />, type: 'tel' },
-                                { label: 'Address', key: 'address', icon: <MapPin size={14} color="#9CA3AF" />, type: 'text' },
+                                { label: 'Full Name', key: 'fullName' as keyof ProfileForm, icon: <User size={14} color="#9CA3AF" />, type: 'text' },
+                                { label: 'Email Address', key: 'email' as keyof ProfileForm, icon: <Mail size={14} color="#9CA3AF" />, type: 'email' },
+                                { label: 'Phone Number', key: 'phone' as keyof ProfileForm, icon: <Phone size={14} color="#9CA3AF" />, type: 'tel' },
+                                { label: 'Address', key: 'address' as keyof ProfileForm, icon: <MapPin size={14} color="#9CA3AF" />, type: 'text' },
                             ].map(f => (
                                 <div key={f.key}>
                                     <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5, color: '#374151' }}>{f.label}</label>
@@ -178,7 +178,7 @@ export default function AccountSettingsPage() {
                                     <div style={{ fontWeight: 500, fontSize: 14 }}>{n.label}</div>
                                     <div style={{ fontSize: 12, color: '#9CA3AF' }}>{n.desc}</div>
                                 </div>
-                                <Toggle checked={notifPrefs[n.key]} onChange={() => saveNotifs(n.key, !notifPrefs[n.key])} />
+                                <Toggle checked={notifPrefs[n.key as keyof NotificationPrefs]} onChange={() => saveNotifs(n.key as keyof NotificationPrefs, !notifPrefs[n.key as keyof NotificationPrefs])} />
                             </div>
                         ))}
                     </div>

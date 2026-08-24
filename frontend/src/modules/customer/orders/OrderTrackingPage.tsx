@@ -145,7 +145,12 @@ export default function OrderTrackingPage() {
     );
 }
 
-const DEMO_ORDER = {
-    _id: '00284', restaurantName: "L'Artisan Bistro", status: 'preparing', total: 124.50,
+const DEMO_ORDER: Order = {
+    _id: '00284',
+    customerId: 'demo-customer',
+    restaurantId: 'demo-restaurant',
+    restaurantName: "L'Artisan Bistro",
+    status: 'preparing',
+    total: 124.50,
     items: [{ name: 'Wagyu Beef Burger', price: 64.00, quantity: 2 }, { name: 'Truffle Fries', price: 18.50, quantity: 1 }, { name: 'Bordeaux Reserve', price: 42.00, quantity: 1 }],
 };

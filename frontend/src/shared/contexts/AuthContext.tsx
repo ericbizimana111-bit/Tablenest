@@ -103,7 +103,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const register = useCallback(async (data: RegisterPayload) => {
         setIsActionLoading(true);
         try {
-            const res = await authAPI.register(data as Record<string, unknown>);
+            const res = await authAPI.register(data as unknown as Record<string, unknown>);
             const { user: nextUser, accessToken } = res.data;
             applySession(nextUser, accessToken);
             return nextUser;
@@ -115,7 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const registerOwner = useCallback(async (data: RegisterPayload) => {
         setIsActionLoading(true);
         try {
-            const res = await authAPI.registerOwner(data as Record<string, unknown>);
+            const res = await authAPI.registerOwner(data as unknown as Record<string, unknown>);
             const { user: nextUser, accessToken } = res.data;
             applySession(nextUser, accessToken);
             return nextUser;

@@ -19,10 +19,10 @@ export default function MyBookingsPage() {
     const [tab, setTab] = useState('Upcoming');
     const [modifyModal, setModifyModal] = useState<ModifyModalState | null>(null);
 
-    const { data = [], isLoading } = useQuery({
+    const { data = [], isLoading } = useQuery<Reservation[]>({
         queryKey: ['my-reservations'],
         queryFn: () => reservationsAPI.getMyReservations().then(r => r.data),
-        initialData: DEMO_RESERVATIONS,
+        initialData: DEMO_RESERVATIONS as Reservation[],
     });
 
     const cancelMut = useMutation({

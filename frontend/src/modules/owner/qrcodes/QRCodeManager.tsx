@@ -93,7 +93,7 @@ export default function QRCodeManager() {
                                     <span style={{ fontWeight: 700, fontSize: 14 }}>T-{t.tableNumber || t.number}</span>
                                     <Toggle checked={t.isActive !== false} onChange={() => { }} />
                                 </div>
-                                <div style={{ aspect: '1/1', background: '#F3F4F6', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+                                <div style={{ aspectRatio: '1/1', background: '#F3F4F6', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
                                     <svg viewBox="0 0 80 80" width="64" height="64">
                                         <rect x="5" y="5" width="30" height="30" rx="3" fill={t.isActive !== false ? primaryColor : '#9CA3AF'} opacity="0.8" />
                                         <rect x="45" y="5" width="30" height="30" rx="3" fill={t.isActive !== false ? primaryColor : '#9CA3AF'} opacity="0.8" />

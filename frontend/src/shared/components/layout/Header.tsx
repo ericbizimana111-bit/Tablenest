@@ -1,7 +1,12 @@
 
 import { useNavigate } from 'react-router-dom';
 
-export default function Header({ activeTab, setActiveTab }) {
+interface HeaderProps {
+    activeTab?: string;
+    setActiveTab?: (tab: string) => void;
+}
+
+export default function Header({ activeTab, setActiveTab }: HeaderProps) {
     const navigate = useNavigate();
 
     return (

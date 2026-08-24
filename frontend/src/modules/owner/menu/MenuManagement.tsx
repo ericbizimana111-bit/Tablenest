@@ -7,7 +7,7 @@ import { Modal, Spinner, Toggle } from '../../../shared/components/ui/index';
 import toast from 'react-hot-toast';
 
 type MenuCategory = { _id: string; name: string; count?: number };
-type MenuItem = { _id: string; name: string; price?: string | number; description?: string; image?: string; categoryId?: string; isSoldOut?: boolean };
+type MenuItem = { _id: string; name: string; price?: string | number; description?: string; image?: string; categoryId?: string; isSoldOut?: boolean; isAvailable?: boolean };
 type ItemForm = { name: string; price: string; description: string; image: string };
 
 export default function MenuManagement() {
@@ -183,7 +183,7 @@ export default function MenuManagement() {
                     </div>
                     <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
                         <button onClick={() => setShowItemModal(false)} style={{ flex: 1, padding: '10px', border: '1px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 14, cursor: 'pointer', fontFamily: 'Poppins' }}>Cancel</button>
-                        <button onClick={() => saveItemMut.mutate({ ...itemForm, price: parseFloat(itemForm.price) })}
+                        <button onClick={() => saveItemMut.mutate(itemForm)}
                             style={{ flex: 1, padding: '10px', background: '#B91C1C', color: 'white', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>
                             {editItem ? 'Update Item' : 'Add Item'}
                         </button>

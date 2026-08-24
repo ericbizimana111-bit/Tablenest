@@ -137,7 +137,7 @@ export default function PromotionsPage() {
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                         <div>
                             <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>Discount Type</label>
-                            <select value={form.discountType} onChange={e => setForm(f => ({ ...f, discountType: e.target.value }))}
+                            <select value={form.discountType} onChange={e => setForm(f => ({ ...f, discountType: e.target.value as 'percentage' | 'flat' }))}
                                 style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none', background: 'white' }}>
                                 <option value="percentage">Percentage (%)</option>
                                 <option value="flat">Flat ($)</option>
@@ -181,7 +181,7 @@ export default function PromotionsPage() {
                     </div>
                     <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
                         <button onClick={() => setShowModal(false)} style={{ flex: 1, padding: '10px', border: '1px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 14, cursor: 'pointer', fontFamily: 'Poppins' }}>Cancel</button>
-                        <button onClick={() => saveMut.mutate({ ...form, discountValue: parseFloat(form.discountValue) })}
+                        <button onClick={() => saveMut.mutate({ ...form, discountValue: form.discountValue })}
                             style={{ flex: 1, padding: '10px', background: '#B91C1C', color: 'white', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>
                             {editPromo ? 'Update Offer' : 'Create Offer'}
                         </button>
