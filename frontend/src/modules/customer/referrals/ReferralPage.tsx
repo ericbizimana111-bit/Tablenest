@@ -141,9 +141,9 @@ export default function ReferralPage() {
     );
 }
 
-const DEMO_REFERRAL: Referral = { userId: 'demo', code: 'NEST-GOLD-2024', referrals: DEMO_REFERRALS, totalEarned: 1500 };
-const DEMO_REFERRALS = [
-    { _id: '1', name: 'Alex Sterling', email: 'alex.s@email.com', status: 'successful', reward: 500, date: 'Oct 24, 2023' },
-    { _id: '2', name: 'Maria Lopez', email: 'm.lopez@email.com', status: 'pending', reward: 0, date: 'Nov 02, 2023' },
-    { _id: '3', name: 'James Hunter', email: 'j.hunter@email.com', status: 'successful', reward: 500, date: 'Nov 15, 2023' },
+const DEMO_REFERRALS: ReferralRecord[] = [
+    { name: 'Alex Sterling', email: 'alex.s@email.com', status: 'successful' as const, reward: 500, date: 'Oct 24, 2023' },
+    { name: 'Maria Lopez', email: 'm.lopez@email.com', status: 'pending' as const, reward: 0, date: 'Nov 02, 2023' },
+    { name: 'James Hunter', email: 'j.hunter@email.com', status: 'successful' as const, reward: 500, date: 'Nov 15, 2023' },
 ];
+const DEMO_REFERRAL: Referral = { userId: 'demo', code: 'NEST-GOLD-2024', referrals: DEMO_REFERRALS, totalEarned: 1500 };

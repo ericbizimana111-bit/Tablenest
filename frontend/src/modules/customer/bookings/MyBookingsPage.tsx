@@ -153,8 +153,8 @@ export default function MyBookingsPage() {
     );
 }
 
-const DEMO_RESERVATIONS = [
-    { _id: '1', restaurantName: "L'Art Culinaire", bookingRef: 'TN-7729-1X', date: '2024-11-15', time: '19:30', guests: 4, status: 'confirmed' },
-    { _id: '2', restaurantName: "Lumière Brasserie", bookingRef: 'TN-7730-2X', date: '2024-11-20', time: '20:00', guests: 2, status: 'pending' },
-    { _id: '3', restaurantName: 'Bistro No. 9', bookingRef: 'TN-7728-3X', date: '2024-10-28', time: '19:00', guests: 3, status: 'completed' },
+const DEMO_RESERVATIONS: Reservation[] = [
+    { _id: '1', customerId: 'demo', restaurantId: 'r1', tableId: 't1', restaurantName: "L'Art Culinaire", bookingRef: 'TN-7729-1X', date: '2024-11-15', time: '19:30', guests: 4, status: 'confirmed' },
+    { _id: '2', customerId: 'demo', restaurantId: 'r2', tableId: 't2', restaurantName: "Lumière Brasserie", bookingRef: 'TN-7730-2X', date: '2024-11-20', time: '20:00', guests: 2, status: 'pending' },
+    { _id: '3', customerId: 'demo', restaurantId: 'r3', tableId: 't3', restaurantName: 'Bistro No. 9', bookingRef: 'TN-7728-3X', date: '2024-10-28', time: '19:00', guests: 3, status: 'completed' },
 ];
