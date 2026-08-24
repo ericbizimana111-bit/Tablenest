@@ -15,6 +15,12 @@ export class LoyaltyController {
     return this.loyaltyService.getByUser(req.user._id.toString());
   }
 
+  @Post('add')
+  @Roles(UserRole.CUSTOMER)
+  addPoints(@Request() req, @Body() body: { points: number; description: string }) {
+    return this.loyaltyService.addPoints(req.user._id.toString(), body.points, body.description);
+  }
+
   @Post('redeem')
   @Roles(UserRole.CUSTOMER)
   redeemPoints(@Request() req, @Body() body: { points: number; description: string }) {
