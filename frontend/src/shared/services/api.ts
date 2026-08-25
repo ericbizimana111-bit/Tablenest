@@ -235,6 +235,8 @@ export const analyticsAPI = {
     getCuisineDistribution: () => api.get('/analytics/cuisine-distribution'),
     getRestaurantDashboard: (restaurantId: string) => api.get(`/analytics/restaurant/${restaurantId}/dashboard`),
     getHeatmap: (restaurantId: string) => api.get(`/analytics/restaurant/${restaurantId}/heatmap`),
+    getRevenueByDay: (days?: number) => api.get('/analytics/revenue-by-day', { params: { days } }),
+    getOrdersByDay: (days?: number) => api.get('/analytics/orders-by-day', { params: { days } }),
 };
 
 /* =================================================================

@@ -111,6 +111,25 @@ export class AnalyticsService {
             },
         ]);
     }
-}
+
+    async getRevenueByDay(days = 7) {
+        const since = new Date();
+        since.setDate(since.getDate() - days);
+        return this.orderModel.aggregate([
+            { $match: { status: OrderStatus.DELIVERED, createdAt: { $gte: since } } },
+            { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }, revenue: { $sum: '$total' }, orders: { $sum: 1 } } },
+            { $sort: { _id: 1 } },
+        ]);
+    }
+
+    async getOrdersByDay(days = 7) {
+        const since = new Date();
+        since.setDate(since.getDate() - days);
+        return this.orderModel.aggregate([
+            { $match: { createdAt: { $gte: since } } },
+            { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }, count: { $sum: 1 } } },
+            { $sort: { _id: 1 } },
+        ]);
+    }
 
 

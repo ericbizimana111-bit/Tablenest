@@ -15,8 +15,40 @@ export default function AdminReports() {
         queryFn: () => analyticsAPI.getSignups(+period).then(r => r.data),
     });
 
+    const { data: bookingsByDay = [] } = useQuery({
+        queryKey: ['report-bookings', period],
+        queryFn: () => analyticsAPI.getBookingsByDay(+period).then(r => r.data),
+    });
+
+    const { data: revenueByDay = [] } = useQuery({
+        queryKey: ['report-revenue', period],
+        queryFn: () => analyticsAPI.getRevenueByDay(+period).then(r => r.data),
+    });
+
+    const { data: ordersByDay = [] } = useQuery({
+        queryKey: ['report-orders', period],
+        queryFn: () => analyticsAPI.getOrdersByDay(+period).then(r => r.data),
+    });
+
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    const revenueData = days.map(d => ({ day: d, revenue: 0, orders: 0 }));
+
+    const revenueData = days.map((d) => {
+        const revMatch = (revenueByDay as Array<{ _id: string; revenue: number }>).find(
+            b => b._id?.toUpperCase()?.startsWith(d.toUpperCase())
+        );
+        const ordMatch = (ordersByDay as Array<{ _id: string; count: number }>).find(
+            b => b._id?.toUpperCase()?.startsWith(d.toUpperCase())
+        );
+        return { day: d, revenue: revMatch?.revenue || 0, orders: ordMatch?.count || 0 };
+    });
+
+    const signupData = (signups.length > 0)
+        ? signups.map((s: { _id?: string; count: number }) => ({ day: s._id?.slice(5) || '', count: s.count }))
+        : days.map(d => ({ day: d, count: 0 }));
+
+    const bookingData = (bookingsByDay.length > 0)
+        ? bookingsByDay.map((b: { _id?: string; count: number }) => ({ day: b._id?.slice(5) || '', count: b.count }))
+        : days.map(d => ({ day: d, count: 0 }));
 
     return (
         <div className="fade-in">
@@ -70,16 +102,36 @@ export default function AdminReports() {
                 </div>
             </div>
 
-            <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 20 }}>
-                <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 16 }}>New User Signups</div>
-                <ResponsiveContainer width="100%" height={180}>
-                    <LineChart data={signups.length ? signups.map((s: { _id?: string; count: number }) => ({ day: s._id?.slice(5), count: s.count })) : days.map(d => ({ day: d, count: 0 }))}>
-                        <XAxis dataKey="day" tick={{ fontSize: 11, fontFamily: 'Poppins' }} axisLine={false} tickLine={false} />
-                        <YAxis hide />
-                        <Tooltip contentStyle={{ fontFamily: 'Poppins', fontSize: 12, borderRadius: 8 }} />
-                        <Line type="monotone" dataKey="count" stroke={RED} strokeWidth={2.5} dot={{ fill: RED, r: 4 }} />
-                    </LineChart>
-                </ResponsiveContainer>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 20 }}>
+                    <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 16 }}>New User Signups</div>
+                    <ResponsiveContainer width="100%" height={180}>
+                        <LineChart data={signupData}>
+                            <XAxis dataKey="day" tick={{ fontSize: 11, fontFamily: 'Poppins' }} axisLine={false} tickLine={false} />
+                            <YAxis hide />
+                            <Tooltip contentStyle={{ fontFamily: 'Poppins', fontSize: 12, borderRadius: 8 }} />
+                            <Line type="monotone" dataKey="count" stroke={RED} strokeWidth={2.5} dot={{ fill: RED, r: 4 }} />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </div>
+
+                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 20 }}>
+                    <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 16 }}>Bookings by Day</div>
+                    <ResponsiveContainer width="100%" height={180}>
+                        <AreaChart data={bookingData}>
+                            <defs>
+                                <linearGradient id="bookGrad" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor={RED} stopOpacity={0.2} />
+                                    <stop offset="100%" stopColor={RED} stopOpacity={0} />
+                                </linearGradient>
+                            </defs>
+                            <XAxis dataKey="day" tick={{ fontSize: 11, fontFamily: 'Poppins' }} axisLine={false} tickLine={false} />
+                            <YAxis hide />
+                            <Tooltip contentStyle={{ fontFamily: 'Poppins', fontSize: 12, borderRadius: 8 }} />
+                            <Area type="monotone" dataKey="count" stroke={RED} strokeWidth={2.5} fill="url(#bookGrad)" />
+                        </AreaChart>
+                    </ResponsiveContainer>
+                </div>
             </div>
         </div>
     );

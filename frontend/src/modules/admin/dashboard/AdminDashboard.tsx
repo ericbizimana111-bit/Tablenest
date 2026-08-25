@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import { Utensils, Users, Calendar, ShoppingBag, Clock, DollarSign, Pencil, Trash2 } from 'lucide-react';
 import { analyticsAPI, restaurantsAPI } from '../../../shared/services/api';
@@ -39,6 +39,13 @@ const COLORS = [RED, '#92400E', '#D97706', '#F9A8D4', '#FBBF24'];
 
 export default function AdminDashboard() {
     const navigate = useNavigate();
+    const qc = useQueryClient();
+
+    const deleteMut = useMutation({
+        mutationFn: (id: string) => restaurantsAPI.delete(id).then(() => restaurantsAPI.getAll({ limit: 5 })),
+        onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-restaurants'] }); qc.invalidateQueries({ queryKey: ['admin-overview'] }); toast.success('Restaurant deleted'); },
+        onError: () => toast.error('Failed to delete restaurant'),
+    });
 
     const { data: overview, isLoading } = useQuery({
         queryKey: ['admin-overview'],

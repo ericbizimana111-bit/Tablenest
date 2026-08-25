@@ -46,7 +46,7 @@ export default function OrderTrackingPage() {
                                 <div style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 2 }}>Order #{o._id?.slice(-5) || '00284'}</div>
                                 <div style={{ fontWeight: 700, fontSize: 18 }}>{o.restaurantName || "L'Artisan Bistro"}</div>
                                 <div style={{ fontSize: 13, color: '#9CA3AF', display: 'flex', alignItems: 'center', gap: 4 }}>
-                                    <Clock size={12} /> Today, 7:15 PM
+                                    <Clock size={12} /> {o.createdAt ? new Date(o.createdAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'Order time'}
                                 </div>
                             </div>
                             <div style={{ fontWeight: 700, fontSize: 20, color: '#B91C1C' }}>${o.total?.toFixed(2) || '124.50'}</div>
@@ -106,14 +106,16 @@ export default function OrderTrackingPage() {
                         <div style={{ padding: 16 }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                                    <div style={{ width: 44, height: 44, borderRadius: '50%', overflow: 'hidden', background: '#E5E7EB' }}>
-                                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&q=80" alt="Driver" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    <div style={{ width: 44, height: 44, borderRadius: '50%', overflow: 'hidden', background: '#E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 16, color: '#B91C1C' }}>
+                                        {o.driverName?.[0]?.toUpperCase() || 'D'}
                                     </div>
                                     <div>
-                                        <div style={{ fontWeight: 600, fontSize: 14 }}>Marcus Thompson</div>
-                                        <div style={{ fontSize: 12, color: '#9CA3AF', display: 'flex', alignItems: 'center', gap: 4 }}>
-                                            <Star size={12} fill="#F59E0B" color="#F59E0B" /> 4.9 · Delivery Pro
-                                        </div>
+                                        <div style={{ fontWeight: 600, fontSize: 14 }}>{o.driverName || 'Driver assigned'}</div>
+                                        {o.driverRating && (
+                                            <div style={{ fontSize: 12, color: '#9CA3AF', display: 'flex', alignItems: 'center', gap: 4 }}>
+                                                <Star size={12} fill="#F59E0B" color="#F59E0B" /> {o.driverRating} · Delivery Pro
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                                 <div style={{ display: 'flex', gap: 8 }}>

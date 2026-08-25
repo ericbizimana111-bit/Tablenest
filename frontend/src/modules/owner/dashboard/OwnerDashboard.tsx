@@ -41,7 +41,17 @@ export default function OwnerDashboard() {
         revenue: revenueData[i]?.revenue || 0,
     }));
 
-    const heatmapData = [];
+    const { data: heatmapData = [] } = useQuery({
+        queryKey: ['owner-heatmap', restaurantId],
+        queryFn: () => restaurantId ? analyticsAPI.getHeatmap(restaurantId).then(r => r.data) : Promise.resolve([]),
+        enabled: !!restaurantId,
+    });
+
+    const { data: kitchenOrders = [] } = useQuery({
+        queryKey: ['kitchen-queue', restaurantId],
+        queryFn: () => restaurantId ? ordersAPI.getByRestaurant(restaurantId, { status: 'preparing', limit: 4 }).then(r => r.data?.orders || r.data) : Promise.resolve([]),
+        enabled: !!restaurantId,
+    });
 
     if (isLoading) return <Spinner />;
 
@@ -135,15 +145,18 @@ export default function OwnerDashboard() {
                 {/* Kitchen Queue */}
                 <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden' }}>
                     <div style={{ padding: '16px 20px', borderBottom: '1px solid #E5E7EB', fontWeight: 600, fontSize: 15 }}>Kitchen Queue</div>
-                    {[].map(q => (
-                        <div key={q.id} style={{ padding: '12px 20px', borderBottom: '1px solid #F3F4F6', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    {(Array.isArray(kitchenOrders) ? kitchenOrders : []).slice(0, 4).map((q: any) => (
+                        <div key={q._id || q.id} style={{ padding: '12px 20px', borderBottom: '1px solid #F3F4F6', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <div>
-                                <div style={{ fontWeight: 500, fontSize: 13 }}>Order #{q.id}</div>
-                                <div style={{ fontSize: 12, color: '#9CA3AF' }}>Table {q.table} • {q.items} Items</div>
+                                <div style={{ fontWeight: 500, fontSize: 13 }}>Order #{(q._id || '').slice(-5)}</div>
+                                <div style={{ fontSize: 12, color: '#9CA3AF' }}>{q.items?.length || 0} Items</div>
                             </div>
-                            <span style={{ fontSize: 12, fontWeight: 600, color: RED }}>{q.time}</span>
+                            <span style={{ fontSize: 12, fontWeight: 600, color: RED }}>{q.status}</span>
                         </div>
                     ))}
+                    {(!kitchenOrders || (Array.isArray(kitchenOrders) && kitchenOrders.length === 0)) && (
+                        <div style={{ padding: '16px 20px', textAlign: 'center', color: '#9CA3AF', fontSize: 13 }}>No pending kitchen orders</div>
+                    )}
                     <div style={{ padding: '12px 20px' }}>
                         <button style={{ width: '100%', padding: '9px', background: '#D97706', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins' }}>
                             View Full Kitchen Display

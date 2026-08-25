@@ -187,7 +187,7 @@ export default function LandingPage() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 24 }}>
                     {(featuredRestaurants || []).map((r: any) => (
-                        <div key={r.name} className="hover-card" style={{ border: '1px solid #E5E7EB', borderRadius: 16, overflow: 'hidden', cursor: 'pointer', background: 'white', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }} onClick={() => navigate('/restaurants/booking')}>
+                        <div key={r.name} className="hover-card" style={{ border: '1px solid #E5E7EB', borderRadius: 16, overflow: 'hidden', cursor: 'pointer', background: 'white', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }} onClick={() => navigate(`/restaurants/${r._id}`)}>
                             <div style={{ position: 'relative' }}>
 
                                 <img src={r.images?.[0] || "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=500&q=80"} alt={r.name} style={{ width: '100%', height: 180, objectFit: 'cover' }} />
@@ -200,7 +200,7 @@ export default function LandingPage() {
                                     <span style={{ fontWeight: 700, fontSize: 16, color: '#111827' }}>{r.name}</span>
                                     <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 14, color: '#4B5563', fontWeight: 500 }}><Star size={14} fill="#F59E0B" color="#F59E0B" />{r.rating}</span>
                                 </div>
-                                <div style={{ fontSize: 13, color: '#6B7280', marginBottom: 16 }}>{r.cuisineType || "Various"} • {r.dist}</div>
+                                <div style={{ fontSize: 13, color: '#6B7280', marginBottom: 16 }}>{r.cuisineType || "Various"} · {r.priceRange || '$$'}{r.city ? ` · ${r.city}` : ''}</div>
                                 <div style={{ display: 'flex', gap: 10 }}>
                                     <button className="btn-outline-hover" style={{ flex: 1, padding: "9px", border: "1px solid #E5E7EB", borderRadius: 8, background: "white", fontSize: 13, cursor: "pointer", fontFamily: "Poppins", fontWeight: 600, color: "#4B5563" }} onClick={(e) => { e.stopPropagation(); navigate("/restaurants/" + r._id); }}>View Menu</button>
                                     <button className="btn-hover" style={{ flex: 1, padding: "9px", border: "none", borderRadius: 8, background: "#B91C1C", color: "white", fontSize: 13, cursor: "pointer", fontFamily: "Poppins", fontWeight: 600 }} onClick={(e) => { e.stopPropagation(); navigate("/restaurants/" + r._id); }}>Book</button>

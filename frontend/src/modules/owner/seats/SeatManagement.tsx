@@ -112,24 +112,20 @@ export default function SeatManagement() {
                                 <div style={{ marginBottom: 12 }}>
                                     <div style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 4 }}>Current Guest</div>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13, color: '#374151' }}>J</div>
-                                        <span style={{ fontWeight: 500, fontSize: 14 }}>Jonathan Reed</span>
+                                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13, color: '#374151' }}>{selectedTable.serverNotes?.[0]?.toUpperCase() || 'G'}</div>
+                                        <span style={{ fontWeight: 500, fontSize: 14 }}>{selectedTable.serverNotes || 'Guest'}</span>
                                     </div>
                                 </div>
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14, fontSize: 13 }}>
-                                    <div><div style={{ color: '#9CA3AF', fontSize: 11, marginBottom: 2 }}>Party Size</div><div style={{ fontWeight: 600 }}>4 People</div></div>
-                                    <div><div style={{ color: '#9CA3AF', fontSize: 11, marginBottom: 2 }}>Seated At</div><div style={{ fontWeight: 600 }}>12:45 PM</div></div>
+                                    <div><div style={{ color: '#9CA3AF', fontSize: 11, marginBottom: 2 }}>Party Size</div><div style={{ fontWeight: 600 }}>{selectedTable.capacity} People</div></div>
+                                    <div><div style={{ color: '#9CA3AF', fontSize: 11, marginBottom: 2 }}>Table</div><div style={{ fontWeight: 600 }}>T-{selectedTable.tableNumber}</div></div>
                                 </div>
                                 <div style={{ marginBottom: 12 }}>
-                                    <div style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 4 }}>Order Status</div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#F9FAFB', padding: '8px 12px', borderRadius: 8 }}>
-                                        <span style={{ fontSize: 13, fontWeight: 500 }}>Main Courses</span>
-                                        <span style={{ fontSize: 12, color: '#16A34A', fontWeight: 600 }}>Served</span>
-                                    </div>
+
                                 </div>
                                 <div style={{ marginBottom: 14 }}>
                                     <div style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 4 }}>Server Notes</div>
-                                    <div style={{ background: '#F9FAFB', padding: 10, borderRadius: 8, fontSize: 12, color: '#374151', fontStyle: 'italic', lineHeight: 1.5 }}>"{selectedTable.serverNotes || 'Celebrating anniversary. Requesting a bottle of 2018 Napa Valley Cabernet after main course.'}"</div>
+                                    <div style={{ background: '#F9FAFB', padding: 10, borderRadius: 8, fontSize: 12, color: '#374151', fontStyle: 'italic', lineHeight: 1.5 }}>"{selectedTable.serverNotes || 'No notes available.'}"</div>
                                 </div>
                             </>
                         )}

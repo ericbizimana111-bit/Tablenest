@@ -52,4 +52,16 @@ export class AnalyticsController {
     await this.accessControl.assertRestaurantOwner(req.user, restaurantId);
     return this.analyticsService.getReservationsHeatmap(restaurantId);
   }
+
+  @Get('revenue-by-day')
+  @Roles(UserRole.SUPER_ADMIN)
+  getRevenueByDay(@Query('days') days?: number) {
+    return this.analyticsService.getRevenueByDay(days);
+  }
+
+  @Get('orders-by-day')
+  @Roles(UserRole.SUPER_ADMIN)
+  getOrdersByDay(@Query('days') days?: number) {
+    return this.analyticsService.getOrdersByDay(days);
+  }
 }

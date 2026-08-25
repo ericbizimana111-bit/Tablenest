@@ -41,6 +41,11 @@ export default function AccountSettingsPage() {
         initialData: { points: 0 },
     });
 
+    const { data: userStats } = useQuery({
+        queryKey: ['user-stats'],
+        queryFn: () => usersAPI.getStats().then(r => r.data),
+    });
+
     const saveProfile = async () => {
         setSaving(true);
         try {
@@ -203,11 +208,11 @@ export default function AccountSettingsPage() {
                         <div style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 16 }}>
                             Member since {user ? new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Jan 2024'}
                         </div>
-                        {[
-                            { label: 'Total Bookings', value: '12', color: '#B91C1C' },
-                            { label: 'Total Orders', value: '28', color: '#B91C1C' },
-                            { label: 'Loyalty Points', value: `${loyalty?.points || 450} pts`, color: '#B91C1C' },
-                        ].map(s => (
+                    {[
+                        { label: 'Total Bookings', value: String(userStats?.bookings ?? '—'), color: '#B91C1C' },
+                        { label: 'Total Orders', value: String(userStats?.orders ?? '—'), color: '#B91C1C' },
+                        { label: 'Loyalty Points', value: `${loyalty?.points ?? 0} pts`, color: '#B91C1C' },
+                    ].map(s => (
                             <div key={s.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #F3F4F6', fontSize: 14 }}>
                                 <span style={{ color: '#374151' }}>{s.label}</span>
                                 <span style={{ fontWeight: 600, color: s.color }}>{s.value}</span>
@@ -223,7 +228,7 @@ export default function AccountSettingsPage() {
                             style={{ width: '100%', padding: '11px', background: '#B91C1C', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: 'pointer', fontFamily: 'Poppins' }}>
                             {saving ? 'Saving...' : 'Save All Changes'}
                         </button>
-                        <div style={{ fontSize: 11, color: '#9CA3AF', textAlign: 'center', marginTop: 8 }}>Last updated: 2 hours ago</div>
+                        <div style={{ fontSize: 11, color: '#9CA3AF', textAlign: 'center', marginTop: 8 }}>{user ? `Last login: ${new Date(user.lastLogin || Date.now()).toLocaleDateString()}` : ''}</div>
                         <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid #E5E7EB', textAlign: 'center' }}>
                             <span onClick={() => navigate('/settings/addresses')} style={{ fontSize: 13, color: '#B91C1C', cursor: 'pointer', fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
                                 <CreditCard size={13} /> Manage Addresses & Payments

@@ -193,11 +193,3 @@ export default function StaffManagement() {
         </div>
     );
 }
-
-const [] = [
-    { _id: '1', name: 'Maria Santos', email: 'maria@restaurant.com', phone: '+1 555-0101', role: 'Manager', isActive: true },
-    { _id: '2', name: 'James Liu', email: 'james@restaurant.com', phone: '+1 555-0102', role: 'Chef', isActive: true },
-    { _id: '3', name: 'Aisha Patel', email: 'aisha@restaurant.com', phone: '+1 555-0103', role: 'Server', isActive: true },
-    { _id: '4', name: 'Tom Wright', email: 'tom@restaurant.com', phone: '+1 555-0104', role: 'Bartender', isActive: false },
-    { _id: '5', name: 'Sofia Rossi', email: 'sofia@restaurant.com', phone: '+1 555-0105', role: 'Host', isActive: true },
-];

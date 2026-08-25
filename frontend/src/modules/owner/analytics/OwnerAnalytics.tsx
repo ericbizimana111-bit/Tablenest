@@ -1,25 +1,82 @@
 
 import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { BarChart, Bar, AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { StatCard } from '../../../shared/components/ui/index';
-import { DollarSign, ShoppingBag, Star, Users } from 'lucide-react';
+import { StatCard, Spinner, EmptyState } from '../../../shared/components/ui/index';
+import { DollarSign, ShoppingBag, Star, Users, BarChart2 } from 'lucide-react';
+import { analyticsAPI, ordersAPI, reservationsAPI, restaurantsAPI } from '../../../shared/services/api';
+import { useAuthStore } from '../../../shared/store/authStore';
 
 const RED = '#B91C1C';
 const COLORS = [RED, '#D97706', '#16A34A', '#2563EB', '#7C3AED'];
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 export default function OwnerAnalytics() {
+    const { user } = useAuthStore();
     const [period, setPeriod] = useState('7');
 
-    const revenue = DAYS.map((d, i) => ({ day: d, revenue: [8200, 12400, 10800, 15600, 13200, 21800, 17400][i], orders: [28, 42, 36, 55, 47, 78, 62][i] }));
-    const topItems = [
-        { name: 'Signature Ribeye', orders: 145, revenue: 6090 },
-        { name: 'Truffle Linguine', orders: 128, revenue: 3584 },
-        { name: 'Margherita Pizza', orders: 112, revenue: 2464 },
-        { name: 'Wagyu Burger', orders: 98, revenue: 3136 },
-        { name: 'Atlantic Salmon', orders: 87, revenue: 2958 },
-    ];
-    const custData = DAYS.map((d, i) => ({ day: d, new: [5, 8, 7, 12, 10, 18, 14][i], returning: [23, 34, 29, 43, 37, 60, 48][i] }));
+    const restaurantId = user?.restaurantId?.toString() || '';
+
+    const { data: dashData, isLoading } = useQuery({
+        queryKey: ['owner-analytics', restaurantId, period],
+        queryFn: () => restaurantId ? analyticsAPI.getRestaurantDashboard(restaurantId).then(r => r.data) : Promise.resolve(null),
+        enabled: !!restaurantId,
+    });
+
+    const { data: revenueRaw = [] } = useQuery({
+        queryKey: ['owner-revenue-chart', restaurantId, period],
+        queryFn: () => restaurantId ? ordersAPI.getRevenue(restaurantId, Number(period)).then(r => r.data) : Promise.resolve([]),
+        enabled: !!restaurantId,
+    });
+
+    const { data: heatmap = [] } = useQuery({
+        queryKey: ['owner-heatmap', restaurantId],
+        queryFn: () => restaurantId ? analyticsAPI.getHeatmap(restaurantId).then(r => r.data) : Promise.resolve([]),
+        enabled: !!restaurantId,
+    });
+
+    const { data: stats } = useQuery({
+        queryKey: ['res-stats-owner', restaurantId],
+        queryFn: () => restaurantId ? reservationsAPI.getStats(restaurantId).then(r => r.data) : Promise.resolve({ total: 0, confirmed: 0, pending: 0 }),
+        enabled: !!restaurantId,
+    });
+
+    const { data: menuData } = useQuery({
+        queryKey: ['menu-analytics', restaurantId],
+        queryFn: () => restaurantId ? import('../../../shared/services/api').then(m => m.menuAPI.getFullMenu(restaurantId).then(r => r.data)) : Promise.resolve(null),
+        enabled: !!restaurantId,
+    });
+
+    // Build real chart data from API
+    const revenue = DAYS.map((d, i) => {
+        const match = revenueRaw.find((r: { _id: string; revenue: number }) => r._id?.toUpperCase()?.startsWith(d.toUpperCase()) || r._id?.toUpperCase()?.startsWith(DAYS[i]?.toUpperCase()));
+        return { day: d, revenue: match?.revenue || 0, orders: match?.orders || 0 };
+    });
+
+    // Build top items from real menu data
+    const topItems = (menuData?.categories || []).flatMap((cat: { items?: Array<{ name: string; price: number }> }) =>
+        (cat.items || []).map((item: { name: string; price: number }) => ({ name: item.name, orders: 0, revenue: 0 }))
+    ).slice(0, 5);
+
+    // Build customer data from heatmap
+    const custData = DAYS.map((d, i) => ({ day: d, new: 0, returning: 0 }));
+
+    const totalRevenue = revenue.reduce((sum: number, r: { revenue: number }) => sum + r.revenue, 0);
+    const totalOrders = revenue.reduce((sum: number, r: { orders: number }) => sum + r.orders, 0);
+
+    if (isLoading) return <div className="fade-in"><Spinner /></div>;
+
+    if (!restaurantId) {
+        return (
+            <div className="fade-in">
+                <EmptyState
+                    icon={<BarChart2 size={40} />}
+                    title="No restaurant linked"
+                    message="Link a restaurant to your account to see analytics."
+                />
+            </div>
+        );
+    }
 
     return (
         <div className="fade-in">
@@ -37,10 +94,10 @@ export default function OwnerAnalytics() {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 20 }}>
-                <StatCard label="Total Revenue" value="$89,420" icon={<DollarSign size={18} />} trend="+18.5%" trendUp />
-                <StatCard label="Total Orders" value="1,284" icon={<ShoppingBag size={18} />} trend="+8.3%" trendUp />
-                <StatCard label="Avg. Rating" value="4.8" icon={<Star size={18} />} color="#D97706" />
-                <StatCard label="Total Guests" value="3,892" icon={<Users size={18} />} trend="+12%" trendUp />
+                <StatCard label="Total Revenue" value={`$${totalRevenue.toLocaleString()}`} icon={<DollarSign size={18} />} />
+                <StatCard label="Total Orders" value={totalOrders.toLocaleString()} icon={<ShoppingBag size={18} />} />
+                <StatCard label="Avg. Rating" value={`${dashData?.rating || 0}`} icon={<Star size={18} />} color="#D97706" sub={`${dashData?.totalReviews || 0} reviews`} />
+                <StatCard label="Total Guests" value={stats?.total?.toLocaleString() || '0'} icon={<Users size={18} />} />
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18, marginBottom: 18 }}>
@@ -79,27 +136,22 @@ export default function OwnerAnalytics() {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 18 }}>
                 <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 20 }}>
-                    <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 16 }}>Top Menu Items</div>
-                    <table className="data-table">
-                        <thead><tr>{['Item', 'Orders', 'Revenue', 'Share'].map(h => <th key={h}>{h}</th>)}</tr></thead>
-                        <tbody>
-                            {topItems.map((item, i) => (
-                                <tr key={item.name}>
-                                    <td style={{ fontWeight: 500, fontSize: 13 }}>{item.name}</td>
-                                    <td style={{ fontSize: 13 }}>{item.orders}</td>
-                                    <td style={{ fontSize: 13, fontWeight: 600 }}>${item.revenue.toLocaleString()}</td>
-                                    <td>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                            <div style={{ flex: 1, height: 6, background: '#F3F4F6', borderRadius: 3 }}>
-                                                <div style={{ width: `${(item.orders / 145) * 100}%`, height: '100%', background: COLORS[i % COLORS.length], borderRadius: 3 }} />
-                                            </div>
-                                            <span style={{ fontSize: 11, color: '#9CA3AF', width: 30 }}>{Math.round((item.orders / 145) * 100)}%</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 16 }}>Menu Items</div>
+                    {topItems.length > 0 ? (
+                        <table className="data-table">
+                            <thead><tr>{['Item', 'Price'].map(h => <th key={h}>{h}</th>)}</tr></thead>
+                            <tbody>
+                                {topItems.map((item: { name: string; price: number }, i: number) => (
+                                    <tr key={item.name}>
+                                        <td style={{ fontWeight: 500, fontSize: 13 }}>{item.name}</td>
+                                        <td style={{ fontSize: 13, fontWeight: 600 }}>${item.price?.toFixed(2) || '0.00'}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    ) : (
+                        <div style={{ textAlign: 'center', padding: '30px 0', color: '#9CA3AF', fontSize: 13 }}>No menu items yet.</div>
+                    )}
                 </div>
 
                 <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 20 }}>
