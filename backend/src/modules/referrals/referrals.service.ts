@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Referral, ReferralDocument } from './referral.schema';
 
 @Injectable()
@@ -8,7 +8,7 @@ export class ReferralsService {
     constructor(@InjectModel(Referral.name) private referralModel: Model<ReferralDocument>) { }
 
     async getByUser(userId: string) {
-        return this.referralModel.findOne({ userId });
+        return this.referralModel.findOne({ userId: new Types.ObjectId(userId) });
     }
 
     async trackReferral(code: string, referredUser: any) {

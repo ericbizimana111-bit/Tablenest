@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "resolvePackageJsonExports": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
     "esModuleInterop": true,
     "isolatedModules": true,
     "declaration": true,
     "removeComments": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
+    "rootDir": "./src",
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
@@ -23,5 +23,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "strict": true
-  }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "test", "seed.ts"]
 }

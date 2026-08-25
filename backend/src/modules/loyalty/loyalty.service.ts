@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Loyalty, LoyaltyDocument } from './loyalty.schema';
 
 @Injectable()
@@ -8,7 +8,7 @@ export class LoyaltyService {
   constructor(@InjectModel(Loyalty.name) private loyaltyModel: Model<LoyaltyDocument>) {}
 
   async getByUser(userId: string) {
-    return this.loyaltyModel.findOne({ userId });
+    return this.loyaltyModel.findOne({ userId: new Types.ObjectId(userId) });
   }
 
   async addPoints(userId: string, points: number, description: string) {
