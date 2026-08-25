@@ -110,6 +110,10 @@ export class RestaurantsService {
     );
   }
 
+  async remove(id: string) {
+    return this.restaurantModel.findByIdAndDelete(id);
+  }
+
   async getPendingApprovals() {
     return this.restaurantModel.find({ status: RestaurantStatus.PENDING }).sort({ createdAt: -1 });
   }

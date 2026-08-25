@@ -206,7 +206,7 @@ export default function AccountSettingsPage() {
                     <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 20, position: 'sticky', top: 80 }}>
                         <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 4 }}>Quick Summary</div>
                         <div style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 16 }}>
-                            Member since {user ? new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Jan 2024'}
+                            Member since {user ? new Date(user.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '—'}
                         </div>
                     {[
                         { label: 'Total Bookings', value: String(userStats?.bookings ?? '—'), color: '#B91C1C' },
@@ -228,7 +228,7 @@ export default function AccountSettingsPage() {
                             style={{ width: '100%', padding: '11px', background: '#B91C1C', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: 'pointer', fontFamily: 'Poppins' }}>
                             {saving ? 'Saving...' : 'Save All Changes'}
                         </button>
-                        <div style={{ fontSize: 11, color: '#9CA3AF', textAlign: 'center', marginTop: 8 }}>{user ? `Last login: ${new Date(user.lastLogin || Date.now()).toLocaleDateString()}` : ''}</div>
+                        <div style={{ fontSize: 11, color: '#9CA3AF', textAlign: 'center', marginTop: 8 }}>{user ? `Member since ${new Date(user.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}` : ''}</div>
                         <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid #E5E7EB', textAlign: 'center' }}>
                             <span onClick={() => navigate('/settings/addresses')} style={{ fontSize: 13, color: '#B91C1C', cursor: 'pointer', fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
                                 <CreditCard size={13} /> Manage Addresses & Payments
@@ -237,6 +237,3 @@ export default function AccountSettingsPage() {
                     </div>
                 </div>
             </div>
-        </div>
-    );
-}

@@ -131,5 +131,4 @@ export class AnalyticsService {
             { $sort: { _id: 1 } },
         ]);
     }
-
-
+}

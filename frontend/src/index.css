@@ -176,3 +176,57 @@ body {
 .fade-in {
   animation: fadeIn 0.25s ease-out;
 }
+
+/* ── Responsive ────────────────────────────────────────────────── */
+
+/* Hide horizontal scroll bars on navigation pill bars */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Data table responsive overflow */
+.data-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 1024px) {
+  .data-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Footer stacking */
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  footer {
+    padding: 30px 24px 16px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  footer {
+    padding: 24px 16px 16px !important;
+  }
+}
+
+/* Overflow handling for data tables on small screens */
+.data-table {
+  min-width: 600px;
+}
+
+/* Ensure cards don't overflow on mobile */
+img {
+  max-width: 100%;
+  height: auto;
+}

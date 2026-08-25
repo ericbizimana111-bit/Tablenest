@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 export default function Footer() {
     return (
         <footer style={{ background: '#1F1F1F', color: 'white', padding: '40px 80px 20px', marginTop: 'auto' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 32, marginBottom: 32 }}>
+            <div className="footer-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 32, marginBottom: 32 }}>
                 <div>
                     <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 8, color: 'white' }}>TableNest</div>
                     <p style={{ fontSize: 13, color: '#9CA3AF', lineHeight: 1.6 }}>

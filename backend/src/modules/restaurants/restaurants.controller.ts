@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Patch, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Put, Patch, Delete, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
 import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -87,5 +87,12 @@ export class RestaurantsController {
   @Patch(':id/suspend')
   suspend(@Param('id', MongoIdValidationPipe) id: string) {
     return this.restaurantsService.suspend(id);
+  }
+
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN)
+  @Delete(':id')
+  remove(@Param('id', MongoIdValidationPipe) id: string) {
+    return this.restaurantsService.remove(id);
   }
 }
