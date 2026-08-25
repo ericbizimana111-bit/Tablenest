@@ -238,20 +238,18 @@ export default function LandingPage() {
             </section>
 
             {/* Testimonials Section */}
-            <section className="animate-rain-fade" style={{ padding: '80px 80px', background: 'white', animationDelay: '0.5s' }}>
+            <section className="animate-rain-fade" style={{ padding: '80px 80px', background: '#FAFAFA', animationDelay: '0.5s' }}>
                 <h2 style={{ textAlign: 'center', fontSize: 32, fontWeight: 800, marginBottom: 48, color: '#111827', letterSpacing: '-0.5px' }}>What Diners Are Saying</h2>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 28 }}>
                     {TESTIMONIALS.map(t => (
-                        <div key={t.name} style={{ border: '1px solid #E5E7EB', borderRadius: 16, padding: 32, background: '#FAFAFA' }}>
-                            <div style={{ display: 'flex', gap: 3, marginBottom: 16 }}>
-                                {Array(5).fill(0).map((_, i) => <Star key={i} size={15} fill="#F59E0B" color="#F59E0B" />)}
-                            </div>
-                            <p style={{ fontSize: 14, color: '#374151', lineHeight: 1.6, marginBottom: 24, fontStyle: 'italic', fontWeight: 400 }}>"{t.text}"</p>
+                        <div key={t.name} className="hover-card" style={{ border: '1px solid #E5E7EB', borderRadius: 16, padding: '32px 32px 28px', background: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', position: 'relative', overflow: 'hidden' }}>
+                            <div style={{ position: 'absolute', top: 0, left: 0, width: 4, height: '100%', background: '#B91C1C', borderRadius: '16px 0 0 16px' }} />
+                            <p style={{ fontSize: 15, color: '#374151', lineHeight: 1.7, fontStyle: 'italic', fontWeight: 400, margin: '0 0 24px 8px' }}>"{t.text}"</p>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                                <img src={t.img} alt={t.name} style={{ width: 42, height: 42, borderRadius: '50%', objectFit: 'cover', border: '1px solid #E5E7EB' }} />
+                                <img src={t.img} alt={t.name} style={{ width: 44, height: 44, borderRadius: '50%', objectFit: 'cover', border: '2px solid #FEE2E2' }} />
                                 <div>
                                     <div style={{ fontSize: 14, fontWeight: 700, color: '#111827' }}>{t.name}</div>
-                                    <div style={{ fontSize: 12, color: '#9CA3AF', fontWeight: 500 }}>{t.role}</div>
+                                    <div style={{ fontSize: 12, color: '#B91C1C', fontWeight: 500 }}>{t.role}</div>
                                 </div>
                             </div>
                         </div>
