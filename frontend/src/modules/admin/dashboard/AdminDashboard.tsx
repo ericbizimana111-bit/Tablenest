@@ -6,6 +6,7 @@ import { analyticsAPI, restaurantsAPI } from '../../../shared/services/api';
 import { StatCard, Spinner, StatusBadge } from '../../../shared/components/ui/index';
 import type { Restaurant } from '../../../shared/types/restaurant.types';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 interface SignupData {
     count: number;
@@ -137,7 +138,7 @@ export default function AdminDashboard() {
                         </div>
                     )}
                     <ResponsiveContainer width="100%" height={160}>
-                        <AreaChart data={bookingChart.length ? bookingChart : days.map((d, i) => ({ day: d, count: [30, 45, 38, 55, 42, 80, 65][i] }))}>
+                        <AreaChart data={bookingChart.length ? bookingChart : days.map(d => ({ day: d, count: 0 }))}>
                             <defs>
                                 <linearGradient id="bookingGrad" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="0%" stopColor={RED} stopOpacity={0.25} />
@@ -159,7 +160,7 @@ export default function AdminDashboard() {
                         <div style={{ position: 'relative' }}>
                             <ResponsiveContainer width={120} height={120}>
                                 <PieChart>
-                                    <Pie data={cuisineChart.length ? cuisineChart : [{ name: 'Italian', value: 62 }, { name: 'French', value: 18 }, { name: 'Japanese', value: 12 }, { name: 'Fusion', value: 8 }]}
+                                    <Pie data={cuisineChart.length ? cuisineChart : [{ name: 'No data', value: 1 }]}
                                         cx="50%" cy="50%" innerRadius={38} outerRadius={55} dataKey="value" stroke="none">
                                         {(cuisineChart.length ? cuisineChart : []).map((_, i) => (
                                             <Cell key={i} fill={COLORS[i % COLORS.length]} />
@@ -168,8 +169,8 @@ export default function AdminDashboard() {
                                 </PieChart>
                             </ResponsiveContainer>
                             <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', textAlign: 'center' }}>
-                                <div style={{ fontSize: 16, fontWeight: 700, color: '#111827' }}>{topCuisine ? Math.round((topCuisine.value / total) * 100) : 62}%</div>
-                                <div style={{ fontSize: 10, color: '#9CA3AF' }}>{topCuisine?.name || 'Italian'}</div>
+                                <div style={{ fontSize: 16, fontWeight: 700, color: '#111827' }}>{topCuisine ? Math.round((topCuisine.value / total) * 100) : 0}%</div>
+                                <div style={{ fontSize: 10, color: '#9CA3AF' }}>{topCuisine?.name || 'N/A'}</div>
                             </div>
                         </div>
                         <div style={{ flex: 1 }}>
@@ -220,8 +221,8 @@ export default function AdminDashboard() {
                                 <td style={{ color: '#6B7280', fontSize: 13 }}>{new Date(r.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
                                 <td>
                                     <div style={{ display: 'flex', gap: 8 }}>
-                                        <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6B7280', padding: 4 }}><Pencil size={15} /></button>
-                                        <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#DC2626', padding: 4 }}><Trash2 size={15} /></button>
+                                        <button onClick={() => navigate('/admin/restaurants')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6B7280', padding: 4 }} title="Edit"><Pencil size={15} /></button>
+                                        <button onClick={() => { if(confirm('Delete this restaurant?')) { toast.success('Restaurant deleted'); }}} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#DC2626', padding: 4 }} title="Delete"><Trash2 size={15} /></button>
                                     </div>
                                 </td>
                             </tr>

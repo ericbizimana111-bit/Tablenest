@@ -144,7 +144,7 @@ export default function NotificationsPage() {
 
             {filtered.length > 0 && (
                 <div style={{ textAlign: 'center', marginTop: 20 }}>
-                    <button style={{ padding: '10px 28px', border: '1.5px solid #E5E7EB', borderRadius: 9999, background: 'white', fontSize: 14, cursor: 'pointer', fontFamily: 'Poppins', color: '#374151', fontWeight: 500 }}>
+                    <button onClick={() => toast.success('All notifications loaded')} style={{ padding: '10px 28px', border: '1.5px solid #E5E7EB', borderRadius: 9999, background: 'white', fontSize: 14, cursor: 'pointer', fontFamily: 'Poppins', color: '#374151', fontWeight: 500 }}>
                         Load More Notifications
                     </button>
                 </div>

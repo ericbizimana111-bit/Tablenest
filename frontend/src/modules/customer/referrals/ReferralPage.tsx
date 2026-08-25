@@ -14,7 +14,7 @@ export default function ReferralPage() {
     const { data: loyalty } = useQuery<Loyalty>({
         queryKey: ['loyalty'],
         queryFn: () => loyaltyAPI.get().then(r => r.data),
-        initialData: { userId: 'demo', points: 9000, transactions: [] },
+        initialData: { userId: '', points: 0, transactions: [] },
     });
 
     const code = referral?.code || 'NEST-GOLD-2024';
@@ -23,7 +23,7 @@ export default function ReferralPage() {
     const referrals = referral?.referrals || [];
     const sentCount = referrals.length;
     const successCount = referrals.filter((r: ReferralRecord) => r.status === 'successful').length;
-    const totalPoints = loyalty?.points || 9000;
+    const totalPoints = loyalty?.points || 0;
 
     return (
         <div className="fade-in">

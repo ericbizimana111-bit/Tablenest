@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Calendar, Star, ArrowRight, Clock } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { restaurantsAPI } from '../../../shared/services/api';
+import { restaurantsAPI, reservationsAPI, ordersAPI, usersAPI } from '../../../shared/services/api';
 import { useAuthStore } from '../../../shared/store/authStore';
 import type { Restaurant } from '../../../shared/types/restaurant.types';
 import { getRestaurantBookPath, getRestaurantMenuPath } from '../../../shared/utils/restaurantNavigation';
@@ -27,6 +27,24 @@ export default function CustomerHome() {
 
     const restaurants = data?.restaurants || [];
 
+    const { data: bookingsData } = useQuery({
+        queryKey: ['my-bookings-count'],
+        queryFn: () => reservationsAPI.getMyReservations().then(r => r.data),
+    });
+    const bookingsCount = (bookingsData?.reservations || []).filter((b: { status?: string }) => b.status === 'pending' || b.status === 'confirmed').length;
+
+    const { data: ordersData } = useQuery({
+        queryKey: ['my-orders-count'],
+        queryFn: () => ordersAPI.getMyOrders().then(r => r.data),
+    });
+    const ordersCount = (ordersData?.orders || []).filter((o: { status?: string }) => o.status !== 'delivered' && o.status !== 'cancelled').length;
+
+    const { data: favData } = useQuery({
+        queryKey: ['favorites-count'],
+        queryFn: () => usersAPI.getFavorites().then(r => r.data),
+    });
+    const favoritesCount = (favData?.favorites || []).length;
+
     return (
         <div className="fade-in">
             {/* Welcome banner */}
@@ -50,9 +68,8 @@ export default function CustomerHome() {
                     </button>
                 </div>
                 <div style={{ textAlign: 'right', opacity: 0.9 }}>
-                    <div style={{ fontSize: 12, marginBottom: 4 }}>Your Loyalty Points</div>
-                    <div style={{ fontSize: 36, fontWeight: 700 }}>450</div>
-                    <div style={{ fontSize: 12, opacity: 0.75 }}>pts available</div>
+                    <div style={{ fontSize: 12, marginBottom: 4 }}>Quick Links</div>
+                    <div style={{ fontSize: 14, opacity: 0.85, marginTop: 8 }}>Explore restaurants, make bookings, and manage your dining experience.</div>
                 </div>
             </div>
 
@@ -73,9 +90,9 @@ export default function CustomerHome() {
             {/* Quick stats */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14, marginBottom: 28 }}>
                 {[
-                    { label: 'Upcoming Bookings', value: '2', icon: <Calendar size={18} />, path: '/my-bookings', color: '#B91C1C' },
-                    { label: 'Active Orders', value: '1', icon: <Clock size={18} />, path: '/my-orders', color: '#D97706' },
-                    { label: 'Saved Favorites', value: '8', icon: <Star size={18} />, path: '/favorites', color: '#2563EB' },
+                    { label: 'Upcoming Bookings', value: String(bookingsCount), icon: <Calendar size={18} />, path: '/my-bookings', color: '#B91C1C' },
+                    { label: 'Active Orders', value: String(ordersCount), icon: <Clock size={18} />, path: '/my-orders', color: '#D97706' },
+                    { label: 'Saved Favorites', value: String(favoritesCount), icon: <Star size={18} />, path: '/favorites', color: '#2563EB' },
                 ].map(s => (
                     <div key={s.label} onClick={() => navigate(s.path)}
                         style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: '18px 20px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, transition: 'box-shadow 0.15s' }}

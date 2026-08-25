@@ -66,7 +66,7 @@ export default function OrderHistoryPage() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 13, color: '#374151', cursor: 'pointer' }}>
                     <Calendar size={14} /> Jan 01, 2024 - Dec 31, 2024
                 </div>
-                <button style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins' }}>
+                <button onClick={() => toast.success('Advanced filters coming soon')} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins' }}>
                     <Filter size={14} /> Filters
                 </button>
             </div>
@@ -96,7 +96,7 @@ export default function OrderHistoryPage() {
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, flexShrink: 0 }}>
                                 {order.status === 'delivered' && (
-                                    <button style={{ padding: '8px 16px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 5 }}>
+                                    <button onClick={() => toast.success('Review feature coming soon')} style={{ padding: '8px 16px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 5 }}>
                                         <Star size={12} /> Write Review
                                     </button>
                                 )}
@@ -107,7 +107,7 @@ export default function OrderHistoryPage() {
                                     </button>
                                 )}
                                 {order.status === 'cancelled' && (
-                                    <button style={{ padding: '8px 16px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 5 }}>
+                                    <button onClick={() => navigate('/notifications')} style={{ padding: '8px 16px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 5 }}>
                                         <Headphones size={12} /> Support
                                     </button>
                                 )}

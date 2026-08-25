@@ -82,20 +82,17 @@ export default function AdminComplaints() {
                     <p style={{ fontSize: 14, color: '#6B7280', marginTop: 2 }}>Manage customer inquiries and operational tickets.</p>
                 </div>
                 <div style={{ display: 'flex', gap: 10 }}>
-                    <button style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins' }}>
+                    <button onClick={() => toast.success('Filter coming soon')} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins' }}>
                         <Filter size={14} /> Filter
-                    </button>
-                    <button style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', background: '#B91C1C', color: 'white', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>
-                        <Plus size={14} /> New Ticket
                     </button>
                 </div>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginBottom: 24 }}>
-                <StatCard label="Total Active" value={stats?.total || 128} icon={<Ticket size={20} />} sub="+12 today" />
-                <StatCard label="Open Tickets" value={stats?.open || 42} icon={<Plus size={20} />} sub="High Priority" color="#DC2626" />
-                <StatCard label="Avg. Response" value="1.4h" icon={<Reply size={20} />} trend="-15% YoY" trendUp />
-                <StatCard label="Resolution Rate" value={`${stats?.resolutionRate || 94}%`} icon={<Eye size={20} />} color="#16A34A" />
+                <StatCard label="Total Active" value={stats?.total || 0} icon={<Ticket size={20} />} />
+                <StatCard label="Open Tickets" value={stats?.open || 0} icon={<Plus size={20} />} sub="High Priority" color="#DC2626" />
+                <StatCard label="Resolved" value={stats?.resolved || 0} icon={<Reply size={20} />} color="#16A34A" />
+                <StatCard label="Resolution Rate" value={`${stats?.resolutionRate || 0}%`} icon={<Eye size={20} />} color="#16A34A" />
             </div>
 
             <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden' }}>
@@ -156,8 +153,8 @@ export default function AdminComplaints() {
                 )}
 
                 <div style={{ padding: '12px 20px', borderTop: '1px solid #E5E7EB', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: 13, color: '#6B7280' }}>Showing {tickets.length} of {data?.total || 128} results</span>
-                    <Pagination page={page} pages={data?.pages || 13} onPage={setPage} />
+                    <span style={{ fontSize: 13, color: '#6B7280' }}>Showing {tickets.length} of {data?.total || tickets.length} results</span>
+                    <Pagination page={page} pages={data?.pages || 1} onPage={setPage} />
                 </div>
             </div>
 

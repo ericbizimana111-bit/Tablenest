@@ -20,6 +20,9 @@ type PartnerForm = {
     seatingCapacity: string;
     priceRange: string;
     address: string;
+    city: string;
+    country: string;
+    phone: string;
     dineIn: boolean;
     delivery: boolean;
 };
@@ -30,7 +33,7 @@ export default function PartnerRegistration() {
     const [step, setStep] = useState(1);
     const [form, setForm] = useState<PartnerForm>({
         fullName: '', email: '', password: '', restaurantName: '', cuisineType: 'Italian',
-        description: '', seatingCapacity: '', priceRange: '$$', address: '', city: '', country: 'Rwanda', phone: '', dineIn: true, delivery: false, imageUrls: [],
+        description: '', seatingCapacity: '', priceRange: '$$', address: '', city: '', country: 'Rwanda', phone: '', dineIn: true, delivery: false,
     });
 
     const [images, setImages] = useState<string[]>([]);
@@ -158,6 +161,20 @@ export default function PartnerRegistration() {
                             <div>
                                 <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 6 }}>Location & Operations</h2>
                                 <p style={{ fontSize: 13, color: '#6B7280', marginBottom: 24 }}>Set your address and service type.</p>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+                                    <div>
+                                        <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>Country</label>
+                                        <select value={form.country || 'Rwanda'} onChange={e => up('country' as any, e.target.value)}
+                                            style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none', background: 'white' }}>
+                                            {COUNTRIES.map(c => <option key={c}>{c}</option>)}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>City / District</label>
+                                        <input placeholder="e.g. Kigali" value={form.city || ''} onChange={e => up('city' as any, e.target.value)}
+                                            style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
+                                    </div>
+                                </div>
                                 <div style={{ marginBottom: 16 }}>
                                     <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>Primary Address</label>
                                     <input placeholder="23 Culinary Way, Arts District" value={form.address} onChange={e => up('address', e.target.value)}
@@ -184,12 +201,23 @@ export default function PartnerRegistration() {
                         {step === 4 && (
                             <div>
                                 <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 6 }}>Media & Branding</h2>
-                                <p style={{ fontSize: 13, color: '#6B7280', marginBottom: 24 }}>Upload your restaurant logo and photos.</p>
-                                <div style={{ border: '2px dashed #E5E7EB', borderRadius: 10, padding: 40, textAlign: 'center', marginBottom: 16 }}>
-                                    <Image size={32} color="#9CA3AF" style={{ marginBottom: 8 }} />
-                                    <div style={{ fontWeight: 500, fontSize: 14, marginBottom: 4 }}>Upload Restaurant Logo</div>
-                                    <div style={{ fontSize: 12, color: '#9CA3AF' }}>PNG, JPG up to 5MB</div>
+                                <p style={{ fontSize: 13, color: '#6B7280', marginBottom: 24 }}>Upload your restaurant photos.</p>
+                                <input type="file" ref={fileInputRef} multiple accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
+                                <div onClick={() => !uploading && fileInputRef.current?.click()} style={{ border: '2px dashed #E5E7EB', borderRadius: 10, padding: 40, textAlign: 'center', marginBottom: 16, cursor: uploading ? 'wait' : 'pointer', background: '#FAFAFA' }}>
+                                    <Upload size={32} color="#9CA3AF" style={{ marginBottom: 8 }} />
+                                    <div style={{ fontWeight: 500, fontSize: 14, marginBottom: 4 }}>{uploading ? 'Uploading...' : 'Click to Upload Restaurant Photos'}</div>
+                                    <div style={{ fontSize: 12, color: '#9CA3AF' }}>PNG, JPG up to 5MB each</div>
                                 </div>
+                                {images.length > 0 && (
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 16 }}>
+                                        {images.map((url, i) => (
+                                            <div key={i} style={{ position: 'relative', borderRadius: 8, overflow: 'hidden' }}>
+                                                <img src={url} alt="" style={{ width: '100%', height: 100, objectFit: 'cover' }} />
+                                                <button onClick={(e) => { e.stopPropagation(); removeImage(i); }} style={{ position: 'absolute', top: 4, right: 4, background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'white' }}><X size={14} /></button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                                 <div style={{ background: '#F0FDF4', border: '1px solid #16A34A', borderRadius: 10, padding: 16, textAlign: 'center' }}>
                                     <div style={{ fontWeight: 600, color: '#16A34A', marginBottom: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}><PartyPopper size={16} /> Ready to Submit!</div>
                                     <p style={{ fontSize: 13, color: '#374151' }}>Review your details and submit your application for approval.</p>

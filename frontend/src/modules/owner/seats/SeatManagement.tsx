@@ -38,6 +38,9 @@ export default function SeatManagement() {
         initialData: { tables: [], stats: { total: 0, available: 0, occupied: 0, reserved: 0 } },
     });
 
+    const tables = data?.tables || [];
+    const stats = data?.stats || { total: 0, available: 0, occupied: 0, reserved: 0 };
+
     return (
         <div className="fade-in">
             <div style={{ marginBottom: 24 }}>

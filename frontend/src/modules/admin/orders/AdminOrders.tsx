@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ordersAPI } from '../../../shared/services/api';
 import { Spinner, StatusBadge, Pagination, StatCard } from '../../../shared/components/ui/index';
 import { DollarSign, ShoppingBag, Users, TrendingUp, Eye } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 interface Order {
     _id: string;
@@ -40,16 +41,15 @@ export default function AdminOrders() {
                     <p style={{ fontSize: 14, color: '#6B7280', marginTop: 2 }}>Real-time oversight of TableNest culinary transactions.</p>
                 </div>
                 <div style={{ display: 'flex', gap: 10 }}>
-                    <button style={{ padding: '8px 16px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins' }}>↓ Export Data</button>
-                    <button style={{ padding: '8px 16px', background: '#B91C1C', color: 'white', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>+ Create Order</button>
+                    <button onClick={() => toast.success('Export coming soon')} style={{ padding: '8px 16px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins' }}>↓ Export Data</button>
                 </div>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginBottom: 24 }}>
-                <StatCard label="Today's Revenue" value={`$${(stats?.revenue || 14290).toLocaleString()}`} icon={<DollarSign size={20} />} trend="+12.5%" trendUp />
-                <StatCard label="Active Orders" value={stats?.active || 48} icon={<ShoppingBag size={20} />} />
-                <StatCard label="Total Diners" value={stats?.total || 156} icon={<Users size={20} />} />
-                <StatCard label="Avg. Order Value" value={`$${stats?.avgValue || 297.70}`} icon={<TrendingUp size={20} />} />
+                <StatCard label="Today's Revenue" value={`$${(stats?.revenue || 0).toLocaleString()}`} icon={<DollarSign size={20} />} />
+                <StatCard label="Active Orders" value={stats?.active || 0} icon={<ShoppingBag size={20} />} />
+                <StatCard label="Total Orders" value={stats?.total || 0} icon={<Users size={20} />} />
+                <StatCard label="Avg. Order Value" value={`$${stats?.avgValue || 0}`} icon={<TrendingUp size={20} />} />
             </div>
 
             <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden' }}>
@@ -76,14 +76,14 @@ export default function AdminOrders() {
                                     <td><StatusBadge status={o.status} /></td>
                                     <td style={{ fontSize: 13, color: '#6B7280' }}>{o.items?.length || 1}x items</td>
                                     <td style={{ fontWeight: 600, fontSize: 13 }}>${o.total?.toFixed(2) || o.total}</td>
-                                    <td><button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6B7280', padding: 4 }} title="View order"><Eye size={16} /></button></td>
+                                    <td><button onClick={() => toast.success('Order details coming soon')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6B7280', padding: 4 }} title="View order"><Eye size={16} /></button></td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 )}
                 <div style={{ padding: '12px 20px', borderTop: '1px solid #E5E7EB', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: 13, color: '#6B7280' }}>Showing {orders.length} of {data?.total || 48} orders</span>
+                    <span style={{ fontSize: 13, color: '#6B7280' }}>Showing {orders.length} of {data?.total || orders.length} orders</span>
                     <Pagination page={page} pages={data?.pages || 1} onPage={setPage} />
                 </div>
             </div>

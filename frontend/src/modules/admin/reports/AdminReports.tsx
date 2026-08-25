@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, AreaChart, Area } from 'recharts';
 import { analyticsAPI } from '../../../shared/services/api';
 import { Download } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const RED = '#B91C1C';
 
@@ -15,7 +16,7 @@ export default function AdminReports() {
     });
 
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    const revenueData = days.map((d, i) => ({ day: d, revenue: [12400, 18200, 15800, 22100, 19300, 31200, 26800][i], orders: [42, 65, 55, 78, 68, 110, 95][i] }));
+    const revenueData = days.map(d => ({ day: d, revenue: 0, orders: 0 }));
 
     return (
         <div className="fade-in">
@@ -31,7 +32,7 @@ export default function AdminReports() {
                             {p === '7' ? 'Week' : p === '30' ? 'Month' : 'Quarter'}
                         </button>
                     ))}
-                    <button style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins' }}>
+                    <button onClick={() => toast.success('Export coming soon')} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins' }}>
                         <Download size={14} /> Export
                     </button>
                 </div>
@@ -72,7 +73,7 @@ export default function AdminReports() {
             <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 20 }}>
                 <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 16 }}>New User Signups</div>
                 <ResponsiveContainer width="100%" height={180}>
-                    <LineChart data={signups.length ? signups.map((s: { _id?: string; count: number }) => ({ day: s._id?.slice(5), count: s.count })) : days.map((d, i) => ({ day: d, count: [28, 45, 38, 62, 55, 80, 70][i] }))}>
+                    <LineChart data={signups.length ? signups.map((s: { _id?: string; count: number }) => ({ day: s._id?.slice(5), count: s.count })) : days.map(d => ({ day: d, count: 0 }))}>
                         <XAxis dataKey="day" tick={{ fontSize: 11, fontFamily: 'Poppins' }} axisLine={false} tickLine={false} />
                         <YAxis hide />
                         <Tooltip contentStyle={{ fontFamily: 'Poppins', fontSize: 12, borderRadius: 8 }} />

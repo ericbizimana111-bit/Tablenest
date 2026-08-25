@@ -8,6 +8,41 @@ import toast from 'react-hot-toast';
 
 const TABS = ['Upcoming', 'Past', 'Cancelled'];
 
+function ModifyContent({ booking, onSave, onCancel, saving }: { booking: ModifyModalState; onSave: (date: string, time: string, guests: number) => void; onCancel: () => void; saving: boolean }) {
+    const [date, setDate] = useState(booking.date?.slice(0, 10) || '');
+    const [time, setTime] = useState(booking.time || '19:00');
+    const [guests, setGuests] = useState(booking.guests || 2);
+    return (
+        <div>
+            <p style={{ fontSize: 13, color: '#6B7280', marginBottom: 16 }}>Update your booking details for <strong>{booking.restaurantName || 'Restaurant'}</strong>.</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <div>
+                    <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>Date</label>
+                    <input type="date" value={date} onChange={e => setDate(e.target.value)}
+                        style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
+                </div>
+                <div>
+                    <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>Time</label>
+                    <input type="time" value={time} onChange={e => setTime(e.target.value)}
+                        style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
+                </div>
+                <div>
+                    <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>Guests</label>
+                    <input type="number" value={guests} min={1} max={12} onChange={e => setGuests(Number(e.target.value))}
+                        style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
+                </div>
+            </div>
+            <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
+                <button onClick={onCancel} style={{ flex: 1, padding: '10px', border: '1px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 14, cursor: 'pointer', fontFamily: 'Poppins' }}>Cancel</button>
+                <button onClick={() => onSave(date, time, guests)} disabled={saving}
+                    style={{ flex: 1, padding: '10px', background: '#B91C1C', color: 'white', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>
+                    {saving ? 'Saving...' : 'Save Changes'}
+                </button>
+            </div>
+        </div>
+    );
+}
+
 interface ModifyModalState extends Reservation {
     newDate?: string;
     newTime?: string;
@@ -27,6 +62,13 @@ export default function MyBookingsPage() {
     const cancelMut = useMutation({
         mutationFn: (id: string) => reservationsAPI.cancel(id),
         onSuccess: () => { qc.invalidateQueries({ queryKey: ['my-reservations'] }); toast.success('Reservation cancelled'); },
+    });
+
+    const updateMut = useMutation({
+        mutationFn: (data: { id: string; date: string; time: string; guests: number }) =>
+            import('../../../shared/services/api').then(mod => mod.default.patch(`/reservations/${data.id}`, { date: data.date, time: data.time, guests: data.guests })),
+        onSuccess: () => { qc.invalidateQueries({ queryKey: ['my-reservations'] }); toast.success('Booking updated!'); setModifyModal(null); },
+        onError: () => toast.error('Failed to update booking'),
     });
 
     const reservations: Reservation[] = Array.isArray(data) ? data : (data as { reservations?: Reservation[] }).reservations || [];
@@ -105,11 +147,11 @@ export default function MyBookingsPage() {
                                             </button>
                                         </div>
                                     )}
-                                    {r.status === 'completed' && (
-                                        <button style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 14px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500 }}>
-                                            Write Review
-                                        </button>
-                                    )}
+                            {r.status === 'completed' && (
+                                <button onClick={() => toast.success('Review feature coming soon')} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 14px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500 }}>
+                                    Write Review
+                                </button>
+                            )}
                                 </div>
                             </div>
                         </div>
@@ -119,33 +161,12 @@ export default function MyBookingsPage() {
 
             <Modal isOpen={!!modifyModal} onClose={() => setModifyModal(null)} title="Modify Booking" width={460}>
                 {modifyModal && (
-                    <div>
-                        <p style={{ fontSize: 13, color: '#6B7280', marginBottom: 16 }}>Update your booking details for <strong>{modifyModal.restaurantName || "L'Art Culinaire"}</strong>.</p>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                            <div>
-                                <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>Date</label>
-                                <input type="date" defaultValue={modifyModal.date?.slice(0, 10)}
-                                    style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
-                            </div>
-                            <div>
-                                <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>Time</label>
-                                <input type="time" defaultValue={modifyModal.time}
-                                    style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
-                            </div>
-                            <div>
-                                <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>Guests</label>
-                                <input type="number" defaultValue={modifyModal.guests} min={1} max={12}
-                                    style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
-                            </div>
-                        </div>
-                        <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
-                            <button onClick={() => setModifyModal(null)} style={{ flex: 1, padding: '10px', border: '1px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 14, cursor: 'pointer', fontFamily: 'Poppins' }}>Cancel</button>
-                            <button onClick={() => { setModifyModal(null); toast.success('Booking updated!'); }}
-                                style={{ flex: 1, padding: '10px', background: '#B91C1C', color: 'white', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>
-                                Save Changes
-                            </button>
-                        </div>
-                    </div>
+                    <ModifyContent
+                        booking={modifyModal}
+                        onSave={(date, time, guests) => updateMut.mutate({ id: modifyModal._id, date, time, guests })}
+                        onCancel={() => setModifyModal(null)}
+                        saving={updateMut.isPending}
+                    />
                 )}
             </Modal>
         </div>

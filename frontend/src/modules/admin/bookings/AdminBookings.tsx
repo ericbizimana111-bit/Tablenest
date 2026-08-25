@@ -39,10 +39,10 @@ export default function AdminBookings() {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginBottom: 24 }}>
-                <StatCard label="Total Bookings" value={(stats?.total || 8421).toLocaleString()} icon={<Calendar size={20} />} trend="-2.1%" />
-                <StatCard label="Today" value={stats?.todayTotal || 42} icon={<Clock size={20} />} />
-                <StatCard label="Confirmed" value={stats?.confirmed || 118} icon={<CheckCircle size={20} />} color="#16A34A" />
-                <StatCard label="Pending" value={stats?.pending || 12} icon={<Users size={20} />} color="#D97706" />
+                <StatCard label="Total Bookings" value={(stats?.total || 0).toLocaleString()} icon={<Calendar size={20} />} trend="-2.1%" />
+                <StatCard label="Today" value={stats?.todayTotal || 0} icon={<Clock size={20} />} />
+                <StatCard label="Confirmed" value={stats?.confirmed || 0} icon={<CheckCircle size={20} />} color="#16A34A" />
+                <StatCard label="Pending" value={stats?.pending || 0} icon={<Users size={20} />} color="#D97706" />
             </div>
 
             <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden' }}>

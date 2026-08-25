@@ -8,14 +8,17 @@ export class RestaurantsService {
   constructor(@InjectModel(Restaurant.name) private restaurantModel: Model<RestaurantDocument>) {}
 
   async findAll(query: any = {}) {
-    const { page = 1, limit = 20, status, search, cuisine, city } = query;
+    const { page = 1, limit = 20, status, search, cuisine, city, country } = query;
     const filter: any = {};
     if (status) filter.status = status;
     if (cuisine) filter.cuisineType = { $regex: cuisine, $options: 'i' };
     if (city) filter.city = { $regex: city, $options: 'i' };
+    if (country) filter.country = { $regex: country, $options: 'i' };
     if (search) filter.$or = [
       { name: { $regex: search, $options: 'i' } },
       { cuisineType: { $regex: search, $options: 'i' } },
+      { city: { $regex: search, $options: 'i' } },
+      { country: { $regex: search, $options: 'i' } },
     ];
     const skip = (page - 1) * limit;
     const [restaurants, total] = await Promise.all([
@@ -26,18 +29,26 @@ export class RestaurantsService {
   }
 
   async findPublic(query: any = {}) {
-    const { page = 1, limit = 20, search, cuisine, city } = query;
+    const { page = 1, limit = 20, search, cuisine, city, country, priceRange, sort } = query;
     const filter: any = { status: RestaurantStatus.ACTIVE };
     if (cuisine) filter.cuisineType = { $regex: cuisine, $options: 'i' };
     if (city) filter.city = { $regex: city, $options: 'i' };
+    if (country) filter.country = { $regex: country, $options: 'i' };
+    if (priceRange) filter.priceRange = priceRange;
     if (search) filter.$or = [
       { name: { $regex: search, $options: 'i' } },
       { cuisineType: { $regex: search, $options: 'i' } },
+      { city: { $regex: search, $options: 'i' } },
+      { country: { $regex: search, $options: 'i' } },
       { description: { $regex: search, $options: 'i' } },
     ];
+    let sortObj: any = { rating: -1 };
+    if (sort === 'rating_asc') sortObj = { rating: 1 };
+    else if (sort === 'newest') sortObj = { createdAt: -1 };
+    else if (sort === 'name_asc') sortObj = { name: 1 };
     const skip = (page - 1) * limit;
     const [restaurants, total] = await Promise.all([
-      this.restaurantModel.find(filter).skip(skip).limit(+limit).sort({ rating: -1 }),
+      this.restaurantModel.find(filter).skip(skip).limit(+limit).sort(sortObj),
       this.restaurantModel.countDocuments(filter),
     ]);
     return { restaurants, total, page: +page, pages: Math.ceil(total / limit) };

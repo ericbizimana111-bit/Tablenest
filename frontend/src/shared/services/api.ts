@@ -46,6 +46,8 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+let isHandling401 = false;
+
 api.interceptors.response.use(
     (response) => response,
     (error) => {
@@ -55,7 +57,13 @@ api.interceptors.response.use(
         const hadAuthHeader = Boolean(error.config?.headers?.Authorization);
 
         if (status === 401 && !isAuthRoute && hadAuthHeader && unauthorizedHandler) {
-            unauthorizedHandler();
+            if (!isHandling401) {
+                isHandling401 = true;
+                unauthorizedHandler();
+                setTimeout(() => { isHandling401 = false; }, 2000);
+            }
+            // Suppress 401 toasts - the handler redirects to login
+            return Promise.reject(error);
         }
 
         return Promise.reject(error);

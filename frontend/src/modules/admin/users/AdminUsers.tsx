@@ -40,10 +40,10 @@ export default function AdminUsers() {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginBottom: 24 }}>
-                <StatCard label="Total Users" value={(stats?.total || 42910).toLocaleString()} icon={<Eye size={20} />} trend="+12%" trendUp />
-                <StatCard label="Customers" value={(stats?.customers || 39200).toLocaleString()} icon={<Eye size={20} />} />
-                <StatCard label="Owners" value={(stats?.owners || 1284).toLocaleString()} icon={<Eye size={20} />} />
-                <StatCard label="Active" value={(stats?.active || 41200).toLocaleString()} icon={<CheckCircle size={20} />} color="#16A34A" />
+                <StatCard label="Total Users" value={(stats?.total || 0).toLocaleString()} icon={<Eye size={20} />} trend="+12%" trendUp />
+                <StatCard label="Customers" value={(stats?.customers || 0).toLocaleString()} icon={<Eye size={20} />} />
+                <StatCard label="Owners" value={(stats?.owners || 0).toLocaleString()} icon={<Eye size={20} />} />
+                <StatCard label="Active" value={(stats?.active || 0).toLocaleString()} icon={<CheckCircle size={20} />} color="#16A34A" />
             </div>
 
             <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden' }}>

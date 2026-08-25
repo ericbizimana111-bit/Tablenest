@@ -38,7 +38,7 @@ export default function AccountSettingsPage() {
     const { data: loyalty } = useQuery({
         queryKey: ['loyalty'],
         queryFn: () => loyaltyAPI.get().then(r => r.data),
-        initialData: { points: 450 },
+        initialData: { points: 0 },
     });
 
     const saveProfile = async () => {
