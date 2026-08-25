@@ -2,6 +2,9 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 import { InjectModel } from '@nestjs/mongoose';
 import { isValidObjectId, Model } from 'mongoose';
 import { Reservation, ReservationDocument, ReservationStatus } from './reservation.schema';
+import { Restaurant, RestaurantDocument } from '../restaurants/restaurant.schema';
+import { NotificationsService } from '../notifications/notifications.service';
+import { NotificationType } from '../notifications/notification.schema';
 import * as crypto from 'crypto';
 
 @Injectable()
@@ -11,7 +14,11 @@ export class ReservationsService {
       throw new BadRequestException(`Invalid ${field}: ${value}`);
     }
   }
-  constructor(@InjectModel(Reservation.name) private reservationModel: Model<ReservationDocument>) { }
+  constructor(
+    @InjectModel(Reservation.name) private reservationModel: Model<ReservationDocument>,
+    @InjectModel(Restaurant.name) private restaurantModel: Model<RestaurantDocument>,
+    private notificationsService: NotificationsService,
+  ) { }
 
   async create(customerId: string, data: any) {
     if (!data.restaurantId) {
@@ -19,8 +26,46 @@ export class ReservationsService {
     }
     this.assertValidId(data.restaurantId, 'restaurantId');
 
+    // Validate date is not in the past
+    if (data.date) {
+      const bookingDate = new Date(data.date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (bookingDate < today) {
+        throw new BadRequestException('Cannot book a date in the past');
+      }
+    }
+
+    // Validate guests
+    if (data.guests && (data.guests < 1 || data.guests > 20)) {
+      throw new BadRequestException('Guests must be between 1 and 20');
+    }
+
     const bookingRef = 'TN-' + crypto.randomBytes(4).toString('hex').toUpperCase();
-    return this.reservationModel.create({ ...data, customerId, bookingRef, status: ReservationStatus.PENDING });
+    const reservation = await this.reservationModel.create({
+      ...data,
+      customerId,
+      bookingRef,
+      status: ReservationStatus.PENDING,
+      tableId: data.tableId || null,
+      specialRequests: data.notes || data.specialRequests || null,
+    });
+
+    // Notify restaurant owner
+    try {
+      const restaurant = await this.restaurantModel.findById(data.restaurantId).select('name ownerId');
+      if (restaurant?.ownerId) {
+        await this.notificationsService.create(restaurant.ownerId.toString(), {
+          title: 'New Booking Request',
+          message: `New booking at ${restaurant.name} for ${data.guests} guests on ${data.date} at ${data.time}.`,
+          type: NotificationType.BOOKING,
+          link: '/owner/reservations',
+          metadata: { reservationId: reservation._id, restaurantId: data.restaurantId },
+        });
+      }
+    } catch { /* notification failure should not block booking */ }
+
+    return reservation;
   }
 
   async findAll(query: any = {}) {
@@ -65,12 +110,40 @@ export class ReservationsService {
 
   async confirm(id: string) {
     this.assertValidId(id, 'id');
-    return this.reservationModel.findByIdAndUpdate(id, { status: ReservationStatus.CONFIRMED }, { returnDocument: 'after' });
+    const reservation = await this.reservationModel.findByIdAndUpdate(id, { status: ReservationStatus.CONFIRMED }, { returnDocument: 'after' });
+    // Notify customer
+    if (reservation) {
+      try {
+        const restaurant = await this.restaurantModel.findById(reservation.restaurantId).select('name');
+        await this.notificationsService.create(reservation.customerId.toString(), {
+          title: 'Booking Confirmed',
+          message: `Your booking at ${restaurant?.name || 'the restaurant'} for ${reservation.guests} guests on ${reservation.date} at ${reservation.time} has been confirmed.`,
+          type: NotificationType.BOOKING,
+          link: '/my-bookings',
+          metadata: { reservationId: reservation._id },
+        });
+      } catch { /* notification failure should not block */ }
+    }
+    return reservation;
   }
 
   async cancel(id: string) {
     this.assertValidId(id, 'id');
-    return this.reservationModel.findByIdAndUpdate(id, { status: ReservationStatus.CANCELLED }, { returnDocument: 'after' });
+    const reservation = await this.reservationModel.findByIdAndUpdate(id, { status: ReservationStatus.CANCELLED }, { returnDocument: 'after' });
+    // Notify customer
+    if (reservation) {
+      try {
+        const restaurant = await this.restaurantModel.findById(reservation.restaurantId).select('name');
+        await this.notificationsService.create(reservation.customerId.toString(), {
+          title: 'Booking Cancelled',
+          message: `Your booking at ${restaurant?.name || 'the restaurant'} has been cancelled.`,
+          type: NotificationType.BOOKING,
+          link: '/my-bookings',
+          metadata: { reservationId: reservation._id },
+        });
+      } catch { /* notification failure should not block */ }
+    }
+    return reservation;
   }
 
   async markArrived(id: string) {

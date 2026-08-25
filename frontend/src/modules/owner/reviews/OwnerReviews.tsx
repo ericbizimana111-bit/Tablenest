@@ -42,7 +42,7 @@ export default function OwnerReviews() {
         queryKey: ['owner-reviews', restaurantId],
         queryFn: () => reviewsAPI.getByRestaurant(restaurantId).then(r => r.data),
         enabled: !!restaurantId,
-        initialData: { reviews: DEMO_REVIEWS, avgRating: 4.6 },
+        initialData: { reviews: [], avgRating: 0 },
     });
 
     const replyMut = useMutation({
@@ -50,7 +50,7 @@ export default function OwnerReviews() {
         onSuccess: () => { qc.invalidateQueries({ queryKey: ['owner-reviews'] }); setReplyModal(null); setReplyText(''); toast.success('Reply sent!'); },
     });
 
-    const reviews = data?.reviews || DEMO_REVIEWS;
+    const reviews = data?.reviews || [];
 
     const ratingDist = [5, 4, 3, 2, 1].map(r => ({
         star: r,
@@ -139,13 +139,4 @@ export default function OwnerReviews() {
         </div>
     );
 }
-
-const DEMO_REVIEWS = [
-    { _id: '1', customerName: 'Emily Lawson', rating: 5, comment: 'The seasonal tasting menu was absolutely phenomenal. Exceptional service from Maria!', date: '2h ago', ownerReply: null },
-    { _id: '2', customerName: 'Marcus Brown', rating: 4, comment: 'Great atmosphere and wine selection. Duck confit was a bit salty, but overall a lovely night.', date: '5h ago', ownerReply: null },
-    { _id: '3', customerName: 'Sarah Kim', rating: 2, comment: 'Waited 45 minutes past our reservation time. Disappointing as we\'ve enjoyed TableNest before.', date: '1d ago', ownerReply: 'We sincerely apologize for the wait time. Please contact us directly for a complimentary reservation.' },
-];
-
-
-
 

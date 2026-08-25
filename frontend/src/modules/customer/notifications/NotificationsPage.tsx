@@ -38,7 +38,7 @@ export default function NotificationsPage() {
     const { data, isLoading } = useQuery({
         queryKey: ['notifications', currentType],
         queryFn: () => notificationsAPI.getAll({ type: currentType, limit: 20 }).then(r => r.data),
-        initialData: { notifications: DEMO_NOTIFICATIONS, unread: 3 } as { notifications: Notification[]; unread: number },
+        initialData: { notifications: [], unread: 0 } as { notifications: Notification[]; unread: number },
         refetchInterval: TIME_UPDATE_INTERVAL,
     });
 
@@ -55,7 +55,7 @@ export default function NotificationsPage() {
         onSuccess: () => qc.invalidateQueries({ queryKey: ['notifications'] }),
     });
 
-    const notifications = data?.notifications || DEMO_NOTIFICATIONS;
+    const notifications = data?.notifications || [];
     const filtered = currentType ? notifications.filter((n) => n.type === currentType) : notifications;
 
     const getTimeLabel = (createdAt: string) => {
@@ -153,10 +153,3 @@ export default function NotificationsPage() {
     );
 }
 
-const DEMO_NOTIFICATIONS = [
-    { _id: '1', type: 'order', title: 'Order Out for Delivery', message: "Your order #TN-8829 from 'The Golden Fork' is on its way. Estimated arrival in 15 minutes.", isRead: false, createdAt: new Date(Date.now() - 2 * 60000).toISOString(), actions: ['Track Order', 'View Receipt'] },
-    { _id: '2', type: 'booking', title: 'Booking Confirmed', message: "Success! Your reservation for 4 at 'Lumière Brasserie' tonight at 8:30 PM is locked in.", isRead: false, createdAt: new Date(Date.now() - 60 * 60000).toISOString(), actions: ['Add to Calendar', 'Modify Booking'] },
-    { _id: '3', type: 'promotion', title: 'Weekend Brunch Special', message: 'Get 20% off your next brunch booking. Valid this Saturday and Sunday only!', isRead: true, createdAt: new Date(Date.now() - 4 * 60 * 60000).toISOString(), cta: 'Redeem Now' },
-    { _id: '4', type: 'system', title: 'Security Update', message: "We've updated our Privacy Policy to better protect your data. Take a moment to review the changes.", isRead: true, createdAt: new Date(Date.now() - 24 * 60 * 60000).toISOString(), actions: ['Read Privacy Policy'] },
-    { _id: '5', type: 'order', title: 'Order Delivered', message: "Your order from 'Sushirama' was delivered. How was the food? Rate your experience.", isRead: true, createdAt: '2024-10-12T00:00:00Z', actions: ['Write Review'] },
-];

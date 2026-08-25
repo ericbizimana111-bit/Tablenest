@@ -21,6 +21,24 @@ export default function AdminRestaurants() {
         queryFn: () => restaurantsAPI.getStats().then((r) => r.data),
     });
 
+
+    const approveMut = useMutation({
+        mutationFn: (id: string) => restaurantsAPI.approve(id),
+        onSuccess: () => {
+            qc.invalidateQueries({ queryKey: ['admin-restaurants'] });
+            qc.invalidateQueries({ queryKey: ['restaurant-stats'] });
+            toast.success('Restaurant approved');
+        },
+    });
+
+    const rejectMut = useMutation({
+        mutationFn: ({ id, reason }: { id: string; reason: string }) => restaurantsAPI.reject(id, reason),
+        onSuccess: () => {
+            qc.invalidateQueries({ queryKey: ['admin-restaurants'] });
+            qc.invalidateQueries({ queryKey: ['restaurant-stats'] });
+            toast.success('Restaurant rejected');
+        },
+    });
     const suspendMut = useMutation({
         mutationFn: (id: string) => restaurantsAPI.suspend(id),
         onSuccess: () => {
@@ -29,7 +47,7 @@ export default function AdminRestaurants() {
         },
     });
 
-    const restaurants: Restaurant[] = data?.restaurants || DEMO_RESTAURANTS;
+    const restaurants: Restaurant[] = data?.restaurants || [];
 
     return (
         <div className="fade-in">
@@ -94,8 +112,3 @@ export default function AdminRestaurants() {
     );
 }
 
-const DEMO_RESTAURANTS: Restaurant[] = [
-    { _id: '1', name: "L'Art Culinaire", ownerId: 'owner1', cuisineType: 'French', city: 'Paris', status: 'active', rating: 4.9, address: '12 Rue de la Paix' },
-    { _id: '2', name: 'Sakura Zen', ownerId: 'owner2', cuisineType: 'Japanese', city: 'Tokyo', status: 'active', rating: 4.8, address: '5 Sakura Lane' },
-    { _id: '3', name: 'Bistro No. 9', ownerId: 'owner3', cuisineType: 'Italian', city: 'Rome', status: 'pending', rating: 4.6, address: '9 Via Roma' },
-];

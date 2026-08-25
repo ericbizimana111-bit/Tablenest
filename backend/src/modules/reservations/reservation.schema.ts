@@ -20,8 +20,14 @@ export class Reservation {
   @Prop({ required: true })
   restaurantId: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ default: null })
   tableId: Types.ObjectId;
+
+  @Prop({ default: null })
+  restaurantName: string;
+
+  @Prop({ default: null })
+  customerName: string;
 
   @Prop({ required: true })
   date: Date;

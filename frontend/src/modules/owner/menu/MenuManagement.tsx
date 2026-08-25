@@ -79,10 +79,10 @@ export default function MenuManagement() {
         setShowItemModal(true);
     };
 
-    const allItems = (items.length ? items : DEMO_ITEMS).filter((i: MenuItem) =>
+    const allItems = (items.length ? items : []).filter((i: MenuItem) =>
         !activeCategory || i.categoryId === activeCategory._id || !activeCategory._id
     );
-    const allCategories = categories.length ? categories : DEMO_CATS;
+    const allCategories = categories.length ? categories : [];
 
     return (
         <div className="fade-in">
@@ -108,7 +108,7 @@ export default function MenuManagement() {
                 <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 12, height: 'fit-content' }}>
                     <div style={{ fontSize: 11, fontWeight: 700, color: '#9CA3AF', letterSpacing: '0.08em', padding: '4px 8px', marginBottom: 6 }}>CATEGORIES</div>
                     {allCategories.map((cat: MenuCategory) => {
-                        const count = DEMO_ITEMS.filter(i => i.categoryId === cat._id).length || cat.count || 0;
+                        const count = [].filter(i => i.categoryId === cat._id).length || cat.count || 0;
                         const isActive = activeCategory?._id === cat._id || (!activeCategory && cat._id === allCategories[0]?._id);
                         return (
                             <div key={cat._id} onClick={() => setActiveCategory(isActive ? null : cat)}
@@ -123,7 +123,7 @@ export default function MenuManagement() {
                 {/* Items grid */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
                     {isLoading ? <Spinner /> : (
-                        (allItems.length ? allItems : DEMO_ITEMS).map((item: MenuItem) => (
+                        (allItems.length ? allItems : []).map((item: MenuItem) => (
                             <div key={item._id} style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden' }}>
                                 <div style={{ position: 'relative' }}>
                                     <img src={item.image || `https://images.unsplash.com/photo-${FOOD_IMGS[item.name?.charCodeAt(0) % FOOD_IMGS.length]}?w=400&q=80`}
@@ -207,14 +207,4 @@ export default function MenuManagement() {
     );
 }
 
-const DEMO_CATS = [
-    { _id: '1', name: 'Mains', count: 12 }, { _id: '2', name: 'Starters', count: 8 },
-    { _id: '3', name: 'Desserts', count: 6 }, { _id: '4', name: 'Drinks', count: 15 }, { _id: '5', name: 'Sides', count: 4 },
-];
 const FOOD_IMGS = ['1546069901-ba9599a7e63c', '1555396273-367ea4eb4db5', '1414235077428-338989a2e8c0', '1579871494447-9811cf80d66c'];
-const DEMO_ITEMS = [
-    { _id: '1', categoryId: '1', name: 'Signature Ribeye', price: 42.00, description: '30-day aged grass-fed beef served with roasted vegetables', image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80', isAvailable: true },
-    { _id: '2', categoryId: '1', name: 'Truffle Linguine', price: 28.00, description: 'Hand-crafted pasta with black summer truffles', image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&q=80', isAvailable: true },
-    { _id: '3', categoryId: '1', name: 'Atlantic Salmon', price: 34.00, description: 'Pan-seared wild salmon with asparagus spears', image: 'https://images.unsplash.com/photo-1485921325833-c519f76c4927?w=400&q=80', isAvailable: false, isSoldOut: true },
-    { _id: '4', categoryId: '1', name: 'Margherita Pizza', price: 22.00, description: 'San Marzano tomatoes, buffalo mozzarella, fresh basil', image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80', isAvailable: true },
-];

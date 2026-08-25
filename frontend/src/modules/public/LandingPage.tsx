@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { restaurantsAPI } from '../../shared/services/api';
 import { useNavigate } from 'react-router-dom';
 import { MapPin, Utensils, Calendar, Search, Star, ArrowRight } from 'lucide-react';
 import Header from '../../shared/components/layout/Header'; // Adjust this import path to match your folder setup
@@ -27,22 +29,17 @@ const TESTIMONIALS = [
     { text: 'The only app I use for dinner plans now. Reliable, fast, and the interface is beautiful.', name: 'Emily Rodriguez', role: 'Local Guide', img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80' },
 ];
 
-const FEATURED = [
-    { name: "L'Osteria", cuisine: 'Italian', rating: 4.8, dist: '0.6 miles', isOpen: true, img: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=500&q=80' },
-    { name: 'Zento Sushi', cuisine: 'Japanese', rating: 4.7, dist: '1.2 miles', isOpen: true, img: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=500&q=80' },
-    { name: 'Iron Grill', cuisine: 'Steakhouse', rating: 4.8, dist: '2.5 miles', isOpen: false, img: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=500&q=80' },
-    { name: 'Bleu Bistro', cuisine: 'French', rating: 4.6, dist: '3.1 miles', isOpen: true, img: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=500&q=80' },
-    { name: 'Taco Loco', cuisine: 'Mexican', rating: 4.9, dist: '1.5 miles', isOpen: true, img: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&q=80' },
-    { name: 'The Burger Joint', cuisine: 'American', rating: 4.5, dist: '2.1 miles', isOpen: true, img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=80' },
-    { name: 'Golden Dragon', cuisine: 'Chinese', rating: 4.7, dist: '3.8 miles', isOpen: true, img: 'https://images.unsplash.com/photo-1525755662778-989d0524087e?w=500&q=80' },
-    { name: 'Saffron Hub', cuisine: 'Indian', rating: 4.8, dist: '4.2 miles', isOpen: false, img: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&q=80' },
-];
-
 export default function LandingPage() {
     const navigate = useNavigate();
     const [location, setLocation] = useState('');
     const [cuisine, setCuisine] = useState('');
     const [activeTab, setActiveTab] = useState('Home');
+
+    const { data: featuredData } = useQuery({
+        queryKey: ['featured-restaurants'],
+        queryFn: () => restaurantsAPI.getPublic({ limit: 8 }).then(r => r.data),
+    });
+    const featuredRestaurants = featuredData?.restaurants || [];
 
     return (
         <div style={{ fontFamily: 'Poppins, sans-serif', background: '#FAFAFA', overflowX: 'hidden' }}>
@@ -189,13 +186,13 @@ export default function LandingPage() {
 
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 24 }}>
-                    {FEATURED.map(r => (
+                    {(featuredRestaurants || []).map((r: any) => (
                         <div key={r.name} className="hover-card" style={{ border: '1px solid #E5E7EB', borderRadius: 16, overflow: 'hidden', cursor: 'pointer', background: 'white', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }} onClick={() => navigate('/restaurants/booking')}>
                             <div style={{ position: 'relative' }}>
 
-                                <img src={r.img} alt={r.name} style={{ width: '100%', height: 180, objectFit: 'cover' }} />
-                                <span style={{ position: 'absolute', top: 12, left: 12, background: r.isOpen ? '#10B981' : '#EF4444', color: 'white', fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 9999, backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', gap: 4 }}>
-                                    <span style={{ fontSize: 8 }}>●</span> {r.isOpen ? 'Open' : 'Closed'}
+                                <img src={r.images?.[0] || "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=500&q=80"} alt={r.name} style={{ width: '100%', height: 180, objectFit: 'cover' }} />
+                                <span style={{ position: 'absolute', top: 12, left: 12, background: r.status === 'active' ? '#10B981' : '#EF4444', color: 'white', fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 9999, backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', gap: 4 }}>
+                                    <span style={{ fontSize: 8 }}>●</span> {r.status === 'active' ? 'Open' : 'Closed'}
                                 </span>
                             </div>
                             <div style={{ padding: 18 }}>
@@ -203,10 +200,10 @@ export default function LandingPage() {
                                     <span style={{ fontWeight: 700, fontSize: 16, color: '#111827' }}>{r.name}</span>
                                     <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 14, color: '#4B5563', fontWeight: 500 }}><Star size={14} fill="#F59E0B" color="#F59E0B" />{r.rating}</span>
                                 </div>
-                                <div style={{ fontSize: 13, color: '#6B7280', marginBottom: 16 }}>{r.cuisine} • {r.dist}</div>
+                                <div style={{ fontSize: 13, color: '#6B7280', marginBottom: 16 }}>{r.cuisineType || "Various"} • {r.dist}</div>
                                 <div style={{ display: 'flex', gap: 10 }}>
-                                    <button className="btn-outline-hover" style={{ flex: 1, padding: '9px', border: '1px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 600, color: '#4B5563' }}>View Menu</button>
-                                    <button className="btn-hover" style={{ flex: 1, padding: '9px', border: 'none', borderRadius: 8, background: '#B91C1C', color: 'white', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 600 }}>Book</button>
+                                    <button className="btn-outline-hover" style={{ flex: 1, padding: "9px", border: "1px solid #E5E7EB", borderRadius: 8, background: "white", fontSize: 13, cursor: "pointer", fontFamily: "Poppins", fontWeight: 600, color: "#4B5563" }} onClick={(e) => { e.stopPropagation(); navigate("/restaurants/" + r._id); }}>View Menu</button>
+                                    <button className="btn-hover" style={{ flex: 1, padding: "9px", border: "none", borderRadius: 8, background: "#B91C1C", color: "white", fontSize: 13, cursor: "pointer", fontFamily: "Poppins", fontWeight: 600 }} onClick={(e) => { e.stopPropagation(); navigate("/restaurants/" + r._id); }}>Book</button>
                                 </div>
                             </div>
                         </div>

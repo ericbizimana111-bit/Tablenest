@@ -30,7 +30,7 @@ export default function AdminOrders() {
         queryFn: () => ordersAPI.getStats().then(r => r.data),
     });
 
-    const orders: Order[] = (data as { orders?: Order[] } | undefined)?.orders || DEMO_ORDERS;
+    const orders: Order[] = (data as { orders?: Order[] } | undefined)?.orders || [];
 
     return (
         <div className="fade-in">
@@ -91,10 +91,3 @@ export default function AdminOrders() {
     );
 }
 
-const DEMO_ORDERS = [
-    { _id: '8921', orderId: '8921', restaurantName: 'The Gilded Fork', customerName: 'Elena Rodriguez', status: 'placed', total: 512.00 },
-    { _id: '8920', orderId: '8920', restaurantName: 'Azure Coastal', customerName: 'Marcus Chen', status: 'confirmed', total: 245.50 },
-    { _id: '8919', orderId: '8919', restaurantName: 'Bistro No. 9', customerName: 'Sarah Jenkins', status: 'delivered', total: 480.00 },
-    { _id: '8918', orderId: '8918', restaurantName: 'Terra & Grain', customerName: "Liam O'Connor", status: 'preparing', total: 68.00 },
-    { _id: '8917', orderId: '8917', restaurantName: 'The Gilded Fork', customerName: 'Diana Prince', status: 'cancelled', total: 1200.00 },
-];

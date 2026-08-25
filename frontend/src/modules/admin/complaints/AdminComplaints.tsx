@@ -72,7 +72,7 @@ export default function AdminComplaints() {
         onSuccess: () => { qc.invalidateQueries({ queryKey: ['support-tickets'] }); toast.success('Response sent'); setReply(''); },
     });
 
-    const tickets: SupportTicket[] = data?.tickets || DEMO_TICKETS;
+    const tickets: SupportTicket[] = data?.tickets || [];
 
     return (
         <div className="fade-in">
@@ -207,9 +207,3 @@ export default function AdminComplaints() {
     );
 }
 
-const DEMO_TICKETS: SupportTicket[] = [
-    { _id: '1', ticketId: '#TK-89421', userName: 'Julian Schmidt', subject: 'Payment gateway timeout', description: 'Integration error during checkout process when using Visa card', type: 'technical', status: 'open', createdAt: '2024-10-24', date: 'Oct 24, 14:30' },
-    { _id: '2', ticketId: '#TK-89418', userName: 'Elena Watson', subject: 'Missing item in Order #8821', description: 'Truffle pasta was not delivered with my order', type: 'order', status: 'in_progress', createdAt: '2024-10-24', date: 'Oct 24, 12:15' },
-    { _id: '3', ticketId: '#TK-89399', userName: 'Marco Lucca', subject: 'Reservation rescheduling', description: 'Need to move from 7pm to 8:30pm same day', type: 'booking', status: 'resolved', createdAt: '2024-10-23', date: 'Oct 23, 18:05' },
-    { _id: '4', ticketId: '#TK-89382', userName: 'Sarah Connor', subject: 'Refund for cold delivery', description: 'The soup was stone cold on arrival at my address', type: 'order', status: 'open', createdAt: '2024-10-23', date: 'Oct 23, 09:40' },
-];

@@ -36,7 +36,7 @@ export default function AdminPendingApprovals() {
         },
     });
 
-    const pending = data.length ? data : DEMO_PENDING;
+    const pending = data || [];
 
     return (
         <div className="fade-in">
@@ -107,7 +107,3 @@ export default function AdminPendingApprovals() {
     );
 }
 
-const DEMO_PENDING: Restaurant[] = [
-    { _id: 'p1', name: 'Harbor & Vine', ownerId: 'owner4', cuisineType: 'Seafood', city: 'Miami', status: 'pending', address: '88 Ocean Drive', description: 'Fresh coastal cuisine with a modern twist.' },
-    { _id: 'p2', name: 'Ember & Oak', ownerId: 'owner5', cuisineType: 'Steakhouse', city: 'Chicago', status: 'pending', address: '220 Lake St', description: 'Premium steaks and craft cocktails.' },
-];

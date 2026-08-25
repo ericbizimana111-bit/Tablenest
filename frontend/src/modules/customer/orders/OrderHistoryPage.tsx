@@ -31,8 +31,7 @@ export default function OrderHistoryPage() {
 
     const { data, isLoading } = useQuery({
         queryKey: ['my-orders', tab, page],
-        queryFn: () => ordersAPI.getMyOrders({ status: tab === 'All' ? undefined : tab.toLowerCase(), page, limit: 10 }).then(r => r.data),
-        initialData: { orders: DEMO_ORDERS, total: 3, pages: 12 },
+        queryFn: () => ordersAPI.getMyOrders({ status: tab === 'All' ? undefined : tab.toLowerCase(), page, limit: 10 }).then(r => r.data)
     });
 
     const reorderMut = useMutation({
@@ -45,7 +44,7 @@ export default function OrderHistoryPage() {
         onSuccess: () => { qc.invalidateQueries({ queryKey: ['my-orders'] }); toast.success('Order placed!'); },
     });
 
-    const orders = (data?.orders as Order[]) || DEMO_ORDERS;
+    const orders = (data?.orders as Order[]) || [];
 
     return (
         <div className="fade-in">
@@ -130,8 +129,3 @@ export default function OrderHistoryPage() {
     );
 }
 
-const DEMO_ORDERS: Order[] = [
-    { _id: '64e1f45d5b8e4f6a8d2a1b01', restaurantId: 'rest1', customerId: 'user1', restaurantName: "L'Osteria di Roma", status: 'delivered', total: 124.50, createdAt: '2024-10-12T07:30:00Z', items: [{ menuItemId: 'm1', name: 'Truffle Fettuccine', price: 32.00, quantity: 2 }, { menuItemId: 'm2', name: 'Tiramisu', price: 12.50, quantity: 1 }, { menuItemId: 'm3', name: 'Pinot Grigio', price: 12.50, quantity: 1 }] },
-    { _id: '64e1f45d5b8e4f6a8d2a1b02', restaurantId: 'rest2', customerId: 'user1', restaurantName: 'Sakura Sushi & Grill', status: 'placed', total: 88.20, createdAt: '2024-10-08T06:15:00Z', items: [{ menuItemId: 'm4', name: "Chef's Selection Platter", price: 42.00, quantity: 1 }, { menuItemId: 'm5', name: 'Miso Soup', price: 6.10, quantity: 2 }, { menuItemId: 'm6', name: 'Green Tea', price: 4.00, quantity: 1 }] },
-    { _id: '64e1f45d5b8e4f6a8d2a1b03', restaurantId: 'rest3', customerId: 'user1', restaurantName: 'The Burger Collective', status: 'cancelled', total: 64.00, createdAt: '2024-10-01T01:20:00Z', items: [{ menuItemId: 'm7', name: 'Signature BBQ Burger', price: 18.00, quantity: 3 }, { menuItemId: 'm8', name: 'Truffle Fries', price: 10.00, quantity: 2 }] },
-];

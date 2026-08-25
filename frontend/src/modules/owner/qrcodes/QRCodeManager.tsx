@@ -32,7 +32,7 @@ export default function QRCodeManager() {
         queryKey: ['tables-qr', restaurantId],
         queryFn: () => tablesAPI.getByRestaurant(restaurantId).then(r => r.data),
         enabled: !!restaurantId,
-        initialData: DEMO_TABLES,
+        initialData: [],
     });
 
     return (
@@ -87,7 +87,7 @@ export default function QRCodeManager() {
 
                     {/* Table QR grid */}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14 }}>
-                        {(tables.length ? tables : DEMO_TABLES).map((t: TableInfo) => (
+                        {(tables.length ? tables : []).map((t: TableInfo) => (
                             <div key={t._id} style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 14 }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
                                     <span style={{ fontWeight: 700, fontSize: 14 }}>T-{t.tableNumber || t.number}</span>
@@ -172,7 +172,7 @@ export default function QRCodeManager() {
     );
 }
 
-const DEMO_TABLES = [
+const [] = [
     { _id: '1', tableNumber: '01', isActive: true }, { _id: '2', tableNumber: '02', isActive: true },
     { _id: '3', tableNumber: '03', isActive: true }, { _id: '4', tableNumber: '04', isActive: false },
 ];

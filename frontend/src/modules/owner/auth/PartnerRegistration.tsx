@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { restaurantsAPI } from '../../../shared/services/api';
+import { restaurantsAPI, uploadsAPI } from '../../../shared/services/api';
 import { useAuth } from '../../../shared/hooks/useAuthContext';
 import { getRoleHomePath } from '../../../shared/utils/auth.utils';
 import toast from 'react-hot-toast';
-import { CheckCircle, Image, PartyPopper } from 'lucide-react';
+import { CheckCircle, Image, PartyPopper, X, Upload } from 'lucide-react';
 
 const STEPS = ['Account', 'Business', 'Operations', 'Media'];
-const CUISINES = ['Italian', 'Japanese', 'French', 'Mexican', 'American', 'Chinese', 'Indian', 'Mediterranean', 'Seafood', 'Steakhouse', 'Modern European', 'British Modern', 'Other'];
+const CUISINES = ['Italian', 'Japanese', 'French', 'Mexican', 'American', 'Chinese', 'Indian', 'Mediterranean', 'Seafood', 'Steakhouse', 'Modern European', 'African', 'Other'];
+const COUNTRIES = ['Rwanda', 'Kenya', 'Uganda', 'Tanzania', 'Burundi', 'Ethiopia', 'Nigeria', 'Ghana', 'South Africa', 'USA', 'UK', 'France', 'Germany', 'Other'];
 
 type PartnerForm = {
     fullName: string;
@@ -29,10 +30,35 @@ export default function PartnerRegistration() {
     const [step, setStep] = useState(1);
     const [form, setForm] = useState<PartnerForm>({
         fullName: '', email: '', password: '', restaurantName: '', cuisineType: 'Italian',
-        description: '', seatingCapacity: '', priceRange: '$$', address: '', dineIn: true, delivery: false,
+        description: '', seatingCapacity: '', priceRange: '$$', address: '', city: '', country: 'Rwanda', phone: '', dineIn: true, delivery: false, imageUrls: [],
     });
 
+    const [images, setImages] = useState<string[]>([]);
+    const [uploading, setUploading] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
     const up = <K extends keyof PartnerForm>(key: K, val: PartnerForm[K]) => setForm(f => ({ ...f, [key]: val }));
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (!files) return;
+        setUploading(true);
+        try {
+            for (let i = 0; i < files.length; i++) {
+                const res = await uploadsAPI.uploadImage(files[i]);
+                setImages(prev => [...prev, res.data.url]);
+            }
+            toast.success('Images uploaded!');
+        } catch {
+            toast.error('Failed to upload image');
+        } finally {
+            setUploading(false);
+            if (fileInputRef.current) fileInputRef.current.value = '';
+        }
+    };
+
+    const removeImage = (index: number) => setImages(prev => prev.filter((_, i) => i !== index));
 
     const submit = async () => {
         try {
@@ -42,7 +68,7 @@ export default function PartnerRegistration() {
             await restaurantsAPI.create({
                 name: form.restaurantName, cuisineType: form.cuisineType, description: form.description,
                 seatingCapacity: +form.seatingCapacity, priceRange: form.priceRange,
-                address: form.address, dineIn: form.dineIn, delivery: form.delivery,
+                address: form.address, city: form.city, country: form.country, phone: form.phone, dineIn: form.dineIn, delivery: form.delivery, images,
             });
             toast.success('Application submitted! Await approval.');
             navigate(getRoleHomePath('owner'), { replace: true });
@@ -178,7 +204,7 @@ export default function PartnerRegistration() {
                             </button>
                             {step < 4
                                 ? <button onClick={() => setStep(s => s + 1)} style={{ padding: '10px 24px', background: '#B91C1C', color: 'white', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>Continue →</button>
-                                : <button onClick={submit} style={{ padding: '10px 24px', background: '#B91C1C', color: 'white', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>Submit for Approval</button>
+                                : <button onClick={submit} disabled={submitting} style={{ padding: '10px 24px', background: submitting ? '#9CA3AF' : '#B91C1C', color: 'white', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: submitting ? 'not-allowed' : 'pointer', fontFamily: 'Poppins' }}>{submitting ? 'Submitting...' : 'Submit for Approval'}</button>
                             }
                         </div>
                     </div>

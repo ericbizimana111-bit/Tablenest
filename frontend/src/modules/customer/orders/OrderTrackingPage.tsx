@@ -22,12 +22,11 @@ export default function OrderTrackingPage() {
         queryKey: ['order', id],
         queryFn: () => ordersAPI.getById(id!).then(r => r.data),
         enabled: !!id,
-        initialData: DEMO_ORDER,
         refetchInterval: 15000,
     });
 
     if (isLoading) return <Spinner />;
-    const o = order || DEMO_ORDER;
+    const o: any = (typeof order === "object" && order && !Array.isArray(order)) ? order : {};
 
     const currentStep = STATUS_STEPS.findIndex(s => s.key === o.status);
 
@@ -53,7 +52,7 @@ export default function OrderTrackingPage() {
                             <div style={{ fontWeight: 700, fontSize: 20, color: '#B91C1C' }}>${o.total?.toFixed(2) || '124.50'}</div>
                         </div>
                         <div style={{ borderTop: '1px solid #E5E7EB', paddingTop: 12 }}>
-                            {(o.items || DEMO_ORDER.items).map((item: OrderItem, i: number) => (
+                            {(o.items || []).map((item: OrderItem, i: number) => (
                                 <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', fontSize: 13 }}>
                                     <span>{item.quantity || 1}x {item.name}</span>
                                     <span style={{ color: '#6B7280' }}>${item.price?.toFixed(2)}</span>
@@ -145,12 +144,3 @@ export default function OrderTrackingPage() {
     );
 }
 
-const DEMO_ORDER: Order = {
-    _id: '00284',
-    customerId: 'demo-customer',
-    restaurantId: 'demo-restaurant',
-    restaurantName: "L'Artisan Bistro",
-    status: 'preparing',
-    total: 124.50,
-    items: [{ name: 'Wagyu Beef Burger', price: 64.00, quantity: 2 }, { name: 'Truffle Fries', price: 18.50, quantity: 1 }, { name: 'Bordeaux Reserve', price: 42.00, quantity: 1 }],
-};

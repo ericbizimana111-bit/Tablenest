@@ -10,7 +10,6 @@ export default function ReferralPage() {
     const { data: referral } = useQuery<Referral>({
         queryKey: ['referrals'],
         queryFn: () => referralsAPI.get().then(r => r.data),
-        initialData: DEMO_REFERRAL,
     });
     const { data: loyalty } = useQuery<Loyalty>({
         queryKey: ['loyalty'],
@@ -21,7 +20,7 @@ export default function ReferralPage() {
     const code = referral?.code || 'NEST-GOLD-2024';
     const copyCode = () => { navigator.clipboard.writeText(code); toast.success('Code copied!'); };
 
-    const referrals = referral?.referrals || DEMO_REFERRALS;
+    const referrals = referral?.referrals || [];
     const sentCount = referrals.length;
     const successCount = referrals.filter((r: ReferralRecord) => r.status === 'successful').length;
     const totalPoints = loyalty?.points || 9000;
@@ -141,9 +140,3 @@ export default function ReferralPage() {
     );
 }
 
-const DEMO_REFERRALS: ReferralRecord[] = [
-    { name: 'Alex Sterling', email: 'alex.s@email.com', status: 'successful' as const, reward: 500, date: 'Oct 24, 2023' },
-    { name: 'Maria Lopez', email: 'm.lopez@email.com', status: 'pending' as const, reward: 0, date: 'Nov 02, 2023' },
-    { name: 'James Hunter', email: 'j.hunter@email.com', status: 'successful' as const, reward: 500, date: 'Nov 15, 2023' },
-];
-const DEMO_REFERRAL: Referral = { userId: 'demo', code: 'NEST-GOLD-2024', referrals: DEMO_REFERRALS, totalEarned: 1500 };

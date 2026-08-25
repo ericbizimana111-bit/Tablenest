@@ -35,15 +35,12 @@ export default function SeatManagement() {
         queryKey: ['floor-plan', restaurantId],
         queryFn: () => tablesAPI.getFloorPlan(restaurantId).then(r => r.data),
         enabled: !!restaurantId,
-        initialData: { tables: DEMO_TABLES, stats: { total: 48, available: 22, occupied: 18, reserved: 8 } },
+        initialData: { tables: [], stats: { total: 0, available: 0, occupied: 0, reserved: 0 } },
     });
-
-    const tables = data?.tables || DEMO_TABLES;
-    const stats = data?.stats || { total: 48, available: 22, occupied: 18, reserved: 8 };
 
     return (
         <div className="fade-in">
-            <div style={{ marginBottom: 20 }}>
+            <div style={{ marginBottom: 24 }}>
                 <h1 style={{ fontSize: 22, fontWeight: 700 }}>Seat Management</h1>
                 <p style={{ fontSize: 13, color: '#6B7280' }}>Real-time floor plan and table status management.</p>
             </div>
@@ -149,17 +146,3 @@ export default function SeatManagement() {
     );
 }
 
-const DEMO_TABLES = [
-    { _id: '1', tableNumber: '01', capacity: 6, status: 'available' },
-    { _id: '2', tableNumber: '02', capacity: 2, status: 'reserved' },
-    { _id: '3', tableNumber: '03', capacity: 4, status: 'occupied' },
-    { _id: '4', tableNumber: '04', capacity: 4, status: 'available' },
-    { _id: '5', tableNumber: '05', capacity: 2, status: 'blocked' },
-    { _id: '6', tableNumber: '06', capacity: 4, status: 'occupied', serverNotes: 'Celebrating anniversary' },
-    { _id: '7', tableNumber: '07', capacity: 8, status: 'available' },
-    { _id: '8', tableNumber: '08', capacity: 4, status: 'available' },
-    { _id: '9', tableNumber: '09', capacity: 2, status: 'occupied' },
-    { _id: '10', tableNumber: '10', capacity: 2, status: 'occupied' },
-    { _id: '11', tableNumber: '11', capacity: 2, status: 'available' },
-    { _id: '12', tableNumber: '12', capacity: 6, status: 'reserved' },
-];

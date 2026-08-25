@@ -40,11 +40,10 @@ export default function InventoryManagement() {
 
     const restaurantId = user?.restaurantId?.toString() || myRestaurant?._id || '';
 
-    const { data: items = DEMO_INVENTORY } = useQuery<InventoryItem[]>({
+    const { data: items = [] } = useQuery<InventoryItem[]>({
         queryKey: ['inventory', restaurantId],
         queryFn: () => inventoryAPI.getByRestaurant(restaurantId).then(r => r.data),
         enabled: !!restaurantId,
-        initialData: DEMO_INVENTORY,
     });
 
     const saveMut = useMutation({
@@ -89,7 +88,7 @@ export default function InventoryManagement() {
         setShowModal(true);
     };
 
-    const allItems = items.length ? items : DEMO_INVENTORY;
+    const allItems = items.length ? items : [];
     const lowStock = allItems.filter(i => i.quantity <= i.minQuantity);
 
     return (
@@ -196,10 +195,3 @@ export default function InventoryManagement() {
     );
 }
 
-const DEMO_INVENTORY = [
-    { _id: '1', name: 'Truffle Oil', unit: 'bottles', quantity: 8, minQuantity: 5, supplier: 'Gourmet Imports', cost: 24.50 },
-    { _id: '2', name: 'Wagyu Beef', unit: 'kg', quantity: 3, minQuantity: 5, supplier: 'Premium Meats Co.', cost: 85.00 },
-    { _id: '3', name: 'Bordeaux Wine', unit: 'bottles', quantity: 24, minQuantity: 12, supplier: 'Wine Direct', cost: 45.00 },
-    { _id: '4', name: 'Truffle (Black)', unit: 'g', quantity: 200, minQuantity: 100, supplier: 'Truffle House', cost: 8.50 },
-    { _id: '5', name: 'Lobster (Live)', unit: 'units', quantity: 2, minQuantity: 6, supplier: 'Ocean Fresh', cost: 32.00 },
-];

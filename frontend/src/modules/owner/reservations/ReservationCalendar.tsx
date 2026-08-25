@@ -35,7 +35,7 @@ export default function ReservationCalendar() {
     const { data: dayRes } = useQuery({
         queryKey: ['day-reservations', restaurantId, format(selectedDate, 'yyyy-MM-dd')],
         queryFn: () => reservationsAPI.getByRestaurant(restaurantId, { date: format(selectedDate, 'yyyy-MM-dd') }).then(r => r.data),
-        initialData: { reservations: DEMO_RES },
+        
     });
 
     const confirmMut = useMutation({
@@ -53,7 +53,9 @@ export default function ReservationCalendar() {
     const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
     const startPad = getDay(monthStart);
 
-    const todayStats = { confirmed: 118, pending: 12, cancelled: 4, noShow: 8 };
+    const todayKey = format(new Date(), 'yyyy-MM-dd');
+    const todayCal = calData[todayKey] || {};
+    const todayStats = { confirmed: todayCal.confirmed || 0, pending: todayCal.pending || 0, cancelled: todayCal.cancelled || 0, noShow: todayCal.noShow || 0 };
 
     return (
         <div className="fade-in" style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 20 }}>
@@ -91,7 +93,7 @@ export default function ReservationCalendar() {
                         {Array(startPad).fill(null).map((_, i) => <div key={`pad-${i}`} style={{ minHeight: 80, borderRight: '1px solid #F3F4F6', borderBottom: '1px solid #F3F4F6' }} />)}
                         {days.map(day => {
                             const key = format(day, 'yyyy-MM-dd');
-                            const data = calData[key] || DEMO_CAL[format(day, 'd')];
+                            const data = calData[key] || {};
                             const isSel = isSameDay(day, selectedDate);
                             const today = isToday(day);
                             return (
@@ -127,9 +129,9 @@ export default function ReservationCalendar() {
                 <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden', marginBottom: 12 }}>
                     <div style={{ padding: '14px 16px', borderBottom: '1px solid #E5E7EB' }}>
                         <div style={{ fontWeight: 600, fontSize: 15 }}>{format(selectedDate, 'MMMM d, yyyy')}</div>
-                        <div style={{ fontSize: 12, color: '#9CA3AF' }}>{(dayRes?.reservations || DEMO_RES).length} Total Reservations</div>
+                        <div style={{ fontSize: 12, color: '#9CA3AF' }}>{(dayRes?.reservations || []).length} Total Reservations</div>
                     </div>
-                    {(dayRes?.reservations || DEMO_RES).map((r: ReservationEntry) => (
+                    {(dayRes?.reservations || []).map((r: ReservationEntry) => (
                         <div key={r._id} style={{ padding: '14px 16px', borderBottom: '1px solid #F3F4F6', borderLeft: `3px solid ${r.status === 'confirmed' ? '#16A34A' : r.status === 'pending' ? '#D97706' : '#E5E7EB'}` }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
                                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
@@ -166,9 +168,3 @@ export default function ReservationCalendar() {
     );
 }
 
-const DEMO_RES = [
-    { _id: '1', customerName: 'Jane Doe', status: 'confirmed', time: '19:30', guests: 4, tableNumber: 'Table #12' },
-    { _id: '2', customerName: 'Mark Williams', status: 'pending', time: '20:00', guests: 2, tableNumber: 'Table #7' },
-    { _id: '3', customerName: 'Sarah Rogers', status: 'confirmed', time: '18:45', guests: 3, tableNumber: 'Booth 4' },
-];
-const DEMO_CAL: Record<string, { confirmed?: number; pending?: number }> = { '1': { confirmed: 12, pending: 3 }, '2': { confirmed: 18, pending: 5 }, '3': { confirmed: 24 }, '5': { confirmed: 8 }, '6': { pending: 2 }, '8': { confirmed: 14 } };

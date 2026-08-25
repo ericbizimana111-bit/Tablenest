@@ -29,18 +29,12 @@ type AddressForm = { label: string; street: string; apt: string; city: string; p
 
 type CardForm = { number: string; name: string; expiry: string; cvv: string; zip: string };
 
-const DEMO_ADDRESSES: DisplayAddress[] = [
-    { id: '1', label: 'Home', icon: 'home', address: '123 Culinary Lane, Apartment 4B', city: 'Gourmet District, NY 10012', country: 'United States', isDefault: true },
-    { id: '2', label: 'Work', icon: 'work', address: '456 Operational Plaza, Suite 200', city: 'Business Hub, NY 10001', country: 'United States', isDefault: false },
-];
-const DEMO_CARDS: DisplayCard[] = [
-    { id: '1', last4: '4242', holder: 'ALEXANDER DUPONT', expiry: '12/26', brand: 'Visa', isPrimary: true },
-    { id: '2', last4: '8891', holder: 'ALEX THOMPSON', expiry: '08/24', brand: 'Mastercard', isPrimary: false },
-];
+
+
 
 export default function AddressesPaymentsPage() {
-    const [addresses, setAddresses] = useState<DisplayAddress[]>(DEMO_ADDRESSES);
-    const [cards, setCards] = useState<DisplayCard[]>(DEMO_CARDS);
+    const [addresses, setAddresses] = useState<DisplayAddress[]>([]);
+    const [cards, setCards] = useState<DisplayCard[]>([]);
     const [showAddrForm, setShowAddrForm] = useState(false);
     const [showCardForm, setShowCardForm] = useState(false);
     const [addrForm, setAddrForm] = useState<AddressForm>({ label: '', street: '', apt: '', city: '', postalCode: '' });

@@ -29,7 +29,7 @@ export default function AdminBookings() {
         queryFn: () => reservationsAPI.getStats().then(r => r.data),
     });
 
-    const reservations: Reservation[] = (data as { reservations?: Reservation[] } | undefined)?.reservations || DEMO_RESERVATIONS;
+    const reservations: Reservation[] = (data as { reservations?: Reservation[] } | undefined)?.reservations || [];
 
     return (
         <div className="fade-in">
@@ -74,8 +74,3 @@ export default function AdminBookings() {
     );
 }
 
-const DEMO_RESERVATIONS = [
-    { _id: '1', bookingRef: 'TN-7729-1X', restaurantName: "L'Art Culinaire", customerName: 'Jane Doe', date: '2024-11-02', time: '19:30', guests: 4, status: 'confirmed' },
-    { _id: '2', bookingRef: 'TN-7730-2X', restaurantName: "Lumière Brasserie", customerName: 'Mark Williams', date: '2024-11-02', time: '20:00', guests: 2, status: 'pending' },
-    { _id: '3', bookingRef: 'TN-7731-3X', restaurantName: 'Bistro No. 9', customerName: 'Sarah Rogers', date: '2024-11-02', time: '18:45', guests: 3, status: 'confirmed' },
-];

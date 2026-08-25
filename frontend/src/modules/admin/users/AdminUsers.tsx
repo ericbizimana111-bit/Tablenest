@@ -30,7 +30,7 @@ export default function AdminUsers() {
         onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-users'] }); toast.success('User activated'); },
     });
 
-    const users = data?.users || DEMO_USERS;
+    const users = data?.users || [];
 
     return (
         <div className="fade-in">
@@ -103,9 +103,3 @@ export default function AdminUsers() {
     );
 }
 
-const DEMO_USERS = [
-    { _id: '1', fullName: 'Alex Thompson', email: 'alex.t@example.com', role: 'customer', activePlan: 'Gourmet Pro', isActive: true, createdAt: '2024-01-15' },
-    { _id: '2', fullName: 'Marco V.', email: 'marco@osteria.com', role: 'owner', activePlan: 'Business', isActive: true, createdAt: '2023-10-12' },
-    { _id: '3', fullName: 'Sarah Jenkins', email: 'sarah@gildedfork.com', role: 'owner', activePlan: 'Business', isActive: true, createdAt: '2023-11-04' },
-    { _id: '4', fullName: 'Elena Watson', email: 'elena.w@example.com', role: 'customer', activePlan: 'Free', isActive: false, createdAt: '2024-03-20' },
-];

@@ -44,7 +44,6 @@ export default function StaffManagement() {
         queryKey: ['staff', restaurantId],
         queryFn: () => staffAPI.getByRestaurant(restaurantId).then(r => r.data),
         enabled: !!restaurantId,
-        initialData: DEMO_STAFF,
     });
 
     const saveMut = useMutation({
@@ -58,7 +57,7 @@ export default function StaffManagement() {
 
     const openEdit = (s: StaffMember) => { setEditStaff(s); setForm({ name: s.name || '', email: s.email || '', phone: s.phone || '', role: s.role || 'Server' }); setShowModal(true); };
     const openAdd = () => { setEditStaff(null); setForm({ name: '', email: '', phone: '', role: 'Server' }); setShowModal(true); };
-    const allStaff = (Array.isArray(staff) ? staff : DEMO_STAFF) as StaffMember[];
+    const allStaff = (Array.isArray(staff) ? staff : []) as StaffMember[];
     const filtered = allStaff.filter((s: StaffMember) =>
         !search || s.name?.toLowerCase().includes(search.toLowerCase()) || s.role?.toLowerCase().includes(search.toLowerCase())
     );
@@ -195,7 +194,7 @@ export default function StaffManagement() {
     );
 }
 
-const DEMO_STAFF = [
+const [] = [
     { _id: '1', name: 'Maria Santos', email: 'maria@restaurant.com', phone: '+1 555-0101', role: 'Manager', isActive: true },
     { _id: '2', name: 'James Liu', email: 'james@restaurant.com', phone: '+1 555-0102', role: 'Chef', isActive: true },
     { _id: '3', name: 'Aisha Patel', email: 'aisha@restaurant.com', phone: '+1 555-0103', role: 'Server', isActive: true },

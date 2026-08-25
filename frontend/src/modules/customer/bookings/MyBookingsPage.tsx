@@ -22,7 +22,6 @@ export default function MyBookingsPage() {
     const { data = [], isLoading } = useQuery<Reservation[]>({
         queryKey: ['my-reservations'],
         queryFn: () => reservationsAPI.getMyReservations().then(r => r.data),
-        initialData: DEMO_RESERVATIONS as Reservation[],
     });
 
     const cancelMut = useMutation({
@@ -30,14 +29,14 @@ export default function MyBookingsPage() {
         onSuccess: () => { qc.invalidateQueries({ queryKey: ['my-reservations'] }); toast.success('Reservation cancelled'); },
     });
 
-    const reservations: Reservation[] = Array.isArray(data) ? data : (data as { reservations?: Reservation[] }).reservations || DEMO_RESERVATIONS;
+    const reservations: Reservation[] = Array.isArray(data) ? data : (data as { reservations?: Reservation[] }).reservations || [];
     const upcoming = reservations.filter((r) => ['pending', 'confirmed', 'arrived'].includes(r.status));
     const past = reservations.filter((r) => r.status === 'completed');
     const cancelled = reservations.filter((r) => r.status === 'cancelled');
 
     const tabData: Record<string, Reservation[]> = {
-        Upcoming: upcoming.length ? upcoming : DEMO_RESERVATIONS.filter(r => r.status === 'confirmed' || r.status === 'pending'),
-        Past: past.length ? past : DEMO_RESERVATIONS.filter(r => r.status === 'completed'),
+        Upcoming: upcoming,
+        Past: past,
         Cancelled: cancelled,
     };
     const list = tabData[tab] || [];
@@ -153,8 +152,3 @@ export default function MyBookingsPage() {
     );
 }
 
-const DEMO_RESERVATIONS: Reservation[] = [
-    { _id: '1', customerId: 'demo', restaurantId: 'r1', tableId: 't1', restaurantName: "L'Art Culinaire", bookingRef: 'TN-7729-1X', date: '2024-11-15', time: '19:30', guests: 4, status: 'confirmed' },
-    { _id: '2', customerId: 'demo', restaurantId: 'r2', tableId: 't2', restaurantName: "Lumière Brasserie", bookingRef: 'TN-7730-2X', date: '2024-11-20', time: '20:00', guests: 2, status: 'pending' },
-    { _id: '3', customerId: 'demo', restaurantId: 'r3', tableId: 't3', restaurantName: 'Bistro No. 9', bookingRef: 'TN-7728-3X', date: '2024-10-28', time: '19:00', guests: 3, status: 'completed' },
-];

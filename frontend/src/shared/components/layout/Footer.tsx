@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Footer() {
     return (
@@ -11,25 +12,38 @@ export default function Footer() {
                     </p>
                 </div>
                 <div>
-                    <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 12, color: 'white' }}>Quick Links</div>
-                    {['Dashboard', 'Bookings', 'Analytics'].map(l => (
-                        <div key={l} style={{ fontSize: 13, color: '#9CA3AF', marginBottom: 8, cursor: 'pointer' }}>{l}</div>
+                    <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 12, color: 'white' }}>Explore</div>
+                    {[
+                        { label: 'Home', path: '/' },
+                        { label: 'Browse Restaurants', path: '/restaurants' },
+                        { label: 'About Us', path: '/about-us' },
+                        { label: 'FAQ', path: '/faq' },
+                    ].map(l => (
+                        <Link key={l.path} to={l.path} style={{ fontSize: 13, color: '#9CA3AF', marginBottom: 8, display: 'block', textDecoration: 'none' }}>
+                            {l.label}
+                        </Link>
                     ))}
                 </div>
                 <div>
                     <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 12, color: 'white' }}>For Restaurants</div>
-                    {['Join TableNest', 'Partner Perks', 'Support Center'].map(l => (
-                        <div key={l} style={{ fontSize: 13, color: '#9CA3AF', marginBottom: 8, cursor: 'pointer' }}>{l}</div>
+                    {[
+                        { label: 'Partner With Us', path: '/partner/register' },
+                        { label: 'Login', path: '/login' },
+                        { label: 'Sign Up', path: '/register' },
+                    ].map(l => (
+                        <Link key={l.path} to={l.path} style={{ fontSize: 13, color: '#9CA3AF', marginBottom: 8, display: 'block', textDecoration: 'none' }}>
+                            {l.label}
+                        </Link>
                     ))}
                 </div>
                 <div>
-                    <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 12, color: 'white' }}>Contact Info</div>
+                    <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 12, color: 'white' }}>Contact</div>
                     <div style={{ fontSize: 13, color: '#9CA3AF', marginBottom: 6 }}>support@tablenest.com</div>
                     <div style={{ fontSize: 13, color: '#9CA3AF' }}>1-800-RESERVE</div>
                 </div>
             </div>
             <div style={{ borderTop: '1px solid #374151', paddingTop: 16, fontSize: 13, color: '#6B7280', textAlign: 'center' }}>
-                © 2024 TableNest. Culinary artistry meets operational precision.
+                © {new Date().getFullYear()} TableNest. Culinary artistry meets operational precision.
             </div>
         </footer>
     );

@@ -52,7 +52,6 @@ export default function PromotionsPage() {
         queryKey: ['promotions', restaurantId],
         queryFn: () => promotionsAPI.getByRestaurant(restaurantId).then(r => r.data),
         enabled: !!restaurantId,
-        initialData: DEMO_PROMOS,
     });
 
     const saveMut = useMutation({
@@ -95,7 +94,7 @@ export default function PromotionsPage() {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
-                {(promos.length ? promos : DEMO_PROMOS).map((p: Promotion) => (
+                {(promos.length ? promos : []).map((p: Promotion) => (
                     <div key={p._id} style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden' }}>
                         <div style={{ background: p.isActive ? '#B91C1C' : '#9CA3AF', padding: '14px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -192,8 +191,3 @@ export default function PromotionsPage() {
     );
 }
 
-const DEMO_PROMOS = [
-    { _id: '1', name: 'Weekend Brunch Special', discountType: 'percentage', discountValue: 20, isActive: true, applicableCategories: ['Mains', 'Drinks'], startDate: '2024-11-01', endDate: '2024-11-30' },
-    { _id: '2', name: 'Happy Hour', discountType: 'percentage', discountValue: 15, isActive: true, applicableCategories: ['Drinks', 'Starters'], startDate: '2024-11-01', endDate: '2024-12-31' },
-    { _id: '3', name: 'Loyalty Discount', discountType: 'flat', discountValue: 10, isActive: false, applicableCategories: ['All Items'], startDate: '2024-10-01', endDate: '2024-10-31' },
-];
