@@ -7,8 +7,6 @@ import { useAuthStore } from '../../../shared/store/authStore';
 import { StatCard, Spinner, StatusBadge } from '../../../shared/components/ui/index';
 
 const RED = '#B91C1C';
-const DEMO_HEATMAP = [3, 5, 2, 7, 4, 6, 1, 8, 2, 4, 5, 3, 6, 7, 2, 1, 4, 5, 8, 3, 2, 6, 4, 7, 1, 5, 3, 8, 2, 4, 6, 7, 3, 1, 5, 2, 8, 4, 6, 3, 7, 2, 5, 1, 4, 8, 3, 6, 2, 7, 5, 4, 1, 3, 8, 6, 2, 5, 7, 4, 3, 1, 8, 2, 6, 5, 4, 7, 3, 1, 8, 2, 6, 5, 4, 7, 3, 1, 8, 2, 6, 5, 4, 7];
-
 interface DashboardReservation {
     _id?: string;
     customerName?: string;
@@ -24,9 +22,8 @@ export default function OwnerDashboard() {
 
     const { data: dashData, isLoading } = useQuery({
         queryKey: ['owner-dashboard', restaurantId],
-        queryFn: () => restaurantId ? analyticsAPI.getRestaurantDashboard(restaurantId).then(r => r.data) : Promise.resolve(DEMO_DASH),
+        queryFn: () => restaurantId ? analyticsAPI.getRestaurantDashboard(restaurantId).then(r => r.data) : Promise.resolve(null),
         enabled: !!restaurantId,
-        initialData: DEMO_DASH,
     });
 
     const { data: revenueData = [] } = useQuery({
@@ -36,16 +33,15 @@ export default function OwnerDashboard() {
 
     const { data: todayReservations } = useQuery({
         queryKey: ['today-reservations', restaurantId],
-        queryFn: () => restaurantId ? reservationsAPI.getByRestaurant(restaurantId, { limit: 5 }).then(r => r.data) : Promise.resolve({ reservations: DEMO_RES }),
-        initialData: { reservations: DEMO_RES },
+        queryFn: () => restaurantId ? reservationsAPI.getByRestaurant(restaurantId, { limit: 5 }).then(r => r.data) : Promise.resolve({ reservations: [] }),
     });
 
     const chartData = DAYS_LABELS.map((d, i) => ({
         day: d,
-        revenue: revenueData[i]?.revenue || DEMO_REVENUE[i],
+        revenue: revenueData[i]?.revenue || 0,
     }));
 
-    const heatmapData = DEMO_HEATMAP;
+    const heatmapData = [];
 
     if (isLoading) return <Spinner />;
 
@@ -58,11 +54,11 @@ export default function OwnerDashboard() {
 
             {/* KPI Row */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 14, marginBottom: 22 }}>
-                <StatCard label="Today's Reservations" value={dashData?.todayReservations ?? 42} icon={<Calendar size={18} />} trend="+12% vs yesterday" trendUp />
-                <StatCard label="Pending Orders" value={dashData?.pendingOrders ?? 8} icon={<ShoppingBag size={18} />} sub="Awaiting kitchen" color="#D97706" />
-                <StatCard label="Revenue (MTD)" value={`$${((dashData?.monthRevenue || 12450)).toLocaleString()}`} icon={<DollarSign size={18} />} trend="+on track" trendUp />
-                <StatCard label="Rating" value={`${dashData?.rating || 4.8}`} icon={<Star size={18} />} sub={`${dashData?.totalReviews || 1200} reviews`} color="#D97706" />
-                <StatCard label="Active Tables" value={`${dashData?.activeTables || 18} / 24`} icon={<Grid3X3 size={18} />} />
+                <StatCard label="Today's Reservations" value={dashData?.todayReservations || 0} icon={<Calendar size={18} />} trend="+12% vs yesterday" trendUp />
+                <StatCard label="Pending Orders" value={dashData?.pendingOrders || 0} icon={<ShoppingBag size={18} />} sub="Awaiting kitchen" color="#D97706" />
+                <StatCard label="Revenue (MTD)" value={`$${((dashData?.monthRevenue || 0)).toLocaleString()}`} icon={<DollarSign size={18} />} trend="+on track" trendUp />
+                <StatCard label="Rating" value={`${dashData?.rating || 0}`} icon={<Star size={18} />} sub={`${dashData?.totalReviews || 0} reviews`} color="#D97706" />
+                <StatCard label="Active Tables" value={`${dashData?.activeTables || 0} / 24`} icon={<Grid3X3 size={18} />} />
             </div>
 
             {/* Charts Row */}
@@ -121,7 +117,7 @@ export default function OwnerDashboard() {
                     <table className="data-table">
                         <thead><tr>{['Customer', 'Time', 'Guests', 'Status', 'Action'].map(h => <th key={h}>{h}</th>)}</tr></thead>
                         <tbody>
-                            {(todayReservations?.reservations || DEMO_RES).slice(0, 4).map((r: DashboardReservation, i: number) => (
+                            {(todayReservations?.reservations || []).slice(0, 4).map((r: DashboardReservation, i: number) => (
                                 <tr key={r._id || i}>
                                     <td style={{ fontWeight: 500, fontSize: 13 }}>{r.customerName || r.name}</td>
                                     <td style={{ fontSize: 13 }}>{r.time}</td>
@@ -139,7 +135,7 @@ export default function OwnerDashboard() {
                 {/* Kitchen Queue */}
                 <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden' }}>
                     <div style={{ padding: '16px 20px', borderBottom: '1px solid #E5E7EB', fontWeight: 600, fontSize: 15 }}>Kitchen Queue</div>
-                    {KITCHEN_QUEUE.map(q => (
+                    {[].map(q => (
                         <div key={q.id} style={{ padding: '12px 20px', borderBottom: '1px solid #F3F4F6', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <div>
                                 <div style={{ fontWeight: 500, fontSize: 13 }}>Order #{q.id}</div>
@@ -159,16 +155,4 @@ export default function OwnerDashboard() {
     );
 }
 
-const DAYS_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-const DEMO_REVENUE = [8200, 12400, 10800, 15600, 13200, 21800, 17400];
-const DEMO_DASH = { todayReservations: 42, pendingOrders: 8, monthRevenue: 12450, rating: 4.8, totalReviews: 1200, activeTables: 18 };
-const DEMO_RES = [
-    { _id: '1', name: 'David Chen', customerName: 'David Chen', time: '18:30', guests: 4, status: 'confirmed' },
-    { _id: '2', name: 'Sarah Jenkins', customerName: 'Sarah Jenkins', time: '19:00', guests: 2, status: 'arrived' },
-    { _id: '3', name: 'Robert Miller', customerName: 'Robert Miller', time: '20:15', guests: 6, status: 'pending' },
-];
-const KITCHEN_QUEUE = [
-    { id: '4229', table: 14, items: 3, time: '12m ago' },
-    { id: '4230', table: '02', items: 5, time: '8m ago' },
-    { id: '4231', table: 21, items: 2, time: 'Just now' },
-];
+const DAYS_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];

@@ -67,8 +67,8 @@ export default function AdminDashboard() {
     const days = WEEK_DAYS;
 
     const signupChart = useMemo<ChartEntry[]>(() => {
-        const fallback = Array.from({ length: 7 }, (_, i) => ({ day: days[i], count: 50 + i * 5 }));
-        return days.map((d, i) => ({ day: d, count: (signups[i] as SignupData | undefined)?.count || fallback[i].count }));
+        
+        return days.map((d, i) => ({ day: d, count: (signups[i] as SignupData | undefined)?.count || 0 }));
     }, [signups, days]);
 
     const bookingChart = useMemo<ChartEntry[]>(() =>
@@ -101,12 +101,12 @@ export default function AdminDashboard() {
 
             {/* KPI Row */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: 14, marginBottom: 24 }}>
-                <StatCard label="Restaurants" value={(overview?.restaurants || 1284).toLocaleString()} icon={<Utensils size={20} />} trend="+4.5%" trendUp />
-                <StatCard label="Users" value={(overview?.users || 42910).toLocaleString()} icon={<Users size={20} />} trend="+12%" trendUp />
-                <StatCard label="Bookings" value={(overview?.bookings || 8421).toLocaleString()} icon={<Calendar size={20} />} trend="-2.1%" trendUp={false} />
-                <StatCard label="Orders" value={(overview?.orders || 3512).toLocaleString()} icon={<ShoppingBag size={20} />} trend="+8.3%" trendUp />
-                <StatCard label="Pending" value={overview?.pending || 12} icon={<Clock size={20} />} sub="Action Needed" color="#D97706" />
-                <StatCard label="Revenue" value={`$${((overview?.revenue || 2400000) / 1000000).toFixed(1)}M`} icon={<DollarSign size={20} />} trend="+18.5%" trendUp />
+                <StatCard label="Restaurants" value={(overview?.restaurants || 0).toLocaleString()} icon={<Utensils size={20} />} trend="+4.5%" trendUp />
+                <StatCard label="Users" value={(overview?.users || 0).toLocaleString()} icon={<Users size={20} />} trend="+12%" trendUp />
+                <StatCard label="Bookings" value={(overview?.bookings || 0).toLocaleString()} icon={<Calendar size={20} />} trend="-2.1%" trendUp={false} />
+                <StatCard label="Orders" value={(overview?.orders || 0).toLocaleString()} icon={<ShoppingBag size={20} />} trend="+8.3%" trendUp />
+                <StatCard label="Pending" value={overview?.pending || 0} icon={<Clock size={20} />} sub="Action Needed" color="#D97706" />
+                <StatCard label="Revenue" value={`$${((overview?.revenue || 0) / 1000000).toFixed(1)}M`} icon={<DollarSign size={20} />} trend="+18.5%" trendUp />
             </div>
 
             {/* Charts Row */}
@@ -161,7 +161,7 @@ export default function AdminDashboard() {
                                 <PieChart>
                                     <Pie data={cuisineChart.length ? cuisineChart : [{ name: 'Italian', value: 62 }, { name: 'French', value: 18 }, { name: 'Japanese', value: 12 }, { name: 'Fusion', value: 8 }]}
                                         cx="50%" cy="50%" innerRadius={38} outerRadius={55} dataKey="value" stroke="none">
-                                        {(cuisineChart.length ? cuisineChart : COLORS).map((_, i) => (
+                                        {(cuisineChart.length ? cuisineChart : []).map((_, i) => (
                                             <Cell key={i} fill={COLORS[i % COLORS.length]} />
                                         ))}
                                     </Pie>
@@ -173,7 +173,7 @@ export default function AdminDashboard() {
                             </div>
                         </div>
                         <div style={{ flex: 1 }}>
-                            {(cuisineChart.length ? cuisineChart : [{ name: 'Italian', color: RED }, { name: 'French', color: '#92400E' }, { name: 'Japanese', color: '#D97706' }, { name: 'Fusion', color: '#F9A8D4' }]).slice(0, 4).map((c) => (
+                            {(cuisineChart.length ? cuisineChart : []).slice(0, 4).map((c) => (
                                 <div key={c.name} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
                                     <div style={{ width: 10, height: 10, borderRadius: 2, background: c.color || COLORS[0] }} />
                                     <span style={{ fontSize: 12, color: '#374151' }}>{c.name}</span>
@@ -202,11 +202,7 @@ export default function AdminDashboard() {
                         </tr>
                     </thead>
                     <tbody>
-                        {(restaurantsData?.restaurants || [
-                            { _id: '1', name: 'Osteria Bella', ownerId: 'Marco V.', city: 'Florence', cuisineType: 'Italian', status: 'active', createdAt: '2023-10-12' },
-                            { _id: '2', name: 'The Gilded Fork', ownerId: 'Sarah Jenkins', city: 'London', cuisineType: 'British Modern', status: 'active', createdAt: '2023-11-04' },
-                            { _id: '3', name: 'Azure Coastal', ownerId: 'James Liu', city: 'Sydney', cuisineType: 'Seafood', status: 'pending', createdAt: '2024-01-15' },
-                        ]).map((r: Restaurant, i: number) => (
+                        {(restaurantsData?.restaurants || []).map((r: Restaurant, i: number) => (
                             <tr key={r._id}>
                                 <td style={{ color: RED, fontWeight: 600, fontSize: 13 }}>#TR-{1024 + i}</td>
                                 <td>

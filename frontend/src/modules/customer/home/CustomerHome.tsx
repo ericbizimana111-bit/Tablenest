@@ -23,10 +23,9 @@ export default function CustomerHome() {
             limit: 8,
             cuisine: activeCuisine === 'All' ? undefined : activeCuisine,
         }).then(r => r.data),
-        initialData: { restaurants: DEMO_RESTAURANTS },
-    });
+        });
 
-    const restaurants = data?.restaurants || DEMO_RESTAURANTS;
+    const restaurants = data?.restaurants || [];
 
     return (
         <div className="fade-in">
@@ -120,7 +119,7 @@ export default function CustomerHome() {
                     >
                         <div style={{ position: 'relative' }}>
                             <img
-                                src={r.images?.[0] || r.logo || `https://images.unsplash.com/photo-${FOOD_IMG_IDS[r.name?.charCodeAt(0) % FOOD_IMG_IDS.length]}?w=400&q=80`}
+                                src={r.images?.[0] || r.logo || 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=80'}
                                 alt={r.name}
                                 style={{ width: '100%', height: 150, objectFit: 'cover' }}
                             />
@@ -134,7 +133,7 @@ export default function CustomerHome() {
                                 <div style={{ fontWeight: 600, fontSize: 14, color: '#111827' }}>{r.name}</div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 12, color: '#6B7280', flexShrink: 0 }}>
                                     <Star size={11} fill="#F59E0B" color="#F59E0B" />
-                                    {r.rating || '4.7'}
+                                    {r.rating != null && r.rating > 0 ? r.rating.toFixed(1) : null}
                                 </div>
                             </div>
                             <div style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 10 }}>
@@ -162,24 +161,3 @@ export default function CustomerHome() {
     );
 }
 
-const FOOD_IMG_IDS = [
-    '1414235077428-338989a2e8c0',
-    '1555396273-367ea4eb4db5',
-    '1546069901-ba9599a7e63c',
-    '1579871494447-9811cf80d66c',
-    '1565299585323-38d6b0865b47',
-    '1544025162-d76694265947',
-    '1485921325833-c519f76c4927',
-    '1565958011703-44f9829ba187',
-];
-
-const DEMO_RESTAURANTS = [
-    { _id: '1', name: "L'Osteria", cuisineType: 'Italian', priceRange: '$$$', status: 'active', rating: 4.8 },
-    { _id: '2', name: 'Zento Sushi', cuisineType: 'Japanese', priceRange: '$$$$', status: 'active', rating: 4.7 },
-    { _id: '3', name: 'Bistro Celeste', cuisineType: 'French', priceRange: '$$$', status: 'active', rating: 4.7 },
-    { _id: '4', name: 'Cantina Azul', cuisineType: 'Mexican', priceRange: '$$', status: 'closed', rating: 4.5 },
-    { _id: '5', name: 'The Rosso Kitchen', cuisineType: 'Italian', priceRange: '$$$', status: 'active', rating: 4.9 },
-    { _id: '6', name: 'Umi Omakase', cuisineType: 'Japanese', priceRange: '$$$$', status: 'active', rating: 4.8 },
-    { _id: '7', name: 'Iron Grill', cuisineType: 'Steakhouse', priceRange: '$$$', status: 'active', rating: 4.8 },
-    { _id: '8', name: 'Bleu Bistro', cuisineType: 'French', priceRange: '$$$', status: 'active', rating: 4.6 },
-];
