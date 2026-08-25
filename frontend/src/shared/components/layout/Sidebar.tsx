@@ -39,6 +39,7 @@ export default function Sidebar({ title, subtitle, navItems, bottomUser = true }
                         key={item.path}
                         to={item.path}
                         end={item.path.endsWith('/dashboard')}
+                        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                         style={({ isActive }) => ({
                             display: 'flex', alignItems: 'center', gap: 10,
                             padding: '10px 14px', borderRadius: 8,

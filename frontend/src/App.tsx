@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './shared/contexts/AuthContext';
 import ProtectedRoute from './shared/components/auth/ProtectedRoute';
+import ScrollToTop from './shared/components/layout/ScrollToTop';
 
 // Public pages
 const LandingPage = lazy(() => import('./modules/public/LandingPage'));
@@ -75,6 +76,7 @@ export default function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Toaster position="top-right" toastOptions={{ style: { fontFamily: 'Poppins, sans-serif', fontSize: '14px' } }} />
+          <ScrollToTop />
           <Suspense fallback={<Loader />}>
             <Routes>
               <Route path="/" element={<LandingPage />} />
