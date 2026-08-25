@@ -129,6 +129,7 @@ export const restaurantsAPI = {
     approve: (id: string) => api.patch(`/restaurants/${id}/approve`),
     reject: (id: string, reason: string) => api.patch(`/restaurants/${id}/reject`, { reason }),
     suspend: (id: string) => api.patch(`/restaurants/${id}/suspend`),
+    delete: (id: string) => api.delete(`/restaurants/${id}`),
     getStats: () => api.get('/restaurants/stats'),
 };
 

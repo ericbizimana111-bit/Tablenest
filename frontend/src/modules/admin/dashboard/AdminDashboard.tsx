@@ -229,7 +229,7 @@ export default function AdminDashboard() {
                                 <td>
                                     <div style={{ display: 'flex', gap: 8 }}>
                                         <button onClick={() => navigate('/admin/restaurants')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6B7280', padding: 4 }} title="Edit"><Pencil size={15} /></button>
-                                        <button onClick={() => { if(confirm('Delete this restaurant?')) { toast.success('Restaurant deleted'); }}} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#DC2626', padding: 4 }} title="Delete"><Trash2 size={15} /></button>
+                                        <button onClick={() => { if(confirm('Delete this restaurant?')) { deleteMut.mutate(r._id); }}} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#DC2626', padding: 4 }} title="Delete"><Trash2 size={15} /></button>
                                     </div>
                                 </td>
                             </tr>
