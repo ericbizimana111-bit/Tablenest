@@ -1,5 +1,5 @@
-
 import axios from 'axios';
+import { AUTH_TOKEN_KEY } from '../utils/auth.utils';
 
 // ── Axios instance ─────────────────────────────────────────────────────────
 const api = axios.create({
@@ -8,26 +8,58 @@ const api = axios.create({
     headers: { 'Content-Type': 'application/json' },
 });
 
-// Attach token to every request
-api.interceptors.request.use(config => {
-    const token = localStorage.getItem('token');
-    if (token) config.headers.Authorization = `Bearer ${token}`;
+// ── Token management ───────────────────────────────────────────────────────
+let inMemoryToken: string | null = null;
+let unauthorizedHandler: (() => void) | null = null;
+
+export function setAuthToken(token: string | null): void {
+    inMemoryToken = token;
+    if (token) {
+        localStorage.setItem(AUTH_TOKEN_KEY, token);
+        api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    } else {
+        localStorage.removeItem(AUTH_TOKEN_KEY);
+        delete api.defaults.headers.common.Authorization;
+    }
+}
+
+export function setUnauthorizedHandler(handler: (() => void) | null): void {
+    unauthorizedHandler = handler;
+}
+
+export function getStoredToken(): string | null {
+    return inMemoryToken ?? localStorage.getItem(AUTH_TOKEN_KEY);
+}
+
+// Restore token from localStorage on load
+const initialToken = localStorage.getItem(AUTH_TOKEN_KEY);
+if (initialToken) {
+    setAuthToken(initialToken);
+}
+
+// ── Interceptors ───────────────────────────────────────────────────────────
+api.interceptors.request.use((config) => {
+    const token = getStoredToken();
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
 });
 
-// Global response error handling
 api.interceptors.response.use(
-    res => res,
-    error => {
-        if (error.response?.status === 401) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            if (window.location.pathname !== '/login') {
-                window.location.href = '/login';
-            }
+    (response) => response,
+    (error) => {
+        const status = error.response?.status;
+        const url = error.config?.url ?? '';
+        const isAuthRoute = /\/auth\/(login|register|forgot-password|reset-password)/.test(url);
+        const hadAuthHeader = Boolean(error.config?.headers?.Authorization);
+
+        if (status === 401 && !isAuthRoute && hadAuthHeader && unauthorizedHandler) {
+            unauthorizedHandler();
         }
+
         return Promise.reject(error);
-    }
+    },
 );
 
 export default api;
@@ -279,12 +311,9 @@ export const paymentsAPI = {
     create: (data: Payload) => api.post('/payments', data),
 };
 
-
 /* =================================================================
    CALENDAR (getCalendarData alias used in some components)
 ================================================================= */
-// reservationsAPI.getCalendarData is already defined above
-// This ensures backward compatibility with older call sites
 export const calendarAPI = {
     getData: (restaurantId: string, month: number, year: number) =>
         reservationsAPI.getCalendarData(restaurantId, month, year),

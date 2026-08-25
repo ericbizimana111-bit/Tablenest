@@ -7,7 +7,7 @@ import React, {
     type ReactNode,
 } from 'react';
 import { authAPI } from '../services/api';
-import { setAuthToken, setUnauthorizedHandler } from '../services/axios';
+import { setAuthToken, setUnauthorizedHandler } from '../services/api';
 import type { RegisterPayload, User } from '../types/auth.types';
 import {
     AUTH_TOKEN_KEY,
