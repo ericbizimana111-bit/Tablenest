@@ -48,7 +48,6 @@ export function RegisterPage() {
                 fullName: form.fullName,
                 email: form.email,
                 password: form.password,
-                role: 'customer'
             });
 
             toast.success('Welcome to TableNest!');
