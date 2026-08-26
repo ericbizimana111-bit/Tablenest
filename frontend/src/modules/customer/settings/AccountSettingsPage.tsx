@@ -221,14 +221,13 @@ export default function AccountSettingsPage() {
                         <div style={{ background: '#F9FAFB', borderRadius: 8, padding: 12, marginTop: 12, marginBottom: 16 }}>
                             <div style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 2 }}>ACTIVE PLAN</div>
                             <div style={{ fontWeight: 600, fontSize: 14, display: 'flex', alignItems: 'center', gap: 6 }}>
-                                <CreditCard size={14} color="#B91C1C" /> Gourmet Pro
+                                <CreditCard size={14} color="#B91C1C" /> {user?.activePlan || 'Free Plan'}
                             </div>
                         </div>
                         <button onClick={saveProfile} disabled={saving}
                             style={{ width: '100%', padding: '11px', background: '#B91C1C', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: 'pointer', fontFamily: 'Poppins' }}>
                             {saving ? 'Saving...' : 'Save All Changes'}
                         </button>
-                        <div style={{ fontSize: 11, color: '#9CA3AF', textAlign: 'center', marginTop: 8 }}>{user ? `Member since ${new Date(user.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}` : ''}</div>
                         <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid #E5E7EB', textAlign: 'center' }}>
                             <span onClick={() => navigate('/settings/addresses')} style={{ fontSize: 13, color: '#B91C1C', cursor: 'pointer', fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
                                 <CreditCard size={13} /> Manage Addresses & Payments
@@ -237,3 +236,6 @@ export default function AccountSettingsPage() {
                     </div>
                 </div>
             </div>
+        </div>
+    );
+}

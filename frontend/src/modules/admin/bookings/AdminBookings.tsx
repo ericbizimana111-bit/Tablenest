@@ -53,7 +53,7 @@ export default function AdminBookings() {
                         <tbody>
                             {reservations.map((r) => (
                                 <tr key={r._id}>
-                                    <td style={{ color: '#B91C1C', fontWeight: 600, fontSize: 13 }}>{r.bookingRef || '#TN-7729'}</td>
+                                    <td style={{ color: '#B91C1C', fontWeight: 600, fontSize: 13 }}>{r.bookingRef || `#TN-${r._id?.slice(-4)?.toUpperCase()}`}</td>
                                     <td style={{ fontSize: 13 }}>{r.restaurantName || r.restaurantId}</td>
                                     <td style={{ fontSize: 13, color: '#6B7280' }}>{r.customerName || r.customerId}</td>
                                     <td style={{ fontSize: 13, color: '#6B7280' }}>{new Date(r.date).toLocaleDateString()}</td>

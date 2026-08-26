@@ -118,7 +118,7 @@ export default function MyBookingsPage() {
                                 <div style={{ flex: 1, padding: '16px 18px' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
                                         <div>
-                                            <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 2 }}>{r.restaurantName || "L'Art Culinaire"}</div>
+                                            <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 2 }}>{r.restaurantName || 'Restaurant'}</div>
                                             <div style={{ fontSize: 12, color: '#9CA3AF' }}>{r.bookingRef}</div>
                                         </div>
                                         <StatusBadge status={r.status} />

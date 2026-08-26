@@ -44,12 +44,12 @@ export default function OrderTrackingPage() {
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
                             <div>
                                 <div style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 2 }}>Order #{o._id?.slice(-5) || '00284'}</div>
-                                <div style={{ fontWeight: 700, fontSize: 18 }}>{o.restaurantName || "L'Artisan Bistro"}</div>
+                                <div style={{ fontWeight: 700, fontSize: 18 }}>{o.restaurantName || 'Restaurant'}</div>
                                 <div style={{ fontSize: 13, color: '#9CA3AF', display: 'flex', alignItems: 'center', gap: 4 }}>
                                     <Clock size={12} /> {o.createdAt ? new Date(o.createdAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'Order time'}
                                 </div>
                             </div>
-                            <div style={{ fontWeight: 700, fontSize: 20, color: '#B91C1C' }}>${o.total?.toFixed(2) || '124.50'}</div>
+                            <div style={{ fontWeight: 700, fontSize: 20, color: '#B91C1C' }}>${o.total?.toFixed(2) || '0.00'}</div>
                         </div>
                         <div style={{ borderTop: '1px solid #E5E7EB', paddingTop: 12 }}>
                             {(o.items || []).map((item: OrderItem, i: number) => (
