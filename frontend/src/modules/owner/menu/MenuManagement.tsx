@@ -89,15 +89,15 @@ export default function MenuManagement() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
                 <div>
                     <h1 style={{ fontSize: 24, fontWeight: 700 }}>Menu Management</h1>
-                    <p style={{ fontSize: 14, color: '#6B7280', marginTop: 2 }}>Configure your restaurant's offerings and availability.</p>
+                    <p style={{ fontSize: 14, color: '#475569', marginTop: 2 }}>Configure your restaurant's offerings and availability.</p>
                 </div>
                 <div style={{ display: 'flex', gap: 10 }}>
                     <button onClick={() => setShowCatModal(true)}
-                        style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 16px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500 }}>
+                        style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 16px', border: '1.5px solid #E2E8F0', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500 }}>
                         + Add Category
                     </button>
                     <button onClick={() => { setEditItem(null); setItemForm({ name: '', price: '', description: '', image: '' }); setShowItemModal(true); }}
-                        style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 16px', background: '#B91C1C', color: 'white', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>
+                        style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 16px', background: '#F97316', color: 'white', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>
                         + Add Item
                     </button>
                 </div>
@@ -105,16 +105,16 @@ export default function MenuManagement() {
 
             <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 20 }}>
                 {/* Category sidebar */}
-                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 12, height: 'fit-content' }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: '#9CA3AF', letterSpacing: '0.08em', padding: '4px 8px', marginBottom: 6 }}>CATEGORIES</div>
+                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 12, height: 'fit-content' }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', letterSpacing: '0.08em', padding: '4px 8px', marginBottom: 6 }}>CATEGORIES</div>
                     {allCategories.map((cat: MenuCategory) => {
                         const count = [].filter(i => i.categoryId === cat._id).length || cat.count || 0;
                         const isActive = activeCategory?._id === cat._id || (!activeCategory && cat._id === allCategories[0]?._id);
                         return (
                             <div key={cat._id} onClick={() => setActiveCategory(isActive ? null : cat)}
-                                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '9px 10px', borderRadius: 8, cursor: 'pointer', marginBottom: 2, background: isActive ? '#FEE2E2' : 'transparent', color: isActive ? '#B91C1C' : '#374151' }}>
+                                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '9px 10px', borderRadius: 8, cursor: 'pointer', marginBottom: 2, background: isActive ? '#FEE2E2' : 'transparent', color: isActive ? '#F97316' : '#475569' }}>
                                 <span style={{ fontSize: 14, fontWeight: isActive ? 600 : 400 }}>{cat.name}</span>
-                                <span style={{ fontSize: 12, background: isActive ? '#B91C1C' : '#F3F4F6', color: isActive ? 'white' : '#6B7280', padding: '1px 7px', borderRadius: 9999 }}>{count || 12}</span>
+                                <span style={{ fontSize: 12, background: isActive ? '#F97316' : '#F1F5F9', color: isActive ? 'white' : '#475569', padding: '1px 7px', borderRadius: 9999 }}>{count || 12}</span>
                             </div>
                         );
                     })}
@@ -124,7 +124,7 @@ export default function MenuManagement() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
                     {isLoading ? <Spinner /> : (
                         (allItems.length ? allItems : []).map((item: MenuItem) => (
-                            <div key={item._id} style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden' }}>
+                            <div key={item._id} style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', overflow: 'hidden' }}>
                                 <div style={{ position: 'relative' }}>
                                     <img src={item.image || `https://images.unsplash.com/photo-${FOOD_IMGS[item.name?.charCodeAt(0) % FOOD_IMGS.length]}?w=400&q=80`}
                                         alt={item.name} style={{ width: '100%', height: 160, objectFit: 'cover' }} />
@@ -135,10 +135,10 @@ export default function MenuManagement() {
                                 <div style={{ padding: 14 }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
                                         <div style={{ fontWeight: 600, fontSize: 15 }}>{item.name}</div>
-                                        <div style={{ color: '#B91C1C', fontWeight: 700, fontSize: 15 }}>${item.price}</div>
+                                        <div style={{ color: '#F97316', fontWeight: 700, fontSize: 15 }}>${item.price}</div>
                                     </div>
-                                    <p style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 12, lineHeight: 1.5 }}>{item.description?.slice(0, 60) || 'Fresh seasonal ingredients...'}...</p>
-                                    <div style={{ borderTop: '1px solid #F3F4F6', paddingTop: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <p style={{ fontSize: 12, color: '#94A3B8', marginBottom: 12, lineHeight: 1.5 }}>{item.description?.slice(0, 60) || 'Fresh seasonal ingredients...'}...</p>
+                                    <div style={{ borderTop: '1px solid #F1F5F9', paddingTop: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                                             <div style={{ width: 8, height: 8, borderRadius: '50%', background: item.isAvailable !== false ? '#16A34A' : '#DC2626' }} />
                                             <span style={{ fontSize: 12, color: item.isAvailable !== false ? '#16A34A' : '#DC2626' }}>
@@ -146,7 +146,7 @@ export default function MenuManagement() {
                                             </span>
                                         </div>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                            <button onClick={() => openEdit(item)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6B7280', padding: 4 }}><Pencil size={14} /></button>
+                                            <button onClick={() => openEdit(item)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#475569', padding: 4 }}><Pencil size={14} /></button>
                                             <button onClick={() => deleteMut.mutate(item._id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#DC2626', padding: 4 }}><Trash2 size={14} /></button>
                                             <Toggle checked={item.isAvailable !== false} onChange={() => toggleMut.mutate(item._id)} />
                                         </div>
@@ -166,25 +166,25 @@ export default function MenuManagement() {
                         { label: 'Price ($)', key: 'price', type: 'number', placeholder: '0.00' },
                     ].map(f => (
                         <div key={f.key}>
-                            <label style={{ fontSize: 13, fontWeight: 500, color: '#374151', display: 'block', marginBottom: 5 }}>{f.label}</label>
+                            <label style={{ fontSize: 13, fontWeight: 500, color: '#475569', display: 'block', marginBottom: 5 }}>{f.label}</label>
                             <input type={f.type} placeholder={f.placeholder} value={itemForm[f.key as keyof ItemForm]} onChange={e => setItemForm(p => ({ ...p, [f.key]: e.target.value } as ItemForm))}
-                                style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
+                                style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E2E8F0', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
                         </div>
                     ))}
                     <div>
-                        <label style={{ fontSize: 13, fontWeight: 500, color: '#374151', display: 'block', marginBottom: 5 }}>Description</label>
+                        <label style={{ fontSize: 13, fontWeight: 500, color: '#475569', display: 'block', marginBottom: 5 }}>Description</label>
                         <textarea value={itemForm.description} onChange={e => setItemForm(p => ({ ...p, description: e.target.value }))} placeholder="Describe the dish..."
-                            style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none', minHeight: 80, resize: 'vertical' }} />
+                            style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E2E8F0', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none', minHeight: 80, resize: 'vertical' }} />
                     </div>
                     <div>
-                        <label style={{ fontSize: 13, fontWeight: 500, color: '#374151', display: 'block', marginBottom: 5 }}>Image URL</label>
+                        <label style={{ fontSize: 13, fontWeight: 500, color: '#475569', display: 'block', marginBottom: 5 }}>Image URL</label>
                         <input type="text" placeholder="https://..." value={itemForm.image} onChange={e => setItemForm(p => ({ ...p, image: e.target.value }))}
-                            style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
+                            style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E2E8F0', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
                     </div>
                     <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
-                        <button onClick={() => setShowItemModal(false)} style={{ flex: 1, padding: '10px', border: '1px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 14, cursor: 'pointer', fontFamily: 'Poppins' }}>Cancel</button>
+                        <button onClick={() => setShowItemModal(false)} style={{ flex: 1, padding: '10px', border: '1px solid #E2E8F0', borderRadius: 8, background: 'white', fontSize: 14, cursor: 'pointer', fontFamily: 'Poppins' }}>Cancel</button>
                         <button onClick={() => saveItemMut.mutate(itemForm)}
-                            style={{ flex: 1, padding: '10px', background: '#B91C1C', color: 'white', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>
+                            style={{ flex: 1, padding: '10px', background: '#F97316', color: 'white', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>
                             {editItem ? 'Update Item' : 'Add Item'}
                         </button>
                     </div>
@@ -196,10 +196,10 @@ export default function MenuManagement() {
                 <div>
                     <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 6 }}>Category Name</label>
                     <input value={catName} onChange={e => setCatName(e.target.value)} placeholder="e.g. Starters"
-                        style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none', marginBottom: 16 }} />
+                        style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E2E8F0', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none', marginBottom: 16 }} />
                     <div style={{ display: 'flex', gap: 10 }}>
-                        <button onClick={() => setShowCatModal(false)} style={{ flex: 1, padding: '9px', border: '1px solid #E5E7EB', borderRadius: 8, background: 'white', cursor: 'pointer', fontFamily: 'Poppins', fontSize: 13 }}>Cancel</button>
-                        <button onClick={() => saveCatMut.mutate()} style={{ flex: 1, padding: '9px', background: '#B91C1C', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins', fontSize: 13 }}>Add Category</button>
+                        <button onClick={() => setShowCatModal(false)} style={{ flex: 1, padding: '9px', border: '1px solid #E2E8F0', borderRadius: 8, background: 'white', cursor: 'pointer', fontFamily: 'Poppins', fontSize: 13 }}>Cancel</button>
+                        <button onClick={() => saveCatMut.mutate()} style={{ flex: 1, padding: '9px', background: '#F97316', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins', fontSize: 13 }}>Add Category</button>
                     </div>
                 </div>
             </Modal>

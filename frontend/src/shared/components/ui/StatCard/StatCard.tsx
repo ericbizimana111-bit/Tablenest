@@ -19,7 +19,7 @@ export function StatCard({
     trend,
     trendUp,
     sub,
-    color = '#B91C1C',
+    color = '#F97316',
     onClick,
 }: StatCardProps) {
     return (
@@ -29,7 +29,7 @@ export function StatCard({
                 background: 'white',
                 borderRadius: 12,
                 padding: '18px 20px',
-                border: '1px solid #E5E7EB',
+                border: '1px solid #E2E8F0',
                 boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
                 fontFamily: 'Poppins, sans-serif',
                 cursor: onClick ? 'pointer' : 'default',
@@ -63,9 +63,9 @@ export function StatCard({
                     </span>
                 )}
             </div>
-            <div style={{ fontSize: 13, color: '#6B7280', marginBottom: 4 }}>{label}</div>
-            <div style={{ fontSize: 26, fontWeight: 700, color: '#111827', lineHeight: 1.2 }}>{value}</div>
-            {sub && <div style={{ fontSize: 12, color: '#9CA3AF', marginTop: 4 }}>{sub}</div>}
+            <div style={{ fontSize: 13, color: '#475569', marginBottom: 4 }}>{label}</div>
+            <div style={{ fontSize: 26, fontWeight: 700, color: '#0F172A', lineHeight: 1.2 }}>{value}</div>
+            {sub && <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 4 }}>{sub}</div>}
         </div>
     );
 }

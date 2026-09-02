@@ -6,7 +6,6 @@ import Topbar from '../../../shared/components/layout/Topbar';
 
 const NAV = [
     { label: 'Home', path: '/home', icon: <Home size={18} /> },
-    { label: 'Browse', path: '/browse', icon: <Search size={18} /> },
     { label: 'My Bookings', path: '/my-bookings', icon: <Calendar size={18} /> },
     { label: 'My Orders', path: '/my-orders', icon: <ShoppingBag size={18} /> },
     { label: 'Favorites', path: '/favorites', icon: <Heart size={18} /> },
@@ -18,7 +17,7 @@ const NAV = [
 
 export default function CustomerLayout() {
     return (
-        <div style={{ display: 'flex', minHeight: '100vh', background: '#FAF7F5', fontFamily: 'Poppins, sans-serif' }}>
+        <div style={{ display: 'flex', minHeight: '100vh', background: '#F8FAFC', fontFamily: 'Poppins, sans-serif' }}>
             <Sidebar title="TableNest" subtitle="Dashboard" navItems={NAV} />
             <div style={{ marginLeft: 220, flex: 1, display: 'flex', flexDirection: 'column' }}>
                 <Topbar placeholder="Search restaurants or dishes" notifPath="/notifications" settingsPath="/settings" />

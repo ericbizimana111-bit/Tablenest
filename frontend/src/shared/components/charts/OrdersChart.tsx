@@ -4,8 +4,8 @@ import {
     XAxis, YAxis, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts';
 
-const RED = '#B91C1C';
-const COLORS = [RED, '#D97706', '#16A34A', '#2563EB', '#7C3AED', '#F9A8D4'];
+const ORANGE = '#F97316';
+const COLORS = [ORANGE, '#F59E0B', '#16A34A', '#2563EB', '#7C3AED', '#F9A8D4'];
 
 interface ChartDataPoint {
     label: string;
@@ -35,13 +35,13 @@ const CustomTooltip = ({ active, payload, label }: TooltipContentProps) => {
     if (active && payload && payload.length) {
         return (
             <div style={{
-                background: 'white', border: '1px solid #E5E7EB', borderRadius: 8,
+                background: 'white', border: '1px solid #E2E8F0', borderRadius: 8,
                 padding: '10px 14px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                 fontFamily: 'Poppins, sans-serif', fontSize: 13,
             }}>
-                {label && <p style={{ color: '#6B7280', marginBottom: 4, fontSize: 11 }}>{label}</p>}
+                {label && <p style={{ color: '#475569', marginBottom: 4, fontSize: 11 }}>{label}</p>}
                 {payload.map((p, i: number) => (
-                    <p key={i} style={{ color: p.color || RED, fontWeight: 600 }}>
+                    <p key={i} style={{ color: p.color || ORANGE, fontWeight: 600 }}>
                         {p.name}: {p.value?.toLocaleString()}
                     </p>
                 ))}
@@ -55,7 +55,7 @@ export function OrdersChart({
     data,
     type = 'bar',
     height = 200,
-    color = RED,
+    color = ORANGE,
     title,
     showLegend = false,
     multiSeries,
@@ -94,7 +94,7 @@ export function OrdersChart({
         if (type === 'line') {
             return (
                 <LineChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
-                    <XAxis dataKey="name" tick={{ fontSize: 11, fontFamily: 'Poppins', fill: '#9CA3AF' }} axisLine={false} tickLine={false} />
+                    <XAxis dataKey="name" tick={{ fontSize: 11, fontFamily: 'Poppins', fill: '#94A3B8' }} axisLine={false} tickLine={false} />
                     <YAxis hide />
                     <Tooltip content={<CustomTooltip />} />
                     {multiSeries ? (
@@ -112,7 +112,7 @@ export function OrdersChart({
         // Default: bar
         return (
             <BarChart data={chartData} barSize={multiSeries ? 12 : 22} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
-                <XAxis dataKey="name" tick={{ fontSize: 11, fontFamily: 'Poppins', fill: '#9CA3AF' }} axisLine={false} tickLine={false} />
+                <XAxis dataKey="name" tick={{ fontSize: 11, fontFamily: 'Poppins', fill: '#94A3B8' }} axisLine={false} tickLine={false} />
                 <YAxis hide />
                 <Tooltip content={<CustomTooltip />} />
                 {multiSeries ? (
@@ -134,7 +134,7 @@ export function OrdersChart({
     return (
         <div style={{ fontFamily: 'Poppins, sans-serif' }}>
             {title && (
-                <div style={{ fontWeight: 600, fontSize: 15, color: '#111827', marginBottom: 16 }}>{title}</div>
+                <div style={{ fontWeight: 600, fontSize: 15, color: '#0F172A', marginBottom: 16 }}>{title}</div>
             )}
             <ResponsiveContainer width="100%" height={height}>
                 {renderChart()}

@@ -67,7 +67,7 @@ export default function ForgotPasswordPage() {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                background: '#FAF7F5',
+                background: '#F8FAFC',
                 padding: 60
             }}>
                 <div style={{ width: '100%', maxWidth: 420 }}>
@@ -79,13 +79,13 @@ export default function ForgotPasswordPage() {
                                 <h1 style={{
                                     fontSize: 34,
                                     fontWeight: 700,
-                                    color: '#111827',
+                                    color: '#0F172A',
                                     marginBottom: 10
                                 }}>
                                     Forgot Password
                                 </h1>
 
-                                <p style={{ fontSize: 15, color: '#6B7280' }}>
+                                <p style={{ fontSize: 15, color: '#475569' }}>
                                     Enter your email to receive a reset link
                                 </p>
                             </div>
@@ -102,7 +102,7 @@ export default function ForgotPasswordPage() {
                                     <label style={{
                                         fontSize: 13,
                                         fontWeight: 600,
-                                        color: '#374151',
+                                        color: '#475569',
                                         marginBottom: 8,
                                         display: 'block'
                                     }}>
@@ -115,7 +115,7 @@ export default function ForgotPasswordPage() {
                                             left: 14,
                                             top: '50%',
                                             transform: 'translateY(-50%)',
-                                            color: '#9CA3AF'
+                                            color: '#94A3B8'
                                         }} />
 
                                         <input
@@ -127,15 +127,15 @@ export default function ForgotPasswordPage() {
                                                 width: '100%',
                                                 height: 52,
                                                 paddingLeft: 44,
-                                                border: '1.5px solid #E5E7EB',
+                                                border: '1.5px solid #E2E8F0',
                                                 borderRadius: 12,
                                                 fontSize: 14,
                                                 background: '#fff',
                                                 outline: 'none',
                                                 boxSizing: 'border-box'
                                             }}
-                                            onFocus={e => (e.target.style.borderColor = '#B91C1C')}
-                                            onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+                                            onFocus={e => (e.target.style.borderColor = '#F97316')}
+                                            onBlur={e => (e.target.style.borderColor = '#E2E8F0')}
                                         />
                                     </div>
                                 </div>
@@ -146,7 +146,7 @@ export default function ForgotPasswordPage() {
                                     disabled={loading}
                                     style={{
                                         height: 54,
-                                        background: '#B91C1C',
+                                        background: '#F97316',
                                         color: '#fff',
                                         border: 'none',
                                         borderRadius: 12,
@@ -168,7 +168,7 @@ export default function ForgotPasswordPage() {
                                 <p style={{
                                     textAlign: 'center',
                                     fontSize: 14,
-                                    color: '#6B7280',
+                                    color: '#475569',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
@@ -178,7 +178,7 @@ export default function ForgotPasswordPage() {
                                     <Link
                                         to="/login"
                                         style={{
-                                            color: '#B91C1C',
+                                            color: '#F97316',
                                             fontWeight: 600,
                                             textDecoration: 'none'
                                         }}
@@ -210,7 +210,7 @@ export default function ForgotPasswordPage() {
                             <h2 style={{
                                 fontSize: 22,
                                 fontWeight: 700,
-                                color: '#111827',
+                                color: '#0F172A',
                                 marginBottom: 10
                             }}>
                                 Check Your Email
@@ -218,7 +218,7 @@ export default function ForgotPasswordPage() {
 
                             <p style={{
                                 fontSize: 14,
-                                color: '#6B7280',
+                                color: '#475569',
                                 marginBottom: 24
                             }}>
                                 Reset link sent to <strong>{email}</strong>
@@ -230,7 +230,7 @@ export default function ForgotPasswordPage() {
                                     width: '100%',
                                     height: 52,
                                     borderRadius: 12,
-                                    border: '1.5px solid #E5E7EB',
+                                    border: '1.5px solid #E2E8F0',
                                     background: '#fff',
                                     fontSize: 14,
                                     fontWeight: 500,
@@ -249,7 +249,7 @@ export default function ForgotPasswordPage() {
                                     alignItems: 'center',
                                     height: 52,
                                     borderRadius: 12,
-                                    background: '#B91C1C',
+                                    background: '#F97316',
                                     color: '#fff',
                                     fontSize: 14,
                                     fontWeight: 600,

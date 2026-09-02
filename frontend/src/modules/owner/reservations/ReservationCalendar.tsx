@@ -63,34 +63,34 @@ export default function ReservationCalendar() {
                 {/* Header */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                        <div style={{ display: 'flex', gap: 0, border: '1px solid #E5E7EB', borderRadius: 8, overflow: 'hidden' }}>
+                        <div style={{ display: 'flex', gap: 0, border: '1px solid #E2E8F0', borderRadius: 8, overflow: 'hidden' }}>
                             {(['month', 'week', 'day'] as const).map(v => (
                                 <button key={v} onClick={() => setView(v)}
-                                    style={{ padding: '7px 16px', border: 'none', background: view === v ? '#B91C1C' : 'white', color: view === v ? 'white' : '#374151', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins', textTransform: 'capitalize' }}>
+                                    style={{ padding: '7px 16px', border: 'none', background: view === v ? '#F97316' : 'white', color: view === v ? 'white' : '#475569', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins', textTransform: 'capitalize' }}>
                                     {v}
                                 </button>
                             ))}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <button onClick={() => setCurrentDate(d => { const n = new Date(d); n.setMonth(n.getMonth() - 1); return n; })} style={{ background: 'none', border: '1px solid #E5E7EB', borderRadius: 6, padding: '4px 8px', cursor: 'pointer' }}><ChevronLeft size={16} /></button>
+                            <button onClick={() => setCurrentDate(d => { const n = new Date(d); n.setMonth(n.getMonth() - 1); return n; })} style={{ background: 'none', border: '1px solid #E2E8F0', borderRadius: 6, padding: '4px 8px', cursor: 'pointer' }}><ChevronLeft size={16} /></button>
                             <span style={{ fontWeight: 600, fontSize: 15 }}>{format(currentDate, 'MMMM yyyy')}</span>
-                            <button onClick={() => setCurrentDate(d => { const n = new Date(d); n.setMonth(n.getMonth() + 1); return n; })} style={{ background: 'none', border: '1px solid #E5E7EB', borderRadius: 6, padding: '4px 8px', cursor: 'pointer' }}><ChevronRight size={16} /></button>
+                            <button onClick={() => setCurrentDate(d => { const n = new Date(d); n.setMonth(n.getMonth() + 1); return n; })} style={{ background: 'none', border: '1px solid #E2E8F0', borderRadius: 6, padding: '4px 8px', cursor: 'pointer' }}><ChevronRight size={16} /></button>
                         </div>
                     </div>
-                    <button style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 16px', background: '#B91C1C', color: 'white', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>
+                    <button style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 16px', background: '#F97316', color: 'white', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>
                         <Plus size={14} /> Add Manual Booking
                     </button>
                 </div>
 
                 {/* Calendar grid */}
-                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden' }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', borderBottom: '1px solid #E5E7EB' }}>
+                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', overflow: 'hidden' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', borderBottom: '1px solid #E2E8F0' }}>
                         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
-                            <div key={d} style={{ padding: '12px 8px', textAlign: 'center', fontSize: 13, fontWeight: 600, color: '#6B7280' }}>{d}</div>
+                            <div key={d} style={{ padding: '12px 8px', textAlign: 'center', fontSize: 13, fontWeight: 600, color: '#475569' }}>{d}</div>
                         ))}
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)' }}>
-                        {Array(startPad).fill(null).map((_, i) => <div key={`pad-${i}`} style={{ minHeight: 80, borderRight: '1px solid #F3F4F6', borderBottom: '1px solid #F3F4F6' }} />)}
+                        {Array(startPad).fill(null).map((_, i) => <div key={`pad-${i}`} style={{ minHeight: 80, borderRight: '1px solid #F1F5F9', borderBottom: '1px solid #F1F5F9' }} />)}
                         {days.map(day => {
                             const key = format(day, 'yyyy-MM-dd');
                             const data = calData[key] || {};
@@ -98,12 +98,12 @@ export default function ReservationCalendar() {
                             const today = isToday(day);
                             return (
                                 <div key={key} onClick={() => setSelectedDate(day)}
-                                    style={{ minHeight: 80, borderRight: '1px solid #F3F4F6', borderBottom: '1px solid #F3F4F6', padding: 8, cursor: 'pointer', background: isSel ? '#FFF7F7' : 'white' }}>
-                                    <div style={{ width: 28, height: 28, borderRadius: '50%', background: today ? '#B91C1C' : 'transparent', color: today ? 'white' : '#111827', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: today ? 700 : 400, marginBottom: 4 }}>
+                                    style={{ minHeight: 80, borderRight: '1px solid #F1F5F9', borderBottom: '1px solid #F1F5F9', padding: 8, cursor: 'pointer', background: isSel ? '#FFF7F7' : 'white' }}>
+                                    <div style={{ width: 28, height: 28, borderRadius: '50%', background: today ? '#F97316' : 'transparent', color: today ? 'white' : '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: today ? 700 : 400, marginBottom: 4 }}>
                                         {format(day, 'd')}
                                     </div>
                                     {data?.confirmed > 0 && <div style={{ fontSize: 10, background: '#DCFCE7', color: '#16A34A', padding: '1px 5px', borderRadius: 4, marginBottom: 2 }}>{data.confirmed} Confirmed</div>}
-                                    {data?.pending > 0 && <div style={{ fontSize: 10, background: '#FEF9C3', color: '#D97706', padding: '1px 5px', borderRadius: 4 }}>{data.pending} Pending</div>}
+                                    {data?.pending > 0 && <div style={{ fontSize: 10, background: '#FEF3C7', color: '#F59E0B', padding: '1px 5px', borderRadius: 4 }}>{data.pending} Pending</div>}
                                 </div>
                             );
                         })}
@@ -111,13 +111,13 @@ export default function ReservationCalendar() {
                 </div>
 
                 {/* Summary bar */}
-                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: '14px 20px', marginTop: 14, display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: '#6B7280', letterSpacing: '0.05em' }}>TODAY'S SUMMARY:</span>
+                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: '14px 20px', marginTop: 14, display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: '#475569', letterSpacing: '0.05em' }}>TODAY'S SUMMARY:</span>
                     {[
                         { label: `${todayStats.confirmed} Confirmed`, color: '#16A34A', bg: '#DCFCE7' },
-                        { label: `${todayStats.pending} Pending`, color: '#D97706', bg: '#FEF9C3' },
+                        { label: `${todayStats.pending} Pending`, color: '#F59E0B', bg: '#FEF3C7' },
                         { label: `${todayStats.cancelled} Cancelled`, color: '#DC2626', bg: '#FEE2E2' },
-                        { label: `${todayStats.noShow} No-Shows`, color: '#6B7280', bg: '#F3F4F6' },
+                        { label: `${todayStats.noShow} No-Shows`, color: '#475569', bg: '#F1F5F9' },
                     ].map(s => (
                         <span key={s.label} style={{ padding: '5px 12px', borderRadius: 9999, background: s.bg, color: s.color, fontSize: 13, fontWeight: 500 }}>{s.label}</span>
                     ))}
@@ -126,41 +126,41 @@ export default function ReservationCalendar() {
 
             {/* Right panel */}
             <div>
-                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden', marginBottom: 12 }}>
-                    <div style={{ padding: '14px 16px', borderBottom: '1px solid #E5E7EB' }}>
+                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', overflow: 'hidden', marginBottom: 12 }}>
+                    <div style={{ padding: '14px 16px', borderBottom: '1px solid #E2E8F0' }}>
                         <div style={{ fontWeight: 600, fontSize: 15 }}>{format(selectedDate, 'MMMM d, yyyy')}</div>
-                        <div style={{ fontSize: 12, color: '#9CA3AF' }}>{(dayRes?.reservations || []).length} Total Reservations</div>
+                        <div style={{ fontSize: 12, color: '#94A3B8' }}>{(dayRes?.reservations || []).length} Total Reservations</div>
                     </div>
                     {(dayRes?.reservations || []).map((r: ReservationEntry) => (
-                        <div key={r._id} style={{ padding: '14px 16px', borderBottom: '1px solid #F3F4F6', borderLeft: `3px solid ${r.status === 'confirmed' ? '#16A34A' : r.status === 'pending' ? '#D97706' : '#E5E7EB'}` }}>
+                        <div key={r._id} style={{ padding: '14px 16px', borderBottom: '1px solid #F1F5F9', borderLeft: `3px solid ${r.status === 'confirmed' ? '#16A34A' : r.status === 'pending' ? '#F59E0B' : '#E2E8F0'}` }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
                                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                                    <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13, color: '#374151' }}>{(r.customerName || 'U')[0]}</div>
+                                    <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13, color: '#475569' }}>{(r.customerName || 'U')[0]}</div>
                                     <div>
                                         <div style={{ fontWeight: 600, fontSize: 13 }}>{r.customerName || 'Guest'}</div>
                                         <StatusBadge status={r.status} />
                                     </div>
                                 </div>
-                                <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF', padding: 4 }} title="More options"><MoreHorizontal size={16} /></button>
+                                <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8', padding: 4 }} title="More options"><MoreHorizontal size={16} /></button>
                             </div>
-                            <div style={{ fontSize: 12, color: '#6B7280', display: 'flex', gap: 12, alignItems: 'center' }}>
+                            <div style={{ fontSize: 12, color: '#475569', display: 'flex', gap: 12, alignItems: 'center' }}>
                                 <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={12} /> {r.time}</span>
                                 <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Users size={12} /> {r.guests} Guests</span>
                                 <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Armchair size={12} /> {r.tableNumber || 'Table #12'}</span>
                             </div>
                             {r.status === 'pending' && (
                                 <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
-                                    <button onClick={() => confirmMut.mutate(r._id)} style={{ flex: 1, padding: '7px', background: '#B91C1C', color: 'white', border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>Confirm</button>
+                                    <button onClick={() => confirmMut.mutate(r._id)} style={{ flex: 1, padding: '7px', background: '#F97316', color: 'white', border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>Confirm</button>
                                     <button onClick={() => cancelMut.mutate(r._id)} style={{ flex: 1, padding: '7px', background: 'white', color: '#DC2626', border: '1px solid #DC2626', borderRadius: 6, fontSize: 12, fontWeight: 500, cursor: 'pointer', fontFamily: 'Poppins' }}>Decline</button>
                                 </div>
                             )}
                             {r.status === 'confirmed' && (
-                                <button style={{ width: '100%', marginTop: 8, padding: '6px', background: 'white', color: '#374151', border: '1px solid #E5E7EB', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins' }}>Details</button>
+                                <button style={{ width: '100%', marginTop: 8, padding: '6px', background: 'white', color: '#475569', border: '1px solid #E2E8F0', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins' }}>Details</button>
                             )}
                         </div>
                     ))}
                 </div>
-                <button style={{ width: '100%', padding: '11px', background: '#1F1F1F', color: 'white', border: 'none', borderRadius: 10, fontWeight: 600, fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                <button style={{ width: '100%', padding: '11px', background: '#172033', color: 'white', border: 'none', borderRadius: 10, fontWeight: 600, fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                     <Printer size={14} /> Print Daily Run-Sheet
                 </button>
             </div>

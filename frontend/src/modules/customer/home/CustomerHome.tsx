@@ -49,7 +49,7 @@ export default function CustomerHome() {
         <div className="fade-in">
             {/* Welcome banner */}
             <div style={{
-                background: 'linear-gradient(135deg, #B91C1C 0%, #7F1D1D 100%)',
+                background: 'linear-gradient(135deg, #F97316 0%, #EA580C 100%)',
                 borderRadius: 16, padding: '28px 32px', marginBottom: 28, color: 'white',
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
             }}>
@@ -62,7 +62,7 @@ export default function CustomerHome() {
                     </p>
                     <button
                         onClick={() => navigate('/browse')}
-                        style={{ marginTop: 16, padding: '9px 20px', background: 'white', color: '#B91C1C', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins', display: 'flex', alignItems: 'center', gap: 6 }}
+                        style={{ marginTop: 16, padding: '9px 20px', background: 'white', color: '#F97316', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins', display: 'flex', alignItems: 'center', gap: 6 }}
                     >
                         Browse Restaurants <ArrowRight size={14} />
                     </button>
@@ -75,34 +75,34 @@ export default function CustomerHome() {
 
             {/* Search bar */}
             <div style={{ position: 'relative', marginBottom: 28 }}>
-                <Search size={18} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#9CA3AF' }} />
+                <Search size={18} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} />
                 <input
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && navigate(`/browse?search=${search}`)}
                     placeholder="Search restaurants or dishes..."
-                    style={{ width: '100%', padding: '14px 16px 14px 46px', border: '1.5px solid #E5E7EB', borderRadius: 12, fontSize: 15, fontFamily: 'Poppins', outline: 'none', background: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}
-                    onFocus={e => (e.target.style.borderColor = '#B91C1C')}
-                    onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+                    style={{ width: '100%', padding: '14px 16px 14px 46px', border: '1.5px solid #E2E8F0', borderRadius: 12, fontSize: 15, fontFamily: 'Poppins', outline: 'none', background: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}
+                    onFocus={e => (e.target.style.borderColor = '#F97316')}
+                    onBlur={e => (e.target.style.borderColor = '#E2E8F0')}
                 />
             </div>
 
             {/* Quick stats */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14, marginBottom: 28 }}>
                 {[
-                    { label: 'Upcoming Bookings', value: String(bookingsCount), icon: <Calendar size={18} />, path: '/my-bookings', color: '#B91C1C' },
-                    { label: 'Active Orders', value: String(ordersCount), icon: <Clock size={18} />, path: '/my-orders', color: '#D97706' },
+                    { label: 'Upcoming Bookings', value: String(bookingsCount), icon: <Calendar size={18} />, path: '/my-bookings', color: '#F97316' },
+                    { label: 'Active Orders', value: String(ordersCount), icon: <Clock size={18} />, path: '/my-orders', color: '#F59E0B' },
                     { label: 'Saved Favorites', value: String(favoritesCount), icon: <Star size={18} />, path: '/favorites', color: '#2563EB' },
                 ].map(s => (
                     <div key={s.label} onClick={() => navigate(s.path)}
-                        style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: '18px 20px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, transition: 'box-shadow 0.15s' }}
+                        style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: '18px 20px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, transition: 'box-shadow 0.15s' }}
                         onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)')}
                         onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}
                     >
                         <div style={{ background: `${s.color}15`, color: s.color, padding: 10, borderRadius: 10 }}>{s.icon}</div>
                         <div>
-                            <div style={{ fontSize: 22, fontWeight: 700, color: '#111827' }}>{s.value}</div>
-                            <div style={{ fontSize: 12, color: '#6B7280' }}>{s.label}</div>
+                            <div style={{ fontSize: 22, fontWeight: 700, color: '#0F172A' }}>{s.value}</div>
+                            <div style={{ fontSize: 12, color: '#475569' }}>{s.label}</div>
                         </div>
                     </div>
                 ))}
@@ -112,7 +112,7 @@ export default function CustomerHome() {
             <div style={{ display: 'flex', gap: 8, marginBottom: 20, overflowX: 'auto', paddingBottom: 4 }}>
                 {CUISINES.map(c => (
                     <button key={c} onClick={() => setActiveCuisine(c)}
-                        style={{ padding: '7px 18px', borderRadius: 9999, border: '1.5px solid', borderColor: activeCuisine === c ? '#B91C1C' : '#E5E7EB', background: activeCuisine === c ? '#B91C1C' : 'white', color: activeCuisine === c ? 'white' : '#374151', fontSize: 13, fontWeight: activeCuisine === c ? 600 : 400, cursor: 'pointer', fontFamily: 'Poppins', whiteSpace: 'nowrap' }}>
+                        style={{ padding: '7px 18px', borderRadius: 9999, border: '1.5px solid', borderColor: activeCuisine === c ? '#F97316' : '#E2E8F0', background: activeCuisine === c ? '#F97316' : 'white', color: activeCuisine === c ? 'white' : '#475569', fontSize: 13, fontWeight: activeCuisine === c ? 600 : 400, cursor: 'pointer', fontFamily: 'Poppins', whiteSpace: 'nowrap' }}>
                         {c}
                     </button>
                 ))}
@@ -121,7 +121,7 @@ export default function CustomerHome() {
             {/* Restaurants grid */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                 <h2 style={{ fontSize: 18, fontWeight: 700 }}>Popular Near You</h2>
-                <span onClick={() => navigate('/browse')} style={{ fontSize: 13, color: '#B91C1C', cursor: 'pointer', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 4 }}>
+                <span onClick={() => navigate('/browse')} style={{ fontSize: 13, color: '#F97316', cursor: 'pointer', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 4 }}>
                     View all <ArrowRight size={13} />
                 </span>
             </div>
@@ -130,7 +130,7 @@ export default function CustomerHome() {
                 {(restaurants as HomeRestaurant[]).map((r) => (
                     <div key={r._id}
                         onClick={() => navigate(`/restaurants/${r._id}`)}
-                        style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden', cursor: 'pointer' }}
+                        style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', overflow: 'hidden', cursor: 'pointer' }}
                         onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.1)')}
                         onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}
                     >
@@ -147,25 +147,25 @@ export default function CustomerHome() {
                         </div>
                         <div style={{ padding: '12px 14px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
-                                <div style={{ fontWeight: 600, fontSize: 14, color: '#111827' }}>{r.name}</div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 12, color: '#6B7280', flexShrink: 0 }}>
+                                <div style={{ fontWeight: 600, fontSize: 14, color: '#0F172A' }}>{r.name}</div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 12, color: '#475569', flexShrink: 0 }}>
                                     <Star size={11} fill="#F59E0B" color="#F59E0B" />
                                     {r.rating != null && r.rating > 0 ? r.rating.toFixed(1) : null}
                                 </div>
                             </div>
-                            <div style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 10 }}>
+                            <div style={{ fontSize: 12, color: '#94A3B8', marginBottom: 10 }}>
                                 {r.cuisineType} · {r.priceRange || '$$'}
                             </div>
                             <div style={{ display: 'flex', gap: 8 }}>
                                 <button
                                     onClick={e => { e.stopPropagation(); navigate(getRestaurantMenuPath(r._id)); }}
-                                    style={{ flex: 1, padding: '7px', border: '1.5px solid #E5E7EB', borderRadius: 6, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500, color: '#374151' }}
+                                    style={{ flex: 1, padding: '7px', border: '1.5px solid #E2E8F0', borderRadius: 6, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500, color: '#475569' }}
                                 >
                                     View Menu
                                 </button>
                                 <button
                                     onClick={e => { e.stopPropagation(); navigate(getRestaurantBookPath(r._id)); }}
-                                    style={{ flex: 1, padding: '7px', border: 'none', borderRadius: 6, background: '#B91C1C', color: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 600 }}
+                                    style={{ flex: 1, padding: '7px', border: 'none', borderRadius: 6, background: '#F97316', color: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 600 }}
                                 >
                                     Book
                                 </button>

@@ -14,7 +14,7 @@ export default function ResetPasswordPage() {
     const token = new URLSearchParams(window.location.search).get('token') || '';
 
     const strength = password.length === 0 ? 0 : password.length < 6 ? 1 : password.length < 10 ? 2 : 3;
-    const strengthColors = ['', '#DC2626', '#D97706', '#16A34A'];
+    const strengthColors = ['', '#DC2626', '#F59E0B', '#16A34A'];
     const strengthLabels = ['', 'Weak', 'Medium', 'Strong'];
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -52,14 +52,14 @@ export default function ResetPasswordPage() {
                 flexDirection: 'column',
                 justifyContent: 'center',
                 padding: '48px 52px',
-                background: '#FAF7F5'
+                background: '#F8FAFC'
             }}>
 
-                <h1 style={{ fontSize: 34, fontWeight: 700, color: '#111827', marginBottom: 6 }}>
+                <h1 style={{ fontSize: 34, fontWeight: 700, color: '#0F172A', marginBottom: 6 }}>
                     Reset Password
                 </h1>
 
-                <p style={{ fontSize: 15, color: '#6B7280', marginBottom: 28 }}>
+                <p style={{ fontSize: 15, color: '#475569', marginBottom: 28 }}>
                     Choose a strong password for your account
                 </p>
 
@@ -67,7 +67,7 @@ export default function ResetPasswordPage() {
 
                     {/* PASSWORD */}
                     <div>
-                        <label style={{ fontSize: 13, fontWeight: 600, color: '#374151', marginBottom: 8, display: 'block' }}>
+                        <label style={{ fontSize: 13, fontWeight: 600, color: '#475569', marginBottom: 8, display: 'block' }}>
                             New Password
                         </label>
 
@@ -77,7 +77,7 @@ export default function ResetPasswordPage() {
                                 left: 14,
                                 top: '50%',
                                 transform: 'translateY(-50%)',
-                                color: '#9CA3AF'
+                                color: '#94A3B8'
                             }} />
 
                             <input
@@ -90,7 +90,7 @@ export default function ResetPasswordPage() {
                                     height: 52,
                                     paddingLeft: 44,
                                     paddingRight: 44,
-                                    border: '1.5px solid #E5E7EB',
+                                    border: '1.5px solid #E2E8F0',
                                     borderRadius: 12,
                                     fontSize: 14,
                                     background: '#fff',
@@ -110,7 +110,7 @@ export default function ResetPasswordPage() {
                                     background: 'none',
                                     border: 'none',
                                     cursor: 'pointer',
-                                    color: '#9CA3AF'
+                                    color: '#94A3B8'
                                 }}
                             >
                                 {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -128,7 +128,7 @@ export default function ResetPasswordPage() {
 
                     {/* CONFIRM */}
                     <div>
-                        <label style={{ fontSize: 13, fontWeight: 600, color: '#374151', marginBottom: 8, display: 'block' }}>
+                        <label style={{ fontSize: 13, fontWeight: 600, color: '#475569', marginBottom: 8, display: 'block' }}>
                             Confirm Password
                         </label>
 
@@ -138,7 +138,7 @@ export default function ResetPasswordPage() {
                                 left: 14,
                                 top: '50%',
                                 transform: 'translateY(-50%)',
-                                color: '#9CA3AF'
+                                color: '#94A3B8'
                             }} />
 
                             <input
@@ -150,7 +150,7 @@ export default function ResetPasswordPage() {
                                     width: '100%',
                                     height: 52,        // ✅ MATCH LOGIN
                                     paddingLeft: 44,
-                                    border: '1.5px solid #E5E7EB',
+                                    border: '1.5px solid #E2E8F0',
                                     borderRadius: 12,
                                     fontSize: 14,
                                     background: '#fff',                                                                                                                                                                                                                                                                                                     
@@ -167,7 +167,7 @@ export default function ResetPasswordPage() {
                         disabled={loading}
                         style={{
                             height: 54,
-                            background: '#B91C1C',
+                            background: '#F97316',
                             color: '#fff',
                             border: 'none',
                             borderRadius: 12,
@@ -183,14 +183,14 @@ export default function ResetPasswordPage() {
                     <p style={{
                         textAlign: 'center',
                         fontSize: 14,
-                        color: '#6B7280',
+                        color: '#475569',
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
                         gap: 4
                     }}>
                         <ArrowLeft size={13} />
-                        <Link to="/login" style={{ color: '#B91C1C', fontWeight: 600, textDecoration: 'none' }}>
+                        <Link to="/login" style={{ color: '#F97316', fontWeight: 600, textDecoration: 'none' }}>
                             Back to Login
                         </Link>
                     </p>

@@ -26,7 +26,7 @@ export function Pagination({ page, pages, onPage }: PaginationProps) {
                 disabled={page === 1}
                 style={{
                     padding: "6px 10px",
-                    border: "1px solid #E5E7EB",
+                    border: "1px solid #E2E8F0",
                     borderRadius: 6,
                     background: "white",
                     cursor: page === 1 ? "not-allowed" : "pointer",
@@ -46,9 +46,9 @@ export function Pagination({ page, pages, onPage }: PaginationProps) {
                         borderRadius: 6,
                         fontSize: 13,
                         cursor: "pointer",
-                        borderColor: n === page ? "#B91C1C" : "#E5E7EB",
-                        background: n === page ? "#B91C1C" : "white",
-                        color: n === page ? "white" : "#374151"
+                        borderColor: n === page ? "#F97316" : "#E2E8F0",
+                        background: n === page ? "#F97316" : "white",
+                        color: n === page ? "white" : "#475569"
                     }}
                 >
                     {n}
@@ -66,9 +66,9 @@ export function Pagination({ page, pages, onPage }: PaginationProps) {
                         borderRadius: 6,
                         fontSize: 13,
                         cursor: "pointer",
-                        borderColor: pages === page ? "#B91C1C" : "#E5E7EB",
-                        background: pages === page ? "#B91C1C" : "white",
-                        color: pages === page ? "white" : "#374151"
+                        borderColor: pages === page ? "#F97316" : "#E2E8F0",
+                        background: pages === page ? "#F97316" : "white",
+                        color: pages === page ? "white" : "#475569"
                     }}
                 >
                     {pages}
@@ -80,7 +80,7 @@ export function Pagination({ page, pages, onPage }: PaginationProps) {
                 disabled={page === pages}
                 style={{
                     padding: "6px 10px",
-                    border: "1px solid #E5E7EB",
+                    border: "1px solid #E2E8F0",
                     borderRadius: 6,
                     background: "white",
                     cursor: page === pages ? "not-allowed" : "pointer",

@@ -6,7 +6,7 @@ import { analyticsAPI, ordersAPI, reservationsAPI } from '../../../shared/servic
 import { useAuthStore } from '../../../shared/store/authStore';
 import { StatCard, Spinner, StatusBadge } from '../../../shared/components/ui/index';
 
-const RED = '#B91C1C';
+const ORANGE = '#F97316';
 interface DashboardReservation {
     _id?: string;
     customerName?: string;
@@ -59,25 +59,25 @@ export default function OwnerDashboard() {
         <div className="fade-in">
             <div style={{ marginBottom: 24 }}>
                 <h1 style={{ fontSize: 22, fontWeight: 700 }}>Overview</h1>
-                <p style={{ fontSize: 13, color: '#6B7280' }}>Welcome back. Here's what's happening today.</p>
+                <p style={{ fontSize: 13, color: '#475569' }}>Welcome back. Here's what's happening today.</p>
             </div>
 
             {/* KPI Row */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 14, marginBottom: 22 }}>
                 <StatCard label="Today's Reservations" value={dashData?.todayReservations || 0} icon={<Calendar size={18} />} trend="+12% vs yesterday" trendUp />
-                <StatCard label="Pending Orders" value={dashData?.pendingOrders || 0} icon={<ShoppingBag size={18} />} sub="Awaiting kitchen" color="#D97706" />
+                <StatCard label="Pending Orders" value={dashData?.pendingOrders || 0} icon={<ShoppingBag size={18} />} sub="Awaiting kitchen" color="#F59E0B" />
                 <StatCard label="Revenue (MTD)" value={`$${((dashData?.monthRevenue || 0)).toLocaleString()}`} icon={<DollarSign size={18} />} trend="+on track" trendUp />
-                <StatCard label="Rating" value={`${dashData?.rating || 0}`} icon={<Star size={18} />} sub={`${dashData?.totalReviews || 0} reviews`} color="#D97706" />
+                <StatCard label="Rating" value={`${dashData?.rating || 0}`} icon={<Star size={18} />} sub={`${dashData?.totalReviews || 0} reviews`} color="#F59E0B" />
                 <StatCard label="Active Tables" value={`${dashData?.activeTables || 0} / 24`} icon={<Grid3X3 size={18} />} />
             </div>
 
             {/* Charts Row */}
             <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 18, marginBottom: 18 }}>
                 {/* Revenue Bar Chart */}
-                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 20 }}>
+                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 20 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                         <div style={{ fontWeight: 600, fontSize: 15 }}>Revenue Trend</div>
-                        <select style={{ padding: '5px 10px', border: '1px solid #E5E7EB', borderRadius: 6, fontSize: 12, fontFamily: 'Poppins', outline: 'none' }}>
+                        <select style={{ padding: '5px 10px', border: '1px solid #E2E8F0', borderRadius: 6, fontSize: 12, fontFamily: 'Poppins', outline: 'none' }}>
                             <option>Last 7 Days</option><option>Last 30 Days</option>
                         </select>
                     </div>
@@ -88,7 +88,7 @@ export default function OwnerDashboard() {
                             <Tooltip formatter={(v: number) => [`$${Number(v).toLocaleString()}`, 'Revenue']} contentStyle={{ fontFamily: 'Poppins', fontSize: 12, borderRadius: 8 }} />
                             <Bar dataKey="revenue" radius={[4, 4, 0, 0]}>
                                 {chartData.map((_, i) => (
-                                    <Cell key={i} fill={i === 5 ? RED : `${RED}55`} />
+                                    <Cell key={i} fill={i === 5 ? ORANGE : `${ORANGE}55`} />
                                 ))}
                             </Bar>
                         </BarChart>
@@ -96,33 +96,33 @@ export default function OwnerDashboard() {
                 </div>
 
                 {/* Reservations Heatmap */}
-                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 20 }}>
+                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 20 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                         <div style={{ fontWeight: 600, fontSize: 15 }}>Reservations Heatmap</div>
                         <div style={{ display: 'flex', gap: 6 }}>
                             {['Daily', 'Weekly'].map((t, i) => (
-                                <span key={t} style={{ padding: '4px 10px', borderRadius: 6, fontSize: 12, cursor: 'pointer', background: i === 0 ? RED : 'transparent', color: i === 0 ? 'white' : '#6B7280', fontWeight: i === 0 ? 600 : 400 }}>{t}</span>
+                                <span key={t} style={{ padding: '4px 10px', borderRadius: 6, fontSize: 12, cursor: 'pointer', background: i === 0 ? ORANGE : 'transparent', color: i === 0 ? 'white' : '#475569', fontWeight: i === 0 ? 600 : 400 }}>{t}</span>
                             ))}
                         </div>
                     </div>
                     <div style={{ overflowX: 'auto' }}>
                         <div style={{ display: 'grid', gridTemplateColumns: `repeat(12, 1fr)`, gap: 3 }}>
                             {heatmapData.map((v, i) => (
-                                <div key={i} style={{ width: '100%', paddingBottom: '100%', borderRadius: 3, background: v === 0 ? '#F3F4F6' : `rgba(185,28,28,${v / 10})` }} />
+                                <div key={i} style={{ width: '100%', paddingBottom: '100%', borderRadius: 3, background: v === 0 ? '#F1F5F9' : `rgba(249,115,22,${v / 10})` }} />
                             ))}
                         </div>
                     </div>
-                    <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 10 }}>Peak hours detected between 19:00 - 21:00</p>
+                    <p style={{ fontSize: 11, color: '#94A3B8', marginTop: 10 }}>Peak hours detected between 19:00 - 21:00</p>
                 </div>
             </div>
 
             {/* Bottom Row */}
             <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 18 }}>
                 {/* Today's Reservations */}
-                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid #E5E7EB' }}>
+                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', overflow: 'hidden' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid #E2E8F0' }}>
                         <div style={{ fontWeight: 600, fontSize: 15 }}>Today's Reservations</div>
-                        <span style={{ color: RED, fontSize: 13, cursor: 'pointer', fontWeight: 500 }}>View All</span>
+                        <span style={{ color: ORANGE, fontSize: 13, cursor: 'pointer', fontWeight: 500 }}>View All</span>
                     </div>
                     <table className="data-table">
                         <thead><tr>{['Customer', 'Time', 'Guests', 'Status', 'Action'].map(h => <th key={h}>{h}</th>)}</tr></thead>
@@ -134,7 +134,7 @@ export default function OwnerDashboard() {
                                     <td style={{ fontSize: 13 }}>{r.guests} Pax</td>
                                     <td><StatusBadge status={r.status} /></td>
                                     <td>
-                                        <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6B7280', padding: 4 }} title="More options"><MoreHorizontal size={16} /></button>
+                                        <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#475569', padding: 4 }} title="More options"><MoreHorizontal size={16} /></button>
                                     </td>
                                 </tr>
                             ))}
@@ -143,22 +143,22 @@ export default function OwnerDashboard() {
                 </div>
 
                 {/* Kitchen Queue */}
-                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden' }}>
-                    <div style={{ padding: '16px 20px', borderBottom: '1px solid #E5E7EB', fontWeight: 600, fontSize: 15 }}>Kitchen Queue</div>
+                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', overflow: 'hidden' }}>
+                    <div style={{ padding: '16px 20px', borderBottom: '1px solid #E2E8F0', fontWeight: 600, fontSize: 15 }}>Kitchen Queue</div>
                     {(Array.isArray(kitchenOrders) ? kitchenOrders : []).slice(0, 4).map((q: any) => (
-                        <div key={q._id || q.id} style={{ padding: '12px 20px', borderBottom: '1px solid #F3F4F6', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div key={q._id || q.id} style={{ padding: '12px 20px', borderBottom: '1px solid #F1F5F9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <div>
                                 <div style={{ fontWeight: 500, fontSize: 13 }}>Order #{(q._id || '').slice(-5)}</div>
-                                <div style={{ fontSize: 12, color: '#9CA3AF' }}>{q.items?.length || 0} Items</div>
+                                <div style={{ fontSize: 12, color: '#94A3B8' }}>{q.items?.length || 0} Items</div>
                             </div>
-                            <span style={{ fontSize: 12, fontWeight: 600, color: RED }}>{q.status}</span>
+                            <span style={{ fontSize: 12, fontWeight: 600, color: ORANGE }}>{q.status}</span>
                         </div>
                     ))}
                     {(!kitchenOrders || (Array.isArray(kitchenOrders) && kitchenOrders.length === 0)) && (
-                        <div style={{ padding: '16px 20px', textAlign: 'center', color: '#9CA3AF', fontSize: 13 }}>No pending kitchen orders</div>
+                        <div style={{ padding: '16px 20px', textAlign: 'center', color: '#94A3B8', fontSize: 13 }}>No pending kitchen orders</div>
                     )}
                     <div style={{ padding: '12px 20px' }}>
-                        <button style={{ width: '100%', padding: '9px', background: '#D97706', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins' }}>
+                        <button style={{ width: '100%', padding: '9px', background: '#F59E0B', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins' }}>
                             View Full Kitchen Display
                         </button>
                     </div>

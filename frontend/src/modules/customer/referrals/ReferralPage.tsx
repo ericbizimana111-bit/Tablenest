@@ -29,7 +29,7 @@ export default function ReferralPage() {
         <div className="fade-in">
             {/* Hero banner */}
             <div style={{
-                background: 'linear-gradient(135deg, #B91C1C 0%, #7F1D1D 100%)',
+                background: 'linear-gradient(135deg, #F97316 0%, #EA580C 100%)',
                 borderRadius: 16, padding: '28px 32px', marginBottom: 24, color: 'white',
                 display: 'grid', gridTemplateColumns: '1fr 280px', gap: 24, alignItems: 'center',
             }}>
@@ -41,7 +41,7 @@ export default function ReferralPage() {
                     <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                         <div style={{ background: 'rgba(255,255,255,0.15)', borderRadius: 8, padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
                             <span style={{ fontWeight: 700, fontSize: 16, letterSpacing: '0.05em' }}>{code}</span>
-                            <button onClick={copyCode} style={{ background: 'white', color: '#B91C1C', border: 'none', borderRadius: 6, padding: '5px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>Copy</button>
+                            <button onClick={copyCode} style={{ background: 'white', color: '#F97316', border: 'none', borderRadius: 6, padding: '5px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>Copy</button>
                         </div>
                         <button style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}><Share2 size={16} /></button>
                         <button style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}><Mail size={16} /></button>
@@ -56,25 +56,25 @@ export default function ReferralPage() {
             {/* Stats */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14, marginBottom: 28 }}>
                 {[
-                    { label: 'Sent Invites', value: sentCount, icon: <TrendingUp size={20} />, trend: '+12% from last month', color: '#B91C1C' },
+                    { label: 'Sent Invites', value: sentCount, icon: <TrendingUp size={20} />, trend: '+12% from last month', color: '#F97316' },
                     { label: 'Successful', value: successCount, icon: <CheckCircle size={20} />, trend: '+8% from last month', color: '#16A34A' },
-                    { label: 'Points Earned', value: totalPoints.toLocaleString(), icon: <Tag size={20} />, trend: 'Active Rewards', color: '#D97706' },
+                    { label: 'Points Earned', value: totalPoints.toLocaleString(), icon: <Tag size={20} />, trend: 'Active Rewards', color: '#F59E0B' },
                 ].map(s => (
-                    <div key={s.label} style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 20 }}>
+                    <div key={s.label} style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 20 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
                             <div style={{ background: `${s.color}15`, color: s.color, padding: 10, borderRadius: 10 }}>{s.icon}</div>
                             <span style={{ fontSize: 11, color: s.color, fontWeight: 500 }}>{s.trend}</span>
                         </div>
-                        <div style={{ fontSize: 13, color: '#6B7280', marginBottom: 4 }}>{s.label}</div>
+                        <div style={{ fontSize: 13, color: '#475569', marginBottom: 4 }}>{s.label}</div>
                         <div style={{ fontSize: 30, fontWeight: 700, color: s.color }}>{s.value}</div>
                     </div>
                 ))}
             </div>
 
             {/* How it works */}
-            <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 28, marginBottom: 24 }}>
+            <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 28, marginBottom: 24 }}>
                 <h2 style={{ fontSize: 20, fontWeight: 700, textAlign: 'center', marginBottom: 6 }}>3 Simple Steps to Rewards</h2>
-                <p style={{ fontSize: 13, color: '#6B7280', textAlign: 'center', marginBottom: 28 }}>Joining our referral ecosystem is effortless. Share your passion for dining and get rewarded for every new food enthusiast you bring to TableNest.</p>
+                <p style={{ fontSize: 13, color: '#475569', textAlign: 'center', marginBottom: 28 }}>Joining our referral ecosystem is effortless. Share your passion for dining and get rewarded for every new food enthusiast you bring to TableNest.</p>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 24 }}>
                     {[
                         { icon: <QrCode size={28} />, step: '1. Get Your Code', desc: 'Copy your unique referral code or link from your dashboard to begin sharing with friends.' },
@@ -82,19 +82,19 @@ export default function ReferralPage() {
                         { icon: <Tag size={28} />, step: '3. Reap the Rewards', desc: 'Once their first reservation is complete, 500 points are automatically added to your TableNest account.' },
                     ].map(s => (
                         <div key={s.step} style={{ textAlign: 'center' }}>
-                            <div style={{ width: 64, height: 64, borderRadius: '50%', background: '#FEE2E2', color: '#B91C1C', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>{s.icon}</div>
+                            <div style={{ width: 64, height: 64, borderRadius: '50%', background: '#FEE2E2', color: '#F97316', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>{s.icon}</div>
                             <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8 }}>{s.step}</div>
-                            <p style={{ fontSize: 13, color: '#6B7280', lineHeight: 1.6 }}>{s.desc}</p>
+                            <p style={{ fontSize: 13, color: '#475569', lineHeight: 1.6 }}>{s.desc}</p>
                         </div>
                     ))}
                 </div>
             </div>
 
             {/* Referral history table */}
-            <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid #E5E7EB' }}>
+            <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', overflow: 'hidden' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid #E2E8F0' }}>
                     <div style={{ fontWeight: 600, fontSize: 16 }}>Referral History</div>
-                    <button style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#B91C1C', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500 }}>
+                    <button style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#F97316', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500 }}>
                         Download Report
                     </button>
                 </div>
@@ -112,28 +112,28 @@ export default function ReferralPage() {
                             <tr key={i}>
                                 <td>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                                        <div style={{ width: 34, height: 34, borderRadius: '50%', background: '#E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 12, color: '#374151' }}>
+                                        <div style={{ width: 34, height: 34, borderRadius: '50%', background: '#E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 12, color: '#475569' }}>
                                             {(r.name || r.email || 'U').slice(0, 2).toUpperCase()}
                                         </div>
                                         <div>
                                             <div style={{ fontWeight: 500, fontSize: 13 }}>{r.name || 'User'}</div>
-                                            <div style={{ fontSize: 11, color: '#9CA3AF' }}>{r.email}</div>
+                                            <div style={{ fontSize: 11, color: '#94A3B8' }}>{r.email}</div>
                                         </div>
                                     </div>
                                 </td>
-                                <td style={{ fontSize: 13, color: '#6B7280' }}>
+                                <td style={{ fontSize: 13, color: '#475569' }}>
                                     {r.invitedAt ? new Date(r.invitedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : r.date}
                                 </td>
                                 <td><StatusBadge status={r.status} /></td>
-                                <td style={{ fontWeight: 600, color: r.reward > 0 ? '#16A34A' : '#9CA3AF', fontSize: 13 }}>
+                                <td style={{ fontWeight: 600, color: r.reward > 0 ? '#16A34A' : '#94A3B8', fontSize: 13 }}>
                                     {r.reward > 0 ? `+${r.reward} Points` : '0 Points'}
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
-                <div style={{ padding: '12px 20px', borderTop: '1px solid #E5E7EB', textAlign: 'center' }}>
-                    <button style={{ fontSize: 13, color: '#B91C1C', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500 }}>View All Activities</button>
+                <div style={{ padding: '12px 20px', borderTop: '1px solid #E2E8F0', textAlign: 'center' }}>
+                    <button style={{ fontSize: 13, color: '#F97316', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500 }}>View All Activities</button>
                 </div>
             </div>
         </div>

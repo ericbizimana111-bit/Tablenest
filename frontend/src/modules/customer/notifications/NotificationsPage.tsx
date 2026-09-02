@@ -15,10 +15,10 @@ const TYPE_ICONS: Partial<Record<Notification['type'], React.ReactNode>> = {
     review: <Star size={18} />,
 };
 const TYPE_COLORS: Partial<Record<Notification['type'], string>> = {
-    order: '#B91C1C', booking: '#D97706', promotion: '#D97706', system: '#6B7280', review: '#2563EB',
+    order: '#F97316', booking: '#F59E0B', promotion: '#F59E0B', system: '#475569', review: '#2563EB',
 };
 const TYPE_BG: Partial<Record<Notification['type'], string>> = {
-    order: '#FEE2E2', booking: '#FEF9C3', promotion: '#FEF3C7', system: '#F3F4F6', review: '#DBEAFE',
+    order: '#FEE2E2', booking: '#FEF3C7', promotion: '#FEF3C7', system: '#F1F5F9', review: '#DBEAFE',
 };
 
 type NotificationTab = (typeof TABS)[number];
@@ -73,25 +73,25 @@ export default function NotificationsPage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
                 <div>
                     <h1 style={{ fontSize: 24, fontWeight: 700 }}>Notification Center</h1>
-                    <p style={{ fontSize: 14, color: '#6B7280', marginTop: 2 }}>Stay updated on your culinary adventures and table bookings.</p>
+                    <p style={{ fontSize: 14, color: '#475569', marginTop: 2 }}>Stay updated on your culinary adventures and table bookings.</p>
                 </div>
                 <div style={{ display: 'flex', gap: 10 }}>
                     <button onClick={() => markAllMut.mutate()}
-                        style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 16px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins' }}>
+                        style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 16px', border: '1.5px solid #E2E8F0', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins' }}>
                         <CheckCheck size={14} /> Mark All as Read
                     </button>
                     <button onClick={() => clearMut.mutate()}
-                        style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 16px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins' }}>
+                        style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 16px', border: '1.5px solid #E2E8F0', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins' }}>
                         <Trash2 size={14} /> Clear All
                     </button>
                 </div>
             </div>
 
             {/* Tabs */}
-            <div style={{ display: 'flex', gap: 0, borderBottom: '2px solid #E5E7EB', marginBottom: 20 }}>
+            <div style={{ display: 'flex', gap: 0, borderBottom: '2px solid #E2E8F0', marginBottom: 20 }}>
                 {TABS.map(t => (
                     <button key={t} onClick={() => setTab(t)}
-                        style={{ padding: '10px 20px', border: 'none', background: 'transparent', fontFamily: 'Poppins', fontSize: 14, fontWeight: tab === t ? 600 : 400, color: tab === t ? '#B91C1C' : '#6B7280', borderBottom: tab === t ? '2px solid #B91C1C' : '2px solid transparent', marginBottom: -2, cursor: 'pointer' }}>
+                        style={{ padding: '10px 20px', border: 'none', background: 'transparent', fontFamily: 'Poppins', fontSize: 14, fontWeight: tab === t ? 600 : 400, color: tab === t ? '#F97316' : '#475569', borderBottom: tab === t ? '2px solid #F97316' : '2px solid transparent', marginBottom: -2, cursor: 'pointer' }}>
                         {t}
                     </button>
                 ))}
@@ -100,9 +100,9 @@ export default function NotificationsPage() {
             {isLoading ? <Spinner /> : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
                     {filtered.length === 0 ? (
-                        <div style={{ textAlign: 'center', padding: '60px 20px', color: '#9CA3AF' }}>
+                        <div style={{ textAlign: 'center', padding: '60px 20px', color: '#94A3B8' }}>
                             <Bell size={48} style={{ margin: '0 auto 16px', opacity: 0.2 }} />
-                            <div style={{ fontSize: 16, fontWeight: 600, color: '#6B7280', marginBottom: 6 }}>No notifications</div>
+                            <div style={{ fontSize: 16, fontWeight: 600, color: '#475569', marginBottom: 6 }}>No notifications</div>
                             <div style={{ fontSize: 14 }}>You're all caught up!</div>
                         </div>
                     ) : filtered.map((n: Notification, i: number) => (
@@ -111,28 +111,28 @@ export default function NotificationsPage() {
                             style={{
                                 display: 'flex', gap: 14, padding: '18px 20px',
                                 background: n.isRead ? 'white' : '#FFFBFB',
-                                borderLeft: n.isRead ? '3px solid transparent' : '3px solid #B91C1C',
-                                borderBottom: '1px solid #F3F4F6',
+                                borderLeft: n.isRead ? '3px solid transparent' : '3px solid #F97316',
+                                borderBottom: '1px solid #F1F5F9',
                                 cursor: n.isRead ? 'default' : 'pointer',
                             }}>
-                            <div style={{ width: 44, height: 44, borderRadius: '50%', background: TYPE_BG[n.type] || '#F3F4F6', color: TYPE_COLORS[n.type] || '#6B7280', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            <div style={{ width: 44, height: 44, borderRadius: '50%', background: TYPE_BG[n.type] || '#F1F5F9', color: TYPE_COLORS[n.type] || '#475569', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                                 {TYPE_ICONS[n.type] || <Bell size={18} />}
                             </div>
                             <div style={{ flex: 1 }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
-                                    <div style={{ fontWeight: n.isRead ? 500 : 700, fontSize: 14, color: '#111827' }}>{n.title}</div>
-                                    <span style={{ fontSize: 12, color: '#9CA3AF', flexShrink: 0, marginLeft: 12 }}>{getTimeLabel(n.createdAt) || n.time}</span>
+                                    <div style={{ fontWeight: n.isRead ? 500 : 700, fontSize: 14, color: '#0F172A' }}>{n.title}</div>
+                                    <span style={{ fontSize: 12, color: '#94A3B8', flexShrink: 0, marginLeft: 12 }}>{getTimeLabel(n.createdAt) || n.time}</span>
                                 </div>
-                                <p style={{ fontSize: 13, color: '#6B7280', lineHeight: 1.5, marginBottom: 8 }}>{n.message}</p>
+                                <p style={{ fontSize: 13, color: '#475569', lineHeight: 1.5, marginBottom: 8 }}>{n.message}</p>
                                 {n.actions && (
                                     <div style={{ display: 'flex', gap: 12 }}>
                                         {n.actions.map((a: string, ai: number) => (
-                                            <span key={ai} style={{ fontSize: 13, color: ai === 0 ? '#B91C1C' : '#6B7280', fontWeight: 500, cursor: 'pointer' }}>{a}</span>
+                                            <span key={ai} style={{ fontSize: 13, color: ai === 0 ? '#F97316' : '#475569', fontWeight: 500, cursor: 'pointer' }}>{a}</span>
                                         ))}
                                     </div>
                                 )}
                                 {n.type === 'promotion' && n.cta && (
-                                    <button style={{ padding: '6px 16px', background: '#B91C1C', color: 'white', border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>
+                                    <button style={{ padding: '6px 16px', background: '#F97316', color: 'white', border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>
                                         {n.cta}
                                     </button>
                                 )}
@@ -144,7 +144,7 @@ export default function NotificationsPage() {
 
             {filtered.length > 0 && (
                 <div style={{ textAlign: 'center', marginTop: 20 }}>
-                    <button onClick={() => toast.success('All notifications loaded')} style={{ padding: '10px 28px', border: '1.5px solid #E5E7EB', borderRadius: 9999, background: 'white', fontSize: 14, cursor: 'pointer', fontFamily: 'Poppins', color: '#374151', fontWeight: 500 }}>
+                    <button onClick={() => toast.success('All notifications loaded')} style={{ padding: '10px 28px', border: '1.5px solid #E2E8F0', borderRadius: 9999, background: 'white', fontSize: 14, cursor: 'pointer', fontFamily: 'Poppins', color: '#475569', fontWeight: 500 }}>
                         Load More Notifications
                     </button>
                 </div>

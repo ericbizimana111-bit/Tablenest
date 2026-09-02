@@ -43,7 +43,7 @@ export default function LoginPage() {
                 height: '100vh',
                 overflow: 'hidden',
                 fontFamily: 'Poppins, sans-serif',
-                background: '#FAF7F5',
+                background: '#F8FAFC',
             }}
         >
             {/* LEFT SIDE */}
@@ -95,12 +95,12 @@ export default function LoginPage() {
                         style={{
                             width: 40, // Expanded slightly for better visual presence
                             height: 40,
-                            background: '#B91C1C',
+                            background: '#F97316',
                             borderRadius: 10,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            boxShadow: '0 4px 12px rgba(185, 28, 28, 0.5)', // Stronger brand glow
+                            boxShadow: '0 4px 12px rgba(249, 115, 22, 0.5)', // Stronger brand glow
                         }}
                     >
                         <svg
@@ -160,6 +160,14 @@ export default function LoginPage() {
                 </div>
             </div>
 
+
+
+
+
+
+
+
+
             {/* RIGHT SIDE */}
             <div
                 style={{
@@ -167,7 +175,7 @@ export default function LoginPage() {
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    background: '#FAF7F5',
+                    background: '#F8FAFC',
                     padding: '60px',
                     boxSizing: 'border-box'
                 }}
@@ -183,7 +191,7 @@ export default function LoginPage() {
                             style={{
                                 fontSize: 34,
                                 fontWeight: 700,
-                                color: '#111827',
+                                color: '#0F172A',
                                 marginBottom: 10,
                             }}
                         >
@@ -193,12 +201,16 @@ export default function LoginPage() {
                         <p
                             style={{
                                 fontSize: 15,
-                                color: '#6B7280',
+                                color: '#475569',
                             }}
                         >
                             Sign in to your TableNest account
                         </p>
                     </div>
+
+
+
+
 
                     <form
                         onSubmit={handleSubmit}
@@ -215,7 +227,7 @@ export default function LoginPage() {
                                     marginBottom: 8,
                                     fontSize: 13,
                                     fontWeight: 600,
-                                    color: '#374151',
+                                    color: '#475569',
                                 }}
                             >
                                 Email Address
@@ -229,7 +241,7 @@ export default function LoginPage() {
                                         left: 14,
                                         top: '50%',
                                         transform: 'translateY(-50%)',
-                                        color: '#9CA3AF',
+                                        color: '#94A3B8',
                                     }}
                                 />
 
@@ -242,7 +254,7 @@ export default function LoginPage() {
                                         width: '100%',
                                         height: 52,
                                         paddingLeft: 44,
-                                        border: '1.5px solid #E5E7EB',
+                                        border: '1.5px solid #E2E8F0',
                                         borderRadius: 12,
                                         fontSize: 14,
                                         background: '#fff',
@@ -265,7 +277,7 @@ export default function LoginPage() {
                                     style={{
                                         fontSize: 13,
                                         fontWeight: 600,
-                                        color: '#374151',
+                                        color: '#475569',
                                     }}
                                 >
                                     Password
@@ -275,7 +287,7 @@ export default function LoginPage() {
                                     to="/forgot-password"
                                     style={{
                                         fontSize: 12,
-                                        color: '#B91C1C',
+                                        color: '#F97316',
                                         textDecoration: 'none',
                                     }}
                                 >
@@ -291,7 +303,7 @@ export default function LoginPage() {
                                         left: 14,
                                         top: '50%',
                                         transform: 'translateY(-50%)',
-                                        color: '#9CA3AF',
+                                        color: '#94A3B8',
                                     }}
                                 />
 
@@ -305,7 +317,7 @@ export default function LoginPage() {
                                         height: 52,
                                         paddingLeft: 44,
                                         paddingRight: 44,
-                                        border: '1.5px solid #E5E7EB',
+                                        border: '1.5px solid #E2E8F0',
                                         borderRadius: 12,
                                         fontSize: 14,
                                         background: '#fff',
@@ -325,7 +337,7 @@ export default function LoginPage() {
                                         background: 'none',
                                         border: 'none',
                                         cursor: 'pointer',
-                                        color: '#9CA3AF',
+                                        color: '#94A3B8',
                                     }}
                                 >
                                     {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -338,7 +350,7 @@ export default function LoginPage() {
                             disabled={isSubmitting}
                             style={{
                                 height: 54,
-                                background: '#B91C1C',
+                                background: '#F97316',
                                 color: '#fff',
                                 border: 'none',
                                 borderRadius: 12,
@@ -351,42 +363,19 @@ export default function LoginPage() {
                             {isSubmitting ? 'Signing in...' : 'Sign In'}
                         </button>
 
-                        <div
-                            style={{
-                                background: '#FEE2E2',
-                                borderRadius: 12,
-                                padding: 16,
-                                fontSize: 12,
-                                color: '#374151',
-                            }}
-                        >
-                            <div
-                                style={{
-                                    fontWeight: 700,
-                                    marginBottom: 8,
-                                    color: '#B91C1C',
-                                }}
-                            >
-                                Demo Accounts
-                            </div>
-
-                            <div>Admin: admin@tablenest.com / admin123</div>
-                            <div>Owner: owner@tablenest.com / owner123</div>
-                            <div>Customer: customer@tablenest.com / customer123</div>
-                        </div>
 
                         <p
                             style={{
                                 textAlign: 'center',
                                 fontSize: 14,
-                                color: '#6B7280',
+                                color: '#475569',
                             }}
                         >
                             Don't have an account?{' '}
                             <Link
                                 to="/register"
                                 style={{
-                                    color: '#B91C1C',
+                                    color: '#F97316',
                                     fontWeight: 600,
                                     textDecoration: 'none',
                                 }}

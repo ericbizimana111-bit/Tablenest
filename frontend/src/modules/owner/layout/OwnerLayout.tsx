@@ -21,7 +21,7 @@ const NAV = [
 
 export default function OwnerLayout() {
     return (
-        <div style={{ display: 'flex', minHeight: '100vh', background: '#FAF7F5', fontFamily: 'Poppins, sans-serif' }}>
+        <div style={{ display: 'flex', minHeight: '100vh', background: '#F8FAFC', fontFamily: 'Poppins, sans-serif' }}>
             <Sidebar title="TableNest" subtitle="Dashboard" navItems={NAV} />
             <div style={{ marginLeft: 220, flex: 1, display: 'flex', flexDirection: 'column' }}>
                 <Topbar placeholder="Search orders, tables..." notifPath="/owner/settings" settingsPath="/owner/settings" />

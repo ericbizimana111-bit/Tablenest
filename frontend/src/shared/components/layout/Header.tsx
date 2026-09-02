@@ -32,15 +32,15 @@ export default function Header({ activeTab, setActiveTab }: HeaderProps) {
         <>
             <style>{`
                 .nav-link { transition: color 0.2s ease; }
-                .nav-link:hover { color: #B91C1C !important; }
+                .nav-link:hover { color: #F97316 !important; }
                 .btn-hover { transition: all 0.2s ease; }
-                .btn-hover:hover { background: #991B1B !important; transform: scale(1.02); color: #ffffff !important; }
+                .btn-hover:hover { background: #EA580C !important; transform: scale(1.02); color: #ffffff !important; }
             `}</style>
 
             <nav style={{
                 position: 'fixed', top: 0, left: 0, right: 0, height: 75,
                 background: 'rgba(255, 255, 255, 0.96)', backdropFilter: 'blur(10px)',
-                borderBottom: '1px solid #E5E7EB', display: 'flex',
+                borderBottom: '1px solid #E2E8F0', display: 'flex',
                 alignItems: 'center', justifyContent: 'space-between', padding: '0 80px',
                 zIndex: 1000, boxShadow: '0 2px 10px rgba(0,0,0,0.02)',
             }}>
@@ -50,16 +50,16 @@ export default function Header({ activeTab, setActiveTab }: HeaderProps) {
                     onClick={() => handleNav('Home', '/')}
                 >
                     <div style={{
-                        width: 38, height: 38, background: '#B91C1C', borderRadius: 10,
+                        width: 38, height: 38, background: '#F97316', borderRadius: 10,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        boxShadow: '0 2px 8px rgba(185, 28, 28, 0.3)',
+                        boxShadow: '0 2px 8px rgba(249, 115, 22, 0.3)',
                     }}>
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M6 18h12a2 2 0 0 1 2 2v1H4v-1a2 2 0 0 1 2-2z" />
                             <path d="M18 18a4 4 0 0 0-1.23-7.79 4.36 4.36 0 0 0-9.54 0A4 4 0 0 0 6 18" />
                         </svg>
                     </div>
-                    <span style={{ color: '#111827', fontWeight: 800, fontSize: 22, letterSpacing: '-0.5px' }}>TableNest</span>
+                    <span style={{ color: '#0F172A', fontWeight: 800, fontSize: 22, letterSpacing: '-0.5px' }}>TableNest</span>
                 </div>
 
                 {/* Centered Navigation Links */}
@@ -73,7 +73,7 @@ export default function Header({ activeTab, setActiveTab }: HeaderProps) {
                             className="nav-link"
                             style={{
                                 fontSize: 15,
-                                color: activeTab === l.label ? '#B91C1C' : '#4B5563',
+                                color: activeTab === l.label ? '#F97316' : '#475569',
                                 cursor: 'pointer',
                                 fontWeight: activeTab === l.label ? 700 : 500,
                                 position: 'relative', padding: '4px 0',
@@ -84,7 +84,7 @@ export default function Header({ activeTab, setActiveTab }: HeaderProps) {
                             {activeTab === l.label && (
                                 <span style={{
                                     position: 'absolute', bottom: 0, left: 0, right: 0,
-                                    height: 2, background: '#B91C1C', borderRadius: 2,
+                                    height: 2, background: '#F97316', borderRadius: 2,
                                 }} />
                             )}
                         </span>
@@ -97,7 +97,7 @@ export default function Header({ activeTab, setActiveTab }: HeaderProps) {
                         <>
                             <span
                                 className="nav-link"
-                                style={{ fontSize: 14, color: '#B91C1C', cursor: 'pointer', fontWeight: 600 }}
+                                style={{ fontSize: 14, color: '#F97316', cursor: 'pointer', fontWeight: 600 }}
                                 onClick={() => { navigate(getRoleHomePath(user.role)); scrollToTop(); }}
                             >
                                 Dashboard
@@ -105,10 +105,10 @@ export default function Header({ activeTab, setActiveTab }: HeaderProps) {
                             <button
                                 onClick={() => { logout(); scrollToTop(); }}
                                 style={{
-                                    padding: '9px 20px', border: '1.5px solid #E5E7EB',
+                                    padding: '9px 20px', border: '1.5px solid #E2E8F0',
                                     borderRadius: 8, background: 'white', fontSize: 13,
                                     cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500,
-                                    color: '#6B7280',
+                                    color: '#475569',
                                 }}
                             >
                                 Logout
@@ -120,7 +120,7 @@ export default function Header({ activeTab, setActiveTab }: HeaderProps) {
                                 onClick={() => { navigate('/login'); scrollToTop(); }}
                                 className="nav-link"
                                 style={{
-                                    fontSize: 15, color: activeTab === 'Log In' ? '#B91C1C' : '#4B5563',
+                                    fontSize: 15, color: activeTab === 'Log In' ? '#F97316' : '#475569',
                                     cursor: 'pointer', fontWeight: activeTab === 'Log In' ? 700 : 500,
                                     position: 'relative', padding: '4px 0',
                                 }}
@@ -129,7 +129,7 @@ export default function Header({ activeTab, setActiveTab }: HeaderProps) {
                                 {activeTab === 'Log In' && (
                                     <span style={{
                                         position: 'absolute', bottom: 0, left: 0, right: 0,
-                                        height: 2, background: '#B91C1C', borderRadius: 2,
+                                        height: 2, background: '#F97316', borderRadius: 2,
                                     }} />
                                 )}
                             </span>
@@ -137,10 +137,10 @@ export default function Header({ activeTab, setActiveTab }: HeaderProps) {
                                 onClick={() => { navigate('/register'); scrollToTop(); }}
                                 className="btn-hover"
                                 style={{
-                                    background: '#B91C1C', color: 'white', padding: '10px 24px',
+                                    background: '#F97316', color: 'white', padding: '10px 24px',
                                     borderRadius: 8, border: 'none', cursor: 'pointer',
                                     fontWeight: 600, fontSize: 14, fontFamily: 'Poppins',
-                                    boxShadow: '0 2px 4px rgba(185, 28, 28, 0.2)',
+                                    boxShadow: '0 2px 4px rgba(249, 115, 22, 0.2)',
                                 }}
                             >
                                 Sign Up

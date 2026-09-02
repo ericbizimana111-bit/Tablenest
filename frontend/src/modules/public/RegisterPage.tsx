@@ -67,7 +67,7 @@ export function RegisterPage() {
         left: 14,
         top: '50%',
         transform: 'translateY(-50%)',
-        color: '#9CA3AF'
+        color: '#94A3B8'
     };
 
     const inputStyle = {
@@ -75,7 +75,7 @@ export function RegisterPage() {
         height: 52,
         paddingLeft: 44,
         paddingRight: 14,
-        border: '1.5px solid #E5E7EB',
+        border: '1.5px solid #E2E8F0',
         borderRadius: 12,
         fontSize: 14,
         background: '#fff',
@@ -90,46 +90,138 @@ export function RegisterPage() {
             height: '100vh',
             overflow: 'hidden',
             fontFamily: 'Poppins, sans-serif',
-            background: '#FAF7F5'
+            background: '#F8FAFC'
         }}>
 
+
+
+
+
+
+
+
+
+         
+
             {/* LEFT SIDE */}
-            <div style={{
-                width: '50%',
-                background: 'linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55)), url(https://images.unsplash.com/photo-1552566626-52f8b828add9?w=900&q=80) center/cover',
-                backgroundPosition: 'center',
-                backgroundSize: 'cover',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'flex-end',
-                padding: '60px',
-                color: '#fff'
-            }}>
-                <div style={{ fontSize: 22, fontWeight: 700, marginBottom: 12 }}>
-                    TableNest
+            <div
+                style={{
+                    width: '50%',
+                    background:
+                        'linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&q=80)', // Slightly darkened the overlay for better overall contrast
+                    backgroundPosition: 'center',
+                    backgroundSize: 'cover',
+                    backgroundRepeat: 'no-repeat',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    padding: '60px',
+                    color: '#fff',
+                    boxSizing: 'border-box'
+                }}
+            >
+                {/* BRAND LOGO - HIGH VISIBILITY UPGRADE */}
+                <Link
+                    to="/"
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 14,
+                        textDecoration: 'none',
+                        cursor: 'pointer',
+                        width: 'fit-content',
+                        background: 'rgba(255, 255, 255, 0.07)', // Glassmorphism backdrop to isolate it from image noise
+                        backdropFilter: 'blur(8px)',
+                        WebkitBackdropFilter: 'blur(8px)',
+                        padding: '10px 20px',
+                        borderRadius: '14px',
+                        border: '1px solid rgba(255, 255, 255, 0.15)',
+                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+                        transition: 'all 0.2s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)';
+                        e.currentTarget.style.transform = 'translateY(-1px)';
+                    }}
+                    onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.07)';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                    }}
+                >
+                    <div
+                        style={{
+                            width: 40, // Expanded slightly for better visual presence
+                            height: 40,
+                            background: '#F97316',
+                            borderRadius: 10,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 4px 12px rgba(249, 115, 22, 0.5)', // Stronger brand glow
+                        }}
+                    >
+                        <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="white"
+                            strokeWidth="2.2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        >
+                            <path d="M6 18h12a2 2 0 0 1 2 2v1H4v-1a2 2 0 0 1 2-2z" />
+                            <path d="M18 18a4 4 0 0 0-1.23-7.79 4.36 4.36 0 0 0-9.54 0A4 4 0 0 0 6 18" />
+                        </svg>
+                    </div>
+                    <span
+                        style={{
+                            color: '#ffffff',
+                            fontWeight: 800,
+                            fontSize: 23,
+                            letterSpacing: '-0.5px',
+                            textShadow: '0 2px 4px rgba(0,0,0,0.2)', // Adds a crisp text boundary layer
+                        }}
+                    >
+                        TableNest
+                    </span>
+                </Link>
+
+                {/* SLOGAN & MARKETING TEXT */}
+                <div style={{ marginTop: 'auto' }}>
+                    <h2
+                        style={{
+                            fontSize: 40,
+                            fontWeight: 700,
+                            lineHeight: 1.2,
+                            marginBottom: 16,
+                            maxWidth: 500,
+                        }}
+                    >
+
+                        Join thousands of
+                        <br />
+                        food enthusiasts.
+                    </h2>
+
+                    <p
+                        style={{
+                            fontSize: 16,
+                            lineHeight: 1.7,
+                            opacity: 0.9,
+                            maxWidth: 500,
+                        }}
+                    >
+                        Discover amazing restaurants, book tables instantly, and earn rewards.
+                    </p>
                 </div>
-
-                <h2 style={{
-                    fontSize: 40,
-                    fontWeight: 700,
-                    lineHeight: 1.2,
-                    marginBottom: 16,
-                    maxWidth: 500
-                }}>
-                    Join thousands of
-                    <br />
-                    food enthusiasts.
-                </h2>
-
-                <p style={{
-                    fontSize: 16,
-                    lineHeight: 1.7,
-                    opacity: 0.9,
-                    maxWidth: 500
-                }}>
-                    Discover amazing restaurants, book tables instantly, and earn rewards.
-                </p>
             </div>
+
+
+
+
+
+
 
             {/* RIGHT SIDE */}
             <div style={{
@@ -137,7 +229,7 @@ export function RegisterPage() {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                background: '#FAF7F5',
+                background: '#F8FAFC',
                 padding: '60px'
             }}>
                 <div style={{ width: '100%', maxWidth: 420 }}>
@@ -146,13 +238,13 @@ export function RegisterPage() {
                         <h1 style={{
                             fontSize: 34,
                             fontWeight: 700,
-                            color: '#111827',
+                            color: '#0F172A',
                             marginBottom: 10
                         }}>
                             Create Account
                         </h1>
 
-                        <p style={{ fontSize: 15, color: '#6B7280' }}>
+                        <p style={{ fontSize: 15, color: '#475569' }}>
                             Start your culinary journey today
                         </p>
                     </div>
@@ -174,8 +266,8 @@ export function RegisterPage() {
                                     value={form.fullName}
                                     onChange={e => handleChange('fullName', e.target.value)}
                                     style={inputStyle}
-                                    onFocus={e => (e.target.style.borderColor = '#B91C1C')}
-                                    onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+                                    onFocus={e => (e.target.style.borderColor = '#F97316')}
+                                    onBlur={e => (e.target.style.borderColor = '#E2E8F0')}
                                 />
                             </div>
                         </div>
@@ -195,8 +287,8 @@ export function RegisterPage() {
                                     value={form.email}
                                     onChange={e => handleChange('email', e.target.value)}
                                     style={inputStyle}
-                                    onFocus={e => (e.target.style.borderColor = '#B91C1C')}
-                                    onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+                                    onFocus={e => (e.target.style.borderColor = '#F97316')}
+                                    onBlur={e => (e.target.style.borderColor = '#E2E8F0')}
                                 />
                             </div>
                         </div>
@@ -216,8 +308,8 @@ export function RegisterPage() {
                                     value={form.password}
                                     onChange={e => handleChange('password', e.target.value)}
                                     style={{ ...inputStyle, paddingRight: 44 }}
-                                    onFocus={e => (e.target.style.borderColor = '#B91C1C')}
-                                    onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+                                    onFocus={e => (e.target.style.borderColor = '#F97316')}
+                                    onBlur={e => (e.target.style.borderColor = '#E2E8F0')}
                                 />
 
                                 <button
@@ -231,7 +323,7 @@ export function RegisterPage() {
                                         background: 'none',
                                         border: 'none',
                                         cursor: 'pointer',
-                                        color: '#9CA3AF'
+                                        color: '#94A3B8'
                                     }}
                                 >
                                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -254,8 +346,8 @@ export function RegisterPage() {
                                     value={form.confirm}
                                     onChange={e => handleChange('confirm', e.target.value)}
                                     style={{ ...inputStyle, paddingRight: 44 }}
-                                    onFocus={e => (e.target.style.borderColor = '#B91C1C')}
-                                    onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+                                    onFocus={e => (e.target.style.borderColor = '#F97316')}
+                                    onBlur={e => (e.target.style.borderColor = '#E2E8F0')}
                                 />
 
                                 <button
@@ -269,7 +361,7 @@ export function RegisterPage() {
                                         background: 'none',
                                         border: 'none',
                                         cursor: 'pointer',
-                                        color: '#9CA3AF'
+                                        color: '#94A3B8'
                                     }}
                                 >
                                     {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -283,7 +375,7 @@ export function RegisterPage() {
                             disabled={isSubmitting}
                             style={{
                                 height: 54,
-                                background: '#B91C1C',
+                                background: '#F97316',
                                 color: '#fff',
                                 border: 'none',
                                 borderRadius: 12,
@@ -297,19 +389,24 @@ export function RegisterPage() {
                             {isSubmitting ? 'Creating account...' : 'Create Account'}
                         </button>
 
-                        <p style={{ textAlign: 'center', fontSize: 14, color: '#6B7280' }}>
+                        <p style={{ textAlign: 'center', fontSize: 15 }}>
                             Already have an account?{' '}
-                            <Link to="/login" style={{ color: '#B91C1C', fontWeight: 600 }}>
+                            <Link to="/login" style={{ color: '#F97316', fontWeight: 600 }}>
                                 Sign in
                             </Link>
                         </p>
                         
-                        <div style={{ textAlign: 'center', fontSize: 13, color: '#9CA3AF' }}>
+
+
+                        <div style={{ textAlign: 'center', fontSize: 15,}}>
                             Are you a restaurant owner?{' '}
-                            <Link to="/partner/register" style={{ color: '#B91C1C', fontWeight: 500, textDecoration: 'none' }}>
-                                Register here
+                            <Link to="/partner/register" style={{ color: '#F97316', fontWeight: '600' }}>
+                                Register Your Restaurant 
                             </Link>
                         </div>
+
+
+
 
                     </form>
                 </div>

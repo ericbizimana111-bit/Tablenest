@@ -25,14 +25,14 @@ export function EmptyState({ icon, title, message, action, variant = 'default' }
             justifyContent: 'center', padding: '60px 24px', textAlign: 'center',
             fontFamily: 'Poppins, sans-serif',
         }}>
-            <div style={{ color: '#D1D5DB', marginBottom: 16 }}>
+            <div style={{ color: '#CBD5E1', marginBottom: 16 }}>
                 {icon || defaultIcon}
             </div>
-            <div style={{ fontSize: 16, fontWeight: 600, color: '#6B7280', marginBottom: 6 }}>
+            <div style={{ fontSize: 16, fontWeight: 600, color: '#475569', marginBottom: 6 }}>
                 {title}
             </div>
             {message && (
-                <div style={{ fontSize: 14, color: '#9CA3AF', maxWidth: 320, lineHeight: 1.6 }}>
+                <div style={{ fontSize: 14, color: '#94A3B8', maxWidth: 320, lineHeight: 1.6 }}>
                     {message}
                 </div>
             )}
@@ -40,7 +40,7 @@ export function EmptyState({ icon, title, message, action, variant = 'default' }
                 <button
                     onClick={action.onClick}
                     style={{
-                        marginTop: 20, padding: '9px 22px', background: '#B91C1C', color: 'white',
+                        marginTop: 20, padding: '9px 22px', background: '#F97316', color: 'white',
                         border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600,
                         cursor: 'pointer', fontFamily: 'Poppins, sans-serif',
                     }}

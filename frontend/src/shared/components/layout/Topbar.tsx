@@ -31,25 +31,25 @@ export default function Topbar({ placeholder = 'Search...', onSearch, notifPath,
     return (
         <header style={{
             position: 'fixed', top: 0, left: 220, right: 0, height: 60,
-            background: 'white', borderBottom: '1px solid #E5E7EB',
+            background: 'white', borderBottom: '1px solid #E2E8F0',
             display: 'flex', alignItems: 'center', padding: '0 24px',
             gap: 16, zIndex: 30,
         }}>
             {/* Search */}
             <div style={{ position: 'relative', flex: 1, maxWidth: 420 }}>
-                <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#9CA3AF' }} />
+                <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} />
                 <input
                     value={query}
                     onChange={handleSearch}
                     placeholder={placeholder}
                     style={{
                         width: '100%', padding: '8px 12px 8px 36px',
-                        border: '1.5px solid #E5E7EB', borderRadius: 8,
+                        border: '1.5px solid #E2E8F0', borderRadius: 8,
                         fontSize: 14, fontFamily: 'Poppins, sans-serif',
-                        outline: 'none', background: '#F9FAFB',
+                        outline: 'none', background: '#F8FAFC',
                     }}
-                    onFocus={e => (e.target.style.borderColor = '#B91C1C')}
-                    onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+                    onFocus={e => (e.target.style.borderColor = '#F97316')}
+                    onBlur={e => (e.target.style.borderColor = '#E2E8F0')}
                 />
             </div>
 
@@ -57,13 +57,13 @@ export default function Topbar({ placeholder = 'Search...', onSearch, notifPath,
                 {/* Bell */}
                 <button
                     onClick={() => notifPath && navigate(notifPath)}
-                    style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', padding: 8, borderRadius: 8, color: '#6B7280' }}
+                    style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', padding: 8, borderRadius: 8, color: '#475569' }}
                 >
                     <Bell size={20} />
                     {unread > 0 && (
                         <span style={{
                             position: 'absolute', top: 4, right: 4,
-                            background: '#B91C1C', color: 'white', borderRadius: 9999,
+                            background: '#F97316', color: 'white', borderRadius: 9999,
                             fontSize: 10, fontWeight: 700, padding: '0 4px', minWidth: 16, textAlign: 'center',
                         }}>{unread > 9 ? '9+' : unread}</span>
                     )}
@@ -72,7 +72,7 @@ export default function Topbar({ placeholder = 'Search...', onSearch, notifPath,
                 {/* Settings */}
                 <button
                     onClick={() => settingsPath && navigate(settingsPath)}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 8, borderRadius: 8, color: '#6B7280' }}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 8, borderRadius: 8, color: '#475569' }}
                 >
                     <Settings size={20} />
                 </button>
@@ -80,7 +80,7 @@ export default function Topbar({ placeholder = 'Search...', onSearch, notifPath,
                 {/* Avatar */}
                 <div style={{
                     width: 36, height: 36, borderRadius: '50%',
-                    background: '#B91C1C', color: 'white',
+                    background: '#F97316', color: 'white',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontWeight: 600, fontSize: 14, cursor: 'pointer', overflow: 'hidden',
                 }}>

@@ -20,7 +20,7 @@ export default function ProtectedRoute({ allowedRoles, children }: ProtectedRout
                 alignItems: 'center',
                 justifyContent: 'center',
                 height: '100vh',
-                background: '#FAF7F5',
+                background: '#F8FAFC',
             }}>
                 <Spinner />
             </div>

@@ -2,11 +2,32 @@
 @import "tailwindcss";
 
 :root {
-  --primary: #B91C1C;
-  --primary-dark: #991B1B;
-  --primary-light: #FEE2E2;
-  --bg-app: #FAF7F5;
-  --border: #E5E7EB;
+  --primary: #F97316;
+  --primary-dark: #EA580C;
+  --primary-light: #FFF7ED;
+  --bg-app: #F8FAFC;
+  --border: #E2E8F0;
+  --navy: #172033;
+  --navy-deep: #0F172A;
+  --success: #16A34A;
+  --success-light: #DCFCE7;
+  --warning: #F59E0B;
+  --warning-light: #FEF3C7;
+  --error: #DC2626;
+  --error-light: #FEE2E2;
+  --info: #2563EB;
+  --info-light: #DBEAFE;
+  --purple: #7C3AED;
+  --purple-light: #EDE9FE;
+  --cyan: #0EA5E9;
+  --green-deep: #166534;
+  --green-deep-hover: #14532D;
+  --green-soft: #F0FDF4;
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
+  --surface: #FFFFFF;
+  --surface-secondary: #F1F5F9;
 }
 
 * {
@@ -18,7 +39,7 @@
 html,
 body {
   font-family: 'Poppins', sans-serif;
-  background-color: #FAF7F5;
+  background-color: #F8FAFC;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -32,7 +53,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #b91c1c;
+  background: #F97316;
 }
 
 .badge-success {
@@ -45,8 +66,8 @@ body {
 }
 
 .badge-warning {
-  background: #FEF9C3;
-  color: #D97706;
+  background: #FEF3C7;
+  color: #F59E0B;
   padding: 3px 10px;
   border-radius: 9999px;
   font-size: 12px;
@@ -63,8 +84,8 @@ body {
 }
 
 .badge-gray {
-  background: #F3F4F6;
-  color: #6B7280;
+  background: #F1F5F9;
+  color: #475569;
   padding: 3px 10px;
   border-radius: 9999px;
   font-size: 12px;
@@ -81,8 +102,26 @@ body {
 }
 
 .badge-olive {
-  background: #FEF3C7;
-  color: #92400E;
+  background: #FFF7ED;
+  color: #F97316;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.badge-purple {
+  background: #EDE9FE;
+  color: #7C3AED;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.badge-cyan {
+  background: #E0F2FE;
+  color: #0EA5E9;
   padding: 3px 10px;
   border-radius: 9999px;
   font-size: 12px;
@@ -99,21 +138,21 @@ body {
   padding: 12px 16px;
   font-size: 12px;
   font-weight: 600;
-  color: #6B7280;
+  color: #475569;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-bottom: 1px solid #E5E7EB;
+  border-bottom: 1px solid #E2E8F0;
 }
 
 .data-table td {
   padding: 14px 16px;
   font-size: 14px;
-  border-bottom: 1px solid #F3F4F6;
-  color: #374151;
+  border-bottom: 1px solid #F1F5F9;
+  color: #475569;
 }
 
 .data-table tr:hover td {
-  background: #FAFAFA;
+  background: #F8FAFC;
 }
 
 .toggle-switch {
@@ -136,7 +175,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: #D1D5DB;
+  background: #CBD5E1;
   border-radius: 24px;
   transition: 0.3s;
 }
@@ -154,7 +193,7 @@ body {
 }
 
 .toggle-switch input:checked+.toggle-slider {
-  background: #B91C1C;
+  background: #F97316;
 }
 
 .toggle-switch input:checked+.toggle-slider:before {

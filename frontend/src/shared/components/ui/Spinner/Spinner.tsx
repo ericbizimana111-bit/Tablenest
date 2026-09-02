@@ -9,7 +9,7 @@ interface SpinnerProps {
 
 export function Spinner({
     size = 36,
-    color = '#B91C1C',
+    color = '#F97316',
     fullPage = false,
     label,
 }: SpinnerProps) {
@@ -26,7 +26,7 @@ export function Spinner({
                 }}
             />
             {label && (
-                <span style={{ fontSize: 13, color: '#9CA3AF', fontFamily: 'Poppins, sans-serif' }}>
+                <span style={{ fontSize: 13, color: '#94A3B8', fontFamily: 'Poppins, sans-serif' }}>
                     {label}
                 </span>
             )}

@@ -71,13 +71,13 @@ export default function FAQPage() {
             <Header />
 
             {/* Hero Section */}
-            <div style={{ background: '#F9F9F9', padding: '64px 24px', textAlign: 'center', color: '#111827', marginTop: 90 }}>
+            <div style={{ background: '#F9F9F9', padding: '64px 24px', textAlign: 'center', color: '#0F172A', marginTop: 90 }}>
                 <h1 style={{ fontSize: 40, fontWeight: 700, marginBottom: 16, letterSpacing: '-0.02em' }}>Frequently Asked Questions</h1>
-                <p style={{ fontSize: 15, color: '#4B5563', maxWidth: 600, margin: '0 auto 28px', lineHeight: 1.5 }}>
+                <p style={{ fontSize: 15, color: '#475569', maxWidth: 600, margin: '0 auto 28px', lineHeight: 1.5 }}>
                     Everything you need to know about dining, reservations, and management with TableNest.
                 </p>
                 <div style={{ position: 'relative', maxWidth: 520, margin: '0 auto' }}>
-                    <Search size={16} style={{ position: 'absolute', left: 18, top: '50%', transform: 'translateY(-50%)', color: '#9CA3AF' }} />
+                    <Search size={16} style={{ position: 'absolute', left: 18, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} />
                     <input
                         value={search}
                         onChange={e => setSearch(e.target.value)}
@@ -86,7 +86,7 @@ export default function FAQPage() {
                             width: '100%',
                             padding: '14px 16px 14px 48px',
                             borderRadius: 8,
-                            border: '1px solid #E5E7EB',
+                            border: '1px solid #E2E8F0',
                             fontSize: 14,
                             fontFamily: 'Poppins',
                             outline: 'none',
@@ -111,8 +111,8 @@ export default function FAQPage() {
                                     padding: '8px 20px',
                                     border: 'none',
                                     borderRadius: 9999,
-                                    background: activeCategory === cat.id ? '#A91D22' : '#E5E7EB',
-                                    color: activeCategory === cat.id ? 'white' : '#4B5563',
+                                    background: activeCategory === cat.id ? '#A91D22' : '#E2E8F0',
+                                    color: activeCategory === cat.id ? 'white' : '#475569',
                                     fontSize: 13,
                                     fontWeight: 500,
                                     cursor: 'pointer',
@@ -129,7 +129,7 @@ export default function FAQPage() {
                 {/* FAQ Accordions Layout */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                     {allFiltered.length === 0 ? (
-                        <div style={{ textAlign: 'center', padding: '40px 20px', color: '#9CA3AF' }}>
+                        <div style={{ textAlign: 'center', padding: '40px 20px', color: '#94A3B8' }}>
                             <div style={{ fontSize: 14 }}>No results found matching your criteria.</div>
                         </div>
                     ) : (
@@ -141,7 +141,7 @@ export default function FAQPage() {
                                     style={{
                                         background: 'white',
                                         borderRadius: 8,
-                                        border: '1px solid #E5E7EB',
+                                        border: '1px solid #E2E8F0',
                                         overflow: 'hidden',
                                         boxShadow: '0 1px 3px rgba(0,0,0,0.02)'
                                     }}
@@ -161,16 +161,16 @@ export default function FAQPage() {
                                             textAlign: 'left',
                                         }}
                                     >
-                                        <span style={{ fontWeight: 600, fontSize: 15, color: '#111827' }}>
+                                        <span style={{ fontWeight: 600, fontSize: 15, color: '#0F172A' }}>
                                             {faq.question}
                                         </span>
                                         {isOpen
-                                            ? <ChevronUp size={16} color="#6B7280" />
-                                            : <ChevronDown size={16} color="#6B7280" />
+                                            ? <ChevronUp size={16} color="#475569" />
+                                            : <ChevronDown size={16} color="#475569" />
                                         }
                                     </button>
                                     {isOpen && (
-                                        <div style={{ padding: '0 24px 20px', fontSize: 14, color: '#4B5563', lineHeight: 1.6 }}>
+                                        <div style={{ padding: '0 24px 20px', fontSize: 14, color: '#475569', lineHeight: 1.6 }}>
                                             {faq.answer}
                                         </div>
                                     )}
@@ -207,7 +207,7 @@ export default function FAQPage() {
                         style={{
                             padding: '12px 28px',
                             background: 'white',
-                            color: '#111827',
+                            color: '#0F172A',
                             border: 'none',
                             borderRadius: 6,
                             fontSize: 14,

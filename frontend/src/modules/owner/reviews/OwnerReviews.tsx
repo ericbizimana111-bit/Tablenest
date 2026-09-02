@@ -62,27 +62,27 @@ export default function OwnerReviews() {
         <div className="fade-in">
             <div style={{ marginBottom: 24 }}>
                 <h1 style={{ fontSize: 22, fontWeight: 700 }}>Customer Reviews</h1>
-                <p style={{ fontSize: 13, color: '#6B7280' }}>Manage and respond to guest feedback.</p>
+                <p style={{ fontSize: 13, color: '#475569' }}>Manage and respond to guest feedback.</p>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr', gap: 20 }}>
                 {/* Rating summary */}
-                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 20 }}>
+                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 20 }}>
                     <div style={{ textAlign: 'center', marginBottom: 16 }}>
-                        <div style={{ fontSize: 48, fontWeight: 700, color: '#111827', lineHeight: 1 }}>{data?.avgRating?.toFixed(1) || '4.8'}</div>
+                        <div style={{ fontSize: 48, fontWeight: 700, color: '#0F172A', lineHeight: 1 }}>{data?.avgRating?.toFixed(1) || '4.8'}</div>
                         <div style={{ display: 'flex', justifyContent: 'center', gap: 3, margin: '8px 0' }}>
                             {Array(5).fill(0).map((_, i) => <Star key={i} size={16} fill="#F59E0B" color="#F59E0B" />)}
                         </div>
-                        <div style={{ fontSize: 12, color: '#9CA3AF' }}>{total} reviews</div>
+                        <div style={{ fontSize: 12, color: '#94A3B8' }}>{total} reviews</div>
                     </div>
                     {ratingDist.map(r => (
                         <div key={r.star} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-                            <span style={{ fontSize: 12, color: '#6B7280', width: 14 }}>{r.star}</span>
+                            <span style={{ fontSize: 12, color: '#475569', width: 14 }}>{r.star}</span>
                             <Star size={11} fill="#F59E0B" color="#F59E0B" />
-                            <div style={{ flex: 1, height: 6, background: '#F3F4F6', borderRadius: 3 }}>
-                                <div style={{ width: `${(r.count / total) * 100}%`, height: '100%', background: '#B91C1C', borderRadius: 3 }} />
+                            <div style={{ flex: 1, height: 6, background: '#F1F5F9', borderRadius: 3 }}>
+                                <div style={{ width: `${(r.count / total) * 100}%`, height: '100%', background: '#F97316', borderRadius: 3 }} />
                             </div>
-                            <span style={{ fontSize: 11, color: '#9CA3AF', width: 20 }}>{r.count}</span>
+                            <span style={{ fontSize: 11, color: '#94A3B8', width: 20 }}>{r.count}</span>
                         </div>
                     ))}
                 </div>
@@ -90,28 +90,28 @@ export default function OwnerReviews() {
                 {/* Reviews list */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                     {reviews.map((r: ReviewItem) => (
-                        <div key={r._id} style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 18 }}>
+                        <div key={r._id} style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 18 }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                                    <div style={{ width: 38, height: 38, borderRadius: '50%', background: '#FEE2E2', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 15, color: '#B91C1C' }}>{(r.customerName || 'G')[0]}</div>
+                                    <div style={{ width: 38, height: 38, borderRadius: '50%', background: '#FEE2E2', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 15, color: '#F97316' }}>{(r.customerName || 'G')[0]}</div>
                                     <div>
                                         <div style={{ fontWeight: 600, fontSize: 14 }}>{r.customerName || 'Guest'}</div>
                                         <div style={{ display: 'flex', gap: 2, marginTop: 2 }}>
-                                            {Array(5).fill(0).map((_, i) => <Star key={i} size={12} fill={i < r.rating ? '#F59E0B' : '#E5E7EB'} color={i < r.rating ? '#F59E0B' : '#E5E7EB'} />)}
+                                            {Array(5).fill(0).map((_, i) => <Star key={i} size={12} fill={i < r.rating ? '#F59E0B' : '#E2E8F0'} color={i < r.rating ? '#F59E0B' : '#E2E8F0'} />)}
                                         </div>
                                     </div>
                                 </div>
-                                <span style={{ fontSize: 12, color: '#9CA3AF' }}>{r.createdAt ? new Date(r.createdAt).toLocaleDateString() : r.date}</span>
+                                <span style={{ fontSize: 12, color: '#94A3B8' }}>{r.createdAt ? new Date(r.createdAt).toLocaleDateString() : r.date}</span>
                             </div>
-                            <p style={{ fontSize: 13, color: '#374151', lineHeight: 1.6, marginBottom: 10 }}>{r.comment}</p>
+                            <p style={{ fontSize: 13, color: '#475569', lineHeight: 1.6, marginBottom: 10 }}>{r.comment}</p>
                             {r.ownerReply ? (
-                                <div style={{ background: '#F9FAFB', borderRadius: 8, padding: 12, borderLeft: '3px solid #B91C1C' }}>
-                                    <div style={{ fontSize: 12, fontWeight: 600, color: '#B91C1C', marginBottom: 4 }}>Your Reply</div>
-                                    <p style={{ fontSize: 12, color: '#6B7280' }}>{r.ownerReply}</p>
+                                <div style={{ background: '#F8FAFC', borderRadius: 8, padding: 12, borderLeft: '3px solid #F97316' }}>
+                                    <div style={{ fontSize: 12, fontWeight: 600, color: '#F97316', marginBottom: 4 }}>Your Reply</div>
+                                    <p style={{ fontSize: 12, color: '#475569' }}>{r.ownerReply}</p>
                                 </div>
                             ) : (
                                 <button onClick={() => { setReplyModal(r); setReplyText(''); }}
-                                    style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 14px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', color: '#374151' }}>
+                                    style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 14px', border: '1.5px solid #E2E8F0', borderRadius: 8, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', color: '#475569' }}>
                                     <MessageSquare size={13} /> Reply to Review
                                 </button>
                             )}
@@ -123,13 +123,13 @@ export default function OwnerReviews() {
             <Modal isOpen={!!replyModal} onClose={() => setReplyModal(null)} title="Reply to Review" width={460}>
                 {replyModal && (
                     <div>
-                        <div style={{ background: '#F9FAFB', borderRadius: 8, padding: 12, marginBottom: 14, fontSize: 13, color: '#6B7280', fontStyle: 'italic' }}>"{replyModal.comment}"</div>
+                        <div style={{ background: '#F8FAFC', borderRadius: 8, padding: 12, marginBottom: 14, fontSize: 13, color: '#475569', fontStyle: 'italic' }}>"{replyModal.comment}"</div>
                         <textarea value={replyText} onChange={e => setReplyText(e.target.value)} placeholder="Write a thoughtful reply..."
-                            style={{ width: '100%', padding: 12, border: '1.5px solid #E5E7EB', borderRadius: 8, fontSize: 13, fontFamily: 'Poppins', resize: 'vertical', minHeight: 100, outline: 'none' }} />
+                            style={{ width: '100%', padding: 12, border: '1.5px solid #E2E8F0', borderRadius: 8, fontSize: 13, fontFamily: 'Poppins', resize: 'vertical', minHeight: 100, outline: 'none' }} />
                         <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
-                            <button onClick={() => setReplyModal(null)} style={{ flex: 1, padding: '9px', border: '1px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins' }}>Cancel</button>
+                            <button onClick={() => setReplyModal(null)} style={{ flex: 1, padding: '9px', border: '1px solid #E2E8F0', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins' }}>Cancel</button>
                             <button onClick={() => replyMut.mutate({ id: replyModal._id, reply: replyText })}
-                                style={{ flex: 1, padding: '9px', background: '#B91C1C', color: 'white', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>
+                                style={{ flex: 1, padding: '9px', background: '#F97316', color: 'white', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>
                                 Send Reply
                             </button>
                         </div>

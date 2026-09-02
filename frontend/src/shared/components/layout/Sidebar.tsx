@@ -22,14 +22,14 @@ export default function Sidebar({ title, subtitle, navItems, bottomUser = true }
 
     return (
         <aside style={{
-            width: 220, minHeight: '100vh', background: 'white',
-            borderRight: '1px solid #E5E7EB', display: 'flex',
+            width: 220, minHeight: '100vh', background: '#172033',
+            borderRight: '1px solid #1E293B', display: 'flex',
             flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 40,
         }}>
             {/* Logo */}
             <div style={{ padding: '20px 20px 16px' }}>
-                <div style={{ color: '#B91C1C', fontWeight: 700, fontSize: 18 }}>{title}</div>
-                <div style={{ color: '#9CA3AF', fontSize: 12 }}>{subtitle}</div>
+                <div style={{ color: '#F97316', fontWeight: 700, fontSize: 18 }}>{title}</div>
+                <div style={{ color: '#94A3B8', fontSize: 12 }}>{subtitle}</div>
             </div>
 
             {/* Nav */}
@@ -43,23 +43,23 @@ export default function Sidebar({ title, subtitle, navItems, bottomUser = true }
                         style={({ isActive }) => ({
                             display: 'flex', alignItems: 'center', gap: 10,
                             padding: '10px 14px', borderRadius: 8,
-                            color: isActive ? 'white' : '#374151',
-                            background: isActive ? '#B91C1C' : 'transparent',
+                            color: isActive ? 'white' : '#CBD5E1',
+                            background: isActive ? '#F97316' : 'transparent',
                             textDecoration: 'none', fontSize: 14, fontWeight: 500,
                             marginBottom: 2, transition: 'all 0.15s', cursor: 'pointer',
                         })}
                         onMouseEnter={e => {
                             const el = e.currentTarget as HTMLElement;
-                            if (!el.style.background.includes('rgb(185')) {
-                                el.style.background = '#FEE2E2';
-                                el.style.color = '#B91C1C';
+                            if (!el.style.background.includes('rgb(249')) {
+                                el.style.background = 'rgba(249, 115, 22, 0.15)';
+                                el.style.color = '#F97316';
                             }
                         }}
                         onMouseLeave={e => {
                             const el = e.currentTarget as HTMLElement;
-                            if (!el.style.background.includes('rgb(185')) {
+                            if (!el.style.background.includes('rgb(249')) {
                                 el.style.background = 'transparent';
-                                el.style.color = '#374151';
+                                el.style.color = '#CBD5E1';
                             }
                         }}
                     >
@@ -67,7 +67,7 @@ export default function Sidebar({ title, subtitle, navItems, bottomUser = true }
                         <span style={{ flex: 1 }}>{item.label}</span>
                         {item.badge != null && item.badge > 0 && (
                             <span style={{
-                                background: '#B91C1C', color: 'white', borderRadius: 9999,
+                                background: '#F97316', color: 'white', borderRadius: 9999,
                                 fontSize: 11, fontWeight: 600, padding: '1px 7px', minWidth: 20,
                                 textAlign: 'center',
                             }}>{item.badge}</span>
@@ -78,11 +78,11 @@ export default function Sidebar({ title, subtitle, navItems, bottomUser = true }
 
             {/* Bottom user */}
             {bottomUser && user && (
-                <div style={{ padding: '12px 16px', borderTop: '1px solid #E5E7EB' }}>
+                <div style={{ padding: '12px 16px', borderTop: '1px solid #1E293B' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                         <div style={{
                             width: 36, height: 36, borderRadius: '50%',
-                            background: '#B91C1C', color: 'white',
+                            background: '#F97316', color: 'white',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             fontWeight: 600, fontSize: 14, flexShrink: 0,
                             overflow: 'hidden',
@@ -92,14 +92,14 @@ export default function Sidebar({ title, subtitle, navItems, bottomUser = true }
                                 : user.fullName?.charAt(0).toUpperCase()}
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: 13, fontWeight: 600, color: '#111827', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            <div style={{ fontSize: 13, fontWeight: 600, color: '#F8FAFC', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                 {user.fullName}
                             </div>
-                            <div style={{ fontSize: 11, color: '#9CA3AF', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            <div style={{ fontSize: 11, color: '#94A3B8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                 {user.email}
                             </div>
                         </div>
-                        <button onClick={logout} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF', padding: 4 }} title="Logout">
+                        <button onClick={logout} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8', padding: 4 }} title="Logout">
                             <LogOut size={16} />
                         </button>
                     </div>

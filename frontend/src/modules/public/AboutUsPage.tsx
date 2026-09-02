@@ -9,7 +9,7 @@ export default function AboutPage() {
     const [activeTab, setActiveTab] = useState('About Us');
 
     return (
-        <div style={{ fontFamily: 'Poppins, sans-serif', background: '#FAFAFA' }}>
+        <div style={{ fontFamily: 'Poppins, sans-serif', background: '#F8FAFC' }}>
 
             <Header activeTab={activeTab} setActiveTab={setActiveTab} />
 
@@ -31,13 +31,13 @@ export default function AboutPage() {
             {/* MISSION */}
             <section style={{ padding: '80px', background: 'white', textAlign: 'center' }}>
                 <h2 style={{ fontSize: 32, fontWeight: 800 }}>Our Mission</h2>
-                <p style={{ maxWidth: 800, margin: '20px auto', color: '#6B7280', lineHeight: 1.7 }}>
+                <p style={{ maxWidth: 800, margin: '20px auto', color: '#475569', lineHeight: 1.7 }}>
                     To simplify how people discover, book, and enjoy restaurants while empowering restaurant owners with powerful digital tools to grow their business.
                 </p>
             </section>
 
             {/* CORE VALUES */}
-            <section style={{ padding: '80px', background: '#F9F6F4' }}>
+            <section style={{ padding: '80px', background: '#FFF7ED' }}>
                 <h2 style={{ textAlign: 'center', fontSize: 32, fontWeight: 800, marginBottom: 50 }}>
                     What We Stand For
                 </h2>
@@ -56,11 +56,11 @@ export default function AboutPage() {
                                 background: 'white',
                                 padding: 28,
                                 borderRadius: 14,
-                                border: '1px solid #E5E7EB'
+                                border: '1px solid #E2E8F0'
                             }}>
-                            <div style={{ color: '#B91C1C', marginBottom: 12 }}>{v.icon}</div>
+                            <div style={{ color: '#F97316', marginBottom: 12 }}>{v.icon}</div>
                             <div style={{ fontWeight: 700, marginBottom: 8 }}>{v.title}</div>
-                            <div style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.6 }}>{v.desc}</div>
+                            <div style={{ fontSize: 14, color: '#475569', lineHeight: 1.6 }}>{v.desc}</div>
                         </div>
                     ))}
                 </div>
@@ -74,7 +74,7 @@ export default function AboutPage() {
                     maxWidth: 900,
                     margin: '30px auto',
                     textAlign: 'center',
-                    color: '#6B7280',
+                    color: '#475569',
                     lineHeight: 1.8
                 }}>
                     TableNest started with a simple idea: booking a restaurant should be as easy as ordering food.
@@ -88,7 +88,7 @@ export default function AboutPage() {
                 margin: '0 80px 80px',
                 padding: 60,
                 borderRadius: 18,
-                background: 'linear-gradient(135deg, #B91C1C, #7F1D1D)',
+                background: 'linear-gradient(135deg, #F97316, #EA580C)',
                 color: 'white',
                 textAlign: 'center'
             }}>

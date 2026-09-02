@@ -64,10 +64,10 @@ export function Modal({
                         display: 'flex', alignItems: 'center',
                         justifyContent: 'space-between',
                         padding: '18px 24px',
-                        borderBottom: title ? '1px solid #E5E7EB' : 'none',
+                        borderBottom: title ? '1px solid #E2E8F0' : 'none',
                     }}>
                         {title && (
-                            <h3 style={{ fontSize: 17, fontWeight: 600, color: '#111827', margin: 0 }}>
+                            <h3 style={{ fontSize: 17, fontWeight: 600, color: '#0F172A', margin: 0 }}>
                                 {title}
                             </h3>
                         )}
@@ -76,7 +76,7 @@ export function Modal({
                                 onClick={onClose}
                                 style={{
                                     background: 'none', border: 'none', cursor: 'pointer',
-                                    color: '#6B7280', padding: 4, borderRadius: 6,
+                                    color: '#475569', padding: 4, borderRadius: 6,
                                     display: 'flex', alignItems: 'center',
                                     marginLeft: 'auto',
                                 }}
@@ -96,7 +96,7 @@ export function Modal({
                 {footer && (
                     <div style={{
                         padding: '14px 24px',
-                        borderTop: '1px solid #E5E7EB',
+                        borderTop: '1px solid #E2E8F0',
                         display: 'flex', justifyContent: 'flex-end', gap: 10,
                     }}>
                         {footer}

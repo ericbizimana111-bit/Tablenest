@@ -50,23 +50,23 @@ export default function OrderHistoryPage() {
         <div className="fade-in">
             <div style={{ marginBottom: 24 }}>
                 <h1 style={{ fontSize: 24, fontWeight: 700 }}>Order History</h1>
-                <p style={{ fontSize: 14, color: '#6B7280', marginTop: 2 }}>Review and manage your past culinary experiences.</p>
+                <p style={{ fontSize: 14, color: '#475569', marginTop: 2 }}>Review and manage your past culinary experiences.</p>
             </div>
 
             {/* Filters */}
             <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 20 }}>
-                <div style={{ display: 'flex', gap: 0, background: 'white', border: '1.5px solid #E5E7EB', borderRadius: 10, overflow: 'hidden' }}>
+                <div style={{ display: 'flex', gap: 0, background: 'white', border: '1.5px solid #E2E8F0', borderRadius: 10, overflow: 'hidden' }}>
                     {TABS.map(t => (
                         <button key={t} onClick={() => { setTab(t); setPage(1); }}
-                            style={{ padding: '8px 18px', border: 'none', background: tab === t ? '#1F1F1F' : 'white', color: tab === t ? 'white' : '#374151', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: tab === t ? 600 : 400 }}>
+                            style={{ padding: '8px 18px', border: 'none', background: tab === t ? '#172033' : 'white', color: tab === t ? 'white' : '#475569', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: tab === t ? 600 : 400 }}>
                             {t}
                         </button>
                     ))}
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 13, color: '#374151', cursor: 'pointer' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', border: '1.5px solid #E2E8F0', borderRadius: 8, background: 'white', fontSize: 13, color: '#475569', cursor: 'pointer' }}>
                     <Calendar size={14} /> Filter by date
                 </div>
-                <button onClick={() => toast.success('Advanced filters coming soon')} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins' }}>
+                <button onClick={() => toast.success('Advanced filters coming soon')} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', border: '1.5px solid #E2E8F0', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins' }}>
                     <Filter size={14} /> Filters
                 </button>
             </div>
@@ -77,42 +77,42 @@ export default function OrderHistoryPage() {
                     {orders.map((order: Order) => {
                         const { date, time } = formatOrderDateTime(order.createdAt);
                         return (
-                        <div key={order._id} style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: '18px 20px', display: 'flex', gap: 16, alignItems: 'center' }}>
+                        <div key={order._id} style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: '18px 20px', display: 'flex', gap: 16, alignItems: 'center' }}>
                             <img src={order.restaurantImage || FOOD_IMG} alt="" style={{ width: 72, height: 72, objectFit: 'cover', borderRadius: 8, flexShrink: 0 }} />
                             <div style={{ flex: 1 }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
                                     <div style={{ fontWeight: 600, fontSize: 15 }}>{order.restaurantName || 'Restaurant'}</div>
                                     <StatusBadge status={order.status} />
                                 </div>
-                                <div style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 4 }}>
+                                <div style={{ fontSize: 12, color: '#94A3B8', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 4 }}>
                                     <Calendar size={11} /> {date}{time ? ` · ${time}` : ''}
                                 </div>
-                                <div style={{ fontSize: 13, color: '#6B7280' }}>
+                                <div style={{ fontSize: 13, color: '#475569' }}>
                                     {order.items.map((i: OrderItem) => `${i.quantity || 1}x ${i.name}`).join(', ')}
                                 </div>
-                                <div style={{ fontWeight: 700, color: '#B91C1C', fontSize: 16, marginTop: 8 }}>
+                                <div style={{ fontWeight: 700, color: '#F97316', fontSize: 16, marginTop: 8 }}>
                                     ${order.total?.toFixed(2)}
                                 </div>
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, flexShrink: 0 }}>
                                 {order.status === 'delivered' && (
-                                    <button onClick={() => toast.success('Review feature coming soon')} style={{ padding: '8px 16px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 5 }}>
+                                    <button onClick={() => toast.success('Review feature coming soon')} style={{ padding: '8px 16px', border: '1.5px solid #E2E8F0', borderRadius: 8, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 5 }}>
                                         <Star size={12} /> Write Review
                                     </button>
                                 )}
                                 {(order.status === 'placed' || order.status === 'confirmed' || order.status === 'preparing') && (
                                     <button onClick={() => navigate(`/my-orders/${order._id}/track`)}
-                                        style={{ padding: '8px 16px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 5 }}>
+                                        style={{ padding: '8px 16px', border: '1.5px solid #E2E8F0', borderRadius: 8, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 5 }}>
                                         <RefreshCw size={12} /> Track Order
                                     </button>
                                 )}
                                 {order.status === 'cancelled' && (
-                                    <button onClick={() => navigate('/notifications')} style={{ padding: '8px 16px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 5 }}>
+                                    <button onClick={() => navigate('/notifications')} style={{ padding: '8px 16px', border: '1.5px solid #E2E8F0', borderRadius: 8, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 5 }}>
                                         <Headphones size={12} /> Support
                                     </button>
                                 )}
                                 <button onClick={() => reorderMut.mutate(order)}
-                                    style={{ padding: '8px 16px', background: '#B91C1C', color: 'white', border: 'none', borderRadius: 8, fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5 }}>
+                                    style={{ padding: '8px 16px', background: '#F97316', color: 'white', border: 'none', borderRadius: 8, fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5 }}>
                                     <RefreshCw size={12} /> Reorder
                                 </button>
                             </div>

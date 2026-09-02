@@ -7,8 +7,8 @@ import { DollarSign, ShoppingBag, Star, Users, BarChart2 } from 'lucide-react';
 import { analyticsAPI, ordersAPI, reservationsAPI, restaurantsAPI } from '../../../shared/services/api';
 import { useAuthStore } from '../../../shared/store/authStore';
 
-const RED = '#B91C1C';
-const COLORS = [RED, '#D97706', '#16A34A', '#2563EB', '#7C3AED'];
+const ORANGE = '#F97316';
+const COLORS = [ORANGE, '#F59E0B', '#16A34A', '#2563EB', '#7C3AED'];
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 export default function OwnerAnalytics() {
@@ -83,12 +83,12 @@ export default function OwnerAnalytics() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
                 <div>
                     <h1 style={{ fontSize: 22, fontWeight: 700 }}>Analytics</h1>
-                    <p style={{ fontSize: 13, color: '#6B7280' }}>Deep insights into your restaurant's performance.</p>
+                    <p style={{ fontSize: 13, color: '#475569' }}>Deep insights into your restaurant's performance.</p>
                 </div>
                 <div style={{ display: 'flex', gap: 8 }}>
                     {[['7', 'Week'], ['30', 'Month'], ['90', 'Quarter']].map(([v, l]) => (
                         <button key={v} onClick={() => setPeriod(v)}
-                            style={{ padding: '7px 16px', border: '1.5px solid', borderColor: period === v ? RED : '#E5E7EB', borderRadius: 8, background: period === v ? RED : 'white', color: period === v ? 'white' : '#374151', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins' }}>{l}</button>
+                            style={{ padding: '7px 16px', border: '1.5px solid', borderColor: period === v ? ORANGE : '#E2E8F0', borderRadius: 8, background: period === v ? ORANGE : 'white', color: period === v ? 'white' : '#475569', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins' }}>{l}</button>
                     ))}
                 </div>
             </div>
@@ -96,38 +96,38 @@ export default function OwnerAnalytics() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 20 }}>
                 <StatCard label="Total Revenue" value={`$${totalRevenue.toLocaleString()}`} icon={<DollarSign size={18} />} />
                 <StatCard label="Total Orders" value={totalOrders.toLocaleString()} icon={<ShoppingBag size={18} />} />
-                <StatCard label="Avg. Rating" value={`${dashData?.rating || 0}`} icon={<Star size={18} />} color="#D97706" sub={`${dashData?.totalReviews || 0} reviews`} />
+                <StatCard label="Avg. Rating" value={`${dashData?.rating || 0}`} icon={<Star size={18} />} color="#F59E0B" sub={`${dashData?.totalReviews || 0} reviews`} />
                 <StatCard label="Total Guests" value={stats?.total?.toLocaleString() || '0'} icon={<Users size={18} />} />
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18, marginBottom: 18 }}>
-                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 20 }}>
+                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 20 }}>
                     <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 16 }}>Revenue by Day</div>
                     <ResponsiveContainer width="100%" height={200}>
                         <AreaChart data={revenue}>
                             <defs>
                                 <linearGradient id="revG" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor={RED} stopOpacity={0.25} />
-                                    <stop offset="100%" stopColor={RED} stopOpacity={0} />
+                                    <stop offset="0%" stopColor={ORANGE} stopOpacity={0.25} />
+                                    <stop offset="100%" stopColor={ORANGE} stopOpacity={0} />
                                 </linearGradient>
                             </defs>
                             <XAxis dataKey="day" tick={{ fontSize: 11, fontFamily: 'Poppins' }} axisLine={false} tickLine={false} />
                             <YAxis hide />
                             <Tooltip formatter={(value) => [`$${Number(value).toLocaleString()}`, 'Revenue']} contentStyle={{ fontFamily: 'Poppins', fontSize: 12, borderRadius: 8 }} />
-                            <Area type="monotone" dataKey="revenue" stroke={RED} strokeWidth={2.5} fill="url(#revG)" />
+                            <Area type="monotone" dataKey="revenue" stroke={ORANGE} strokeWidth={2.5} fill="url(#revG)" />
                         </AreaChart>
                     </ResponsiveContainer>
                 </div>
 
-                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 20 }}>
+                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 20 }}>
                     <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 16 }}>Orders by Day</div>
                     <ResponsiveContainer width="100%" height={200}>
                         <BarChart data={revenue} barSize={20}>
                             <XAxis dataKey="day" tick={{ fontSize: 11, fontFamily: 'Poppins' }} axisLine={false} tickLine={false} />
                             <YAxis hide />
                             <Tooltip contentStyle={{ fontFamily: 'Poppins', fontSize: 12, borderRadius: 8 }} />
-                            <Bar dataKey="orders" fill={`${RED}80`} radius={[4, 4, 0, 0]}>
-                                {revenue.map((_, i) => <Cell key={i} fill={i === 5 ? RED : `${RED}60`} />)}
+                            <Bar dataKey="orders" fill={`${ORANGE}80`} radius={[4, 4, 0, 0]}>
+                                {revenue.map((_, i) => <Cell key={i} fill={i === 5 ? ORANGE : `${ORANGE}60`} />)}
                             </Bar>
                         </BarChart>
                     </ResponsiveContainer>
@@ -135,7 +135,7 @@ export default function OwnerAnalytics() {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 18 }}>
-                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 20 }}>
+                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 20 }}>
                     <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 16 }}>Menu Items</div>
                     {topItems.length > 0 ? (
                         <table className="data-table">
@@ -150,24 +150,24 @@ export default function OwnerAnalytics() {
                             </tbody>
                         </table>
                     ) : (
-                        <div style={{ textAlign: 'center', padding: '30px 0', color: '#9CA3AF', fontSize: 13 }}>No menu items yet.</div>
+                        <div style={{ textAlign: 'center', padding: '30px 0', color: '#94A3B8', fontSize: 13 }}>No menu items yet.</div>
                     )}
                 </div>
 
-                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 20 }}>
+                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 20 }}>
                     <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 16 }}>Customer Breakdown</div>
                     <ResponsiveContainer width="100%" height={180}>
                         <BarChart data={custData} barSize={10}>
                             <XAxis dataKey="day" tick={{ fontSize: 11, fontFamily: 'Poppins' }} axisLine={false} tickLine={false} />
                             <YAxis hide />
                             <Tooltip contentStyle={{ fontFamily: 'Poppins', fontSize: 12, borderRadius: 8 }} />
-                            <Bar dataKey="returning" fill={`${RED}40`} radius={[2, 2, 0, 0]} name="Returning" />
-                            <Bar dataKey="new" fill={RED} radius={[2, 2, 0, 0]} name="New" />
+                            <Bar dataKey="returning" fill={`${ORANGE}40`} radius={[2, 2, 0, 0]} name="Returning" />
+                            <Bar dataKey="new" fill={ORANGE} radius={[2, 2, 0, 0]} name="New" />
                         </BarChart>
                     </ResponsiveContainer>
                     <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginTop: 8 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: RED }} />New</div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: `${RED}40` }} />Returning</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: ORANGE }} />New</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: `${ORANGE}40` }} />Returning</div>
                     </div>
                 </div>
             </div>

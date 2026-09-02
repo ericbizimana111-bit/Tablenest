@@ -49,23 +49,12 @@ const OwnerReviews = lazy(() => import('./modules/owner/reviews/OwnerReviews'));
 const OwnerSettings = lazy(() => import('./modules/owner/settings/OwnerSettings'));
 const PartnerRegistration = lazy(() => import('./modules/owner/auth/PartnerRegistration'));
 
-// Admin
-const AdminLayout = lazy(() => import('./modules/admin/layout/AdminLayout'));
-const AdminDashboard = lazy(() => import('./modules/admin/dashboard/AdminDashboard'));
-const AdminRestaurants = lazy(() => import('./modules/admin/restaurants/AdminRestaurants'));
-const AdminPendingApprovals = lazy(() => import('./modules/admin/restaurants/AdminPendingApprovals'));
-const AdminUsers = lazy(() => import('./modules/admin/users/AdminUsers'));
-const AdminOrders = lazy(() => import('./modules/admin/orders/AdminOrders'));
-const AdminBookings = lazy(() => import('./modules/admin/bookings/AdminBookings'));
-const AdminReports = lazy(() => import('./modules/admin/reports/AdminReports'));
-const AdminComplaints = lazy(() => import('./modules/admin/complaints/AdminComplaints'));
-const AdminSettings = lazy(() => import('./modules/admin/settings/AdminSettings'));
+
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: 30000 } } });
 
-const Loader = () => (
-  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#FAF7F5' }}>
-    <div style={{ width: 40, height: 40, border: '3px solid #FEE2E2', borderTop: '3px solid #B91C1C', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+const Loader = () => (    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#F8FAFC' }}>
+    <div style={{ width: 40, height: 40, border: '3px solid #FFF7ED', borderTop: '3px solid #F97316', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
     <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
   </div>
 );
@@ -87,13 +76,12 @@ export default function App() {
               <Route path="/partner/register" element={<PartnerRegistration />} />
               <Route path="/restaurants" element={<BrowsePage />} />
               <Route path="/restaurants/:id" element={<RestaurantDetailPage />} />
-              <Route path="/about-us" element={<AboutUsPage/>} />
+              <Route path="/about-us" element={<AboutUsPage />} />
               <Route path="/faq" element={<FAQPage />} />
 
               <Route element={<ProtectedRoute allowedRoles={['customer']} />}>
                 <Route element={<CustomerLayout />}>
                   <Route path="/home" element={<CustomerHome />} />
-                  <Route path="/browse" element={<BrowsePage />} />
                   <Route path="/my-orders" element={<OrderHistoryPage />} />
                   <Route path="/my-orders/:id/track" element={<OrderTrackingPage />} />
                   <Route path="/my-bookings" element={<MyBookingsPage />} />
@@ -122,18 +110,6 @@ export default function App() {
                 <Route path="settings" element={<OwnerSettings />} />
               </Route>
 
-              <Route path="/admin" element={<ProtectedRoute allowedRoles={['super_admin']}><AdminLayout /></ProtectedRoute>}>
-                <Route index element={<Navigate to="dashboard" replace />} />
-                <Route path="dashboard" element={<AdminDashboard />} />
-                <Route path="restaurants" element={<AdminRestaurants />} />
-                <Route path="restaurants/pending" element={<AdminPendingApprovals />} />
-                <Route path="users" element={<AdminUsers />} />
-                <Route path="orders" element={<AdminOrders />} />
-                <Route path="bookings" element={<AdminBookings />} />
-                <Route path="reports" element={<AdminReports />} />
-                <Route path="complaints" element={<AdminComplaints />} />
-                <Route path="settings" element={<AdminSettings />} />
-              </Route>
 
               <Route path="*" element={<NotFoundPage />} />
             </Routes>

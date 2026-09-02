@@ -134,7 +134,7 @@ export default function RestaurantDetailPage() {
         return (
             <div style={{ padding: 40, textAlign: 'center', fontFamily: 'Poppins, sans-serif' }}>
                 <h2 style={{ fontSize: 20, fontWeight: 600 }}>Restaurant not found</h2>
-                <button onClick={() => navigate('/restaurants')} style={{ marginTop: 16, padding: '10px 20px', background: '#B91C1C', color: 'white', border: 'none', borderRadius: 8, cursor: 'pointer' }}>Browse Restaurants</button>
+                <button onClick={() => navigate('/restaurants')} style={{ marginTop: 16, padding: '10px 20px', background: '#F97316', color: 'white', border: 'none', borderRadius: 8, cursor: 'pointer' }}>Browse Restaurants</button>
             </div>
         );
     }
@@ -147,7 +147,7 @@ export default function RestaurantDetailPage() {
         <div className="fade-in" style={{ fontFamily: 'Poppins, sans-serif', maxWidth: 1100, margin: '0 auto', padding: '24px 32px' }}>
             <button
                 onClick={() => navigate(-1)}
-                style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#6B7280', cursor: 'pointer', marginBottom: 20, fontFamily: 'Poppins', fontSize: 14 }}
+                style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#475569', cursor: 'pointer', marginBottom: 20, fontFamily: 'Poppins', fontSize: 14 }}
             >
                 <ArrowLeft size={16} /> Back
             </button>
@@ -170,7 +170,7 @@ export default function RestaurantDetailPage() {
                 </div>
             </div>
 
-            <div style={{ display: 'flex', gap: 8, marginBottom: 24, borderBottom: '2px solid #E5E7EB' }}>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 24, borderBottom: '2px solid #E2E8F0' }}>
                 {([
                     { key: 'overview' as const, label: 'Overview', icon: <Star size={15} /> },
                     { key: 'menu' as const, label: 'Menu', icon: <UtensilsCrossed size={15} /> },
@@ -182,8 +182,8 @@ export default function RestaurantDetailPage() {
                         style={{
                             display: 'flex', alignItems: 'center', gap: 6, padding: '10px 20px', border: 'none', background: 'transparent',
                             fontFamily: 'Poppins', fontSize: 14, fontWeight: tab === item.key ? 600 : 400,
-                            color: tab === item.key ? '#B91C1C' : '#6B7280',
-                            borderBottom: tab === item.key ? '2px solid #B91C1C' : '2px solid transparent', marginBottom: -2, cursor: 'pointer',
+                            color: tab === item.key ? '#F97316' : '#475569',
+                            borderBottom: tab === item.key ? '2px solid #F97316' : '2px solid transparent', marginBottom: -2, cursor: 'pointer',
                         }}
                     >
                         {item.icon} {item.label}
@@ -192,16 +192,16 @@ export default function RestaurantDetailPage() {
             </div>
 
             {tab === 'overview' && (
-                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 24 }}>
+                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 24 }}>
                     <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12 }}>About</h2>
-                    <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.7, marginBottom: 20 }}>
+                    <p style={{ fontSize: 14, color: '#475569', lineHeight: 1.7, marginBottom: 20 }}>
                         {displayRestaurant.description || 'Experience exceptional cuisine in an inviting atmosphere. Perfect for special occasions and everyday dining.'}
                     </p>
                     <div style={{ display: 'flex', gap: 12 }}>
-                        <button onClick={() => setTab('menu')} style={{ padding: '10px 20px', border: '1.5px solid #E5E7EB', borderRadius: 8, background: 'white', cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500 }}>
+                        <button onClick={() => setTab('menu')} style={{ padding: '10px 20px', border: '1.5px solid #E2E8F0', borderRadius: 8, background: 'white', cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500 }}>
                             View Menu
                         </button>
-                        <button onClick={() => setTab('book')} style={{ padding: '10px 20px', border: 'none', borderRadius: 8, background: '#B91C1C', color: 'white', cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 600 }}>
+                        <button onClick={() => setTab('book')} style={{ padding: '10px 20px', border: 'none', borderRadius: 8, background: '#F97316', color: 'white', cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 600 }}>
                             Book a Table
                         </button>
                     </div>
@@ -213,15 +213,15 @@ export default function RestaurantDetailPage() {
                     <div>
                         {menuLoading ? <Spinner /> : (
                             (menuData?.categories?.length ? menuData.categories : []).map((category) => (
-                                <div key={category._id} style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 20, marginBottom: 16 }}>
+                                <div key={category._id} style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 20, marginBottom: 16 }}>
                                     <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 14 }}>{category.name}</h3>
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                                         {(category.items || []).map((item) => (
                                             <div key={item._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16 }}>
                                                 <div style={{ flex: 1 }}>
                                                     <div style={{ fontWeight: 500, fontSize: 14 }}>{item.name}</div>
-                                                    {item.description && <div style={{ fontSize: 12, color: '#9CA3AF', marginTop: 2 }}>{item.description}</div>}
-                                                    <div style={{ fontWeight: 600, color: '#B91C1C', fontSize: 14, marginTop: 6 }}>${item.price?.toFixed(2)}</div>
+                                                    {item.description && <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 2 }}>{item.description}</div>}
+                                                    <div style={{ fontWeight: 600, color: '#F97316', fontSize: 14, marginTop: 6 }}>${item.price?.toFixed(2)}</div>
                                                 </div>
                                                 <button
                                                     onClick={() => {
@@ -233,7 +233,7 @@ export default function RestaurantDetailPage() {
                                                         addToCart(item);
                                                     }}
                                                     disabled={!item.isAvailable}
-                                                    style={{ padding: '8px 14px', background: item.isAvailable ? '#B91C1C' : '#E5E7EB', color: item.isAvailable ? 'white' : '#9CA3AF', border: 'none', borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: item.isAvailable ? 'pointer' : 'not-allowed', fontFamily: 'Poppins', whiteSpace: 'nowrap' }}
+                                                    style={{ padding: '8px 14px', background: item.isAvailable ? '#F97316' : '#E2E8F0', color: item.isAvailable ? 'white' : '#94A3B8', border: 'none', borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: item.isAvailable ? 'pointer' : 'not-allowed', fontFamily: 'Poppins', whiteSpace: 'nowrap' }}
                                                 >
                                                     {item.isAvailable ? 'Add' : 'Unavailable'}
                                                 </button>
@@ -244,37 +244,37 @@ export default function RestaurantDetailPage() {
                             ))
                         )}
                         {!menuLoading && !menuData?.categories?.length && (
-                            <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 24, color: '#6B7280' }}>No menu items available yet.</div>
+                            <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 24, color: '#475569' }}>No menu items available yet.</div>
                         )}
                     </div>
 
-                    <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 20, position: 'sticky', top: 24 }}>
+                    <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 20, position: 'sticky', top: 24 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-                            <ShoppingBag size={18} color="#B91C1C" />
+                            <ShoppingBag size={18} color="#F97316" />
                             <h3 style={{ fontSize: 16, fontWeight: 600 }}>Your Order</h3>
                         </div>
                         {cart.length === 0 ? (
-                            <p style={{ fontSize: 13, color: '#9CA3AF' }}>Add items from the menu to start your order.</p>
+                            <p style={{ fontSize: 13, color: '#94A3B8' }}>Add items from the menu to start your order.</p>
                         ) : (
                             <>
                                 {cart.map(item => (
                                     <div key={item.menuItemId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, fontSize: 13 }}>
                                         <div>
                                             <div style={{ fontWeight: 500 }}>{item.name}</div>
-                                            <div style={{ color: '#9CA3AF' }}>${item.price.toFixed(2)} each</div>
+                                            <div style={{ color: '#94A3B8' }}>${item.price.toFixed(2)} each</div>
                                         </div>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                            <button onClick={() => updateQty(item.menuItemId, -1)} style={{ width: 24, height: 24, borderRadius: 6, border: '1px solid #E5E7EB', background: 'white', cursor: 'pointer' }}><Minus size={12} /></button>
+                                            <button onClick={() => updateQty(item.menuItemId, -1)} style={{ width: 24, height: 24, borderRadius: 6, border: '1px solid #E2E8F0', background: 'white', cursor: 'pointer' }}><Minus size={12} /></button>
                                             <span>{item.quantity}</span>
-                                            <button onClick={() => updateQty(item.menuItemId, 1)} style={{ width: 24, height: 24, borderRadius: 6, border: '1px solid #E5E7EB', background: 'white', cursor: 'pointer' }}><Plus size={12} /></button>
+                                            <button onClick={() => updateQty(item.menuItemId, 1)} style={{ width: 24, height: 24, borderRadius: 6, border: '1px solid #E2E8F0', background: 'white', cursor: 'pointer' }}><Plus size={12} /></button>
                                         </div>
                                     </div>
                                 ))}
                                 <textarea value={orderNotes} onChange={(e) => setOrderNotes(e.target.value)} placeholder="Special instructions..." rows={2}
-                                    style={{ width: '100%', marginTop: 8, marginBottom: 12, padding: '8px 10px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontFamily: 'Poppins', fontSize: 12 }} />
+                                    style={{ width: '100%', marginTop: 8, marginBottom: 12, padding: '8px 10px', border: '1.5px solid #E2E8F0', borderRadius: 8, fontFamily: 'Poppins', fontSize: 12 }} />
                                 <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700, marginBottom: 12 }}>
                                     <span>Total</span>
-                                    <span style={{ color: '#B91C1C' }}>${cartTotal.toFixed(2)}</span>
+                                    <span style={{ color: '#F97316' }}>${cartTotal.toFixed(2)}</span>
                                 </div>
                                 <button
                                     onClick={() => {
@@ -285,7 +285,7 @@ export default function RestaurantDetailPage() {
                                         orderMut.mutate();
                                     }}
                                     disabled={orderMut.isPending}
-                                    style={{ width: '100%', padding: '12px', background: '#B91C1C', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}
+                                    style={{ width: '100%', padding: '12px', background: '#F97316', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}
                                 >
                                     {orderMut.isPending ? 'Placing Order...' : 'Place Order'}
                                 </button>
@@ -296,28 +296,28 @@ export default function RestaurantDetailPage() {
             )}
 
             {tab === 'book' && (
-                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E5E7EB', padding: 24, maxWidth: 480 }}>
+                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 24, maxWidth: 480 }}>
                     <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 16 }}>Reserve Your Table</h2>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                         <div>
                             <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>Date</label>
                             <input type="date" value={bookingForm.date} onChange={(e) => setBookingForm((f) => ({ ...f, date: e.target.value }))}
-                                style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontFamily: 'Poppins', fontSize: 14 }} />
+                                style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #E2E8F0', borderRadius: 8, fontFamily: 'Poppins', fontSize: 14 }} />
                         </div>
                         <div>
                             <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>Time</label>
                             <input type="time" value={bookingForm.time} onChange={(e) => setBookingForm((f) => ({ ...f, time: e.target.value }))}
-                                style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontFamily: 'Poppins', fontSize: 14 }} />
+                                style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #E2E8F0', borderRadius: 8, fontFamily: 'Poppins', fontSize: 14 }} />
                         </div>
                         <div>
                             <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>Guests</label>
                             <input type="number" min={1} max={20} value={bookingForm.guests} onChange={(e) => setBookingForm((f) => ({ ...f, guests: Number(e.target.value) }))}
-                                style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontFamily: 'Poppins', fontSize: 14 }} />
+                                style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #E2E8F0', borderRadius: 8, fontFamily: 'Poppins', fontSize: 14 }} />
                         </div>
                         <div>
                             <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>Special Requests</label>
                             <textarea value={bookingForm.notes} onChange={(e) => setBookingForm((f) => ({ ...f, notes: e.target.value }))} rows={3}
-                                style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #E5E7EB', borderRadius: 8, fontFamily: 'Poppins', fontSize: 14, resize: 'vertical' }} />
+                                style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #E2E8F0', borderRadius: 8, fontFamily: 'Poppins', fontSize: 14, resize: 'vertical' }} />
                         </div>
                         <button
                             onClick={() => {
@@ -328,12 +328,12 @@ export default function RestaurantDetailPage() {
                                 bookMut.mutate();
                             }}
                             disabled={bookMut.isPending}
-                            style={{ padding: '12px', background: '#B91C1C', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+                            style={{ padding: '12px', background: '#F97316', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
                         >
                             <Calendar size={16} /> {bookMut.isPending ? 'Booking...' : 'Confirm Booking'}
                         </button>
                     </div>
-                    <div style={{ marginTop: 16, fontSize: 12, color: '#9CA3AF', display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{ marginTop: 16, fontSize: 12, color: '#94A3B8', display: 'flex', alignItems: 'center', gap: 12 }}>
                         <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={12} /> Instant confirmation</span>
                         <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Users size={12} /> Up to 20 guests</span>
                     </div>
