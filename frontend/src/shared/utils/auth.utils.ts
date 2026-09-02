@@ -5,8 +5,6 @@ export const AUTH_USER_KEY = 'user';
 
 export function getRoleHomePath(role: UserRole): string {
     switch (role) {
-        case 'super_admin':
-            return '/admin/dashboard';
         case 'owner':
             return '/owner/dashboard';
         case 'customer':

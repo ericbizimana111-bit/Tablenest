@@ -10,12 +10,6 @@ export class AccessControlService {
     @InjectModel(Restaurant.name) private restaurantModel: Model<RestaurantDocument>,
   ) {}
 
-  assertSuperAdmin(user: { role: UserRole }) {
-    if (user.role !== UserRole.SUPER_ADMIN) {
-      throw new ForbiddenException('Super admin access required');
-    }
-  }
-
   assertOwner(user: { role: UserRole }) {
     if (user.role !== UserRole.OWNER) {
       throw new ForbiddenException('Restaurant owner access required');
@@ -29,10 +23,6 @@ export class AccessControlService {
   }
 
   async assertRestaurantOwner(user: { _id: { toString(): string }; role: UserRole; restaurantId?: { toString(): string } }, restaurantId: string) {
-    if (user.role === UserRole.SUPER_ADMIN) {
-      return;
-    }
-
     if (user.role !== UserRole.OWNER) {
       throw new ForbiddenException('Restaurant owner access required');
     }
@@ -60,11 +50,7 @@ export class AccessControlService {
     return restaurant._id.toString();
   }
 
-  assertSelfOrAdmin(user: { _id: { toString(): string }; role: UserRole }, targetUserId: string) {
-    if (user.role === UserRole.SUPER_ADMIN) {
-      return;
-    }
-
+  assertSelf(user: { _id: { toString(): string }; role: UserRole }, targetUserId: string) {
     if (user._id.toString() !== targetUserId) {
       throw new ForbiddenException('Access denied');
     }

@@ -15,53 +15,17 @@ export class AnalyticsController {
     private accessControl: AccessControlService,
   ) {}
 
-  @Get('platform-overview')
-  @Roles(UserRole.SUPER_ADMIN)
-  getPlatformOverview() {
-    return this.analyticsService.getPlatformOverview();
-  }
-
-  @Get('signups')
-  @Roles(UserRole.SUPER_ADMIN)
-  getSignups(@Query('days') days?: number) {
-    return this.analyticsService.getSignupsByDay(days);
-  }
-
-  @Get('bookings-by-day')
-  @Roles(UserRole.SUPER_ADMIN)
-  getBookingsByDay(@Query('days') days?: number) {
-    return this.analyticsService.getBookingsByDay(days);
-  }
-
-  @Get('cuisine-distribution')
-  @Roles(UserRole.SUPER_ADMIN)
-  getCuisineDistribution() {
-    return this.analyticsService.getCuisineDistribution();
-  }
-
   @Get('restaurant/:restaurantId/dashboard')
-  @Roles(UserRole.OWNER, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.OWNER)
   async getRestaurantDashboard(@Request() req, @Param('restaurantId', MongoIdValidationPipe) restaurantId: string) {
     await this.accessControl.assertRestaurantOwner(req.user, restaurantId);
     return this.analyticsService.getRestaurantDashboard(restaurantId);
   }
 
   @Get('restaurant/:restaurantId/heatmap')
-  @Roles(UserRole.OWNER, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.OWNER)
   async getHeatmap(@Request() req, @Param('restaurantId', MongoIdValidationPipe) restaurantId: string) {
     await this.accessControl.assertRestaurantOwner(req.user, restaurantId);
     return this.analyticsService.getReservationsHeatmap(restaurantId);
-  }
-
-  @Get('revenue-by-day')
-  @Roles(UserRole.SUPER_ADMIN)
-  getRevenueByDay(@Query('days') days?: number) {
-    return this.analyticsService.getRevenueByDay(days);
-  }
-
-  @Get('orders-by-day')
-  @Roles(UserRole.SUPER_ADMIN)
-  getOrdersByDay(@Query('days') days?: number) {
-    return this.analyticsService.getOrdersByDay(days);
   }
 }

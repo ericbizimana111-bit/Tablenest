@@ -23,14 +23,14 @@ export class ReviewsController {
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.OWNER, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.OWNER)
   @Patch(':id/reply')
   reply(@Param('id', MongoIdValidationPipe) id: string, @Body() body: { reply: string }) {
     return this.reviewsService.replyToReview(id, body.reply);
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.CUSTOMER, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.CUSTOMER)
   @Delete(':id')
   delete(@Request() req, @Param('id', MongoIdValidationPipe) id: string) {
     return this.reviewsService.delete(id);

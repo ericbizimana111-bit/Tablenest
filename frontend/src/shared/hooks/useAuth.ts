@@ -42,13 +42,11 @@ export function useAuth() {
         navigate(getRoleHomePath(auth.user.role));
     }, [auth.user, navigate]);
 
-    const isAdmin = auth.user?.role === 'super_admin';
     const isOwner = auth.user?.role === 'owner';
     const isCustomer = auth.user?.role === 'customer';
 
     return {
         ...auth,
-        isAdmin,
         isOwner,
         isCustomer,
         requireAuth,

@@ -120,7 +120,6 @@ export class OrdersService {
 
     if (user) {
       const isCustomer = order.customerId.toString() === user._id.toString();
-      const isAdmin = user.role === 'super_admin';
       let isOwner = false;
       if (user.role === 'owner') {
         try {
@@ -130,7 +129,7 @@ export class OrdersService {
           isOwner = false;
         }
       }
-      if (!isCustomer && !isAdmin && !isOwner) {
+      if (!isCustomer && !isOwner) {
         throw new ForbiddenException('Cannot cancel this order');
       }
     }

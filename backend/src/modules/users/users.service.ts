@@ -11,29 +11,6 @@ export class UsersService {
     @InjectModel(Restaurant.name) private restaurantModel: Model<RestaurantDocument>,
   ) {}
 
-  async findAll(query: any = {}) {
-    const { page = 1, limit = 20, role, search, isActive } = query;
-    const filter: any = {};
-    if (role) filter.role = role;
-    if (isActive !== undefined) filter.isActive = isActive === 'true';
-    if (search) filter.$or = [
-      { fullName: { $regex: search, $options: 'i' } },
-      { email: { $regex: search, $options: 'i' } },
-    ];
-    const skip = (page - 1) * limit;
-    const [users, total] = await Promise.all([
-      this.userModel.find(filter).select('-password').skip(skip).limit(+limit).sort({ createdAt: -1 }),
-      this.userModel.countDocuments(filter),
-    ]);
-    return { users, total, page: +page, pages: Math.ceil(total / limit) };
-  }
-
-  async findById(id: string) {
-    const user = await this.userModel.findById(id).select('-password');
-    if (!user) throw new NotFoundException('User not found');
-    return user;
-  }
-
   async updateProfile(userId: string, data: any) {
     const allowed = ['fullName', 'phone', 'avatar', 'address', 'activePlan'];
     const update: Record<string, unknown> = {};
@@ -57,27 +34,9 @@ export class UsersService {
     ).select('-password');
   }
 
-  async suspend(id: string) {
-    return this.userModel.findByIdAndUpdate(id, { isActive: false }, { returnDocument: 'after' }).select('-password');
-  }
-
-  async activate(id: string) {
-    return this.userModel.findByIdAndUpdate(id, { isActive: true }, { returnDocument: 'after' }).select('-password');
-  }
-
   async deleteAccount(userId: string) {
     await this.userModel.findByIdAndUpdate(userId, { isActive: false });
     return { message: 'Account deactivated' };
-  }
-
-  async getStats() {
-    const [total, customers, owners, active] = await Promise.all([
-      this.userModel.countDocuments(),
-      this.userModel.countDocuments({ role: UserRole.CUSTOMER }),
-      this.userModel.countDocuments({ role: UserRole.OWNER }),
-      this.userModel.countDocuments({ isActive: true }),
-    ]);
-    return { total, customers, owners, active };
   }
 
   async getFavorites(userId: string) {

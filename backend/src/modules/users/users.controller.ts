@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Patch, Delete, Post, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Put, Patch, Delete, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
 import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -10,18 +10,6 @@ import { UsersService } from './users.service';
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 export class UsersController {
   constructor(private usersService: UsersService) {}
-
-  @Get()
-  @Roles(UserRole.SUPER_ADMIN)
-  findAll(@Query() query: any) {
-    return this.usersService.findAll(query);
-  }
-
-  @Get('stats')
-  @Roles(UserRole.SUPER_ADMIN)
-  getStats() {
-    return this.usersService.getStats();
-  }
 
   @Put('profile')
   updateProfile(@Request() req, @Body() data: any) {
@@ -89,23 +77,5 @@ export class UsersController {
   @Delete('payment-methods/:index')
   deletePaymentMethod(@Request() req, @Param('index') index: string) {
     return this.usersService.deletePaymentMethod(req.user._id.toString(), +index);
-  }
-
-  @Patch(':id/suspend')
-  @Roles(UserRole.SUPER_ADMIN)
-  suspend(@Param('id', MongoIdValidationPipe) id: string) {
-    return this.usersService.suspend(id);
-  }
-
-  @Patch(':id/activate')
-  @Roles(UserRole.SUPER_ADMIN)
-  activate(@Param('id', MongoIdValidationPipe) id: string) {
-    return this.usersService.activate(id);
-  }
-
-  @Get(':id')
-  @Roles(UserRole.SUPER_ADMIN)
-  findById(@Param('id', MongoIdValidationPipe) id: string) {
-    return this.usersService.findById(id);
   }
 }

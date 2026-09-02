@@ -18,30 +18,23 @@ export class OrdersController {
   ) {}
 
   @Get()
-  @Roles(UserRole.SUPER_ADMIN, UserRole.OWNER)
+  @Roles(UserRole.OWNER)
   async findAll(@Request() req, @Query() query: any) {
-    if (req.user.role === UserRole.OWNER) {
-      const restaurantId = await this.accessControl.getOwnerRestaurantId(req.user);
-      return this.ordersService.findAll({ ...query, restaurantId });
-    }
-    return this.ordersService.findAll(query);
+    const restaurantId = await this.accessControl.getOwnerRestaurantId(req.user);
+    return this.ordersService.findAll({ ...query, restaurantId });
   }
 
   @Get('stats')
-  @Roles(UserRole.SUPER_ADMIN, UserRole.OWNER)
-  async getStats(@Request() req, @Query('restaurantId') restaurantId?: string) {
-    if (req.user.role === UserRole.OWNER) {
-      restaurantId = await this.accessControl.getOwnerRestaurantId(req.user);
-    }
+  @Roles(UserRole.OWNER)
+  async getStats(@Request() req) {
+    const restaurantId = await this.accessControl.getOwnerRestaurantId(req.user);
     return this.ordersService.getStats(restaurantId);
   }
 
   @Get('revenue')
-  @Roles(UserRole.OWNER, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.OWNER)
   async getRevenue(@Request() req, @Query('restaurantId') restaurantId: string, @Query('days') days?: number) {
-    if (req.user.role === UserRole.OWNER) {
-      restaurantId = await this.accessControl.getOwnerRestaurantId(req.user);
-    }
+    restaurantId = await this.accessControl.getOwnerRestaurantId(req.user);
     await this.accessControl.assertRestaurantOwner(req.user, restaurantId);
     return this.ordersService.getRevenueByDay(restaurantId, days);
   }
@@ -53,7 +46,7 @@ export class OrdersController {
   }
 
   @Get('restaurant/:restaurantId')
-  @Roles(UserRole.OWNER, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.OWNER)
   async getByRestaurant(@Request() req, @Param('restaurantId', MongoIdValidationPipe) restaurantId: string, @Query() query: any) {
     await this.accessControl.assertRestaurantOwner(req.user, restaurantId);
     return this.ordersService.findByRestaurant(restaurantId, query);
@@ -64,7 +57,6 @@ export class OrdersController {
     const order = await this.ordersService.findById(id);
     const userId = req.user._id.toString();
     const isCustomer = order.customerId.toString() === userId;
-    const isAdmin = req.user.role === UserRole.SUPER_ADMIN;
     let isOwner = false;
     if (req.user.role === UserRole.OWNER) {
       try {
@@ -74,7 +66,7 @@ export class OrdersController {
         isOwner = false;
       }
     }
-    if (!isCustomer && !isAdmin && !isOwner) {
+    if (!isCustomer && !isOwner) {
       throw new ForbiddenException('Access denied');
     }
     return order;
@@ -87,7 +79,7 @@ export class OrdersController {
   }
 
   @Patch(':id/status')
-  @Roles(UserRole.OWNER, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.OWNER)
   updateStatus(@Request() req, @Param('id', MongoIdValidationPipe) id: string, @Body() body: { status: OrderStatus; note?: string }) {
     return this.ordersService.updateStatus(id, body.status, body.note, req.user);
   }

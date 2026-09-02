@@ -37,7 +37,7 @@ export class SupportService {
 
     async findByIdForUser(id: string, user: { _id: { toString(): string }; role: string }) {
         const ticket = await this.findById(id);
-        if (user.role !== 'super_admin' && ticket.userId.toString() !== user._id.toString()) {
+        if (ticket.userId.toString() !== user._id.toString()) {
             throw new ForbiddenException('Access denied');
         }
         return ticket;

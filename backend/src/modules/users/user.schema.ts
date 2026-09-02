@@ -4,7 +4,6 @@ import { Document, Types } from 'mongoose';
 export type UserDocument = User & Document;
 
 export enum UserRole {
-  SUPER_ADMIN = 'super_admin',
   OWNER = 'owner',
   CUSTOMER = 'customer',
 }
