@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Search, MessageSquare } from 'lucide-react';
-import Footer from '../../shared/components/layout/Footer';
-import Header from '../../shared/components/layout/Header';
+import LandingHeader from './landing/LandingHeader';
+import LandingFooter from './landing/LandingFooter';
 
 const CATEGORIES = [
     { id: 'general', label: 'General' },
@@ -68,7 +68,7 @@ export default function FAQPage() {
     return (
 
         <div style={{ fontFamily: 'Poppins, sans-serif', background: '#FFFFFF', minHeight: '100vh' }}>
-            <Header />
+            <LandingHeader />
 
             {/* Hero Section */}
             <div style={{ background: '#F9F9F9', padding: '64px 24px', textAlign: 'center', color: '#0F172A', marginTop: 90 }}>
@@ -274,7 +274,7 @@ export default function FAQPage() {
 
             </div>
 
-            <Footer />
+            <LandingFooter />
         </div>
     );
 }

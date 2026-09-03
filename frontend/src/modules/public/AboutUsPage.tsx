@@ -1,17 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../../shared/components/layout/Header';
-import Footer from '../../shared/components/layout/Footer';
+import LandingHeader from './landing/LandingHeader';
+import LandingFooter from './landing/LandingFooter';
 import { Users, Target, Award, Globe, Utensils, Heart } from 'lucide-react';
 
 export default function AboutPage() {
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState('About Us');
-
     return (
         <div style={{ fontFamily: 'Poppins, sans-serif', background: '#F8FAFC' }}>
 
-            <Header activeTab={activeTab} setActiveTab={setActiveTab} />
+            <LandingHeader />
 
             {/* HERO */}
             <section style={{
@@ -110,7 +108,7 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            <Footer />
+            <LandingFooter />
         </div>
     );
 }

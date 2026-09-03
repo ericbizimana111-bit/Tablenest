@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { authAPI } from '../../shared/services/api';
 import toast from 'react-hot-toast';
-import Header from '../../shared/components/layout/Header';
 
 export default function ResetPasswordPage() {
     const navigate = useNavigate();
