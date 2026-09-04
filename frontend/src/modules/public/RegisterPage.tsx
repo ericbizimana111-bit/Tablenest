@@ -4,7 +4,7 @@ import { User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../shared/hooks/useAuthContext';
 import { getRoleHomePath } from '../../shared/utils/auth.utils';
 import toast from 'react-hot-toast';
-import LandingHeader from './landing/LandingHeader';
+
 
 export function RegisterPage() {
     const navigate = useNavigate();
@@ -90,11 +90,10 @@ export function RegisterPage() {
             background: '#F8FAFC',
             minHeight: '100vh',
         }}>
-        <LandingHeader />
         <div style={{
             display: 'flex',
             width: '100%',
-            minHeight: 'calc(100vh - 72px)',
+            minHeight: '100vh',
         }}>
 
 
