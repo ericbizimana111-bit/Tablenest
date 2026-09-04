@@ -5,6 +5,7 @@ import { useAuth } from '../../../shared/hooks/useAuthContext';
 import { getRoleHomePath } from '../../../shared/utils/auth.utils';
 import toast from 'react-hot-toast';
 import { CheckCircle, Image, PartyPopper, X, Upload } from 'lucide-react';
+import LandingHeader from '../../public/landing/LandingHeader';
 
 const STEPS = ['Account', 'Business', 'Operations', 'Media'];
 const CUISINES = ['Italian', 'Japanese', 'French', 'Mexican', 'American', 'Chinese', 'Indian', 'Mediterranean', 'Seafood', 'Steakhouse', 'Modern European', 'African', 'Other'];
@@ -83,7 +84,9 @@ export default function PartnerRegistration() {
     };
 
     return (
-        <div style={{ minHeight: '100vh', background: '#F8FAFC', fontFamily: 'Poppins, sans-serif', padding: '40px 20px' }}>
+        <div style={{ minHeight: '100vh', background: '#F8FAFC', fontFamily: 'Poppins, sans-serif' }}>
+        <LandingHeader />
+        <div style={{ padding: '112px 20px 40px' }}>
             <div style={{ maxWidth: 1000, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 380px', gap: 32 }}>
                 <div>
                     {/* Step progress */}
@@ -319,6 +322,7 @@ export default function PartnerRegistration() {
                     </div>
                 </div>
             </div>
+        </div>
         </div>
     );
 }

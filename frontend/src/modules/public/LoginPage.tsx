@@ -4,6 +4,7 @@ import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useAuth } from '../../shared/hooks/useAuthContext';
 import { getRoleHomePath } from '../../shared/utils/auth.utils';
 import toast from 'react-hot-toast';
+import LandingHeader from './landing/LandingHeader';
 
 export default function LoginPage() {
     const navigate = useNavigate();
@@ -38,12 +39,17 @@ export default function LoginPage() {
     return (
         <div
             style={{
-                display: 'flex',
-                width: '100%',
-                height: '100vh',
-                overflow: 'hidden',
                 fontFamily: 'Poppins, sans-serif',
                 background: '#F8FAFC',
+                minHeight: '100vh',
+            }}
+        >
+        <LandingHeader />
+        <div
+            style={{
+                display: 'flex',
+                width: '100%',
+                minHeight: 'calc(100vh - 72px)',
             }}
         >
             {/* LEFT SIDE */}
@@ -386,6 +392,7 @@ export default function LoginPage() {
                     </form>
                 </div>
             </div>
+        </div>
         </div>
     );
 }

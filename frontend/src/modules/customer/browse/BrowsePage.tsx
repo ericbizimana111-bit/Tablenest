@@ -6,7 +6,7 @@ import { restaurantsAPI } from '../../../shared/services/api';
 import { Spinner, Pagination } from '../../../shared/components/ui/index';
 import type { Restaurant } from '../../../shared/types/restaurant.types';
 import { getRestaurantBookPath, getRestaurantMenuPath } from '../../../shared/utils/restaurantNavigation';
-import Header from '../../../shared/components/layout/Header'
+import LandingHeader from '../../public/landing/LandingHeader'
 
 type BrowseRestaurant = Partial<Restaurant> & {
     _id: string;
@@ -65,7 +65,7 @@ export default function BrowsePage() {
 
     return (
         <div className="fade-in" style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#F8FAFC', minHeight: '100vh' }}>
-            <Header />
+            <LandingHeader />
             <main style={{ maxWidth: 1200, margin: '0 auto', padding: '40px 24px' }}>
                 <div style={{ marginBottom: 32 }}>
                     <h1 style={{ fontSize: 28, fontWeight: 700, color: '#0F172A' }}>Browse Restaurants</h1>

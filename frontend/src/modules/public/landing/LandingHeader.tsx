@@ -7,14 +7,9 @@ import { Menu, X } from 'lucide-react';
 const NAV_LINKS = [
     { label: 'Home', path: '/' },
     { label: 'Restaurants', path: '/restaurants' },
-    { label: 'Reservations', path: '/restaurants' },
     { label: 'About Us', path: '/about-us' },
     { label: 'FAQ', path: '/faq' },
 ];
-
-function scrollToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
 
 export default function LandingHeader() {
     const navigate = useNavigate();
@@ -23,7 +18,6 @@ export default function LandingHeader() {
 
     const handleNav = (path: string) => {
         navigate(path);
-        scrollToTop();
         setMobileOpen(false);
     };
 
@@ -87,12 +81,12 @@ export default function LandingHeader() {
                             <span
                                 className="ln-nav-link"
                                 style={{ fontSize: 14, color: '#F97316', fontWeight: 600 }}
-                                onClick={() => { navigate(getRoleHomePath(user.role)); scrollToTop(); }}
+                                onClick={() => navigate(getRoleHomePath(user.role))}
                             >
                                 Dashboard
                             </span>
                             <button
-                                onClick={() => { logout(); scrollToTop(); }}
+                                onClick={() => logout()}
                                 style={{
                                     padding: '8px 20px', border: '1.5px solid rgba(255,255,255,0.2)',
                                     borderRadius: 8, background: 'transparent', fontSize: 13,
@@ -170,7 +164,7 @@ export default function LandingHeader() {
                         {isAuthenticated && user ? (
                             <>
                                 <button
-                                    onClick={() => { navigate(getRoleHomePath(user.role)); scrollToTop(); setMobileOpen(false); }}
+                                    onClick={() => { navigate(getRoleHomePath(user.role)); setMobileOpen(false); }}
                                     style={{
                                         padding: '12px', borderRadius: 8, border: 'none',
                                         background: '#F97316', color: 'white', fontSize: 15,
@@ -180,7 +174,7 @@ export default function LandingHeader() {
                                     Dashboard
                                 </button>
                                 <button
-                                    onClick={() => { logout(); scrollToTop(); setMobileOpen(false); }}
+                                    onClick={() => { logout(); setMobileOpen(false); }}
                                     style={{
                                         padding: '12px', borderRadius: 8, border: '1.5px solid rgba(255,255,255,0.2)',
                                         background: 'transparent', color: '#CBD5E1', fontSize: 15,

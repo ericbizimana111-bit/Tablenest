@@ -4,6 +4,7 @@ import { User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../shared/hooks/useAuthContext';
 import { getRoleHomePath } from '../../shared/utils/auth.utils';
 import toast from 'react-hot-toast';
+import LandingHeader from './landing/LandingHeader';
 
 export function RegisterPage() {
     const navigate = useNavigate();
@@ -85,12 +86,15 @@ export function RegisterPage() {
 
     return (
         <div style={{
+            fontFamily: 'Poppins, sans-serif',
+            background: '#F8FAFC',
+            minHeight: '100vh',
+        }}>
+        <LandingHeader />
+        <div style={{
             display: 'flex',
             width: '100%',
-            height: '100vh',
-            overflow: 'hidden',
-            fontFamily: 'Poppins, sans-serif',
-            background: '#F8FAFC'
+            minHeight: 'calc(100vh - 72px)',
         }}>
 
 
@@ -411,6 +415,7 @@ export function RegisterPage() {
                     </form>
                 </div>
             </div>
+        </div>
         </div>
     );
 }
