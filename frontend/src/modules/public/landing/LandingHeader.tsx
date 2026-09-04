@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../shared/hooks/useAuthContext';
 import { getRoleHomePath } from '../../../shared/utils/auth.utils';
 import { Menu, X } from 'lucide-react';
+import { ConfirmModal } from '../../../shared/components/ui/ConfirmModal/ConfirmModal';
 
 const NAV_LINKS = [
     { label: 'Home', path: '/' },
@@ -15,6 +16,7 @@ export default function LandingHeader() {
     const navigate = useNavigate();
     const { user, isAuthenticated, logout } = useAuth();
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
     const handleNav = (path: string) => {
         navigate(path);
@@ -86,7 +88,7 @@ export default function LandingHeader() {
                                 Dashboard
                             </span>
                             <button
-                                onClick={() => { if (window.confirm('Are you sure you want to logout?')) logout(); }}
+                                onClick={() => setShowLogoutConfirm(true)}
                                 style={{
                                     padding: '8px 20px', border: '1.5px solid rgba(255,255,255,0.2)',
                                     borderRadius: 8, background: 'transparent', fontSize: 13,
@@ -174,7 +176,7 @@ export default function LandingHeader() {
                                     Dashboard
                                 </button>
                                 <button
-                                    onClick={() => { if (window.confirm('Are you sure you want to logout?')) { logout(); setMobileOpen(false); } }}
+                                    onClick={() => setShowLogoutConfirm(true)}
                                     style={{
                                         padding: '12px', borderRadius: 8, border: '1.5px solid rgba(255,255,255,0.2)',
                                         background: 'transparent', color: '#CBD5E1', fontSize: 15,
@@ -218,6 +220,12 @@ export default function LandingHeader() {
                     .ln-mobile-toggle { display: block !important; }
                 }
             `}</style>
+
+            <ConfirmModal
+                isOpen={showLogoutConfirm}
+                onClose={() => setShowLogoutConfirm(false)}
+                onConfirm={() => { logout(); setShowLogoutConfirm(false); setMobileOpen(false); }}
+            />
         </>
     );
 }

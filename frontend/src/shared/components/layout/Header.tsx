@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuthContext';
 import { getRoleHomePath } from '../../utils/auth.utils';
+import { ConfirmModal } from '../ui/ConfirmModal/ConfirmModal';
 
 interface HeaderProps {
     activeTab?: string;
@@ -21,6 +23,7 @@ function scrollToTop() {
 export default function Header({ activeTab, setActiveTab }: HeaderProps) {
     const navigate = useNavigate();
     const { user, isAuthenticated, logout } = useAuth();
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
     const handleNav = (label: string, path: string) => {
         if (setActiveTab) setActiveTab(label);
@@ -103,7 +106,7 @@ export default function Header({ activeTab, setActiveTab }: HeaderProps) {
                                 Dashboard
                             </span>
                             <button
-                                onClick={() => { if (window.confirm('Are you sure you want to logout?')) { logout(); scrollToTop(); } }}
+                                onClick={() => setShowLogoutConfirm(true)}
                                 style={{
                                     padding: '9px 20px', border: '1.5px solid #E2E8F0',
                                     borderRadius: 8, background: 'white', fontSize: 13,
@@ -149,6 +152,12 @@ export default function Header({ activeTab, setActiveTab }: HeaderProps) {
                     )}
                 </div>
             </nav>
+
+            <ConfirmModal
+                isOpen={showLogoutConfirm}
+                onClose={() => setShowLogoutConfirm(false)}
+                onConfirm={() => { logout(); setShowLogoutConfirm(false); scrollToTop(); }}
+            />
         </>
     );
 }
