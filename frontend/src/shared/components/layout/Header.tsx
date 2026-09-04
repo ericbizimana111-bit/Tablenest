@@ -103,7 +103,7 @@ export default function Header({ activeTab, setActiveTab }: HeaderProps) {
                                 Dashboard
                             </span>
                             <button
-                                onClick={() => { logout(); scrollToTop(); }}
+                                onClick={() => { if (window.confirm('Are you sure you want to logout?')) { logout(); scrollToTop(); } }}
                                 style={{
                                     padding: '9px 20px', border: '1.5px solid #E2E8F0',
                                     borderRadius: 8, background: 'white', fontSize: 13,

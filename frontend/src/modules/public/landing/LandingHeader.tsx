@@ -86,7 +86,7 @@ export default function LandingHeader() {
                                 Dashboard
                             </span>
                             <button
-                                onClick={() => logout()}
+                                onClick={() => { if (window.confirm('Are you sure you want to logout?')) logout(); }}
                                 style={{
                                     padding: '8px 20px', border: '1.5px solid rgba(255,255,255,0.2)',
                                     borderRadius: 8, background: 'transparent', fontSize: 13,
@@ -174,7 +174,7 @@ export default function LandingHeader() {
                                     Dashboard
                                 </button>
                                 <button
-                                    onClick={() => { logout(); setMobileOpen(false); }}
+                                    onClick={() => { if (window.confirm('Are you sure you want to logout?')) { logout(); setMobileOpen(false); } }}
                                     style={{
                                         padding: '12px', borderRadius: 8, border: '1.5px solid rgba(255,255,255,0.2)',
                                         background: 'transparent', color: '#CBD5E1', fontSize: 15,
