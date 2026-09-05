@@ -59,7 +59,7 @@ export default function FAQPage() {
         : FAQS.filter(f => f.category === activeCategory);
 
     return (
-        <div style={{ fontFamily: 'Poppins, sans-serif', background: '#0F172A', minHeight: '100vh', color: 'white' }}>
+        <div style={{ fontFamily: 'Poppins, sans-serif', background: '#FFFFFF', minHeight: '100vh', color: '#0F172A' }}>
             <style>{`
                 .faq-cat-btn { transition: all 0.2s ease; }
                 .faq-cat-btn:hover { color: #F97316 !important; border-color: rgba(249,115,22,0.5) !important; }
@@ -114,7 +114,7 @@ export default function FAQPage() {
                     Frequently Asked <span style={{ color: '#F97316' }}>Questions</span>
                 </h1>
 
-                <p style={{ color: '#94A3B8', fontSize: 15, maxWidth: 520, margin: '0 auto 36px', lineHeight: 1.6 }}>
+                <p style={{ color: '#475569', fontSize: 15, maxWidth: 520, margin: '0 auto 36px', lineHeight: 1.6 }}>
                     Everything you need to know about dining, reservations, and management with TableNest.
                 </p>
 
@@ -133,11 +133,11 @@ export default function FAQPage() {
                             width: '100%',
                             padding: '13px 16px 13px 44px',
                             borderRadius: 10,
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            background: 'rgba(255,255,255,0.05)',
+                            border: '1px solid #E2E8F0',
+                            background: '#F8FAFC',
                             fontSize: 14,
                             fontFamily: 'Poppins',
-                            color: 'white',
+                            color: '#0F172A',
                             boxSizing: 'border-box' as const,
                             transition: 'border-color 0.2s, box-shadow 0.2s',
                         }}
@@ -160,12 +160,12 @@ export default function FAQPage() {
                                     padding: '7px 18px',
                                     border: activeCategory === cat.id
                                         ? '1px solid #F97316'
-                                        : '1px solid rgba(255,255,255,0.12)',
+                                        : '1px solid #E2E8F0',
                                     borderRadius: 9999,
                                     background: activeCategory === cat.id
-                                        ? 'rgba(249,115,22,0.15)'
-                                        : 'transparent',
-                                    color: activeCategory === cat.id ? '#F97316' : '#94A3B8',
+                                        ? 'rgba(249,115,22,0.10)'
+                                        : '#F8FAFC',
+                                    color: activeCategory === cat.id ? '#F97316' : '#64748B',
                                     fontSize: 13,
                                     fontWeight: 500,
                                     cursor: 'pointer',
@@ -181,7 +181,7 @@ export default function FAQPage() {
                 {/* FAQ Accordion Items */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                     {displayList.length === 0 ? (
-                        <div style={{ textAlign: 'center', padding: '48px 20px', color: '#475569' }}>
+                        <div style={{ textAlign: 'center', padding: '48px 20px', color: '#94A3B8' }}>
                             <Search size={32} style={{ marginBottom: 12, opacity: 0.4 }} />
                             <p style={{ fontSize: 14, margin: 0 }}>No results found. Try a different search term.</p>
                         </div>
@@ -193,11 +193,11 @@ export default function FAQPage() {
                                     key={i}
                                     className="faq-item"
                                     style={{
-                                        background: 'rgba(255,255,255,0.04)',
+                                        background: 'white',
                                         borderRadius: 12,
                                         border: isOpen
-                                            ? '1px solid rgba(249,115,22,0.35)'
-                                            : '1px solid rgba(255,255,255,0.08)',
+                                            ? '1px solid rgba(249,115,22,0.4)'
+                                            : '1px solid #E2E8F0',
                                         overflow: 'hidden',
                                     }}
                                 >
@@ -216,7 +216,7 @@ export default function FAQPage() {
                                             textAlign: 'left',
                                         }}
                                     >
-                                        <span style={{ fontWeight: 600, fontSize: 14.5, color: isOpen ? '#F97316' : 'white' }}>
+                                        <span style={{ fontWeight: 600, fontSize: 14.5, color: isOpen ? '#F97316' : '#0F172A' }}>
                                             {faq.question}
                                         </span>
                                         {isOpen
@@ -228,9 +228,9 @@ export default function FAQPage() {
                                         <div style={{
                                             padding: '0 24px 20px',
                                             fontSize: 14,
-                                            color: '#94A3B8',
+                                            color: '#475569',
                                             lineHeight: 1.7,
-                                            borderTop: '1px solid rgba(255,255,255,0.06)',
+                                            borderTop: '1px solid #E2E8F0',
                                             paddingTop: 16,
                                         }}>
                                             {faq.answer}
@@ -245,8 +245,8 @@ export default function FAQPage() {
                 {/* Contact Banner */}
                 <div style={{
                     marginTop: 56,
-                    background: 'linear-gradient(135deg, rgba(249,115,22,0.15) 0%, rgba(234,88,12,0.08) 100%)',
-                    border: '1px solid rgba(249,115,22,0.25)',
+                    background: '#FFF7ED',
+                    border: '1px solid rgba(249,115,22,0.2)',
                     borderRadius: 16,
                     padding: '32px 40px',
                     display: 'flex',
@@ -266,7 +266,7 @@ export default function FAQPage() {
                             <MessageSquare size={20} />
                         </div>
                         <div>
-                            <h3 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 4px' }}>Still have questions?</h3>
+                            <h3 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 4px', color: '#0F172A' }}>Still have questions?</h3>
                             <p style={{ fontSize: 13, color: '#64748B', margin: 0 }}>
                                 Our support team is available 24/7 to help you.
                             </p>

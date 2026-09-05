@@ -159,9 +159,9 @@ export default function AboutPage() {
             {/* ── OUR STORY ── */}
             <section style={{
                 padding: '72px 24px',
-                background: 'rgba(255,255,255,0.02)',
-                borderTop: '1px solid rgba(255,255,255,0.06)',
-                borderBottom: '1px solid rgba(255,255,255,0.06)',
+                background: '#F8FAFC',
+                borderTop: '1px solid #E2E8F0',
+                borderBottom: '1px solid #E2E8F0',
             }}>
                 <div style={{ maxWidth: 720, margin: '0 auto', textAlign: 'center' }}>
                     <div style={{ width: 40, height: 3, background: '#F97316', borderRadius: 2, margin: '0 auto 28px' }} />
@@ -179,8 +179,8 @@ export default function AboutPage() {
                 <div style={{
                     maxWidth: 700,
                     margin: '0 auto',
-                    background: 'linear-gradient(135deg, rgba(249,115,22,0.15) 0%, rgba(234,88,12,0.08) 100%)',
-                    border: '1px solid rgba(249,115,22,0.25)',
+                    background: '#FFF7ED',
+                    border: '1px solid rgba(249,115,22,0.2)',
                     borderRadius: 20,
                     padding: '56px 40px',
                     textAlign: 'center',
@@ -188,7 +188,7 @@ export default function AboutPage() {
                     <h3 style={{ fontSize: 26, fontWeight: 800, marginBottom: 10, letterSpacing: '-0.01em' }}>
                         Join the TableNest Experience
                     </h3>
-                    <p style={{ color: '#94A3B8', marginBottom: 32, fontSize: 14 }}>
+                    <p style={{ color: '#64748B', marginBottom: 32, fontSize: 14 }}>
                         Discover restaurants or become a partner today.
                     </p>
                     <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -202,9 +202,9 @@ export default function AboutPage() {
                         </button>
                         <button className="about-outline-btn" onClick={() => navigate('/partner/register')} style={{
                             padding: '11px 28px', borderRadius: 9,
-                            border: '1.5px solid rgba(255,255,255,0.2)',
-                            background: 'transparent', color: '#CBD5E1',
-                            cursor: 'pointer', fontWeight: 600, fontSize: 14, fontFamily: 'Poppins', color: '#475569',
+                            border: '1.5px solid #E2E8F0',
+                            background: 'white', color: '#475569',
+                            cursor: 'pointer', fontWeight: 600, fontSize: 14, fontFamily: 'Poppins',
                         }}>
                             Become a Partner
                         </button>
