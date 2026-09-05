@@ -5,7 +5,6 @@ import FeatureCards from './landing/FeatureCards';
 import RoleCards from './landing/RoleCards';
 import HowItWorks from './landing/HowItWorks';
 import PopularRestaurants from './landing/PopularRestaurants';
-import StatsSection from './landing/StatsSection';
 import Testimonials from './landing/Testimonials';
 import OwnerCTA from './landing/OwnerCTA';
 import LandingFooter from './landing/LandingFooter';
@@ -20,7 +19,6 @@ export default function LandingPage() {
             <RoleCards />
             <HowItWorks />
             <PopularRestaurants />
-            <StatsSection />
             <Testimonials />
             <OwnerCTA />
             <LandingFooter />
