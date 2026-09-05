@@ -20,8 +20,8 @@ export default function HeroSection() {
             `}</style>
 
             <section style={{
-                position: 'relative', minHeight: 580, display: 'flex', alignItems: 'center',
-                background: '#0F172A', overflow: 'hidden',
+                position: 'relative', minHeight: 540, display: 'flex', alignItems: 'center',
+                background: '#0F172A', overflow: 'hidden', marginTop: 72,
             }}>
                 {/* Background food image on the right */}
                 <div style={{
@@ -44,7 +44,7 @@ export default function HeroSection() {
                 {/* Content */}
                 <div style={{
                     position: 'relative', zIndex: 2, maxWidth: 1280, width: '100%',
-                    margin: '0 auto', padding: '100px 48px 60px', display: 'flex',
+                    margin: '0 auto', padding: '60px 48px 60px', display: 'flex',
                     flexDirection: 'column', alignItems: 'flex-start',
                 }}>
                     {/* Badge */}
