@@ -1,269 +1,153 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, ArrowLeft, Send, CheckCircle } from 'lucide-react';
+import { Mail, ArrowLeft, ArrowRight, Loader2, CheckCircle } from 'lucide-react';
 import { authAPI } from '../../shared/services/api';
-import toast from 'react-hot-toast';
 
 export default function ForgotPasswordPage() {
     const [email, setEmail] = useState('');
     const [sent, setSent] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [focused, setFocused] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!email) return toast.error('Please enter your email');
+        setError('');
+        if (!email) { setError('Please enter your email'); return; }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError('Please enter a valid email'); return; }
 
         setLoading(true);
         try {
             await authAPI.forgotPassword(email);
             setSent(true);
         } catch {
-            toast.error('Error sending reset email. Please try again.');
+            setError('Error sending reset email. Please try again.');
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div style={{ minHeight: '100vh', display: 'flex', fontFamily: 'Poppins, sans-serif' }}>
-
-            {/* LEFT SIDE */}
+        <div style={{ fontFamily: 'Poppins, sans-serif', minHeight: '100vh', display: 'flex', background: '#0C1426' }}>
+            {/* Left side */}
             <div style={{
-                flex: 1,
-                background: 'linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)), url(https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=80) center/cover',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'flex-end',
-                padding: 60,
-                color: '#fff'
+                flex: 1, position: 'relative',
+                background: 'linear-gradient(135deg, rgba(12,20,38,0.92) 0%, rgba(15,23,42,0.85) 100%), url(https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1400&q=85)',
+                backgroundPosition: 'center', backgroundSize: 'cover',
+                display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+                padding: '48px 56px', color: '#fff', overflow: 'hidden',
             }}>
-                <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 10 }}>
-                    TableNest
+                <div style={{ position: 'absolute', top: -120, right: -120, width: 400, height: 400, background: 'radial-gradient(circle, rgba(249,115,22,0.15) 0%, transparent 70%)', borderRadius: '50%', pointerEvents: 'none' }} />
+                <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none', width: 'fit-content', position: 'relative', zIndex: 1 }}>
+                    <div style={{ width: 42, height: 42, background: '#F97316', borderRadius: 11, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(249,115,22,0.4)' }}>
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M6 18h12a2 2 0 0 1 2 2v1H4v-1a2 2 0 0 1 2-2z" /><path d="M18 18a4 4 0 0 0-1.23-7.79 4.36 4.36 0 0 0-9.54 0A4 4 0 0 0 6 18" />
+                        </svg>
+                    </div>
+                    <span style={{ color: '#fff', fontWeight: 800, fontSize: 22, letterSpacing: '-0.5px' }}>TableNest</span>
+                </Link>
+                <div style={{ position: 'relative', zIndex: 1, maxWidth: 520 }}>
+                    <h2 style={{ fontSize: 42, fontWeight: 700, lineHeight: 1.15, marginBottom: 18, letterSpacing: '-1px' }}>
+                        Reset your password<br />in seconds.
+                    </h2>
+                    <p style={{ fontSize: 16, lineHeight: 1.7, opacity: 0.8, maxWidth: 460 }}>
+                        We'll send you a secure link to get back into your account.
+                    </p>
                 </div>
-
-                <h2 style={{
-                    fontSize: 34,
-                    fontWeight: 700,
-                    lineHeight: 1.2,
-                    marginBottom: 16,
-                    maxWidth: 500
-                }}>
-                    Reset your password<br />in seconds.
-                </h2>
-
-                <p style={{
-                    fontSize: 15,
-                    lineHeight: 1.6,
-                    opacity: 0.85,
-                    maxWidth: 500
-                }}>
-                    We'll send you a secure link to get back into your account.
-                </p>
+                <div style={{ position: 'relative', zIndex: 1 }}><div style={{ width: 60, height: 3, background: '#F97316', borderRadius: 2 }} /></div>
             </div>
 
-            {/* RIGHT SIDE */}
+            {/* Right side */}
             <div style={{
-                flex: 1,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                background: '#F8FAFC',
-                padding: 60
+                flex: 1, display: 'flex', flexDirection: 'column',
+                justifyContent: 'center', alignItems: 'center',
+                background: '#0F172A', padding: '48px 56px', boxSizing: 'border-box', position: 'relative', overflow: 'hidden',
             }}>
-                <div style={{ width: '100%', maxWidth: 420 }}>
-
+                <div style={{ position: 'absolute', inset: 0, opacity: 0.03, backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.3) 1px, transparent 0)', backgroundSize: '24px 24px', pointerEvents: 'none' }} />
+                <div style={{ width: '100%', maxWidth: 380, position: 'relative', zIndex: 1 }}>
                     {!sent ? (
                         <>
-                            {/* HEADER */}
-                            <div style={{ marginBottom: 32 }}>
-                                <h1 style={{
-                                    fontSize: 34,
-                                    fontWeight: 700,
-                                    color: '#0F172A',
-                                    marginBottom: 10
-                                }}>
-                                    Forgot Password
-                                </h1>
-
-                                <p style={{ fontSize: 15, color: '#475569' }}>
-                                    Enter your email to receive a reset link
-                                </p>
+                            <button onClick={() => window.history.back()} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', fontSize: 13, cursor: 'pointer', marginBottom: 20, padding: 0, fontFamily: 'Poppins, sans-serif' }}>
+                                <ArrowLeft size={14} /> Back
+                            </button>
+                            <div style={{ marginBottom: 36 }}>
+                                <h1 style={{ fontSize: 30, fontWeight: 800, color: '#FFFFFF', marginBottom: 8, letterSpacing: '-0.5px' }}>Forgot Password</h1>
+                                <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', margin: 0 }}>Enter your email and we'll help you reset your password</p>
                             </div>
 
-                            {/* FORM */}
-                            <form onSubmit={handleSubmit} style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: 22
-                            }}>
+                            {error && (
+                                <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 10, padding: '12px 16px', marginBottom: 20, color: '#FCA5A5', fontSize: 13 }}>{error}</div>
+                            )}
 
-                                {/* EMAIL */}
+                            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
                                 <div>
-                                    <label style={{
-                                        fontSize: 13,
-                                        fontWeight: 600,
-                                        color: '#475569',
-                                        marginBottom: 8,
-                                        display: 'block'
-                                    }}>
-                                        Email Address
-                                    </label>
-
+                                    <label style={{ display: 'block', marginBottom: 8, fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.7)' }}>Email Address</label>
                                     <div style={{ position: 'relative' }}>
-                                        <Mail size={18} style={{
-                                            position: 'absolute',
-                                            left: 14,
-                                            top: '50%',
-                                            transform: 'translateY(-50%)',
-                                            color: '#94A3B8'
+                                        <Mail size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: focused ? '#F97316' : 'rgba(255,255,255,0.3)', transition: 'color 0.2s' }} />
+                                        <input type="email" value={email} onChange={e => { setEmail(e.target.value); if (error) setError(''); }} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} placeholder="you@example.com" style={{
+                                            width: '100%', height: 52, paddingLeft: 44, border: '1.5px solid', borderColor: focused ? '#F97316' : 'rgba(255,255,255,0.12)',
+                                            borderRadius: 12, fontSize: 14, background: focused ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.06)', color: '#fff', outline: 'none',
+                                            boxSizing: 'border-box' as const, fontFamily: 'Poppins, sans-serif', transition: 'all 0.2s',
                                         }} />
-
-                                        <input
-                                            type="email"
-                                            value={email}
-                                            onChange={e => setEmail(e.target.value)}
-                                            placeholder="you@example.com"
-                                            style={{
-                                                width: '100%',
-                                                height: 52,
-                                                paddingLeft: 44,
-                                                border: '1.5px solid #E2E8F0',
-                                                borderRadius: 12,
-                                                fontSize: 14,
-                                                background: '#fff',
-                                                outline: 'none',
-                                                boxSizing: 'border-box'
-                                            }}
-                                            onFocus={e => (e.target.style.borderColor = '#F97316')}
-                                            onBlur={e => (e.target.style.borderColor = '#E2E8F0')}
-                                        />
                                     </div>
                                 </div>
 
-                                {/* BUTTON */}
-                                <button
-                                    type="submit"
-                                    disabled={loading}
-                                    style={{
-                                        height: 54,
-                                        background: '#F97316',
-                                        color: '#fff',
-                                        border: 'none',
-                                        borderRadius: 12,
-                                        fontSize: 15,
-                                        fontWeight: 600,
-                                        cursor: loading ? 'not-allowed' : 'pointer',
-                                        opacity: loading ? 0.7 : 1,
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        gap: 8
-                                    }}
+                                <button type="submit" disabled={loading} style={{
+                                    height: 52, background: loading ? 'rgba(249,115,22,0.7)' : '#F97316',
+                                    color: '#fff', border: 'none', borderRadius: 12, fontSize: 15, fontWeight: 700,
+                                    cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center',
+                                    justifyContent: 'center', gap: 8, boxShadow: loading ? 'none' : '0 4px 16px rgba(249,115,22,0.3)',
+                                    fontFamily: 'Poppins, sans-serif', transition: 'all 0.2s',
+                                }}
+                                    onMouseEnter={e => { if (!loading) e.currentTarget.style.background = '#EA6A08'; }}
+                                    onMouseLeave={e => { if (!loading) e.currentTarget.style.background = '#F97316'; }}
                                 >
-                                    <Send size={16} />
-                                    {loading ? 'Sending...' : 'Send Reset Link'}
+                                    {loading ? <><Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} /> Sending...</> : <>Send Reset Link <ArrowRight size={18} /></>}
                                 </button>
+                                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
 
-                                {/* BACK */}
-                                <p style={{
-                                    textAlign: 'center',
-                                    fontSize: 14,
-                                    color: '#475569',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: 6
-                                }}>
+                                <Link to="/login" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, fontSize: 14, color: 'rgba(255,255,255,0.5)', textDecoration: 'none' }}>
                                     <ArrowLeft size={14} />
-                                    <Link
-                                        to="/login"
-                                        style={{
-                                            color: '#F97316',
-                                            fontWeight: 600,
-                                            textDecoration: 'none'
-                                        }}
-                                    >
-                                        Back to Login
-                                    </Link>
-                                </p>
-
+                                    <span>Back to Sign In</span>
+                                </Link>
                             </form>
                         </>
                     ) : (
-                        /* SUCCESS STATE */
+                        /* Success state */
                         <div style={{ textAlign: 'center' }}>
-
                             <div style={{
-                                width: 64,
-                                height: 64,
-                                borderRadius: '50%',
-                                background: '#DCFCE7',
-                                border: '3px solid #16A34A',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                margin: '0 auto 20px'
+                                width: 72, height: 72, borderRadius: '50%',
+                                background: 'rgba(34,197,94,0.1)', border: '2px solid #22C55E',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                margin: '0 auto 24px',
                             }}>
-                                <CheckCircle size={28} color="#16A34A" />
+                                <CheckCircle size={32} color="#22C55E" />
                             </div>
-
-                            <h2 style={{
-                                fontSize: 22,
-                                fontWeight: 700,
-                                color: '#0F172A',
-                                marginBottom: 10
-                            }}>
-                                Check Your Email
-                            </h2>
-
-                            <p style={{
-                                fontSize: 14,
-                                color: '#475569',
-                                marginBottom: 24
-                            }}>
-                                Reset link sent to <strong>{email}</strong>
+                            <h2 style={{ fontSize: 24, fontWeight: 800, color: '#FFFFFF', marginBottom: 10 }}>Check Your Email</h2>
+                            <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', marginBottom: 32, lineHeight: 1.6 }}>
+                                We've sent a password reset link to<br />
+                                <strong style={{ color: '#F97316' }}>{email}</strong>
                             </p>
-
-                            <button
-                                onClick={() => setSent(false)}
-                                style={{
-                                    width: '100%',
-                                    height: 52,
-                                    borderRadius: 12,
-                                    border: '1.5px solid #E2E8F0',
-                                    background: '#fff',
-                                    fontSize: 14,
-                                    fontWeight: 500,
-                                    marginBottom: 12,
-                                    cursor: 'pointer'
-                                }}
-                            >
-                                Try Again
+                            <button onClick={() => { setSent(false); setEmail(''); }} style={{
+                                width: '100%', height: 50, borderRadius: 12,
+                                border: '1.5px solid rgba(255,255,255,0.12)', background: 'rgba(255,255,255,0.04)',
+                                color: 'rgba(255,255,255,0.7)', fontSize: 14, fontWeight: 500,
+                                cursor: 'pointer', marginBottom: 12, fontFamily: 'Poppins, sans-serif',
+                            }}>
+                                Try a different email
                             </button>
-
-                            <Link
-                                to="/login"
-                                style={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    height: 52,
-                                    borderRadius: 12,
-                                    background: '#F97316',
-                                    color: '#fff',
-                                    fontSize: 14,
-                                    fontWeight: 600,
-                                    textDecoration: 'none'
-                                }}
-                            >
-                                Back to Login
+                            <Link to="/login" style={{
+                                display: 'flex', justifyContent: 'center', alignItems: 'center', height: 50, borderRadius: 12,
+                                background: '#F97316', color: '#fff', fontSize: 14, fontWeight: 700,
+                                textDecoration: 'none', boxShadow: '0 4px 16px rgba(249,115,22,0.3)',
+                            }}>
+                                Back to Sign In
                             </Link>
-
                         </div>
                     )}
-
                 </div>
             </div>
+            <style>{`@media (max-width: 960px) { > div:first-child { display: none !important; } > div:last-child { width: 100% !important; flex: unset !important; min-width: 0 !important; } } @media (max-width: 480px) { > div:last-child { padding: 32px 24px !important; } }`}</style>
         </div>
     );
 }
