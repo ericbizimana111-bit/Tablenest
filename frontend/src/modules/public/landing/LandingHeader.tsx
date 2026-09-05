@@ -114,13 +114,25 @@ export default function LandingHeader({ theme = 'dark' }: { theme?: 'dark' | 'li
                         </>
                     ) : (
                         <>
-                            <span
-                                className="ln-nav-link"
-                                style={{ fontSize: 14.5, color: linkColor, fontWeight: 500 }}
+                            <button
                                 onClick={() => handleNav('/login')}
+                                style={{
+                                    background: 'transparent',
+                                    color: '#F97316',
+                                    padding: '8px 22px',
+                                    borderRadius: 8,
+                                    border: '1.5px solid #F97316',
+                                    cursor: 'pointer',
+                                    fontWeight: 600,
+                                    fontSize: 13.5,
+                                    fontFamily: 'Poppins',
+                                    transition: 'all 0.2s',
+                                }}
+                                onMouseEnter={e => { e.currentTarget.style.background = '#FFF7ED'; }}
+                                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                             >
-                                Log In
-                            </span>
+                                Sign In
+                            </button>
                             <button
                                 className="ln-btn-hover"
                                 onClick={() => handleNav('/register')}

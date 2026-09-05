@@ -46,14 +46,14 @@ export default function ResetPasswordPage() {
 
     const inputBase: React.CSSProperties = {
         width: '100%', height: 52, paddingLeft: 44, paddingRight: 44,
-        border: '1.5px solid rgba(255,255,255,0.12)', borderRadius: 12,
-        fontSize: 14, background: 'rgba(255,255,255,0.06)', color: '#FFFFFF',
+        border: '1.5px solid #E2E8F0', borderRadius: 12,
+        fontSize: 14, background: 'white', color: '#0F172A',
         outline: 'none', boxSizing: 'border-box' as const,
         fontFamily: 'Poppins, sans-serif', transition: 'all 0.2s ease',
     };
 
     return (
-        <div style={{ fontFamily: 'Poppins, sans-serif', minHeight: '100vh', display: 'flex', background: '#0C1426' }}>
+        <div style={{ fontFamily: 'Poppins, sans-serif', minHeight: '100vh', display: 'flex', background: 'white' }}>
             {/* Left side */}
             <div style={{
                 flex: 1, position: 'relative',
@@ -86,39 +86,38 @@ export default function ResetPasswordPage() {
             <div style={{
                 flex: 1, display: 'flex', flexDirection: 'column',
                 justifyContent: 'center', alignItems: 'center',
-                background: '#0F172A', padding: '48px 56px', boxSizing: 'border-box', position: 'relative', overflow: 'hidden',
+                background: 'white', padding: '48px 56px', boxSizing: 'border-box', position: 'relative', overflow: 'hidden',
             }}>
-                <div style={{ position: 'absolute', inset: 0, opacity: 0.03, backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.3) 1px, transparent 0)', backgroundSize: '24px 24px', pointerEvents: 'none' }} />
                 <div style={{ width: '100%', maxWidth: 380, position: 'relative', zIndex: 1 }}>
-                    <Link to="/login" style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'rgba(255,255,255,0.4)', fontSize: 13, textDecoration: 'none', marginBottom: 20 }}>
+                    <Link to="/login" style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#94A3B8', fontSize: 13, textDecoration: 'none', marginBottom: 20 }}>
                         <ArrowLeft size={14} /> Back to Sign In
                     </Link>
                     <div style={{ marginBottom: 36 }}>
-                        <h1 style={{ fontSize: 30, fontWeight: 800, color: '#FFFFFF', marginBottom: 8, letterSpacing: '-0.5px' }}>Reset Password</h1>
-                        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', margin: 0 }}>Choose a strong password for your account</p>
+                        <h1 style={{ fontSize: 30, fontWeight: 800, color: '#0F172A', marginBottom: 8, letterSpacing: '-0.5px' }}>Reset Password</h1>
+                        <p style={{ fontSize: 14, color: '#94A3B8', margin: 0 }}>Choose a strong password for your account</p>
                     </div>
 
                     {errors.general && (
-                        <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 10, padding: '12px 16px', marginBottom: 20, color: '#FCA5A5', fontSize: 13 }}>{errors.general}</div>
+                        <div style={{ background: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: 10, padding: '12px 16px', marginBottom: 20, color: '#EF4444', fontSize: 13 }}>{errors.general}</div>
                     )}
 
                     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                         {/* New Password */}
                         <div>
-                            <label style={{ display: 'block', marginBottom: 8, fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.7)' }}>New Password</label>
+                            <label style={{ display: 'block', marginBottom: 8, fontSize: 13, fontWeight: 600, color: '#475569' }}>New Password</label>
                             <div style={{ position: 'relative' }}>
-                                <Lock size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: focusedField === 'password' ? '#F97316' : 'rgba(255,255,255,0.3)', transition: 'color 0.2s' }} />
-                                <input type={showPw ? 'text' : 'password'} value={password} onChange={e => { setPassword(e.target.value); if (errors.password) setErrors(p => ({ ...p, password: undefined })); }} onFocus={() => setFocusedField('password')} onBlur={() => setFocusedField(null)} placeholder="Min. 6 characters" style={{ ...inputBase, borderColor: focusedField === 'password' ? '#F97316' : 'rgba(255,255,255,0.12)', background: focusedField === 'password' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.06)' }} />
-                                <button type="button" onClick={() => setShowPw(!showPw)} style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.3)', padding: 0 }} tabIndex={-1}>
+                                <Lock size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: focusedField === 'password' ? '#F97316' : '#94A3B8', transition: 'color 0.2s' }} />
+                                <input type={showPw ? 'text' : 'password'} value={password} onChange={e => { setPassword(e.target.value); if (errors.password) setErrors(p => ({ ...p, password: undefined })); }} onFocus={() => setFocusedField('password')} onBlur={() => setFocusedField(null)} placeholder="Min. 6 characters" style={{ ...inputBase, borderColor: focusedField === 'password' ? '#F97316' : '#E2E8F0', background: focusedField === 'password' ? '#FFF7ED' : 'white' }} />
+                                <button type="button" onClick={() => setShowPw(!showPw)} style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8', padding: 0 }} tabIndex={-1}>
                                     {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
                                 </button>
                             </div>
-                            {errors.password && <span style={{ fontSize: 12, color: '#FCA5A5', marginTop: 4, display: 'block' }}>{errors.password}</span>}
-                            {password.length > 0 && (
+                            {errors.password && <span style={{ fontSize: 12, color: '#EF4444', marginTop: 4, display: 'block' }}>{errors.password}</span>}
+                                {password.length > 0 && (
                                 <div style={{ marginTop: 6, display: 'flex', alignItems: 'center', gap: 8 }}>
                                     <div style={{ display: 'flex', gap: 3, flex: 1 }}>
                                         {[1, 2, 3, 4].map(i => (
-                                            <div key={i} style={{ height: 3, flex: 1, borderRadius: 2, background: i <= strength ? strengthColors[strength] : 'rgba(255,255,255,0.1)', transition: 'all 0.3s' }} />
+                                            <div key={i} style={{ height: 3, flex: 1, borderRadius: 2, background: i <= strength ? strengthColors[strength] : '#E2E8F0', transition: 'all 0.3s' }} />
                                         ))}
                                     </div>
                                     <span style={{ fontSize: 11, color: strengthColors[strength], fontWeight: 600 }}>{strengthLabels[strength]}</span>
@@ -128,15 +127,15 @@ export default function ResetPasswordPage() {
 
                         {/* Confirm Password */}
                         <div>
-                            <label style={{ display: 'block', marginBottom: 8, fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.7)' }}>Confirm Password</label>
+                            <label style={{ display: 'block', marginBottom: 8, fontSize: 13, fontWeight: 600, color: '#475569' }}>Confirm Password</label>
                             <div style={{ position: 'relative' }}>
-                                <Lock size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: focusedField === 'confirm' ? '#F97316' : 'rgba(255,255,255,0.3)', transition: 'color 0.2s' }} />
-                                <input type={showConfirm ? 'text' : 'password'} value={confirm} onChange={e => { setConfirm(e.target.value); if (errors.confirm) setErrors(p => ({ ...p, confirm: undefined })); }} onFocus={() => setFocusedField('confirm')} onBlur={() => setFocusedField(null)} placeholder="Re-enter your password" style={{ ...inputBase, borderColor: focusedField === 'confirm' ? '#F97316' : 'rgba(255,255,255,0.12)', background: focusedField === 'confirm' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.06)' }} />
-                                <button type="button" onClick={() => setShowConfirm(!showConfirm)} style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.3)', padding: 0 }} tabIndex={-1}>
+                                <Lock size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: focusedField === 'confirm' ? '#F97316' : '#94A3B8', transition: 'color 0.2s' }} />
+                                <input type={showConfirm ? 'text' : 'password'} value={confirm} onChange={e => { setConfirm(e.target.value); if (errors.confirm) setErrors(p => ({ ...p, confirm: undefined })); }} onFocus={() => setFocusedField('confirm')} onBlur={() => setFocusedField(null)} placeholder="Re-enter your password" style={{ ...inputBase, borderColor: focusedField === 'confirm' ? '#F97316' : '#E2E8F0', background: focusedField === 'confirm' ? '#FFF7ED' : 'white' }} />
+                                <button type="button" onClick={() => setShowConfirm(!showConfirm)} style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8', padding: 0 }} tabIndex={-1}>
                                     {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
                                 </button>
                             </div>
-                            {errors.confirm && <span style={{ fontSize: 12, color: '#FCA5A5', marginTop: 4, display: 'block' }}>{errors.confirm}</span>}
+                            {errors.confirm && <span style={{ fontSize: 12, color: '#EF4444', marginTop: 4, display: 'block' }}>{errors.confirm}</span>}
                         </div>
 
                         <button type="submit" disabled={loading} style={{

@@ -28,7 +28,7 @@ export default function ForgotPasswordPage() {
     };
 
     return (
-        <div style={{ fontFamily: 'Poppins, sans-serif', minHeight: '100vh', display: 'flex', background: '#0C1426' }}>
+        <div style={{ fontFamily: 'Poppins, sans-serif', minHeight: '100vh', display: 'flex', background: 'white' }}>
             {/* Left side */}
             <div style={{
                 flex: 1, position: 'relative',
@@ -61,32 +61,31 @@ export default function ForgotPasswordPage() {
             <div style={{
                 flex: 1, display: 'flex', flexDirection: 'column',
                 justifyContent: 'center', alignItems: 'center',
-                background: '#0F172A', padding: '48px 56px', boxSizing: 'border-box', position: 'relative', overflow: 'hidden',
+                background: 'white', padding: '48px 56px', boxSizing: 'border-box', position: 'relative', overflow: 'hidden',
             }}>
-                <div style={{ position: 'absolute', inset: 0, opacity: 0.03, backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.3) 1px, transparent 0)', backgroundSize: '24px 24px', pointerEvents: 'none' }} />
                 <div style={{ width: '100%', maxWidth: 380, position: 'relative', zIndex: 1 }}>
                     {!sent ? (
                         <>
-                            <button onClick={() => window.history.back()} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', fontSize: 13, cursor: 'pointer', marginBottom: 20, padding: 0, fontFamily: 'Poppins, sans-serif' }}>
+                            <button onClick={() => window.history.back()} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#94A3B8', fontSize: 13, cursor: 'pointer', marginBottom: 20, padding: 0, fontFamily: 'Poppins, sans-serif' }}>
                                 <ArrowLeft size={14} /> Back
                             </button>
                             <div style={{ marginBottom: 36 }}>
-                                <h1 style={{ fontSize: 30, fontWeight: 800, color: '#FFFFFF', marginBottom: 8, letterSpacing: '-0.5px' }}>Forgot Password</h1>
-                                <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', margin: 0 }}>Enter your email and we'll help you reset your password</p>
+                                <h1 style={{ fontSize: 30, fontWeight: 800, color: '#0F172A', marginBottom: 8, letterSpacing: '-0.5px' }}>Forgot Password</h1>
+                                <p style={{ fontSize: 14, color: '#94A3B8', margin: 0 }}>Enter your email and we'll help you reset your password</p>
                             </div>
 
                             {error && (
-                                <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 10, padding: '12px 16px', marginBottom: 20, color: '#FCA5A5', fontSize: 13 }}>{error}</div>
+                                <div style={{ background: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: 10, padding: '12px 16px', marginBottom: 20, color: '#EF4444', fontSize: 13 }}>{error}</div>
                             )}
 
                             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: 8, fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.7)' }}>Email Address</label>
+                                    <label style={{ display: 'block', marginBottom: 8, fontSize: 13, fontWeight: 600, color: '#475569' }}>Email Address</label>
                                     <div style={{ position: 'relative' }}>
-                                        <Mail size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: focused ? '#F97316' : 'rgba(255,255,255,0.3)', transition: 'color 0.2s' }} />
+                                        <Mail size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: focused ? '#F97316' : '#94A3B8', transition: 'color 0.2s' }} />
                                         <input type="email" value={email} onChange={e => { setEmail(e.target.value); if (error) setError(''); }} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} placeholder="you@example.com" style={{
-                                            width: '100%', height: 52, paddingLeft: 44, border: '1.5px solid', borderColor: focused ? '#F97316' : 'rgba(255,255,255,0.12)',
-                                            borderRadius: 12, fontSize: 14, background: focused ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.06)', color: '#fff', outline: 'none',
+                                            width: '100%', height: 52, paddingLeft: 44, border: '1.5px solid', borderColor: focused ? '#F97316' : '#E2E8F0',
+                                            borderRadius: 12, fontSize: 14, background: focused ? '#FFF7ED' : 'white', color: '#0F172A', outline: 'none',
                                             boxSizing: 'border-box' as const, fontFamily: 'Poppins, sans-serif', transition: 'all 0.2s',
                                         }} />
                                     </div>
@@ -106,7 +105,7 @@ export default function ForgotPasswordPage() {
                                 </button>
                                 <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
 
-                                <Link to="/login" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, fontSize: 14, color: 'rgba(255,255,255,0.5)', textDecoration: 'none' }}>
+                                <Link to="/login" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, fontSize: 14, color: '#94A3B8', textDecoration: 'none' }}>
                                     <ArrowLeft size={14} />
                                     <span>Back to Sign In</span>
                                 </Link>
@@ -117,21 +116,21 @@ export default function ForgotPasswordPage() {
                         <div style={{ textAlign: 'center' }}>
                             <div style={{
                                 width: 72, height: 72, borderRadius: '50%',
-                                background: 'rgba(34,197,94,0.1)', border: '2px solid #22C55E',
+                                background: '#F0FDF4', border: '2px solid #22C55E',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 margin: '0 auto 24px',
                             }}>
                                 <CheckCircle size={32} color="#22C55E" />
                             </div>
-                            <h2 style={{ fontSize: 24, fontWeight: 800, color: '#FFFFFF', marginBottom: 10 }}>Check Your Email</h2>
-                            <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', marginBottom: 32, lineHeight: 1.6 }}>
+                            <h2 style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', marginBottom: 10 }}>Check Your Email</h2>
+                            <p style={{ fontSize: 14, color: '#64748B', marginBottom: 32, lineHeight: 1.6 }}>
                                 We've sent a password reset link to<br />
                                 <strong style={{ color: '#F97316' }}>{email}</strong>
                             </p>
                             <button onClick={() => { setSent(false); setEmail(''); }} style={{
                                 width: '100%', height: 50, borderRadius: 12,
-                                border: '1.5px solid rgba(255,255,255,0.12)', background: 'rgba(255,255,255,0.04)',
-                                color: 'rgba(255,255,255,0.7)', fontSize: 14, fontWeight: 500,
+                                border: '1.5px solid #E2E8F0', background: 'white',
+                                color: '#475569', fontSize: 14, fontWeight: 500,
                                 cursor: 'pointer', marginBottom: 12, fontFamily: 'Poppins, sans-serif',
                             }}>
                                 Try a different email

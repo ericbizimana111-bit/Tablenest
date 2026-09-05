@@ -73,18 +73,18 @@ export default function RegisterPage() {
 
     const inputBase: React.CSSProperties = {
         width: '100%', height: 52, paddingLeft: 44, paddingRight: 14,
-        border: '1.5px solid rgba(255,255,255,0.12)', borderRadius: 12,
-        fontSize: 14, background: 'rgba(255,255,255,0.06)', color: '#FFFFFF',
+        border: '1.5px solid #E2E8F0', borderRadius: 12,
+        fontSize: 14, background: 'white', color: '#0F172A',
         outline: 'none', boxSizing: 'border-box' as const,
         fontFamily: 'Poppins, sans-serif', transition: 'all 0.2s ease',
     };
 
-    const labelStyle: React.CSSProperties = { display: 'block', marginBottom: 8, fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.7)' };
+    const labelStyle: React.CSSProperties = { display: 'block', marginBottom: 8, fontSize: 13, fontWeight: 600, color: '#475569' };
 
     // ── Role Selection Screen ──
     if (!role) {
         return (
-            <div style={{ fontFamily: 'Poppins, sans-serif', minHeight: '100vh', display: 'flex', background: '#0C1426' }}>
+            <div style={{ fontFamily: 'Poppins, sans-serif', minHeight: '100vh', display: 'flex', background: 'white' }}>
                 {/* Left side */}
                 <div style={{
                     flex: 1, position: 'relative',
@@ -125,13 +125,12 @@ export default function RegisterPage() {
                 <div style={{
                     flex: 1, display: 'flex', flexDirection: 'column',
                     justifyContent: 'center', alignItems: 'center',
-                    background: '#0F172A', padding: '48px 56px', boxSizing: 'border-box', position: 'relative', overflow: 'hidden',
-                }}>
-                    <div style={{ position: 'absolute', inset: 0, opacity: 0.03, backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.3) 1px, transparent 0)', backgroundSize: '24px 24px', pointerEvents: 'none' }} />
+                background: 'white', padding: '48px 56px', boxSizing: 'border-box', position: 'relative', overflow: 'hidden',
+            }}>
                     <div style={{ width: '100%', maxWidth: 380, position: 'relative', zIndex: 1 }}>
                         <div style={{ marginBottom: 36 }}>
-                            <h1 style={{ fontSize: 30, fontWeight: 800, color: '#FFFFFF', marginBottom: 8, letterSpacing: '-0.5px' }}>Create Account</h1>
-                            <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', margin: 0 }}>How would you like to use TableNest?</p>
+                            <h1 style={{ fontSize: 30, fontWeight: 800, color: '#0F172A', marginBottom: 8, letterSpacing: '-0.5px' }}>Create Account</h1>
+                            <p style={{ fontSize: 14, color: '#94A3B8', margin: 0 }}>How would you like to use TableNest?</p>
                         </div>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -140,12 +139,12 @@ export default function RegisterPage() {
                                 onClick={() => setRole('customer')}
                                 style={{
                                     display: 'flex', alignItems: 'center', gap: 16, padding: '20px 22px',
-                                    background: 'rgba(255,255,255,0.04)', border: '1.5px solid rgba(255,255,255,0.1)',
-                                    borderRadius: 14, cursor: 'pointer', textAlign: 'left', color: '#fff',
+                                    background: 'white', border: '1.5px solid #E2E8F0',
+                                    borderRadius: 14, cursor: 'pointer', textAlign: 'left', color: '#0F172A',
                                     transition: 'all 0.2s', fontFamily: 'Poppins, sans-serif',
                                 }}
-                                onMouseEnter={e => { e.currentTarget.style.borderColor = '#F97316'; e.currentTarget.style.background = 'rgba(249,115,22,0.08)'; }}
-                                onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; }}
+                                onMouseEnter={e => { e.currentTarget.style.borderColor = '#F97316'; e.currentTarget.style.background = '#FFF7ED'; }}
+                                onMouseLeave={e => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.background = 'white'; }}
                             >
                                 <div style={{
                                     width: 48, height: 48, borderRadius: 12, background: 'rgba(59,130,246,0.15)',
@@ -155,11 +154,11 @@ export default function RegisterPage() {
                                 </div>
                                 <div style={{ flex: 1 }}>
                                     <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 3 }}>Customer</div>
-                                    <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.45)', lineHeight: 1.5 }}>
+                                    <div style={{ fontSize: 12.5, color: '#64748B', lineHeight: 1.5 }}>
                                         Discover restaurants · Book tables · Pre-order meals · Earn rewards
                                     </div>
                                 </div>
-                                <ArrowRight size={18} color="rgba(255,255,255,0.3)" />
+                                <ArrowRight size={18} color="#94A3B8" />
                             </button>
 
                             {/* Owner */}
@@ -167,12 +166,12 @@ export default function RegisterPage() {
                                 onClick={() => setRole('owner')}
                                 style={{
                                     display: 'flex', alignItems: 'center', gap: 16, padding: '20px 22px',
-                                    background: 'rgba(255,255,255,0.04)', border: '1.5px solid rgba(255,255,255,0.1)',
-                                    borderRadius: 14, cursor: 'pointer', textAlign: 'left', color: '#fff',
+                                    background: 'white', border: '1.5px solid #E2E8F0',
+                                    borderRadius: 14, cursor: 'pointer', textAlign: 'left', color: '#0F172A',
                                     transition: 'all 0.2s', fontFamily: 'Poppins, sans-serif',
                                 }}
-                                onMouseEnter={e => { e.currentTarget.style.borderColor = '#F97316'; e.currentTarget.style.background = 'rgba(249,115,22,0.08)'; }}
-                                onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; }}
+                                onMouseEnter={e => { e.currentTarget.style.borderColor = '#F97316'; e.currentTarget.style.background = '#FFF7ED'; }}
+                                onMouseLeave={e => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.background = 'white'; }}
                             >
                                 <div style={{
                                     width: 48, height: 48, borderRadius: 12, background: 'rgba(249,115,22,0.15)',
@@ -182,15 +181,15 @@ export default function RegisterPage() {
                                 </div>
                                 <div style={{ flex: 1 }}>
                                     <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 3 }}>Restaurant Owner</div>
-                                    <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.45)', lineHeight: 1.5 }}>
+                                    <div style={{ fontSize: 12.5, color: '#64748B', lineHeight: 1.5 }}>
                                         Register your restaurant · Manage bookings · Upload menus · Analytics
                                     </div>
                                 </div>
-                                <ArrowRight size={18} color="rgba(255,255,255,0.3)" />
+                                <ArrowRight size={18} color="#94A3B8" />
                             </button>
                         </div>
 
-                        <p style={{ textAlign: 'center', fontSize: 14, color: 'rgba(255,255,255,0.45)', marginTop: 28 }}>
+                        <p style={{ textAlign: 'center', fontSize: 14, color: '#94A3B8', marginTop: 28 }}>
                             Already have an account?{' '}
                             <Link to="/login" style={{ color: '#F97316', fontWeight: 600, textDecoration: 'none' }}>Sign in</Link>
                         </p>
@@ -202,8 +201,7 @@ export default function RegisterPage() {
     }
 
     // ── Registration Form ──
-    return (
-        <div style={{ fontFamily: 'Poppins, sans-serif', minHeight: '100vh', display: 'flex', background: '#0C1426' }}>
+    return (            <div style={{ fontFamily: 'Poppins, sans-serif', minHeight: '100vh', display: 'flex', background: 'white' }}>
             {/* Left side */}
             <div style={{
                 flex: 1, position: 'relative',
@@ -236,25 +234,24 @@ export default function RegisterPage() {
             <div style={{
                 flex: 1, display: 'flex', flexDirection: 'column',
                 justifyContent: 'center', alignItems: 'center',
-                background: '#0F172A', padding: '40px 56px', boxSizing: 'border-box', position: 'relative', overflow: 'hidden',
+                background: 'white', padding: '40px 56px', boxSizing: 'border-box', position: 'relative', overflow: 'hidden',
             }}>
-                <div style={{ position: 'absolute', inset: 0, opacity: 0.03, backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.3) 1px, transparent 0)', backgroundSize: '24px 24px', pointerEvents: 'none' }} />
                 <div style={{ width: '100%', maxWidth: 380, position: 'relative', zIndex: 1 }}>
                     {/* Back + Header */}
-                    <button onClick={() => setRole(null)} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', fontSize: 13, cursor: 'pointer', marginBottom: 20, padding: 0, fontFamily: 'Poppins, sans-serif' }}>
+                    <button onClick={() => setRole(null)} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#94A3B8', fontSize: 13, cursor: 'pointer', marginBottom: 20, padding: 0, fontFamily: 'Poppins, sans-serif' }}>
                         <ArrowLeft size={14} /> Back
                     </button>
                     <div style={{ marginBottom: 28 }}>
-                        <h1 style={{ fontSize: 28, fontWeight: 800, color: '#FFFFFF', marginBottom: 6, letterSpacing: '-0.5px' }}>
+                        <h1 style={{ fontSize: 28, fontWeight: 800, color: '#0F172A', marginBottom: 6, letterSpacing: '-0.5px' }}>
                             Create {role === 'owner' ? 'Owner' : 'Customer'} Account
                         </h1>
-                        <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', margin: 0 }}>
+                        <p style={{ fontSize: 13, color: '#94A3B8', margin: 0 }}>
                             {role === 'owner' ? 'Set up your account to manage your restaurant' : 'Start your culinary journey today'}
                         </p>
                     </div>
 
                     {errors.general && (
-                        <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 10, padding: '12px 16px', marginBottom: 16, color: '#FCA5A5', fontSize: 13 }}>{errors.general}</div>
+                        <div style={{ background: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: 10, padding: '12px 16px', marginBottom: 16, color: '#EF4444', fontSize: 13 }}>{errors.general}</div>
                     )}
 
                     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -262,33 +259,32 @@ export default function RegisterPage() {
                         <div>
                             <label style={labelStyle}>Full Name</label>
                             <div style={{ position: 'relative' }}>
-                                <User size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: focusedField === 'fullName' ? '#F97316' : 'rgba(255,255,255,0.3)', transition: 'color 0.2s' }} />
-                                <input type="text" value={form.fullName} onChange={e => { update('fullName', e.target.value); if (errors.fullName) setErrors(p => ({ ...p, fullName: undefined })); }} onFocus={() => setFocusedField('fullName')} onBlur={() => setFocusedField(null)} placeholder="John Doe" style={{ ...inputBase, borderColor: focusedField === 'fullName' ? '#F97316' : 'rgba(255,255,255,0.12)', background: focusedField === 'fullName' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.06)' }} />
+                                <User size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: focusedField === 'fullName' ? '#F97316' : '#94A3B8', transition: 'color 0.2s' }} />
+                                <input type="text" value={form.fullName} onChange={e => { update('fullName', e.target.value); if (errors.fullName) setErrors(p => ({ ...p, fullName: undefined })); }} onFocus={() => setFocusedField('fullName')} onBlur={() => setFocusedField(null)} placeholder="John Doe" style={{ ...inputBase, borderColor: focusedField === 'fullName' ? '#F97316' : '#E2E8F0', background: focusedField === 'fullName' ? '#FFF7ED' : 'white' }} />
                             </div>
-                            {errors.fullName && <span style={{ fontSize: 12, color: '#FCA5A5', marginTop: 3, display: 'block' }}>{errors.fullName}</span>}
+                            {errors.fullName && <span style={{ fontSize: 12, color: '#EF4444', marginTop: 3, display: 'block' }}>{errors.fullName}</span>}
                         </div>
 
                         {/* Email */}
                         <div>
                             <label style={labelStyle}>Email Address</label>
                             <div style={{ position: 'relative' }}>
-                                <Mail size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: focusedField === 'email' ? '#F97316' : 'rgba(255,255,255,0.3)', transition: 'color 0.2s' }} />
-                                <input type="email" value={form.email} onChange={e => { update('email', e.target.value); if (errors.email) setErrors(p => ({ ...p, email: undefined })); }} onFocus={() => setFocusedField('email')} onBlur={() => setFocusedField(null)} placeholder="you@example.com" style={{ ...inputBase, borderColor: focusedField === 'email' ? '#F97316' : 'rgba(255,255,255,0.12)', background: focusedField === 'email' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.06)' }} />
+                                <Mail size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: focusedField === 'email' ? '#F97316' : '#94A3B8', transition: 'color 0.2s' }} />
+                                <input type="email" value={form.email} onChange={e => { update('email', e.target.value); if (errors.email) setErrors(p => ({ ...p, email: undefined })); }} onFocus={() => setFocusedField('email')} onBlur={() => setFocusedField(null)} placeholder="you@example.com" style={{ ...inputBase, borderColor: focusedField === 'email' ? '#F97316' : '#E2E8F0', background: focusedField === 'email' ? '#FFF7ED' : 'white' }} />
                             </div>
-                            {errors.email && <span style={{ fontSize: 12, color: '#FCA5A5', marginTop: 3, display: 'block' }}>{errors.email}</span>}
+                            {errors.email && <span style={{ fontSize: 12, color: '#EF4444', marginTop: 3, display: 'block' }}>{errors.email}</span>}
                         </div>
 
                         {/* Phone — owner only */}
                         {role === 'owner' && (
                             <div>
                                 <label style={labelStyle}>Phone Number</label>
-                                <div style={{ position: 'relative' }}>
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={focusedField === 'phone' ? '#F97316' : 'rgba(255,255,255,0.3)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', transition: 'stroke 0.2s' }}>
+                                <div style={{ position: 'relative' }}>                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={focusedField === 'phone' ? '#F97316' : '#94A3B8'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', transition: 'stroke 0.2s' }}>
                                         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
                                     </svg>
-                                    <input type="tel" value={form.phone} onChange={e => { update('phone', e.target.value); if (errors.phone) setErrors(p => ({ ...p, phone: undefined })); }} onFocus={() => setFocusedField('phone')} onBlur={() => setFocusedField(null)} placeholder="+1 (555) 000-1234" style={{ ...inputBase, borderColor: focusedField === 'phone' ? '#F97316' : 'rgba(255,255,255,0.12)', background: focusedField === 'phone' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.06)' }} />
+                                    <input type="tel" value={form.phone} onChange={e => { update('phone', e.target.value); if (errors.phone) setErrors(p => ({ ...p, phone: undefined })); }} onFocus={() => setFocusedField('phone')} onBlur={() => setFocusedField(null)} placeholder="+1 (555) 000-1234" style={{ ...inputBase, borderColor: focusedField === 'phone' ? '#F97316' : '#E2E8F0', background: focusedField === 'phone' ? '#FFF7ED' : 'white' }} />
                                 </div>
-                                {errors.phone && <span style={{ fontSize: 12, color: '#FCA5A5', marginTop: 3, display: 'block' }}>{errors.phone}</span>}
+                                {errors.phone && <span style={{ fontSize: 12, color: '#EF4444', marginTop: 3, display: 'block' }}>{errors.phone}</span>}
                             </div>
                         )}
 
@@ -296,18 +292,17 @@ export default function RegisterPage() {
                         <div>
                             <label style={labelStyle}>Password</label>
                             <div style={{ position: 'relative' }}>
-                                <Lock size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: focusedField === 'password' ? '#F97316' : 'rgba(255,255,255,0.3)', transition: 'color 0.2s' }} />
-                                <input type={showPassword ? 'text' : 'password'} value={form.password} onChange={e => { update('password', e.target.value); if (errors.password) setErrors(p => ({ ...p, password: undefined })); }} onFocus={() => setFocusedField('password')} onBlur={() => setFocusedField(null)} placeholder="Min. 6 characters" style={{ ...inputBase, paddingRight: 44, borderColor: focusedField === 'password' ? '#F97316' : 'rgba(255,255,255,0.12)', background: focusedField === 'password' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.06)' }} />
-                                <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.3)', padding: 0 }} tabIndex={-1}>
+                                <Lock size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: focusedField === 'password' ? '#F97316' : '#94A3B8', transition: 'color 0.2s' }} />
+                                <input type={showPassword ? 'text' : 'password'} value={form.password} onChange={e => { update('password', e.target.value); if (errors.password) setErrors(p => ({ ...p, password: undefined })); }} onFocus={() => setFocusedField('password')} onBlur={() => setFocusedField(null)} placeholder="Min. 6 characters" style={{ ...inputBase, paddingRight: 44, borderColor: focusedField === 'password' ? '#F97316' : '#E2E8F0', background: focusedField === 'password' ? '#FFF7ED' : 'white' }} />
+                                <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8', padding: 0 }} tabIndex={-1}>
                                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                                 </button>
                             </div>
-                            {errors.password && <span style={{ fontSize: 12, color: '#FCA5A5', marginTop: 3, display: 'block' }}>{errors.password}</span>}
-                            {form.password.length > 0 && (
+                            {errors.password && <span style={{ fontSize: 12, color: '#EF4444', marginTop: 3, display: 'block' }}>{errors.password}</span>}                                {form.password.length > 0 && (
                                 <div style={{ marginTop: 6, display: 'flex', alignItems: 'center', gap: 8 }}>
                                     <div style={{ display: 'flex', gap: 3, flex: 1 }}>
                                         {[1, 2, 3, 4].map(i => (
-                                            <div key={i} style={{ height: 3, flex: 1, borderRadius: 2, background: i <= strength.level ? strength.color : 'rgba(255,255,255,0.1)', transition: 'all 0.3s' }} />
+                                            <div key={i} style={{ height: 3, flex: 1, borderRadius: 2, background: i <= strength.level ? strength.color : '#E2E8F0', transition: 'all 0.3s' }} />
                                         ))}
                                     </div>
                                     <span style={{ fontSize: 11, color: strength.color, fontWeight: 600 }}>{strength.label}</span>
@@ -319,13 +314,13 @@ export default function RegisterPage() {
                         <div>
                             <label style={labelStyle}>Confirm Password</label>
                             <div style={{ position: 'relative' }}>
-                                <Lock size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: focusedField === 'confirm' ? '#F97316' : 'rgba(255,255,255,0.3)', transition: 'color 0.2s' }} />
-                                <input type={showConfirm ? 'text' : 'password'} value={form.confirm} onChange={e => { update('confirm', e.target.value); if (errors.confirm) setErrors(p => ({ ...p, confirm: undefined })); }} onFocus={() => setFocusedField('confirm')} onBlur={() => setFocusedField(null)} placeholder="Re-enter your password" style={{ ...inputBase, paddingRight: 44, borderColor: focusedField === 'confirm' ? '#F97316' : 'rgba(255,255,255,0.12)', background: focusedField === 'confirm' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.06)' }} />
-                                <button type="button" onClick={() => setShowConfirm(!showConfirm)} style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.3)', padding: 0 }} tabIndex={-1}>
+                                <Lock size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: focusedField === 'confirm' ? '#F97316' : '#94A3B8', transition: 'color 0.2s' }} />
+                                <input type={showConfirm ? 'text' : 'password'} value={form.confirm} onChange={e => { update('confirm', e.target.value); if (errors.confirm) setErrors(p => ({ ...p, confirm: undefined })); }} onFocus={() => setFocusedField('confirm')} onBlur={() => setFocusedField(null)} placeholder="Re-enter your password" style={{ ...inputBase, paddingRight: 44, borderColor: focusedField === 'confirm' ? '#F97316' : '#E2E8F0', background: focusedField === 'confirm' ? '#FFF7ED' : 'white' }} />
+                                <button type="button" onClick={() => setShowConfirm(!showConfirm)} style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8', padding: 0 }} tabIndex={-1}>
                                     {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
                                 </button>
                             </div>
-                            {errors.confirm && <span style={{ fontSize: 12, color: '#FCA5A5', marginTop: 3, display: 'block' }}>{errors.confirm}</span>}
+                            {errors.confirm && <span style={{ fontSize: 12, color: '#EF4444', marginTop: 3, display: 'block' }}>{errors.confirm}</span>}
                         </div>
 
                         {/* Submit */}
@@ -344,7 +339,7 @@ export default function RegisterPage() {
                         </button>
                         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
 
-                        <p style={{ textAlign: 'center', fontSize: 14, color: 'rgba(255,255,255,0.45)', margin: '4px 0 0' }}>
+                        <p style={{ textAlign: 'center', fontSize: 14, color: '#94A3B8', margin: '4px 0 0' }}>
                             Already have an account?{' '}
                             <Link to="/login" style={{ color: '#F97316', fontWeight: 600, textDecoration: 'none' }}>Sign in</Link>
                         </p>

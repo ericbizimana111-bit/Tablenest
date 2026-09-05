@@ -21,7 +21,7 @@ const FAQPage = lazy(() => import('./modules/public/FAQPage'));
 // Customer
 const CustomerLayout = lazy(() => import('./modules/customer/layout/CustomerLayout'));
 const CustomerHome = lazy(() => import('./modules/customer/home/CustomerHome'));
-const BrowsePage = lazy(() => import('./modules/customer/browse/BrowsePage'));
+const BrowsePage = lazy(() => import('./modules/public/BrowsePage'));
 const RestaurantDetailPage = lazy(() => import('./modules/customer/restaurant/RestaurantDetailPage'));
 const OrderHistoryPage = lazy(() => import('./modules/customer/orders/OrderHistoryPage'));
 const OrderTrackingPage = lazy(() => import('./modules/customer/orders/OrderTrackingPage'));
