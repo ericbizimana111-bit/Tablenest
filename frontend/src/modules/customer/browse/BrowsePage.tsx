@@ -65,7 +65,7 @@ export default function BrowsePage() {
 
     return (
         <div className="fade-in" style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#F8FAFC', minHeight: '100vh' }}>
-            <LandingHeader />
+            <LandingHeader theme="light" />
             <main style={{ maxWidth: 1200, margin: '0 auto', padding: '40px 24px' }}>
                 <div style={{ marginBottom: 32 }}>
                     <h1 style={{ fontSize: 28, fontWeight: 700, color: '#0F172A' }}>Browse Restaurants</h1>

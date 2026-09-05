@@ -13,7 +13,7 @@ import LandingFooter from './landing/LandingFooter';
 export default function LandingPage() {
     return (
         <div style={{ fontFamily: 'Poppins, sans-serif', background: '#F8FAFC', overflowX: 'hidden' }}>
-            <LandingHeader />
+            <LandingHeader theme="light" />
             <HeroSection />
             <CuisineCategories />
             <FeatureCards />
