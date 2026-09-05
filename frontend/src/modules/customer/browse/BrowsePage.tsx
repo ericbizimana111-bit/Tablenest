@@ -72,36 +72,7 @@ export default function BrowsePage() {
 
             <LandingHeader theme="light" />
 
-            {/* ── PAGE HERO BANNER ── */}
-            <div style={{
-                background: 'white',
-                borderBottom: '1px solid #E2E8F0',
-                padding: '48px 24px 40px',
-                textAlign: 'center',
-                marginTop: 72,
-            }}>
-                <div style={{
-                    display: 'inline-block',
-                    background: 'rgba(249,115,22,0.08)',
-                    border: '1px solid rgba(249,115,22,0.25)',
-                    borderRadius: 9999,
-                    padding: '5px 16px',
-                    fontSize: 11,
-                    fontWeight: 600,
-                    color: '#F97316',
-                    letterSpacing: '0.08em',
-                    textTransform: 'uppercase' as const,
-                    marginBottom: 16,
-                }}>
-                    Explore
-                </div>
-                <h1 style={{ fontSize: 'clamp(26px, 3.5vw, 38px)', fontWeight: 800, color: '#0F172A', marginBottom: 10, letterSpacing: '-0.02em' }}>
-                    Browse <span style={{ color: '#F97316' }}>Restaurants</span>
-                </h1>
-                <p style={{ fontSize: 15, color: '#475569', maxWidth: 460, margin: '0 auto' }}>
-                    Discover exceptional dining experiences near you.
-                </p>
-            </div>
+         
 
             <main style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 24px' }}>
 
