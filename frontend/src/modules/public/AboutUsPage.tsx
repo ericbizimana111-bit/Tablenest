@@ -24,7 +24,7 @@ export default function AboutPage() {
     const navigate = useNavigate();
     return (
         <div style={{ fontFamily: 'Poppins, sans-serif', background: '#FFFFFF', minHeight: '100vh', color: '#0F172A' }}>
-            <LandingHeader />
+            <LandingHeader theme="light" />
 
             <style>{`
                 .about-val-card { transition: transform 0.25s ease, box-shadow 0.25s ease; }

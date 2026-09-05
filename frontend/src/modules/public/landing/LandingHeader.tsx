@@ -12,11 +12,22 @@ const NAV_LINKS = [
     { label: 'FAQ', path: '/faq' },
 ];
 
-export default function LandingHeader() {
+export default function LandingHeader({ theme = 'dark' }: { theme?: 'dark' | 'light' }) {
     const navigate = useNavigate();
     const { user, isAuthenticated, logout } = useAuth();
     const [mobileOpen, setMobileOpen] = useState(false);
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+    const isDark = theme === 'dark';
+    const navBg = isDark ? 'rgba(15, 23, 42, 0.92)' : 'rgba(255, 255, 255, 0.95)';
+    const navBorder = isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid #E2E8F0';
+    const linkColor = isDark ? '#CBD5E1' : '#475569';
+    const brandColor = isDark ? '#FFFFFF' : '#0F172A';
+    const mobileOverlayBg = isDark ? 'rgba(15, 23, 42, 0.97)' : 'rgba(255,255,255,0.98)';
+    const mobileLinkColor = isDark ? '#CBD5E1' : '#475569';
+    const mobileDivider = isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid #E2E8F0';
+    const logoutBorder = isDark ? 'rgba(255,255,255,0.2)' : '#E2E8F0';
+    const logoutColor = isDark ? '#CBD5E1' : '#475569';
 
     const handleNav = (path: string) => {
         navigate(path);
@@ -34,10 +45,10 @@ export default function LandingHeader() {
 
             <nav style={{
                 position: 'fixed', top: 0, left: 0, right: 0, height: 72,
-                background: 'rgba(15, 23, 42, 0.85)', backdropFilter: 'blur(12px)',
+                background: navBg, backdropFilter: 'blur(12px)',
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 padding: '0 48px', zIndex: 1000,
-                borderBottom: '1px solid rgba(255,255,255,0.08)',
+                borderBottom: navBorder,
             }}>
                 {/* Brand Logo */}
                 <div
@@ -54,7 +65,7 @@ export default function LandingHeader() {
                             <path d="M18 18a4 4 0 0 0-1.23-7.79 4.36 4.36 0 0 0-9.54 0A4 4 0 0 0 6 18" />
                         </svg>
                     </div>
-                    <span style={{ color: '#FFFFFF', fontWeight: 700, fontSize: 21, letterSpacing: '-0.5px' }}>TableNest</span>
+                    <span style={{ color: brandColor, fontWeight: 700, fontSize: 21, letterSpacing: '-0.5px' }}>TableNest</span>
                 </div>
 
                 {/* Centered Desktop Nav Links */}
@@ -68,7 +79,7 @@ export default function LandingHeader() {
                         <span
                             key={l.label}
                             className="ln-nav-link"
-                            style={{ fontSize: 14.5, color: '#CBD5E1', fontWeight: 500 }}
+                            style={{ fontSize: 14.5, color: linkColor, fontWeight: 500 }}
                             onClick={() => handleNav(l.path)}
                         >
                             {l.label}
@@ -90,13 +101,13 @@ export default function LandingHeader() {
                             <button
                                 onClick={() => setShowLogoutConfirm(true)}
                                 style={{
-                                    padding: '8px 20px', border: '1.5px solid rgba(255,255,255,0.2)',
+                                    padding: '8px 20px', border: `1.5px solid ${logoutBorder}`,
                                     borderRadius: 8, background: 'transparent', fontSize: 13,
                                     cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500,
-                                    color: '#CBD5E1', transition: 'all 0.2s',
+                                    color: logoutColor, transition: 'all 0.2s',
                                 }}
                                 onMouseEnter={e => { e.currentTarget.style.borderColor = '#F97316'; e.currentTarget.style.color = '#F97316'; }}
-                                onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; e.currentTarget.style.color = '#CBD5E1'; }}
+                                onMouseLeave={e => { e.currentTarget.style.borderColor = logoutBorder; e.currentTarget.style.color = logoutColor; }}
                             >
                                 Logout
                             </button>
@@ -105,7 +116,7 @@ export default function LandingHeader() {
                         <>
                             <span
                                 className="ln-nav-link"
-                                style={{ fontSize: 14.5, color: '#CBD5E1', fontWeight: 500 }}
+                                style={{ fontSize: 14.5, color: linkColor, fontWeight: 500 }}
                                 onClick={() => handleNav('/login')}
                             >
                                 Log In
@@ -132,7 +143,7 @@ export default function LandingHeader() {
                     onClick={() => setMobileOpen(!mobileOpen)}
                     style={{
                         display: 'none', background: 'none', border: 'none',
-                        color: 'white', cursor: 'pointer', padding: 8,
+                        color: isDark ? 'white' : '#0F172A', cursor: 'pointer', padding: 8,
                     }}
                 >
                     {mobileOpen ? <X size={24} /> : <Menu size={24} />}
@@ -145,7 +156,7 @@ export default function LandingHeader() {
                     className="ln-mobile-overlay"
                     style={{
                         position: 'fixed', top: 72, left: 0, right: 0, bottom: 0,
-                        background: 'rgba(15, 23, 42, 0.97)', zIndex: 999,
+                        background: mobileOverlayBg, zIndex: 999,
                         display: 'flex', flexDirection: 'column', padding: '24px 32px',
                         gap: 0, overflowY: 'auto',
                     }}
@@ -155,8 +166,8 @@ export default function LandingHeader() {
                             key={l.label}
                             onClick={() => handleNav(l.path)}
                             style={{
-                                padding: '16px 0', borderBottom: '1px solid rgba(255,255,255,0.08)',
-                                color: '#CBD5E1', fontSize: 16, fontWeight: 500, cursor: 'pointer',
+                                padding: '16px 0', borderBottom: mobileDivider,
+                                color: mobileLinkColor, fontSize: 16, fontWeight: 500, cursor: 'pointer',
                             }}
                         >
                             {l.label}
