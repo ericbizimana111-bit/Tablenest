@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import LandingHeader from './landing/LandingHeader';
 import { useQuery } from '@tanstack/react-query';
 import { LayoutGrid, List, Search, Star, SlidersHorizontal, X } from 'lucide-react';
 import { restaurantsAPI } from '../../shared/services/api';
@@ -68,7 +69,8 @@ export default function BrowsePage() {
                 .browse-card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(0,0,0,0.07) !important; }
             `}</style>
 
-            <main style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 24px' }}>
+            <LandingHeader theme="light" />
+        <main style={{ maxWidth: 1200, margin: '0 auto', padding: '96px 24px 32px' }}>
 
                 <div style={{ display: 'flex', gap: 12, marginBottom: 24, alignItems: 'center' }}>
                     <div style={{ position: 'relative', flex: 1 }}>

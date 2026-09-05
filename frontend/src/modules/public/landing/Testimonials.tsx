@@ -1,4 +1,5 @@
-import { Star, Quote } from 'lucide-react';
+import { useState } from 'react';
+import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 
 const TESTIMONIALS = [
     {
@@ -6,8 +7,7 @@ const TESTIMONIALS = [
         name: 'Marcus Bell',
         location: 'Brooklyn, NY',
         rating: 4,
-        color: '#3B82F6',
-        initials: 'MB',
+        photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face',
         date: '2 weeks ago',
     },
     {
@@ -15,8 +15,7 @@ const TESTIMONIALS = [
         name: 'Priya Sharma',
         location: 'Austin, TX',
         rating: 5,
-        color: '#10B981',
-        initials: 'PS',
+        photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face',
         date: '1 month ago',
     },
     {
@@ -24,8 +23,7 @@ const TESTIMONIALS = [
         name: 'Jake Morrison',
         location: 'Chicago, IL',
         rating: 5,
-        color: '#F59E0B',
-        initials: 'JM',
+        photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face',
         date: '3 weeks ago',
     },
     {
@@ -33,8 +31,7 @@ const TESTIMONIALS = [
         name: 'Rosa Gutierrez',
         location: 'Miami, FL',
         rating: 5,
-        color: '#EF4444',
-        initials: 'RG',
+        photo: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face',
         date: '1 week ago',
     },
     {
@@ -42,8 +39,7 @@ const TESTIMONIALS = [
         name: 'Alex Kowalski',
         location: 'Portland, OR',
         rating: 4,
-        color: '#8B5CF6',
-        initials: 'AK',
+        photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face',
         date: '5 days ago',
     },
     {
@@ -51,111 +47,276 @@ const TESTIMONIALS = [
         name: 'Danielle Foster',
         location: 'Nashville, TN',
         rating: 4,
-        color: '#EC4899',
-        initials: 'DF',
+        photo: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=200&h=200&fit=crop&crop=face',
         date: '2 months ago',
     },
 ];
 
+const PAGE_SIZE = 3;
+
 export default function Testimonials() {
+    const [page, setPage] = useState(0);
+    const totalPages = Math.ceil(TESTIMONIALS.length / PAGE_SIZE);
+
+    const paginate = (dir: 'next' | 'prev') => {
+        if (dir === 'next') setPage(p => Math.min(p + 1, totalPages - 1));
+        else setPage(p => Math.max(p - 1, 0));
+    };
+
+    const visible = TESTIMONIALS.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+
     return (
         <section style={{
-            padding: '64px 48px', background: '#F8FAFC',
-            maxWidth: 1280, margin: '0 auto', width: '100%',
+            padding: '64px 48px',
+            background: '#F8FAFC',
+            maxWidth: 1280,
+            margin: '0 auto',
+            width: '100%',
         }}>
             <div style={{
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 36,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                textAlign: 'center',
+                marginBottom: 40,
+                width: '100%',
             }}>
-                <div>
                     <h2 style={{
-                        fontSize: 28, fontWeight: 800, color: '#0F172A', letterSpacing: '-0.5px', marginBottom: 4,
+                        fontSize: 28,
+                        fontWeight: 800,
+                        color: '#0B1B3A',
+                        letterSpacing: '-0.5px',
+                        marginBottom: 4,
                     }}>
                         What Our Customers Say
                     </h2>
-                    <p style={{ fontSize: 14, color: '#94A3B8', margin: 0 }}>
+                    <p style={{ fontSize: 14, color: '#64748B', margin: 0, marginTop: 4 }}>
                         Real reviews from real people who use TableNest
                     </p>
                 </div>
                 <span style={{
-                    color: '#F97316', fontSize: 14, cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', gap: 6, fontWeight: 600,
+                    color: '#FF6B00',
+                    fontSize: 14,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    fontWeight: 600,
+                    marginTop: 12,
                 }}>
                     Browse All Reviews →
                 </span>
             </div>
 
-            <div className="testimonials-grid" style={{
-                display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20,
+            <div style={{
+                position: 'relative',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: 40,
+                marginBottom: 32,
+                padding: '0 20px',
             }}>
-                {TESTIMONIALS.map((t, idx) => (
-                    <div
-                        key={idx}
-                        style={{
+                {/* Left arrow */}
+                <button
+                    onClick={() => paginate('prev')}
+                    disabled={page === 0}
+                    style={{
+                        position: 'absolute',
+                        left: 8,
+                        width: 44,
+                        height: 44,
+                        borderRadius: '50%',
+                        background: 'white',
+                        border: '1px solid #E2E8F0',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: page === 0 ? 'not-allowed' : 'pointer',
+                        opacity: page === 0 ? 0.4 : 1,
+                        transition: 'opacity 0.2s',
+                    }}
+                >
+                    <ChevronLeft size={18} color="#0B1B3A" />
+                </button>
+
+                {/* Right arrow */}
+                <button
+                    onClick={() => paginate('next')}
+                    disabled={page === totalPages - 1}
+                    style={{
+                        position: 'absolute',
+                        right: 8,
+                        width: 44,
+                        height: 44,
+                        borderRadius: '50%',
+                        background: 'white',
+                        border: '1px solid #E2E8F0',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: page === totalPages - 1 ? 'not-allowed' : 'pointer',
+                        opacity: page === totalPages - 1 ? 0.4 : 1,
+                        transition: 'opacity 0.2s',
+                    }}
+                >
+                    <ChevronRight size={18} color="#0B1B3A" />
+                </button>
+
+                {/* Testimonial cards */}
+                <div style={{
+                    display: 'flex',
+                    gap: 24,
+                    flexWrap: 'wrap',
+                    justifyContent: 'center',
+                    maxWidth: 960,
+                }}>
+                    {visible.map((t, idx) => (
+                        <div key={idx} style={{
+                            width: 240,
+                            height: 240,
+                            borderRadius: '50%',
                             background: '#FFFFFF',
-                            borderRadius: 12,
-                            padding: '24px 22px 20px',
-                            border: '1px solid #E2E8F0',
+                            border: '1.5px solid #FF6B00',
+                            boxShadow: '0 4px 16px rgba(0,0,0,0.06)',
                             display: 'flex',
                             flexDirection: 'column',
-                            gap: 16,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: 20,
+                            textAlign: 'center',
                             position: 'relative',
-                            transition: 'all 0.2s ease',
-                        }}
-                        onMouseEnter={e => {
-                            e.currentTarget.style.borderColor = '#CBD5E1';
-                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.04)';
-                        }}
-                        onMouseLeave={e => {
-                            e.currentTarget.style.borderColor = '#E2E8F0';
-                            e.currentTarget.style.boxShadow = 'none';
-                        }}
-                    >
-                        {/* Stars — inline, not a separate block */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            {Array.from({ length: 5 }).map((_, i) => (
-                                <Star
-                                    key={i}
-                                    size={14}
-                                    fill={i < t.rating ? '#F59E0B' : 'transparent'}
-                                    color={i < t.rating ? '#F59E0B' : '#CBD5E1'}
-                                />
-                            ))}
-                            <span style={{ fontSize: 12, color: '#94A3B8', marginLeft: 6 }}>
-                                {t.date}
-                            </span>
-                        </div>
-
-                        {/* Quote */}
-                        <p style={{
-                            fontSize: 14, color: '#334155', lineHeight: 1.65,
-                            margin: 0, flex: 1,
+                            overflow: 'hidden',
                         }}>
-                            {t.text}
-                        </p>
-
-                        {/* Author row */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 'auto' }}>
-                            {/* Colored initials circle — no stock photo */}
+                            {/* Profile photo overlapping top of circle */}
                             <div style={{
-                                width: 36, height: 36, borderRadius: '50%',
-                                background: t.color + '18',
-                                color: t.color,
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                fontSize: 13, fontWeight: 700, flexShrink: 0,
-                                letterSpacing: '0.5px',
+                                position: 'relative',
+                                marginBottom: -20,
+                                marginTop: -12,
+                                width: 64,
+                                height: 64,
+                                borderRadius: '50%',
+                                overflow: 'hidden',
+                                border: '2px solid #FF6B00',
+                                boxShadow: '0 2px 8px rgba(255, 107, 0, 0.2)',
+                                zIndex: 1,
                             }}>
-                                {t.initials}
+                                <img
+                                    src={t.photo}
+                                    alt={t.name}
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                                {/* Orange rating badge overlapping photo */}
+                                <div style={{
+                                    position: 'absolute',
+                                    bottom: -4,
+                                    right: -4,
+                                    background: '#FF6B00',
+                                    color: 'white',
+                                    fontSize: 11,
+                                    fontWeight: 700,
+                                    padding: '2px 6px',
+                                    borderRadius: 6,
+                                    boxShadow: '0 1px 4px rgba(0,0,0,0.15)',
+                                    lineHeight: 1.3,
+                                }}>
+                                    {t.rating}.0 ★
+                                </div>
                             </div>
-                            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                <div style={{ fontSize: 13, fontWeight: 700, color: '#1E293B' }}>
+
+                            {/* Stars */}
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 2,
+                                marginBottom: 8,
+                            }}>
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                    <Star
+                                        key={i}
+                                        size={13}
+                                        fill={i < t.rating ? '#FF6B00' : 'transparent'}
+                                        color={i < t.rating ? '#FF6B00' : '#CBD5E1'}
+                                    />
+                                ))}
+                            </div>
+
+                            {/* Review date */}
+                            <div style={{
+                                fontSize: 11,
+                                color: '#94A3B8',
+                                fontWeight: 500,
+                                marginBottom: 8,
+                                letterSpacing: '0.3px',
+                            }}>
+                                {t.date}
+                            </div>
+
+                            {/* Review text */}
+                            <p style={{
+                                fontSize: 12.5,
+                                color: '#1E293B',
+                                lineHeight: 1.5,
+                                margin: '0 0 10px',
+                                flex: 1,
+                                maxWidth: 200,
+                            }}>
+                                {t.text}
+                            </p>
+
+                            {/* Author info */}
+                            <div style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                gap: 1,
+                            }}>
+                                <div style={{
+                                    fontSize: 12.5,
+                                    fontWeight: 700,
+                                    color: '#0B1B3A',
+                                    letterSpacing: '0.2px',
+                                }}>
                                     {t.name}
                                 </div>
-                                <div style={{ fontSize: 11.5, color: '#94A3B8', fontWeight: 500 }}>
+                                <div style={{
+                                    fontSize: 11,
+                                    color: '#64748B',
+                                    fontWeight: 500,
+                                }}>
                                     {t.location}
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Pagination dots */}
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                gap: 8,
+                marginTop: 8,
+            }}>
+                {Array.from({ length: totalPages }).map((_, i) => (
+                    <button
+                        key={i}
+                        onClick={() => setPage(i)}
+                        style={{
+                            width: page === i ? 10 : 8,
+                            height: page === i ? 10 : 8,
+                            borderRadius: '50%',
+                            background: page === i ? '#FF6B00' : '#CBD5E1',
+                            border: 'none',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                            padding: 0,
+                        }}
+                        aria-label={`Go to page ${i + 1}`}
+                    />
                 ))}
             </div>
 
