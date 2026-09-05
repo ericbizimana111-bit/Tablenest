@@ -6,7 +6,6 @@ import { restaurantsAPI } from '../../../shared/services/api';
 import { Spinner, Pagination } from '../../../shared/components/ui/index';
 import type { Restaurant } from '../../../shared/types/restaurant.types';
 import { getRestaurantBookPath, getRestaurantMenuPath } from '../../../shared/utils/restaurantNavigation';
-import LandingHeader from '../../public/landing/LandingHeader'
 
 type BrowseRestaurant = Partial<Restaurant> & {
     _id: string;
@@ -65,12 +64,42 @@ export default function BrowsePage() {
 
     return (
         <div className="fade-in" style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#F8FAFC', minHeight: '100vh' }}>
-            <LandingHeader theme="light" />
-            <main style={{ maxWidth: 1200, margin: '0 auto', padding: '40px 24px' }}>
-                <div style={{ marginBottom: 32 }}>
-                    <h1 style={{ fontSize: 28, fontWeight: 700, color: '#0F172A' }}>Browse Restaurants</h1>
-                    <p style={{ fontSize: 15, color: '#475569', marginTop: 4 }}>Discover exceptional dining experiences near you.</p>
+            <style>{`
+                .browse-card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+                .browse-card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(0,0,0,0.07) !important; }
+            `}</style>
+
+            {/* ── PAGE HERO BANNER ── */}
+            <div style={{
+                background: 'white',
+                borderBottom: '1px solid #E2E8F0',
+                padding: '48px 24px 40px',
+                textAlign: 'center',
+            }}>
+                <div style={{
+                    display: 'inline-block',
+                    background: 'rgba(249,115,22,0.08)',
+                    border: '1px solid rgba(249,115,22,0.25)',
+                    borderRadius: 9999,
+                    padding: '5px 16px',
+                    fontSize: 11,
+                    fontWeight: 600,
+                    color: '#F97316',
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase' as const,
+                    marginBottom: 16,
+                }}>
+                    Explore
                 </div>
+                <h1 style={{ fontSize: 'clamp(26px, 3.5vw, 38px)', fontWeight: 800, color: '#0F172A', marginBottom: 10, letterSpacing: '-0.02em' }}>
+                    Browse <span style={{ color: '#F97316' }}>Restaurants</span>
+                </h1>
+                <p style={{ fontSize: 15, color: '#475569', maxWidth: 460, margin: '0 auto' }}>
+                    Discover exceptional dining experiences near you.
+                </p>
+            </div>
+
+            <main style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 24px' }}>
 
                 <div style={{ display: 'flex', gap: 12, marginBottom: 24, alignItems: 'center' }}>
                     <div style={{ position: 'relative', flex: 1 }}>
