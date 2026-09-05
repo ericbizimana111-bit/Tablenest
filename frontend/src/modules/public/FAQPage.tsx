@@ -48,76 +48,128 @@ const FAQS = [
 export default function FAQPage() {
     const navigate = useNavigate();
     const [activeCategory, setActiveCategory] = useState('general');
-    const [openIndex, setOpenIndex] = useState(0); // Keeping the first open by default like the image
+    const [openIndex, setOpenIndex] = useState<number | null>(0);
     const [search, setSearch] = useState('');
 
-    const filtered = FAQS.filter(f => {
-        const matchCat = f.category === activeCategory;
-        if (!search) return matchCat;
-        const q = search.toLowerCase();
-        return f.question.toLowerCase().includes(q) || f.answer.toLowerCase().includes(q);
-    });
-
-    const allFiltered = search
+    const displayList = search
         ? FAQS.filter(f => {
             const q = search.toLowerCase();
             return f.question.toLowerCase().includes(q) || f.answer.toLowerCase().includes(q);
         })
-        : FAQS; // Showing all questions initially or matching the layout of the screenshot
+        : FAQS.filter(f => f.category === activeCategory);
 
     return (
+        <div style={{ fontFamily: 'Poppins, sans-serif', background: '#0F172A', minHeight: '100vh', color: 'white' }}>
+            <style>{`
+                .faq-cat-btn { transition: all 0.2s ease; }
+                .faq-cat-btn:hover { color: #F97316 !important; border-color: rgba(249,115,22,0.5) !important; }
+                .faq-item { transition: border-color 0.2s ease; }
+                .faq-item:hover { border-color: rgba(249,115,22,0.3) !important; }
+                .faq-contact-btn { transition: all 0.2s ease; }
+                .faq-contact-btn:hover { background: #EA580C !important; transform: scale(1.03); }
+                .faq-search:focus { border-color: #F97316 !important; box-shadow: 0 0 0 3px rgba(249,115,22,0.12) !important; outline: none; }
+            `}</style>
 
-        <div style={{ fontFamily: 'Poppins, sans-serif', background: '#FFFFFF', minHeight: '100vh' }}>
             <LandingHeader />
 
-            {/* Hero Section */}
-            <div style={{ background: '#F9F9F9', padding: '64px 24px', textAlign: 'center', color: '#0F172A', marginTop: 90 }}>
-                <h1 style={{ fontSize: 40, fontWeight: 700, marginBottom: 16, letterSpacing: '-0.02em' }}>Frequently Asked Questions</h1>
-                <p style={{ fontSize: 15, color: '#475569', maxWidth: 600, margin: '0 auto 28px', lineHeight: 1.5 }}>
+            {/* ── HERO ── */}
+            <section style={{
+                marginTop: 72,
+                position: 'relative',
+                padding: '80px 24px 64px',
+                textAlign: 'center',
+                overflow: 'hidden',
+            }}>
+                <div style={{
+                    position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
+                    width: 500, height: 350,
+                    background: 'radial-gradient(ellipse, rgba(249,115,22,0.13) 0%, transparent 70%)',
+                    pointerEvents: 'none',
+                }} />
+
+                <div style={{
+                    display: 'inline-block',
+                    background: 'rgba(249,115,22,0.12)',
+                    border: '1px solid rgba(249,115,22,0.3)',
+                    borderRadius: 9999,
+                    padding: '6px 18px',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: '#FB923C',
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase' as const,
+                    marginBottom: 20,
+                }}>
+                    Help Center
+                </div>
+
+                <h1 style={{
+                    fontSize: 'clamp(32px, 4vw, 48px)',
+                    fontWeight: 800,
+                    margin: '0 auto 16px',
+                    maxWidth: 600,
+                    lineHeight: 1.2,
+                    letterSpacing: '-0.02em',
+                }}>
+                    Frequently Asked <span style={{ color: '#F97316' }}>Questions</span>
+                </h1>
+
+                <p style={{ color: '#94A3B8', fontSize: 15, maxWidth: 520, margin: '0 auto 36px', lineHeight: 1.6 }}>
                     Everything you need to know about dining, reservations, and management with TableNest.
                 </p>
-                <div style={{ position: 'relative', maxWidth: 520, margin: '0 auto' }}>
-                    <Search size={16} style={{ position: 'absolute', left: 18, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} />
+
+                {/* Search */}
+                <div style={{ position: 'relative', maxWidth: 480, margin: '0 auto' }}>
+                    <Search size={15} style={{
+                        position: 'absolute', left: 16, top: '50%',
+                        transform: 'translateY(-50%)', color: '#475569',
+                    }} />
                     <input
+                        className="faq-search"
                         value={search}
                         onChange={e => setSearch(e.target.value)}
                         placeholder="Search for answers..."
                         style={{
                             width: '100%',
-                            padding: '14px 16px 14px 48px',
-                            borderRadius: 8,
-                            border: '1px solid #E2E8F0',
+                            padding: '13px 16px 13px 44px',
+                            borderRadius: 10,
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            background: 'rgba(255,255,255,0.05)',
                             fontSize: 14,
                             fontFamily: 'Poppins',
-                            outline: 'none',
-                            boxSizing: 'border-box',
-                            boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                            color: 'white',
+                            boxSizing: 'border-box' as const,
+                            transition: 'border-color 0.2s, box-shadow 0.2s',
                         }}
                     />
                 </div>
-            </div>
+            </section>
 
-            {/* Main Content Area */}
-            <div style={{ maxWidth: 800, margin: '0 auto', padding: '40px 24px' }}>
+            {/* ── MAIN CONTENT ── */}
+            <div style={{ maxWidth: 760, margin: '0 auto', padding: '0 24px 80px' }}>
 
-                {/* Category Selection Pills */}
+                {/* Category Pills */}
                 {!search && (
-                    <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 40, flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginBottom: 40, flexWrap: 'wrap' }}>
                         {CATEGORIES.map(cat => (
                             <button
                                 key={cat.id}
+                                className="faq-cat-btn"
                                 onClick={() => { setActiveCategory(cat.id); setOpenIndex(null); }}
                                 style={{
-                                    padding: '8px 20px',
-                                    border: 'none',
+                                    padding: '7px 18px',
+                                    border: activeCategory === cat.id
+                                        ? '1px solid #F97316'
+                                        : '1px solid rgba(255,255,255,0.12)',
                                     borderRadius: 9999,
-                                    background: activeCategory === cat.id ? '#A91D22' : '#E2E8F0',
-                                    color: activeCategory === cat.id ? 'white' : '#475569',
+                                    background: activeCategory === cat.id
+                                        ? 'rgba(249,115,22,0.15)'
+                                        : 'transparent',
+                                    color: activeCategory === cat.id ? '#F97316' : '#94A3B8',
                                     fontSize: 13,
                                     fontWeight: 500,
                                     cursor: 'pointer',
                                     fontFamily: 'Poppins',
-                                    transition: 'all 0.2s'
                                 }}
                             >
                                 {cat.label}
@@ -126,24 +178,27 @@ export default function FAQPage() {
                     </div>
                 )}
 
-                {/* FAQ Accordions Layout */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                    {allFiltered.length === 0 ? (
-                        <div style={{ textAlign: 'center', padding: '40px 20px', color: '#94A3B8' }}>
-                            <div style={{ fontSize: 14 }}>No results found matching your criteria.</div>
+                {/* FAQ Accordion Items */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {displayList.length === 0 ? (
+                        <div style={{ textAlign: 'center', padding: '48px 20px', color: '#475569' }}>
+                            <Search size={32} style={{ marginBottom: 12, opacity: 0.4 }} />
+                            <p style={{ fontSize: 14, margin: 0 }}>No results found. Try a different search term.</p>
                         </div>
                     ) : (
-                        allFiltered.map((faq, i) => {
+                        displayList.map((faq, i) => {
                             const isOpen = openIndex === i;
                             return (
                                 <div
                                     key={i}
+                                    className="faq-item"
                                     style={{
-                                        background: 'white',
-                                        borderRadius: 8,
-                                        border: '1px solid #E2E8F0',
+                                        background: 'rgba(255,255,255,0.04)',
+                                        borderRadius: 12,
+                                        border: isOpen
+                                            ? '1px solid rgba(249,115,22,0.35)'
+                                            : '1px solid rgba(255,255,255,0.08)',
                                         overflow: 'hidden',
-                                        boxShadow: '0 1px 3px rgba(0,0,0,0.02)'
                                     }}
                                 >
                                     <button
@@ -161,16 +216,23 @@ export default function FAQPage() {
                                             textAlign: 'left',
                                         }}
                                     >
-                                        <span style={{ fontWeight: 600, fontSize: 15, color: '#0F172A' }}>
+                                        <span style={{ fontWeight: 600, fontSize: 14.5, color: isOpen ? '#F97316' : 'white' }}>
                                             {faq.question}
                                         </span>
                                         {isOpen
-                                            ? <ChevronUp size={16} color="#475569" />
-                                            : <ChevronDown size={16} color="#475569" />
+                                            ? <ChevronUp size={16} color="#F97316" />
+                                            : <ChevronDown size={16} color="#64748B" />
                                         }
                                     </button>
                                     {isOpen && (
-                                        <div style={{ padding: '0 24px 20px', fontSize: 14, color: '#475569', lineHeight: 1.6 }}>
+                                        <div style={{
+                                            padding: '0 24px 20px',
+                                            fontSize: 14,
+                                            color: '#94A3B8',
+                                            lineHeight: 1.7,
+                                            borderTop: '1px solid rgba(255,255,255,0.06)',
+                                            paddingTop: 16,
+                                        }}>
                                             {faq.answer}
                                         </div>
                                     )}
@@ -180,96 +242,55 @@ export default function FAQPage() {
                     )}
                 </div>
 
-                {/* Horizontal Contact Banner */}
+                {/* Contact Banner */}
                 <div style={{
-                    background: '#D32F2F',
-                    borderRadius: 8,
-                    padding: '24px 40px',
                     marginTop: 56,
+                    background: 'linear-gradient(135deg, rgba(249,115,22,0.15) 0%, rgba(234,88,12,0.08) 100%)',
+                    border: '1px solid rgba(249,115,22,0.25)',
+                    borderRadius: 16,
+                    padding: '32px 40px',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    color: 'white',
-                    position: 'relative'
+                    gap: 20,
+                    flexWrap: 'wrap' as const,
                 }}>
-                    <div>
-                        <h3 style={{ fontSize: 22, fontWeight: 700, marginBottom: 6, marginTop: 0 }}>Still have questions?</h3>
-                        <p style={{ fontSize: 13, opacity: 0.9, margin: 0 }}>
-                            Our support team is available 24/7 to help you with any issues or culinary inquiries you might have.
-                        </p>
-                    </div>
-                    {/* Visual Center Icon Ornament */}
-                    <div style={{ opacity: 0.4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <MessageSquare size={24} style={{ position: 'absolute', left: '49%' }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                        <div style={{
+                            width: 44, height: 44,
+                            background: 'rgba(249,115,22,0.15)',
+                            borderRadius: 10,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            color: '#F97316', flexShrink: 0,
+                        }}>
+                            <MessageSquare size={20} />
+                        </div>
+                        <div>
+                            <h3 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 4px' }}>Still have questions?</h3>
+                            <p style={{ fontSize: 13, color: '#64748B', margin: 0 }}>
+                                Our support team is available 24/7 to help you.
+                            </p>
+                        </div>
                     </div>
                     <button
+                        className="faq-contact-btn"
                         onClick={() => navigate('/login')}
                         style={{
-                            padding: '12px 28px',
-                            background: 'white',
-                            color: '#0F172A',
+                            padding: '11px 24px',
+                            background: '#F97316',
+                            color: 'white',
                             border: 'none',
-                            borderRadius: 6,
+                            borderRadius: 9,
                             fontSize: 14,
                             fontWeight: 600,
                             cursor: 'pointer',
                             fontFamily: 'Poppins',
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                            whiteSpace: 'nowrap'
+                            boxShadow: '0 4px 14px rgba(249,115,22,0.3)',
+                            whiteSpace: 'nowrap' as const,
                         }}
                     >
                         Contact Us
                     </button>
-                </div>
-
-                {/* Bottom Graphic Showcase Grid */}
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1.4fr 1fr',
-                    gap: 16,
-                    marginTop: 48,
-                    height: 480
-                }}>
-                    {/* Big left feature card */}
-                    <div style={{
-                        position: 'relative',
-                        borderRadius: 12,
-                        overflow: 'hidden',
-                        backgroundImage: 'url("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800")',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
-                    }}>
-                        <div style={{
-                            position: 'absolute',
-                            inset: 0,
-                            background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 60%)'
-                        }} />
-                        <div style={{ position: 'absolute', bottom: 24, left: 24, color: 'white' }}>
-                            <p style={{ margin: 0, fontSize: 15, fontWeight: 600, letterSpacing: '0.02em' }}>
-                                Operational Excellence for Every Table
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* Right side side-stack photos */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                        <div style={{
-                            flex: 1,
-                            borderRadius: 12,
-                            overflow: 'hidden',
-                            backgroundImage: 'url("https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=500")',
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center'
-                        }} />
-                        <div style={{
-                            flex: 1,
-                            borderRadius: 12,
-                            overflow: 'hidden',
-                            backgroundImage: 'url("https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&q=80&w=500")',
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center'
-                        }} />
-                    </div>
                 </div>
 
             </div>
