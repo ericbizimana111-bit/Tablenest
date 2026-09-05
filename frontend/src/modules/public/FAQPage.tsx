@@ -76,7 +76,7 @@ export default function FAQPage() {
             <section style={{
                 marginTop: 72,
                 position: 'relative',
-                padding: '80px 24px 64px',
+                padding: '100px 24px 80px',
                 textAlign: 'center',
                 overflow: 'hidden',
             }}>
@@ -104,17 +104,17 @@ export default function FAQPage() {
                 </div>
 
                 <h1 style={{
-                    fontSize: 'clamp(32px, 4vw, 48px)',
+                    fontSize: 'clamp(36px, 5vw, 56px)',
                     fontWeight: 800,
-                    margin: '0 auto 16px',
-                    maxWidth: 600,
-                    lineHeight: 1.2,
+                    margin: '0 auto 20px',
+                    maxWidth: 700,
+                    lineHeight: 1.15,
                     letterSpacing: '-0.02em',
                 }}>
                     Frequently Asked <span style={{ color: '#F97316' }}>Questions</span>
                 </h1>
 
-                <p style={{ color: '#475569', fontSize: 15, maxWidth: 520, margin: '0 auto 36px', lineHeight: 1.6 }}>
+                <p style={{ color: '#475569', fontSize: 16, maxWidth: 520, margin: '0 auto 36px', lineHeight: 1.7 }}>
                     Everything you need to know about dining, reservations, and management with TableNest.
                 </p>
 
@@ -216,7 +216,7 @@ export default function FAQPage() {
                                             textAlign: 'left',
                                         }}
                                     >
-                                        <span style={{ fontWeight: 600, fontSize: 14.5, color: isOpen ? '#F97316' : '#0F172A' }}>
+                                        <span style={{ fontWeight: 600, fontSize: 15, color: isOpen ? '#F97316' : '#0F172A' }}>
                                             {faq.question}
                                         </span>
                                         {isOpen
@@ -227,7 +227,7 @@ export default function FAQPage() {
                                     {isOpen && (
                                         <div style={{
                                             padding: '0 24px 20px',
-                                            fontSize: 14,
+                                            fontSize: 15,
                                             color: '#475569',
                                             lineHeight: 1.7,
                                             borderTop: '1px solid #E2E8F0',
@@ -266,8 +266,8 @@ export default function FAQPage() {
                             <MessageSquare size={20} />
                         </div>
                         <div>
-                            <h3 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 4px', color: '#0F172A' }}>Still have questions?</h3>
-                            <p style={{ fontSize: 13, color: '#64748B', margin: 0 }}>
+                            <h3 style={{ fontSize: 20, fontWeight: 700, margin: '0 0 6px', color: '#0F172A' }}>Still have questions?</h3>
+                            <p style={{ fontSize: 14, color: '#64748B', margin: 0 }}>
                                 Our support team is available 24/7 to help you.
                             </p>
                         </div>
