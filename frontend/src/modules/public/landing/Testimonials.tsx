@@ -81,6 +81,7 @@ export default function Testimonials() {
                 marginBottom: 40,
                 width: '100%',
             }}>
+                <div>
                     <h2 style={{
                         fontSize: 28,
                         fontWeight: 800,
