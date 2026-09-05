@@ -419,37 +419,11 @@ export default function ResetPasswordPage() {
                     border: '1px solid rgba(255, 107, 0, 0.1)',
                     borderRadius: '50%',
                     pointerEvents: 'none',
-                }} />
-
-                {/* Logo + Icon + Text - Centered */}
-                <div style={{ textAlign: 'center', marginBottom: 8 }}>
-                    <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: 10,
-                        marginBottom: 32,
-                        width: '100%',
-                    }}>
-                        <div style={{
-                            width: 38,
-                            height: 38,
-                            background: '#FF6B00',
-                            borderRadius: 9,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                        }}>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M6 18h12a2 2 0 0 1 2 2v1H4v-1a2 2 0 0 1 2-2z" />
-                                <path d="M18 18a4 4 0 0 0-1.23-7.79 4.36 4.36 0 0 0-9.54 0A4 4 0 0 0 6 18" />
-                            </svg>
-                        </div>
-                        <span style={{ color: 'white', fontWeight: 800, fontSize: 20, letterSpacing: '-0.5px' }}>
-                            TableNest
-                        </span>
-                    </div>
-
+                }} />                {/* Icon + Text - Centered */}
+                <div style={{
+                    textAlign: 'center',
+                    marginBottom: 8
+                }}>
                     <div style={{
                         width: 56,
                         height: 56,

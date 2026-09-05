@@ -4,8 +4,7 @@ import { restaurantsAPI, uploadsAPI } from '../../../shared/services/api';
 import { useAuth } from '../../../shared/hooks/useAuthContext';
 import { getRoleHomePath } from '../../../shared/utils/auth.utils';
 import toast from 'react-hot-toast';
-import { CheckCircle, Image, PartyPopper, X, Upload } from 'lucide-react';
-import LandingHeader from '../../public/landing/LandingHeader';
+import { CheckCircle, Image, PartyPopper, X, Upload, ArrowLeft, Loader2 } from 'lucide-react';
 
 const STEPS = ['Account', 'Business', 'Operations', 'Media'];
 const CUISINES = ['Italian', 'Japanese', 'French', 'Mexican', 'American', 'Chinese', 'Indian', 'Mediterranean', 'Seafood', 'Steakhouse', 'Modern European', 'African', 'Other'];
@@ -85,11 +84,15 @@ export default function PartnerRegistration() {
 
     return (
         <div style={{ minHeight: '100vh', background: '#F8FAFC', fontFamily: 'Poppins, sans-serif' }}>
-        <LandingHeader />
-        <div style={{ padding: '112px 20px 40px' }}>
+        <div style={{ padding: '80px 20px 40px' }}>
             <div style={{ maxWidth: 1000, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 380px', gap: 32 }}>
                 <div>
-                    {/* Step progress */}
+                    {/* Back button */}
+                <button onClick={() => navigate('/register')} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#94A3B8', fontSize: 13, cursor: 'pointer', marginBottom: 24, padding: 0, fontFamily: 'Poppins, sans-serif', fontWeight: 500 }}>
+                    <ArrowLeft size={14} /> Back to Sign Up
+                </button>
+
+                {/* Step progress */}
                     <div style={{ display: 'flex', gap: 0, marginBottom: 32 }}>
                         {STEPS.map((s, i) => (
                             <React.Fragment key={s}>

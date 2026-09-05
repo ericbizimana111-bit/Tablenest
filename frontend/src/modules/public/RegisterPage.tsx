@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft, Loader2, Phone, ChefHat, Store } from 'lucide-react';
+import { User, Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft, Loader2, ChefHat, Store } from 'lucide-react';
 import { useAuth } from '../../shared/hooks/useAuthContext';
 import { getRoleHomePath } from '../../shared/utils/auth.utils';
 
@@ -11,7 +11,7 @@ export default function RegisterPage() {
     type Role = 'customer' | 'owner';
     type RegisterForm = { fullName: string; email: string; password: string; confirm: string; phone: string };
 
-    const [role, setRole] = useState<Role | null>(null);
+    const [role, setRole] = useState<'customer' | null>(null);
     const [form, setForm] = useState<RegisterForm>({ fullName: '', email: '', password: '', confirm: '', phone: '' });
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
@@ -39,7 +39,6 @@ export default function RegisterPage() {
         if (!form.password) errs.password = 'Password is required';
         else if (form.password.length < 6) errs.password = 'At least 6 characters required';
         if (form.password !== form.confirm) errs.confirm = 'Passwords do not match';
-        if (role === 'owner' && !form.phone) errs.phone = 'Phone number is required for owners';
         setErrors(errs);
         return Object.keys(errs).length === 0;
     };
@@ -50,20 +49,11 @@ export default function RegisterPage() {
         if (!validate()) return;
 
         try {
-            let user;
-            if (role === 'owner') {
-                user = await registerOwner({
-                    fullName: form.fullName,
-                    email: form.email,
-                    password: form.password,
-                });
-            } else {
-                user = await register({
-                    fullName: form.fullName,
-                    email: form.email,
-                    password: form.password,
-                });
-            }
+            const user = await register({
+                fullName: form.fullName,
+                email: form.email,
+                password: form.password,
+            });
             navigate(getRoleHomePath(user.role), { replace: true });
         } catch (err: unknown) {
             const message = err instanceof Error ? err.message : 'Registration failed. Please try again.';
@@ -152,37 +142,8 @@ export default function RegisterPage() {
                     overflow: 'hidden',
                 }}>
                     <div style={{ width: '100%', maxWidth: 400, position: 'relative' }}>
-                        {/* Logo */}
-                        <Link to="/" style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 10,
-                            textDecoration: 'none',
-                            marginBottom: 40,
-                            justifyContent: 'center',
-                            width: '100%',
-                        }}>
-                            <div style={{
-                                width: 38,
-                                height: 38,
-                                background: '#FF6B00',
-                                borderRadius: 9,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                            }}>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M6 18h12a2 2 0 0 1 2 2v1H4v-1a2 2 0 0 1 2-2z" />
-                                    <path d="M18 18a4 4 0 0 0-1.23-7.79 4.36 4.36 0 0 0-9.54 0A4 4 0 0 0 6 18" />
-                                </svg>
-                            </div>
-                            <span style={{ color: '#0B1B3A', fontWeight: 800, fontSize: 20, letterSpacing: '-0.5px' }}>
-                                TableNest
-                            </span>
-                        </Link>
-
-                        {/* Header */}
-                        <div style={{ marginBottom: 32 }}>
+                        {/* Header - Centered */}
+                        <div style={{ textAlign: 'center', marginBottom: 32 }}>
                             <h1 style={{
                                 fontSize: 'clamp(28px, 4vw, 36px)',
                                 fontWeight: 800,
@@ -262,7 +223,7 @@ export default function RegisterPage() {
 
                             {/* Owner */}
                             <button
-                                onClick={() => setRole('owner')}
+                                onClick={() => navigate('/partner/register')}
                                 style={{
                                     display: 'flex',
                                     alignItems: 'center',
@@ -504,7 +465,7 @@ export default function RegisterPage() {
         );
     }
 
-    // ── Registration Form ──
+    // ── Registration Form (Customer Only) ──
     return (
         <div style={{
             fontFamily: 'Poppins, sans-serif',
@@ -528,7 +489,7 @@ export default function RegisterPage() {
                 <div style={{ width: '100%', maxWidth: 400, position: 'relative' }}>
                     {/* Back button */}
                     <button
-                        onClick={() => setRole(null)}
+                        onClick={() => navigate('/register')}
                         style={{
                             display: 'inline-flex',
                             alignItems: 'center',
@@ -550,40 +511,11 @@ export default function RegisterPage() {
                         onBlur={e => e.currentTarget.style.color = '#94A3B8'}
                     >
                         <ArrowLeft size={14} />
-                        Back
+                        Back to Role Selection
                     </button>
 
-                    {/* Logo */}
-                    <Link to="/" style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 10,
-                        textDecoration: 'none',
-                        marginBottom: 24,
-                        justifyContent: 'center',
-                        width: '100%',
-                    }}>
-                        <div style={{
-                            width: 38,
-                            height: 38,
-                            background: '#FF6B00',
-                            borderRadius: 9,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                        }}>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M6 18h12a2 2 0 0 1 2 2v1H4v-1a2 2 0 0 1 2-2z" />
-                                <path d="M18 18a4 4 0 0 0-1.23-7.79 4.36 4.36 0 0 0-9.54 0A4 4 0 0 0 6 18" />
-                            </svg>
-                        </div>
-                        <span style={{ color: '#0B1B3A', fontWeight: 800, fontSize: 20, letterSpacing: '-0.5px' }}>
-                            TableNest
-                        </span>
-                    </Link>
-
-                    {/* Header */}
-                    <div style={{ marginBottom: 28 }}>
+                    {/* Header - Centered */}
+                    <div style={{ textAlign: 'center', marginBottom: 28 }}>
                         <h1 style={{
                             fontSize: 'clamp(24px, 3.5vw, 30px)',
                             fontWeight: 800,
@@ -592,7 +524,7 @@ export default function RegisterPage() {
                             letterSpacing: '-0.5px',
                             lineHeight: 1.2,
                         }}>
-                            Create {role === 'owner' ? 'Owner' : 'Customer'} <span style={{ color: '#FF6B00' }}>Account</span>
+                            Create Customer <span style={{ color: '#FF6B00' }}>Account</span>
                         </h1>
                         <p style={{
                             fontSize: 14,
@@ -600,9 +532,7 @@ export default function RegisterPage() {
                             margin: 0,
                             lineHeight: 1.5,
                         }}>
-                            {role === 'owner'
-                                ? 'Set up your account to manage your restaurant'
-                                : 'Start your culinary journey today'}
+                            Start your culinary journey today
                         </p>
                     </div>
 
@@ -687,41 +617,6 @@ export default function RegisterPage() {
                             </div>
                             {errors.email && <span style={errorTextStyle}>{errors.email}</span>}
                         </div>
-
-                        {/* Phone — owner only */}
-                        {role === 'owner' && (
-                            <div>
-                                <label style={labelStyle} htmlFor="phone">Phone Number</label>
-                                <div style={{ position: 'relative' }}>
-                                    <Phone size={17} style={{
-                                        position: 'absolute',
-                                        left: 14,
-                                        top: '50%',
-                                        transform: 'translateY(-50%)',
-                                        color: focusedField === 'phone' ? '#FF6B00' : '#94A3B8',
-                                        transition: 'color 0.2s',
-                                    }} />
-                                    <input
-                                        id="phone"
-                                        type="tel"
-                                        value={form.phone}
-                                        onChange={e => {
-                                            update('phone', e.target.value);
-                                            if (errors.phone) setErrors(p => ({ ...p, phone: undefined }));
-                                        }}
-                                        onFocus={() => setFocusedField('phone')}
-                                        onBlur={() => setFocusedField(null)}
-                                        placeholder="+1 (555) 000-1234"
-                                        style={{
-                                            ...inputBase,
-                                            ...(focusedField === 'phone' ? inputFocused : {}),
-                                            ...(errors.phone ? inputError : {}),
-                                        }}
-                                    />
-                                </div>
-                                {errors.phone && <span style={errorTextStyle}>{errors.phone}</span>}
-                            </div>
-                        )}
 
                         {/* Password */}
                         <div>
@@ -968,37 +863,11 @@ export default function RegisterPage() {
                     border: '1px solid rgba(255, 107, 0, 0.1)',
                     borderRadius: '50%',
                     pointerEvents: 'none',
-                }} />
-
-                {/* Logo + Icon + Text - Centered */}
-                <div style={{ textAlign: 'center', marginBottom: 8 }}>
-                    <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: 10,
-                        marginBottom: 32,
-                        width: '100%',
-                    }}>
-                        <div style={{
-                            width: 38,
-                            height: 38,
-                            background: '#FF6B00',
-                            borderRadius: 9,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                        }}>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M6 18h12a2 2 0 0 1 2 2v1H4v-1a2 2 0 0 1 2-2z" />
-                                <path d="M18 18a4 4 0 0 0-1.23-7.79 4.36 4.36 0 0 0-9.54 0A4 4 0 0 0 6 18" />
-                            </svg>
-                        </div>
-                        <span style={{ color: 'white', fontWeight: 800, fontSize: 20, letterSpacing: '-0.5px' }}>
-                            TableNest
-                        </span>
-                    </div>
-
+                }} />                {/* Icon + Text - Centered */}
+                <div style={{
+                    textAlign: 'center',
+                    marginBottom: 8
+                }}>
                     <div style={{
                         width: 56,
                         height: 56,
