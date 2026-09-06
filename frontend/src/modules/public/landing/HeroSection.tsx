@@ -246,10 +246,10 @@ export default function HeroSection() {
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: 8,
-                                className="btn-press",
-                                transition: 'background 0.2s',
-                                whiteSpace: 'nowrap',
-                                flexShrink: 0,
+                                    transition: 'background 0.2s',
+                                    whiteSpace: 'nowrap',
+                                    flexShrink: 0,
+                                className: 'btn-press',
                             }}
                             >
                                 <Search size={15} />
@@ -282,9 +282,9 @@ export default function HeroSection() {
                             }}
                         >
                             <img
-                                ref={heroImgRef}
                                 src={heroPhoto}
                                 alt="Delicious gourmet salad bowl"
+                                className="img-reveal"
                                 style={{
                                     width: '100%',
                                     height: '100%',
