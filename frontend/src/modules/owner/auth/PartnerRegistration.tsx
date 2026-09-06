@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { restaurantsAPI, uploadsAPI } from '../../../shared/services/api';
 import { useAuth } from '../../../shared/hooks/useAuthContext';
@@ -7,7 +7,6 @@ import toast from 'react-hot-toast';
 import {
     CheckCircle2,
     Check,
-    Image as ImageIcon,
     X,
     Upload,
     ArrowLeft,
@@ -22,7 +21,6 @@ import {
     Globe,
     MapPin,
     Phone,
-    AlertCircle,
     ShieldCheck,
     Info,
     Star,
@@ -31,10 +29,10 @@ import {
 } from 'lucide-react';
 
 const STEPS = [
-    { label: 'Owner info', desc: 'Set up your account so you can manage your restaurant and access your dashboard.' },
-    { label: 'Restaurant info', desc: 'Tell us about your restaurant so we can set up your public profile.' },
-    { label: 'Location & operations', desc: 'Add your address and choose which services you offer.' },
-    { label: 'Media & submit', desc: 'Add photos and send your application for review.' },
+    { label: 'Owner info', desc: 'Create your account to manage your restaurant.' },
+    { label: 'Restaurant info', desc: 'Set up your public profile.' },
+    { label: 'Location & operations', desc: 'Add your address and services.' },
+    { label: 'Media & submit', desc: 'Upload photos and submit your application.' },
 ];
 
 const CUISINES = ['Italian', 'Japanese', 'French', 'Mexican', 'American', 'Chinese', 'Indian', 'Mediterranean', 'Seafood', 'Steakhouse', 'Modern European', 'African', 'Other'];
@@ -57,63 +55,11 @@ type PartnerForm = {
     delivery: boolean;
 };
 
-// Field error types per field name
-type FieldErrors = Partial<Record<keyof PartnerForm | 'images', string>>;
-
-function IconField({ icon: Icon, error, ...props }: { icon: any; error?: string } & React.InputHTMLAttributes<HTMLInputElement>) {
+function IconField({ icon: Icon, ...props }: { icon: React.ElementType } & React.InputHTMLAttributes<HTMLInputElement>) {
     return (
         <div className="pr-icon-input">
-            <Icon size={16} className={`pr-icon-input-glyph ${error ? 'pr-icon-input-glyph--error' : ''}`} />
-            <input {...props} className={`pr-input pr-input--icon ${error ? 'pr-input--error' : ''}`} />
-            {error && <AlertCircle size={14} className="pr-field-error-icon" />}
-        </div>
-    );
-}
-
-interface FieldWrapperProps {
-    children: React.ReactNode;
-    error?: string;
-}
-
-function FieldWrapper({ children, error }: FieldWrapperProps) {
-    return (
-        <div className={`pr-field ${error ? 'pr-field--error' : ''}`}>
-            {children}
-            {error && (
-                <div className="pr-field-error">
-                    <AlertCircle size={13} />
-                    <span>{error}</span>
-                </div>
-            )}
-        </div>
-    );
-}
-
-function IconField({ icon: Icon, error, ...props }: { icon: any; error?: string } & React.InputHTMLAttributes<HTMLInputElement>) {
-    return (
-        <div className="pr-icon-input">
-            <Icon size={16} className={`pr-icon-input-glyph ${error ? 'pr-icon-input-glyph--error' : ''}`} />
-            <input {...props} className={`pr-input pr-input--icon ${error ? 'pr-input--error' : ''}`} />
-            {error && <AlertCircle size={14} className="pr-field-error-icon" />}
-        </div>
-    );
-}
-
-interface FieldWrapperProps {
-    children: React.ReactNode;
-    error?: string;
-}
-
-function FieldWrapper({ children, error }: FieldWrapperProps) {
-    return (
-        <div className={`pr-field ${error ? 'pr-field--error' : ''}`}>
-            {children}
-            {error && (
-                <div className="pr-field-error">
-                    <AlertCircle size={13} />
-                    <span>{error}</span>
-                </div>
-            )}
+            <Icon size={16} className="pr-icon-input-glyph" />
+            <input {...props} className="pr-input pr-input--icon" />
         </div>
     );
 }
@@ -127,36 +73,16 @@ export default function PartnerRegistration() {
         description: '', seatingCapacity: '', priceRange: '$$', address: '', city: '', country: 'Rwanda', phone: '', dineIn: true, delivery: false,
     });
 
-    // Validation: check if current step's required fields are filled
-    const isStepValid = (currentStep: number): boolean => {
-        switch (currentStep) {
-            case 1:
-                return form.fullName.trim() !== '' &&
-                       form.email.trim() !== '' &&
-                       form.password.length >= 8 && /[A-Z]/.test(form.password) && /[0-9]/.test(form.password);
-            case 2:
-                return form.restaurantName.trim() !== '' &&
-                       form.cuisineType !== '' &&
-                       form.description.trim() !== '' &&
-                       form.seatingCapacity !== '' && !isNaN(Number(form.seatingCapacity)) && Number(form.seatingCapacity) > 0;
-            case 3:
-                return form.country.trim() !== '' &&
-                       form.city.trim() !== '' &&
-                       form.address.trim() !== '' &&
-                       form.phone.trim() !== '';
-            case 4:
-                return images.length > 0;
-            default:
-                return false;
-        }
-    };
-
     const [images, setImages] = useState<string[]>([]);
     const [uploading, setUploading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
+    const [errors, setErrors] = useState<Partial<Record<keyof PartnerForm, string>>>({});
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const up = <K extends keyof PartnerForm>(key: K, val: PartnerForm[K]) => setForm(f => ({ ...f, [key]: val }));
+    const up = <K extends keyof PartnerForm>(key: K, val: PartnerForm[K]) => {
+        setForm(f => ({ ...f, [key]: val }));
+        if (errors[key]) setErrors(e => ({ ...e, [key]: undefined }));
+    };
 
     const passwordChecks = {
         length: form.password.length >= 8,
@@ -251,14 +177,14 @@ export default function PartnerRegistration() {
 
                 .pr-field { margin-bottom: 18px; }
                 .pr-label { font-size: 13px; font-weight: 500; color: #334155; display: block; margin-bottom: 6px; }
-                .pr-input { width: 100%; padding: 11px 13px; border: 1.5px solid #E2E8F0; border-radius: 10px; font-size: 14px; font-family: 'Poppins', sans-serif; outline: none; color: #0F172A; background: white; transition: border-color 0.15s ease; box-sizing: border-box; }
+                .pr-input { width: 100%; padding: 11px 13px; border: 1.5px solid #E2E8F0; border-radius: 12px; font-size: 14px; font-family: 'Poppins', sans-serif; outline: none; color: #0F172A; background: white; transition: border-color 0.15s ease; box-sizing: border-box; }
                 .pr-input:focus { border-color: #F97316; }
                 .pr-input--icon { padding-left: 38px; }
                 .pr-icon-input { position: relative; }
                 .pr-icon-input-glyph { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: #94A3B8; pointer-events: none; }
                 .pr-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
                 .pr-price-group { display: flex; gap: 6px; }
-                .pr-price-btn { flex: 1; padding: 11px 4px; border: 1.5px solid #E2E8F0; border-radius: 10px; background: white; color: #475569; font-size: 13px; cursor: pointer; font-family: 'Poppins', sans-serif; font-weight: 500; transition: all 0.15s ease; }
+                .pr-price-btn { flex: 1; padding: 11px 4px; border: 1.5px solid #E2E8F0; border-radius: 12px; background: white; color: #475569; font-size: 13px; cursor: pointer; font-family: 'Poppins', sans-serif; font-weight: 500; transition: all 0.15s ease; }
                 .pr-price-btn--active { border-color: #F97316; background: #FFF7ED; color: #F97316; font-weight: 700; }
                 .pr-checkbox-row { display: flex; gap: 20px; }
                 .pr-checkbox-label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; color: #334155; }
@@ -302,16 +228,28 @@ export default function PartnerRegistration() {
                 .pr-btn-primary { padding: 11px 24px; background: #F97316; color: white; border: none; border-radius: 14px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Poppins', sans-serif; display: inline-flex; align-items: center; gap: 8px; transition: background 0.15s ease; }
                 .pr-btn-primary:hover:not(:disabled) { background: #EA6A0C; }
                 .pr-btn-primary:disabled { background: #94A3B8; cursor: not-allowed; }
+                .pr-input--error { border-color: #EF4444 !important; }
+                .pr-field-error { display: block; margin-top: 4px; font-size: 12px; color: #EF4444; font-weight: 500; }
 
                 @keyframes pr-spin { to { transform: rotate(360deg); } }
                 .pr-spin { animation: pr-spin 0.8s linear infinite; }
 
                 @media (max-width: 900px) {
-                    .pr-shell { grid-template-columns: 1fr; }
+                    .pr-header { padding: 16px 20px; }
+                    .pr-header-note { display: none; }
+                    .pr-shell { grid-template-columns: 1fr; padding: 28px 20px 48px; }
                     .pr-sidebar { position: relative; top: 0; }
                     .pr-split { grid-template-columns: 1fr; }
                 }
             `}</style>
+
+            <header className="pr-header">
+                <div className="pr-logo">
+                    <div className="pr-logo-icon"><Home size={18} /></div>
+                    <span className="pr-logo-text">TableNest</span>
+                </div>
+                <div className="pr-header-note">Already applied? <a href="/login">Sign in</a></div>
+            </header>
 
             <div className="pr-shell">
                 <aside className="pr-sidebar">
@@ -345,30 +283,33 @@ export default function PartnerRegistration() {
                     </button>
 
                     <div className="pr-main-inner">
-                        <div className="pr-eyebrow">Step {step} of 4</div>
+                        <div className="pr-eyebrow"><Sparkles size={12} /> Step {step} of 4</div>
 
                         {step === 1 && (
                             <>
                                 <h2 className="pr-title">Restaurant owner info</h2>
-                                <p className="pr-subtitle">Set up your account to manage your restaurant. This information is used to access your dashboard.</p>
+                                <p className="pr-subtitle">Create your account to access the owner dashboard.</p>
                                 <div className="pr-divider" />
                                 <div className="pr-split">
                                     <div className="pr-intro-text">
-                                        Let's get to know you. Share your details so we can set up your restaurant account.
-                                        <div className="pr-intro-note">By continuing you agree to TableNest's Partner Terms.</div>
+                                        Share your details to set up your restaurant account.
+                                        <div className="pr-intro-note">By continuing, you agree to TableNest's Partner Terms.</div>
                                     </div>
                                     <div>
                                         <div className="pr-field">
                                             <label className="pr-label">Full name</label>
-                                            <IconField icon={User} type="text" placeholder="e.g. Jean Mugisha" value={form.fullName} onChange={e => up('fullName', e.target.value)} />
+                                            <IconField icon={User} type="text" placeholder="e.g. Jean Mugisha" value={form.fullName} onChange={e => up('fullName', e.target.value)} className={errors.fullName ? 'pr-input--error' : ''} />
+                                            {errors.fullName && <span className="pr-field-error">{errors.fullName}</span>}
                                         </div>
                                         <div className="pr-field">
                                             <label className="pr-label">Email address</label>
-                                            <IconField icon={Mail} type="email" placeholder="restaurant@email.com" value={form.email} onChange={e => up('email', e.target.value)} />
+                                            <IconField icon={Mail} type="email" placeholder="restaurant@email.com" value={form.email} onChange={e => up('email', e.target.value)} className={errors.email ? 'pr-input--error' : ''} />
+                                            {errors.email && <span className="pr-field-error">{errors.email}</span>}
                                         </div>
                                         <div className="pr-field">
                                             <label className="pr-label">Password</label>
-                                            <IconField icon={Lock} type="password" placeholder="Create a password" value={form.password} onChange={e => up('password', e.target.value)} />
+                                            <IconField icon={Lock} type="password" placeholder="Create a password" value={form.password} onChange={e => up('password', e.target.value)} className={errors.password ? 'pr-input--error' : ''} />
+                                            {errors.password && <span className="pr-field-error">{errors.password}</span>}
                                             <div className="pr-pills">
                                                 <span className={`pr-pill ${passwordChecks.length ? 'pr-pill--met' : 'pr-pill--unmet'}`}><Check size={11} /> 8+ chars</span>
                                                 <span className={`pr-pill ${passwordChecks.upper ? 'pr-pill--met' : 'pr-pill--unmet'}`}><Check size={11} /> Uppercase</span>
@@ -383,16 +324,17 @@ export default function PartnerRegistration() {
                         {step === 2 && (
                             <>
                                 <h2 className="pr-title">Restaurant info</h2>
-                                <p className="pr-subtitle">Tell us about your restaurant. This becomes your public profile once approved.</p>
+                                <p className="pr-subtitle">This becomes your public profile once approved.</p>
                                 <div className="pr-divider" />
                                 <div className="pr-split">
                                     <div className="pr-intro-text">
-                                        Diners will see this name, cuisine, and description first — make it count.
+                                        This is what diners will see first.
                                     </div>
                                     <div>
                                         <div className="pr-field">
                                             <label className="pr-label">Restaurant name</label>
-                                            <IconField icon={Store} placeholder="The Golden Truffle" value={form.restaurantName} onChange={e => up('restaurantName', e.target.value)} />
+                                            <IconField icon={Store} placeholder="The Golden Truffle" value={form.restaurantName} onChange={e => up('restaurantName', e.target.value)} className={errors.restaurantName ? 'pr-input--error' : ''} />
+                                            {errors.restaurantName && <span className="pr-field-error">{errors.restaurantName}</span>}
                                         </div>
                                         <div className="pr-row">
                                             <div className="pr-field">
@@ -406,12 +348,14 @@ export default function PartnerRegistration() {
                                             </div>
                                             <div className="pr-field">
                                                 <label className="pr-label">Seating capacity</label>
-                                                <IconField icon={Users} type="number" placeholder="120" value={form.seatingCapacity} onChange={e => up('seatingCapacity', e.target.value)} />
+                                                <IconField icon={Users} type="number" placeholder="120" value={form.seatingCapacity} onChange={e => up('seatingCapacity', e.target.value)} className={errors.seatingCapacity ? 'pr-input--error' : ''} />
+                                                {errors.seatingCapacity && <span className="pr-field-error">{errors.seatingCapacity}</span>}
                                             </div>
                                         </div>
                                         <div className="pr-field">
                                             <label className="pr-label">Description</label>
-                                            <textarea className="pr-input" style={{ minHeight: 90, resize: 'vertical' }} value={form.description} onChange={e => up('description', e.target.value)} placeholder="Describe your culinary philosophy..." />
+                                            <textarea className={`pr-input ${errors.description ? 'pr-input--error' : ''}`} style={{ minHeight: 90, resize: 'vertical' }} value={form.description} onChange={e => up('description', e.target.value)} placeholder="Describe your culinary philosophy..." />
+                                            {errors.description && <span className="pr-field-error">{errors.description}</span>}
                                         </div>
                                         <div className="pr-field">
                                             <label className="pr-label">Price range</label>
@@ -429,11 +373,11 @@ export default function PartnerRegistration() {
                         {step === 3 && (
                             <>
                                 <h2 className="pr-title">Location & operations</h2>
-                                <p className="pr-subtitle">Set your address and choose which services you offer.</p>
+                                <p className="pr-subtitle">Add your address and select your services.</p>
                                 <div className="pr-divider" />
                                 <div className="pr-split">
                                     <div className="pr-intro-text">
-                                        This address and these services appear on your public listing.
+                                        This appears on your public listing.
                                     </div>
                                     <div>
                                         <div className="pr-row">
@@ -448,16 +392,19 @@ export default function PartnerRegistration() {
                                             </div>
                                             <div className="pr-field">
                                                 <label className="pr-label">City / district</label>
-                                                <IconField icon={MapPin} placeholder="e.g. Kigali" value={form.city || ''} onChange={e => up('city', e.target.value)} />
+                                                <IconField icon={MapPin} placeholder="e.g. Kigali" value={form.city || ''} onChange={e => up('city', e.target.value)} className={errors.city ? 'pr-input--error' : ''} />
+                                                {errors.city && <span className="pr-field-error">{errors.city}</span>}
                                             </div>
                                         </div>
                                         <div className="pr-field">
                                             <label className="pr-label">Primary address</label>
-                                            <IconField icon={MapPin} placeholder="23 Culinary Way, Arts District" value={form.address} onChange={e => up('address', e.target.value)} />
+                                            <IconField icon={MapPin} placeholder="23 Culinary Way, Arts District" value={form.address} onChange={e => up('address', e.target.value)} className={errors.address ? 'pr-input--error' : ''} />
+                                            {errors.address && <span className="pr-field-error">{errors.address}</span>}
                                         </div>
                                         <div className="pr-field">
                                             <label className="pr-label">Phone number</label>
-                                            <IconField icon={Phone} type="tel" placeholder="+250 784 955 081" value={form.phone} onChange={e => up('phone', e.target.value)} />
+                                            <IconField icon={Phone} type="tel" placeholder="+250 784 955 081" value={form.phone} onChange={e => up('phone', e.target.value)} className={errors.phone ? 'pr-input--error' : ''} />
+                                            {errors.phone && <span className="pr-field-error">{errors.phone}</span>}
                                         </div>
                                         <div className="pr-field">
                                             <label className="pr-label">Services offered</label>
@@ -474,7 +421,7 @@ export default function PartnerRegistration() {
                                             <ShieldCheck size={18} color="#F97316" style={{ flexShrink: 0, marginTop: 1 }} />
                                             <div>
                                                 <div className="pr-notice-title">Verification required</div>
-                                                <div className="pr-notice-text">All new partners must provide a valid culinary license and complete a 48-hour vetting process before going live.</div>
+                                                <div className="pr-notice-text">New partners must provide a valid culinary license and complete a 48-hour vetting process.</div>
                                             </div>
                                         </div>
                                     </div>
@@ -485,11 +432,11 @@ export default function PartnerRegistration() {
                         {step === 4 && (
                             <>
                                 <h2 className="pr-title">Media & branding</h2>
-                                <p className="pr-subtitle">Upload your restaurant photos. The first photo becomes your cover image.</p>
+                                <p className="pr-subtitle">Upload photos. The first becomes your cover image.</p>
                                 <div className="pr-divider" />
                                 <div className="pr-split">
                                     <div className="pr-intro-text">
-                                        Listings with three or more photos get noticeably more bookings.
+                                        Listings with 3+ photos get more bookings.
                                     </div>
                                     <div>
                                         <input type="file" ref={fileInputRef} multiple accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
@@ -506,14 +453,14 @@ export default function PartnerRegistration() {
                                                 {uploading ? <Loader2 size={20} color="#F97316" className="pr-spin" /> : <Upload size={20} color="#475569" />}
                                             </div>
                                             <div className="pr-dropzone-title">
-                                                {uploading ? 'Uploading...' : images.length > 0 ? 'Add more photos' : 'Click to upload restaurant photos'}
+                                                {uploading ? 'Uploading...' : images.length > 0 ? 'Add more photos' : 'Upload restaurant photos'}
                                             </div>
-                                            <div className="pr-dropzone-hint">PNG, JPG up to 5MB each — multiple files supported</div>
+                                            <div className="pr-dropzone-hint">PNG, JPG up to 5MB each. Multiple files supported.</div>
                                         </div>
 
                                         {images.length > 0 && (
                                             <div>
-                                                <div className="pr-photo-count">{images.length} photo{images.length !== 1 ? 's' : ''} uploaded</div>
+                                                <div className="pr-photo-count">{images.length} photo                                            {images.length !== 1 ? 's' : ''}</div>
                                                 <div className="pr-grid">
                                                     {images.map((url, i) => (
                                                         <div className="pr-thumb" key={i}>
@@ -524,11 +471,10 @@ export default function PartnerRegistration() {
                                                             </button>
                                                         </div>
                                                     ))}
-                                                </div>
-                                                <div className="pr-hint">
-                                                    <Info size={13} style={{ flexShrink: 0, marginTop: 1 }} />
-                                                    The first image is used as your restaurant's cover photo on cards and search results.
-                                                </div>
+                                                </div>                                                    <div className="pr-hint">
+                                                        <Info size={13} style={{ flexShrink: 0, marginTop: 1 }} />
+                                                        The first image is your cover photo on cards and search results.
+                                                    </div>
                                             </div>
                                         )}
 
@@ -536,7 +482,7 @@ export default function PartnerRegistration() {
                                             <CheckCircle2 size={18} color="#16A34A" style={{ flexShrink: 0, marginTop: 1 }} />
                                             <div>
                                                 <div className="pr-ready-title">Ready to submit</div>
-                                                <div className="pr-ready-text">Review your details and submit your application for approval.</div>
+                                                <div className="pr-ready-text">Review and submit your application.</div>
                                             </div>
                                         </div>
                                     </div>
@@ -545,16 +491,38 @@ export default function PartnerRegistration() {
                         )}
 
                         <div className="pr-actions">
-                            <button className="pr-btn-secondary" onClick={() => step > 1 ? setStep(s => s - 1) : navigate('/')}>
+                            <button className="pr-btn-secondary" onClick={() => { setErrors({}); step > 1 ? setStep(s => s - 1) : navigate('/'); }}>
                                 {step === 1 ? 'Back to home' : `Back to step ${step - 1}`}
                             </button>
                             {step < 4 ? (
                                 <button
                                     className="pr-btn-primary"
-                                    onClick={() => isStepValid(step) ? setStep(s => s + 1) : toast.error('Please complete all fields before continuing.')}
-                                    disabled={!isStepValid(step)}
+                                    onClick={() => {
+                                        const errs: typeof errors = {};
+                                        if (step === 1) {
+                                            if (!form.fullName.trim()) errs.fullName = 'Full name is required';
+                                            if (!form.email.trim()) errs.email = 'Email is required';
+                                            else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = 'Please enter a valid email';
+                                            if (!form.password) errs.password = 'Password is required';
+                                            else if (form.password.length < 8) errs.password = 'At least 8 characters required';
+                                        } else if (step === 2) {
+                                            if (!form.restaurantName.trim()) errs.restaurantName = 'Restaurant name is required';
+                                            if (!form.description.trim()) errs.description = 'Description is required';
+                                            if (!form.seatingCapacity) errs.seatingCapacity = 'Seating capacity is required';
+                                        } else if (step === 3) {
+                                            if (!form.address.trim()) errs.address = 'Address is required';
+                                            if (!form.city.trim()) errs.city = 'City is required';
+                                            if (!form.phone.trim()) errs.phone = 'Phone number is required';
+                                        }
+                                        if (Object.keys(errs).length > 0) {
+                                            setErrors(errs);
+                                            return;
+                                        }
+                                        setErrors({});
+                                        setStep(s => s + 1);
+                                    }}
                                 >
-                                    Continue
+                                    Continue <ArrowRight size={14} />
                                 </button>
                             ) : (
                                 <button className="pr-btn-primary" onClick={submit} disabled={submitting}>
