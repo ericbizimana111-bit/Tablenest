@@ -4,26 +4,26 @@ import { Utensils, ShoppingBag, Truck, ChefHat, ArrowRight } from 'lucide-react'
 const FEATURES = [
     {
         id: 1,
-        title: 'Dine In Experience',
-        description: 'Savor meals in a clean, comfortable, and friendly setting with our partner restaurants.',
+        title: 'Dine In',
+        description: 'Sit down to meals worth lingering over, in restaurants that take the experience seriously.',
         icon: Utensils,
     },
     {
         id: 2,
-        title: 'Takeaway Service',
-        description: 'Quickly grab your favorite food easily while on the go. Fresh and ready when you are.',
+        title: 'Takeaway',
+        description: 'Order ahead, pick up fresh, and keep moving. Great food, zero wait when you are on the go.',
         icon: ShoppingBag,
     },
     {
         id: 3,
         title: 'Home Delivery',
-        description: 'Fast and reliable delivery right to your doorstep. Perfect for meetings, parties, and celebrations.',
+        description: 'Meals arrive where you are, reliably and hot. Easy for busy days, nights in, and sharing.',
         icon: Truck,
     },
     {
         id: 4,
         title: 'Event Catering',
-        description: 'Fresh made meals for parties, corporate events, and special occasions. Custom menus available.',
+        description: 'Feed a room without the hassle. Tailored menus for gatherings, offices, and special moments.',
         icon: ChefHat,
     },
 ];
@@ -115,7 +115,7 @@ export default function WhyChooseUs() {
                                 marginBottom: 20,
                                 lineHeight: 1.15,
                             }}>
-                                Why choose us
+                                A better way to eat out, order in, and share a meal.
                             </h2>
 
                             <p style={{
@@ -125,7 +125,7 @@ export default function WhyChooseUs() {
                                 marginBottom: 36,
                                 maxWidth: 460,
                             }}>
-                                For customers: great taste, fresh ingredients, and fast service you can rely on. For restaurant owners: the tools to manage everything from menu to delivery. Quality, affordability, and a friendly atmosphere make every experience special.
+                                TableNest brings diners and standout restaurants together in one place. Find the right spot, choose how you want it, and enjoy the meal.
                             </p>
 
                             <div className="why-actions" style={{

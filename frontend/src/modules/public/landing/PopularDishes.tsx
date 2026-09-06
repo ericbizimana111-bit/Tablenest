@@ -8,33 +8,29 @@ import dishBurger from '../../../assets/dish_burger.jpg';
 const POPULAR_DISHES = [
     {
         id: 1,
-        name: 'Crispy Chicken Wings',
-        description: 'Buffalo sauce with blue cheese dip on the side',
-        price: '$5.50',
+        name: 'Buffalo Wings',
+        description: 'A popular favorite for sharing, from kitchens that get the balance right.',
         rating: '4.8',
         image: dishWings,
     },
     {
         id: 2,
         name: 'Chocolate Lava Cake',
-        description: 'Warm molten center with vanilla ice cream scoop',
-        price: '$7.50',
+        description: 'Warm, refined, and hard to skip — a dessert worth making room for.',
         rating: '4.9',
         image: dishCake,
     },
     {
         id: 3,
-        name: 'Herb-Roasted Chicken',
-        description: 'Seasoned with rosemary and thyme, served with vegetables',
-        price: '$12.50',
+        name: 'Roasted Chicken',
+        description: 'Simple, seasoned well, and served with the kind of care people notice.',
         rating: '4.7',
         image: dishChicken,
     },
     {
         id: 4,
-        name: 'Classic Beef Burger',
-        description: 'Juicy patty with lettuce, tomato, and secret sauce',
-        price: '$9.00',
+        name: 'Beef Burger',
+        description: 'A solid favorite on the menu, built for a satisfying first bite.',
         rating: '4.8',
         image: dishBurger,
     },
@@ -53,9 +49,6 @@ export default function PopularDishes() {
                     transform: translateY(-6px);
                     box-shadow: 0 20px 35px rgba(15, 23, 42, 0.08) !important;
                     border-color: #FED7AA !important;
-                }
-                .dish-card:hover .dish-circle-img {
-                    transform: scale(1.05) rotate(2deg);
                 }
                 .dish-order-btn {
                     background: #F97316;
@@ -113,7 +106,7 @@ export default function PopularDishes() {
                             letterSpacing: '-0.8px',
                             marginBottom: 12,
                         }}>
-                            Popular Dishes Near You
+                            Dishes people are ordering right now
                         </h2>
 
                         <p style={{
@@ -123,7 +116,7 @@ export default function PopularDishes() {
                             margin: '0 auto',
                             lineHeight: 1.65,
                         }}>
-                            Discover handpicked signature dishes from top rated restaurants, crafted by expert chefs using the freshest ingredients.
+                            A short list of popular dishes from restaurants on TableNest — what people are enjoying most, right now.
                         </p>
                     </div>
 
@@ -151,43 +144,24 @@ export default function PopularDishes() {
                                     overflow: 'hidden',
                                 }}
                             >
-                                {/* Top-right Price Pill */}
+                                {/* Dish Cover Image */}
                                 <div style={{
-                                    position: 'absolute',
-                                    top: 16,
-                                    right: 16,
-                                    background: '#F97316',
-                                    color: '#FFFFFF',
-                                    padding: '4px 12px',
-                                    borderRadius: 9999,
-                                    fontWeight: 700,
-                                    fontSize: 13,
-                                    boxShadow: '0 4px 10px rgba(249, 115, 22, 0.3)',
-                                    zIndex: 2,
-                                }}>
-                                    {dish.price}
-                                </div>
-
-                                {/* Circular Dish Image */}
-                                <div style={{
-                                    width: 144,
-                                    height: 144,
-                                    borderRadius: '50%',
+                                    width: '100%',
+                                    height: 168,
+                                    borderRadius: '22px 22px 0 0',
                                     overflow: 'hidden',
-                                    marginTop: 10,
-                                    marginBottom: 20,
-                                    boxShadow: '0 10px 24px rgba(15, 23, 42, 0.12)',
-                                    border: '3px solid #FFFFFF',
+                                    margin: 0,
+                                    marginBottom: 18,
+                                    background: '#F1F5F9',
                                 }}>
                                     <img
                                         src={dish.image}
                                         alt={dish.name}
-                                        className="dish-circle-img"
                                         style={{
                                             width: '100%',
                                             height: '100%',
                                             objectFit: 'cover',
-                                            transition: 'transform 0.4s ease',
+                                            display: 'block',
                                         }}
                                     />
                                 </div>
@@ -258,7 +232,7 @@ export default function PopularDishes() {
                                             fontFamily: 'inherit',
                                         }}
                                     >
-                                        Order Now
+                                        View Restaurant
                                     </button>
                                 </div>
                             </div>
