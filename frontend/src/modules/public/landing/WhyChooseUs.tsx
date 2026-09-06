@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { ShoppingBag, Truck, ChefHat, ArrowRight } from 'lucide-react';
 import rightImage2 from '../../../assets/hero-right-images (2).png';
+import { useScrollReveal, useRevealChildren, useImageReveal } from '../../../shared/hooks/useScrollReveal';
 
 const FEATURES = [
     {
@@ -25,6 +26,13 @@ const FEATURES = [
 
 export default function WhyChooseUs() {
     const navigate = useNavigate();
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const layoutRef = useRef<HTMLDivElement>(null);
+    const imageRef = useRef<HTMLImageElement>(null);
+
+    useScrollReveal(sectionRef, 'reveal');
+    useRevealChildren(layoutRef, 'stagger');
+    useImageReveal(imageRef);
 
     return (
         <>
@@ -88,13 +96,13 @@ export default function WhyChooseUs() {
                 width: '100%',
                 position: 'relative',
             }}>
-                <div style={{
+                <div ref={sectionRef} style={{
                     maxWidth: 1280,
                     margin: '0 auto',
                     padding: '0 40px',
                     width: '100%',
                 }}>
-                    <div className="why-choose-layout" style={{
+                    <div ref={layoutRef} className="why-choose-layout stagger" style={{
                         display: 'grid',
                         gridTemplateColumns: '1.05fr 1.35fr',
                         gap: 60,
@@ -158,6 +166,7 @@ export default function WhyChooseUs() {
                             background: '#FFFFFF',
                         }}>
                             <img
+                                ref={imageRef}
                                 src={rightImage2}
                                 alt="Why Choose TableNest"
                                 style={{

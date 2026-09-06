@@ -49,6 +49,7 @@ export default function LandingHeader({ theme = 'dark' }: { theme?: 'dark' | 'li
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 padding: '0 48px', zIndex: 1000,
                 borderBottom: navBorder,
+                scrollBehavior: 'smooth',
             }}>
                 {/* Brand Logo */}
                 <div
@@ -78,7 +79,7 @@ export default function LandingHeader({ theme = 'dark' }: { theme?: 'dark' | 'li
                     {NAV_LINKS.map(l => (
                         <span
                             key={l.label}
-                            className="ln-nav-link"
+                            className="ln-nav-link btn-press"
                             style={{ fontSize: 14.5, color: linkColor, fontWeight: 500 }}
                             onClick={() => handleNav(l.path)}
                         >
@@ -176,6 +177,7 @@ export default function LandingHeader({ theme = 'dark' }: { theme?: 'dark' | 'li
                     {NAV_LINKS.map(l => (
                         <div
                             key={l.label}
+                            className="btn-press"
                             onClick={() => handleNav(l.path)}
                             style={{
                                 padding: '16px 0', borderBottom: mobileDivider,

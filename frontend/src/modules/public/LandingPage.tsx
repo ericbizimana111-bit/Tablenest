@@ -1,3 +1,4 @@
+import { useRef, useEffect } from 'react';
 import LandingHeader from './landing/LandingHeader';
 import HeroSection from './landing/HeroSection';
 import OurStorySection from './landing/OurStorySection';
@@ -10,13 +11,33 @@ import NewsletterCTA from './landing/NewsletterCTA';
 import LandingFooter from './landing/LandingFooter';
 
 export default function LandingPage() {
+    const shellRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        requestAnimationFrame(() => {
+            if (!shellRef.current) return;
+            shellRef.current.classList.add('is-ready');
+        });
+    }, []);
+    const shellRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        requestAnimationFrame(() => {
+            if (!shellRef.current) return;
+            shellRef.current.classList.add('is-ready');
+        });
+    }, []);
+
     return (
-        <div style={{
-            fontFamily: 'Poppins, sans-serif',
-            background: '#FFFFFF',
-            overflowX: 'hidden',
-            width: '100%',
-        }}>
+        <div
+            ref={shellRef}
+            className="page-shell"
+            style={{
+                fontFamily: 'Poppins, sans-serif',
+                background: '#FFFFFF',
+                overflowX: 'hidden',
+                width: '100%',
+            }}
+        >
             {/* Navigation Header */}
             <LandingHeader theme="light" />
 

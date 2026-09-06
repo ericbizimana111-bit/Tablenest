@@ -1,10 +1,16 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { Utensils } from 'lucide-react';
+import { useScrollReveal, useRevealChildren } from '../../../shared/hooks/useScrollReveal';
 
 export default function LandingFooter() {
     const [email, setEmail] = useState('');
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const gridRef = useRef<HTMLDivElement>(null);
+
+    useScrollReveal(sectionRef, 'reveal');
+    useRevealChildren(gridRef, 'stagger');
 
     const handleSubscribe = (e: React.FormEvent) => {
         e.preventDefault();
@@ -38,7 +44,7 @@ export default function LandingFooter() {
                 fontFamily: 'Poppins, sans-serif',
             }}
         >
-            <div style={{
+            <div ref={sectionRef} style={{
                 maxWidth: 1280,
                 margin: '0 auto',
                 width: '100%',
@@ -49,13 +55,12 @@ export default function LandingFooter() {
                 className="footer-grid"
             >
                 {/* ─── Brand column ─── */}
-                <div style={{ fontFamily: 'Poppins, sans-serif' }}>
-                    <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 10,
-                        marginBottom: 16,
-                    }}>
+                <div style={{ fontFamily: 'Poppins, sans-serif' }}>                    <div className="card-lift" style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 10,
+                            marginBottom: 16,
+                        }}>
                         <div style={{
                             width: 36,
                             height: 36,
@@ -215,9 +220,9 @@ export default function LandingFooter() {
                                 background: 'transparent',
                                 fontFamily: 'inherit',
                             }}
-                        />
-                        <button
+                        />                            <button
                             type="submit"
+                            className="btn-press"
                             style={{
                                 background: '#F97316',
                                 color: '#FFFFFF',

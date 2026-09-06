@@ -1,12 +1,37 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapPin, Utensils, Search, ArrowRight } from 'lucide-react';
 import heroPhoto from '../../../assets/hero-photo.png';
+import { useScrollReveal, useImageReveal } from '../../../shared/hooks/useScrollReveal';
 
 export default function HeroSection() {
     const navigate = useNavigate();
     const [location, setLocation] = useState('');
     const [cuisine, setCuisine] = useState('');
+
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const heroImgRef = useRef<HTMLDivElement>(null);
+    const graphicRingRef = useRef<HTMLDivElement>(null);
+
+    useScrollReveal(sectionRef, 'reveal');
+    useImageReveal(heroImgRef);
+
+    useEffect(() => {
+        if (!graphicRingRef.current) return;
+        const el = graphicRingRef.current;
+        // Slight delayed gentle float start after entrance
+        const onEnter = () => {
+            requestAnimationFrame(() => {
+                el.classList.add('float-slow');
+            });
+        };
+        const observer = new IntersectionObserver(
+            ([entry]) => { if (entry.isIntersecting) { onEnter(); observer.disconnect(); } },
+            { threshold: 0.25 }
+        );
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, []);
 
     const handleSearch = () => {
         navigate(`/restaurants?search=${cuisine}&location=${location}`);
@@ -41,18 +66,21 @@ export default function HeroSection() {
                 overflow: 'hidden',
                 position: 'relative',
             }}>
-                <div style={{
-                    maxWidth: 1280,
-                    width: '100%',
-                    margin: '0 auto',
-                    padding: '48px 40px 32px',
-                    display: 'grid',
-                    gridTemplateColumns: '1.15fr 0.85fr',
-                    gap: 48,
-                    alignItems: 'center',
-                }}>
+                <div
+                    ref={sectionRef}
+                    style={{
+                        maxWidth: 1280,
+                        width: '100%',
+                        margin: '0 auto',
+                        padding: '48px 40px 32px',
+                        display: 'grid',
+                        gridTemplateColumns: '1.15fr 0.85fr',
+                        gap: 48,
+                        alignItems: 'center',
+                    }}
+                >
                     {/* ─── LEFT CONTENT ─── */}
-                    <div className="hero-content-col">
+                    <div className="hero-content-col stagger">
                         {/* Badge */}
                         <div style={{
                             display: 'inline-flex',
@@ -204,7 +232,7 @@ export default function HeroSection() {
                                 />
                             </div>
                             <button
-                                className="hero-find-btn"
+                                className="btn-press hero-find-btn"
                                 onClick={handleSearch}
                                 style={{
                                     background: '#F97316',
@@ -218,10 +246,11 @@ export default function HeroSection() {
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: 8,
-                                    transition: 'background 0.2s',
-                                    whiteSpace: 'nowrap',
-                                    flexShrink: 0,
-                                }}
+                                className="btn-press",
+                                transition: 'background 0.2s',
+                                whiteSpace: 'nowrap',
+                                flexShrink: 0,
+                            }}
                             >
                                 <Search size={15} />
                                 Find a Table
@@ -236,19 +265,24 @@ export default function HeroSection() {
                         alignItems: 'center',
                         justifyContent: 'center',
                     }}>
-                        <div style={{
-                            width: '100%',
-                            maxWidth: 460,
-                            height: 460,
-                            borderRadius: '50%',
-                            background: 'radial-gradient(circle, #FFF7ED 0%, #FED7AA 100%)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            padding: 24,
-                            boxShadow: '0 20px 40px rgba(249, 115, 22, 0.12)',
-                        }}>
+                        <div
+                            ref={graphicRingRef}
+                            style={{
+                                width: '100%',
+                                maxWidth: 460,
+                                height: 460,
+                                borderRadius: '50%',
+                                background: 'radial-gradient(circle, #FFF7ED 0%, #FED7AA 100%)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: 24,
+                                boxShadow: '0 20px 40px rgba(249, 115, 22, 0.12)',
+                                willChange: 'transform',
+                            }}
+                        >
                             <img
+                                ref={heroImgRef}
                                 src={heroPhoto}
                                 alt="Delicious gourmet salad bowl"
                                 style={{
@@ -256,6 +290,7 @@ export default function HeroSection() {
                                     height: '100%',
                                     objectFit: 'contain',
                                     filter: 'drop-shadow(0 16px 24px rgba(0,0,0,0.15))',
+                                    willChange: 'transform, opacity',
                                 }}
                             />
                         </div>

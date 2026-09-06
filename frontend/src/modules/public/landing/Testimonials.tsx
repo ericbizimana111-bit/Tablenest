@@ -1,4 +1,5 @@
 import { Star } from 'lucide-react';
+import { useScrollReveal, useRevealChildren } from '../../../shared/hooks/useScrollReveal';
 
 const TESTIMONIALS = [
     {
@@ -36,6 +37,14 @@ const TESTIMONIALS = [
 ];
 
 export default function Testimonials() {
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const headerRef = useRef<HTMLDivElement>(null);
+    const trackRef = useRef<HTMLDivElement>(null);
+
+    useScrollReveal(sectionRef, 'reveal');
+    useRevealChildren(headerRef, 'stagger');
+    useRevealChildren(trackRef, 'stagger');
+
     return (
         <>
             <style>{`
@@ -88,14 +97,14 @@ export default function Testimonials() {
                 position: 'relative',
                 overflow: 'hidden',
             }}>
-                <div style={{
+                <div ref={sectionRef} style={{
                     maxWidth: 1280,
                     margin: '0 auto',
                     padding: '0 40px',
                     width: '100%',
                 }}>
                     {/* Header */}
-                    <div style={{ textAlign: 'center', marginBottom: 54 }}>
+                    <div ref={headerRef} style={{ textAlign: 'center', marginBottom: 54 }}>
                         <h2 style={{
                             fontSize: 'clamp(28px, 3.4vw, 40px)',
                             fontWeight: 800,
@@ -117,15 +126,15 @@ export default function Testimonials() {
                     </div>
 
                     {/* Testimonial Track */}
-                    <div style={{
+                    <div ref={trackRef} style={{
                         overflow: 'hidden',
                         margin: '0 auto 32px',
                     }}>
-                        <div className="test-track">
+                        <div className="test-track stagger">
                             {[...TESTIMONIALS, ...TESTIMONIALS, ...TESTIMONIALS].map((item, idx) => (
                                 <div
                                     key={idx}
-                                    className="test-card"
+                                    className="test-card card-lift"
                                     style={{
                                         width: 280,
                                         flexShrink: 0,
@@ -145,6 +154,7 @@ export default function Testimonials() {
                                         <img
                                             src={item.avatar}
                                             alt={item.name}
+                                            className="img-reveal"
                                             style={{
                                                 width: 46,
                                                 height: 46,

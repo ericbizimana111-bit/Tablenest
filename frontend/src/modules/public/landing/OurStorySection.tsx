@@ -4,10 +4,18 @@ import { Play, X } from 'lucide-react';
 
 import heroCroquettes from '../../../assets/hero_croquettes.jpg';
 import heroChicken from '../../../assets/hero_chicken.jpg';
+import { useScrollReveal, useRevealChildren } from '../../../shared/hooks/useScrollReveal';
 
 const YOUTUBE_VIDEO_ID = 'LDiEvqi-cmU';
 
 export default function OurStorySection() {
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const gridRef = useRef<HTMLDivElement>(null);
+    const contentRef = useRef<HTMLDivElement>(null);
+
+    useScrollReveal(sectionRef, 'reveal');
+    useRevealChildren(gridRef, 'stagger');
+    useRevealChildren(contentRef, 'stagger');
     const navigate = useNavigate();
     const [showVideoModal, setShowVideoModal] = useState(false);
     const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -123,13 +131,13 @@ export default function OurStorySection() {
                 overflow: 'hidden',
                 borderTop: '1px solid #F1F5F9',
             }}>
-                <div style={{
+                <div ref={sectionRef} style={{
                     maxWidth: 1280,
                     margin: '0 auto',
                     padding: '0 40px',
                     width: '100%',
                 }}>
-                    <div className="story-grid" style={{
+                    <div ref={gridRef} className="story-grid stagger" style={{
                         display: 'grid',
                         gridTemplateColumns: '1.2fr 1.05fr',
                         gap: 56,
@@ -144,6 +152,7 @@ export default function OurStorySection() {
                                 background: '#0F172A',
                                 boxShadow: '0 8px 30px rgba(15, 23, 42, 0.08), 0 2px 8px rgba(15, 23, 42, 0.04)',
                                 cursor: 'pointer',
+                                className="card-lift",
                                 transition: 'transform 0.25s ease, box-shadow 0.25s ease',
                                 aspectRatio: '16 / 9',
                             }}
@@ -229,7 +238,7 @@ export default function OurStorySection() {
                         </div>
 
                         {/* ─── RIGHT COLUMN: TEXT CONTENT ─── */}
-                        <div className="story-content-col" style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+                        <div ref={contentRef} style={{ display: 'flex', flexDirection: 'column', gap: 28 }} className="story-content-col stagger">
                             {/* Headline */}
                             <h2 style={{
                                 fontSize: 'clamp(30px, 3.6vw, 44px)',

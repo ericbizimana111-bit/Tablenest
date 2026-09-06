@@ -1,4 +1,13 @@
+import { useRef } from 'react';
+import { useScrollReveal, useRevealChildren } from '../../../shared/hooks/useScrollReveal';
+
 export default function NewsletterCTA() {
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const cardRef = useRef<HTMLDivElement>(null);
+
+    useScrollReveal(sectionRef, 'reveal');
+    useRevealChildren(cardRef, 'stagger');
+
     return (
         <>
             <style>{`@media (max-width: 900px) {
@@ -15,13 +24,13 @@ export default function NewsletterCTA() {
                 width: '100%',
                 position: 'relative',
             }}>
-                <div style={{
+                <div ref={sectionRef} style={{
                     maxWidth: 1280,
                     margin: '0 auto',
                     padding: '0 40px',
                     width: '100%',
                 }}>
-                    <div style={{
+                    <div ref={cardRef} className="stagger" style={{
                         maxWidth: 680,
                         margin: '0 auto',
                         background: 'linear-gradient(135deg, #FFF7ED, #FFEDD5)',
@@ -89,6 +98,7 @@ export default function NewsletterCTA() {
                             />
                             <button
                                 type="submit"
+                                className="btn-press"
                                 style={{
                                     background: '#F97316',
                                     color: '#FFFFFF',

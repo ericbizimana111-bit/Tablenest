@@ -1,10 +1,18 @@
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, Tag, ArrowRight } from 'lucide-react';
+import { useScrollReveal, useRevealChildren, useImageReveal } from '../../../shared/hooks/useScrollReveal';
 
 const foodHero = new URL('../../../assets/dish_burger.jpg', import.meta.url).href;
 
 export default function SpecialOffer() {
     const navigate = useNavigate();
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const bannerRef = useRef<HTMLDivElement>(null);
+    const imgRef = useRef<HTMLImageElement>(null);
+
+    useScrollReveal(sectionRef, 'reveal');
+    useRevealChildren(bannerRef, 'stagger');
+    useImageReveal(imgRef);
 
     return (
         <>
@@ -36,13 +44,13 @@ export default function SpecialOffer() {
                 padding: '40px 0 90px',
                 width: '100%',
             }}>
-                <div style={{
+                <div ref={sectionRef} style={{
                     maxWidth: 1280,
                     margin: '0 auto',
                     padding: '0 40px',
                     width: '100%',
                 }}>
-                    <div className="offer-banner-grid" style={{
+                    <div ref={bannerRef} className="offer-banner-grid stagger" style={{
                         background: 'linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%)',
                         borderRadius: 26,
                         border: '1.5px solid #FED7AA',
@@ -100,7 +108,7 @@ export default function SpecialOffer() {
                                 flexWrap: 'wrap',
                             }}>
                                 <button
-                                    className="offer-order-btn"
+                                    className="btn-press offer-order-btn"
                                     onClick={() => navigate('/restaurants')}
                                     style={{
                                         display: 'inline-flex',
@@ -137,6 +145,7 @@ export default function SpecialOffer() {
                                 position: 'relative',
                             }}>
                                 <img
+                                    ref={imgRef}
                                     src={foodHero}
                                     alt="TableNest restaurant discovery and great meals"
                                     style={{

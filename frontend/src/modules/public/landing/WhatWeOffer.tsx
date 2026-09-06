@@ -1,4 +1,15 @@
+import { useRef } from 'react';
+import { useScrollReveal, useRevealChildren } from '../../../shared/hooks/useScrollReveal';
+
 export default function WhatWeOffer() {
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const headerRef = useRef<HTMLDivElement>(null);
+    const gridRef = useRef<HTMLDivElement>(null);
+
+    useScrollReveal(sectionRef, 'reveal');
+    useRevealChildren(headerRef, 'stagger');
+    useRevealChildren(gridRef, 'stagger');
+
     return (
         <>
             <style>{`
@@ -25,14 +36,14 @@ export default function WhatWeOffer() {
                 width: '100%',
                 position: 'relative',
             }}>
-                <div style={{
+                <div ref={sectionRef} style={{
                     maxWidth: 1280,
                     margin: '0 auto',
                     padding: '0 40px',
                     width: '100%',
                 }}>
                     {/* Header */}
-                    <div style={{ textAlign: 'center', marginBottom: 60 }}>
+                    <div ref={headerRef} style={{ textAlign: 'center', marginBottom: 60 }}>
                         <div style={{
                             display: 'inline-block',
                             color: '#F97316',
@@ -57,15 +68,15 @@ export default function WhatWeOffer() {
                     </div>
 
                     {/* 3 Pillars Grid */}
-                    <div className="what-we-offer-grid" style={{
+                    <div ref={gridRef} className="what-we-offer-grid stagger" style={{
                         display: 'grid',
                         gridTemplateColumns: 'repeat(3, 1fr)',
                         gap: 36,
                     }}>
                         {/* 1. Easy To Order */}
-                        <div className="offer-item-card">
+                        <div className="offer-item-card card-lift">
                             <div
-                                className="offer-illustration-box"
+                                className="offer-illustration-box card-lift"
                                 style={{
                                     width: '100%',
                                     height: 220,

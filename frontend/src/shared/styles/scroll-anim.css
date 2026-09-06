@@ -1,0 +1,125 @@
+/* ── Premium scroll-driven animations ───────────────────────────────────── */
+:root {
+  --motion-delay-base: 80ms;
+}
+
+/* Smooth scrolling anchored sections (no layout change, just behavior) */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Base reveal state for scroll-triggered elements */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered reveal children */
+.stagger > * {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.stagger.is-visible > *:nth-child(1) { transition-delay: 0ms; opacity: 1; transform: translateY(0); }
+.stagger.is-visible > *:nth-child(2) { transition-delay: 90ms; opacity: 1; transform: translateY(0); }
+.stagger.is-visible > *:nth-child(3) { transition-delay: 180ms; opacity: 1; transform: translateY(0); }
+.stagger.is-visible > *:nth-child(4) { transition-delay: 270ms; opacity: 1; transform: translateY(0); }
+.stagger.is-visible > *:nth-child(5) { transition-delay: 360ms; opacity: 1; transform: translateY(0); }
+.stagger.is-visible > *:nth-child(6) { transition-delay: 450ms; opacity: 1; transform: translateY(0); }
+.stagger.is-visible > *:nth-child(7) { transition-delay: 540ms; opacity: 1; transform: translateY(0); }
+.stagger.is-visible > *:nth-child(8) { transition-delay: 630ms; opacity: 1; transform: translateY(0); }
+
+/* Image reveal: soft fade + near-zero scale pop */
+.img-reveal {
+  opacity: 0;
+  transform: scale(0.97);
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.img-reveal.is-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Subtle floating for decorative circular hero image */
+.float-slow {
+  animation: floatSlow 7s ease-in-out infinite;
+}
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-8px) scale(1.01); }
+}
+
+.float-slow:hover {
+  animation-play-state: paused;
+}
+
+/* Hover lift for cards (premium depth, not exaggerated) */
+.card-lift {
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.25s ease;
+}
+
+.card-lift:hover {
+  transform: translateY(-4px) scale(1.01);
+}
+
+/* Button micro-interaction: gentle lift + press feedback */
+.btn-press {
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.btn-press:hover {
+  transform: translateY(-2px);
+}
+
+.btn-press:active {
+  transform: translateY(0px) scale(0.985);
+  transition-duration: 0.08s;
+}
+
+/* Overscroll/anchor offset so fixed header doesn't hide section heads */
+section,
+section > div,
+section > div > div,
+section > div > div > div,
+section > div > div > div > div {
+  scroll-margin-top: 90px;
+}
+
+/* Entrance page layer: subtle fade-in of whole app shell on first paint */
+.page-shell {
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.page-shell.is-ready {
+  opacity: 1;
+}

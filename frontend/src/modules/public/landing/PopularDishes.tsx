@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import dishWings from '../../../assets/dish_wings.jpg';
 import dishCake from '../../../assets/dish_cake.jpg';
 import dishChicken from '../../../assets/dish_chicken.jpg';
 import dishBurger from '../../../assets/dish_burger.jpg';
+import { useScrollReveal, useRevealChildren } from '../../../shared/hooks/useScrollReveal';
 
 const POPULAR_DISHES = [
     {
@@ -39,6 +40,14 @@ const POPULAR_DISHES = [
 
 export default function PopularDishes() {
     const navigate = useNavigate();
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const headerRef = useRef<HTMLDivElement>(null);
+    const gridRef = useRef<HTMLDivElement>(null);
+
+    useScrollReveal(sectionRef, 'reveal');
+    useRevealChildren(headerRef, 'stagger');
+    useRevealChildren(gridRef, 'stagger');
+
     const [offset, setOffset] = React.useState(0);
     const dishesPerView = window.innerWidth <= 1080 ? 2 : window.innerWidth <= 600 ? 1 : 4;
 
@@ -109,14 +118,14 @@ export default function PopularDishes() {
                 width: '100%',
                 position: 'relative',
             }}>
-                <div style={{
+                <div ref={sectionRef} style={{
                     maxWidth: 1280,
                     margin: '0 auto',
                     padding: '0 40px',
                     width: '100%',
                 }}>
                     {/* Section Header */}
-                    <div style={{ textAlign: 'center', marginBottom: 54 }}>
+                    <div ref={headerRef} style={{ textAlign: 'center', marginBottom: 54 }}>
                         <div style={{
                             display: 'inline-block',
                             color: '#F97316',
@@ -198,7 +207,7 @@ export default function PopularDishes() {
                         </div>
 
                         {/* Dish Cards Grid */}
-                        <div className="popular-dishes-grid" style={{
+                        <div ref={gridRef} className="popular-dishes-grid stagger" style={{
                             display: 'grid',
                             gridTemplateColumns: 'repeat(4, 1fr)',
                             gap: 24,
@@ -206,7 +215,7 @@ export default function PopularDishes() {
                             {POPULAR_DISHES.slice(offset, offset + dishesPerView).map((dish) => (
                                 <div
                                     key={dish.id}
-                                    className="dish-card"
+                                    className="dish-card card-lift"
                                     style={{
                                         background: '#FFFFFF',
                                         borderRadius: 22,
@@ -234,6 +243,7 @@ export default function PopularDishes() {
                                         <img
                                             src={dish.image}
                                             alt={dish.name}
+                                            className="img-reveal"
                                             style={{
                                                 width: '100%',
                                                 height: '100%',
@@ -282,7 +292,7 @@ export default function PopularDishes() {
                                         <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                                             {/* View Restaurant Button */}
                                             <button
-                                                className="dish-order-btn"
+                                                className="btn-press dish-order-btn"
                                                 onClick={() => navigate('/restaurants')}
                                                 style={{
                                                     display: 'inline-flex',
@@ -301,7 +311,7 @@ export default function PopularDishes() {
                                             </button>
                                             {/* Book Button */}
                                             <button
-                                                className="dish-book-btn"
+                                                className="btn-press dish-book-btn"
                                                 onClick={() => navigate('/restaurants')}
                                                 style={{
                                                     display: 'inline-flex',
