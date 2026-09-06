@@ -70,8 +70,8 @@ export default function WhatWeOffer() {
                                     width: '100%',
                                     height: 220,
                                     borderRadius: 20,
-                                    background: '#FFF7ED',
-                                    border: '1.5px solid #FED7AA',
+                                    background: '#FFFFFF',
+                                    border: '1.5px solid #E2E8F0',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
@@ -127,8 +127,8 @@ export default function WhatWeOffer() {
                                     width: '100%',
                                     height: 220,
                                     borderRadius: 20,
-                                    background: '#FFF7ED',
-                                    border: '1.5px solid #FED7AA',
+                                    background: '#FFFFFF',
+                                    border: '1.5px solid #E2E8F0',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
@@ -186,8 +186,8 @@ export default function WhatWeOffer() {
                                     width: '100%',
                                     height: 220,
                                     borderRadius: 20,
-                                    background: '#FFF7ED',
-                                    border: '1.5px solid #FED7AA',
+                                    background: '#FFFFFF',
+                                    border: '1.5px solid #E2E8F0',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
@@ -236,6 +236,99 @@ export default function WhatWeOffer() {
                                 Real reviews, clear pricing, and reliable restaurants — so the experience matches what you expected.
                             </p>
                         </div>
+                    </div>
+
+                    {/* ─── NEWSLETTER CARD ─── */}                        <div style={{
+                        maxWidth: 680,
+                        margin: '60px auto 0',
+                        background: 'linear-gradient(135deg, #FFF7ED, #FFEDD5)',
+                        borderRadius: 24,
+                        padding: '48px 44px',
+                        textAlign: 'center',
+                        boxShadow: '0 4px 16px rgba(249, 115, 22, 0.10)',
+                    }}>
+                        <h3 style={{
+                            fontSize: 22,
+                            fontWeight: 800,
+                            color: '#0F172A',
+                            letterSpacing: '-0.3px',
+                            marginBottom: 8,
+                        }}>
+                            Don't miss out on great meals.
+                        </h3>
+
+                        <p style={{
+                            fontSize: 14,
+                            color: '#64748B',
+                            lineHeight: 1.65,
+                            marginBottom: 24,
+                            maxWidth: 380,
+                            margin: '0 auto 24px',
+                        }}>
+                            Subscribe to our newsletter and get exclusive offers, new restaurant alerts, and seasonal specials delivered to your inbox.
+                        </p>
+
+                        <form
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                const input = (e.target as HTMLFormElement).querySelector('input') as HTMLInputElement;
+                                if (input.value) {
+                                    console.log('Subscribed:', input.value);
+                                    input.value = '';
+                                }
+                            }}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                background: '#FFFFFF',
+                                border: '1.5px solid #FED7AA',
+                                borderRadius: 9999,
+                                padding: '4px 4px 4px 20px',
+                                maxWidth: 600,
+                                margin: '0 auto',
+                                boxShadow: '0 2px 8px rgba(249, 115, 22, 0.08)',
+                            }}
+                        >
+                            <input
+                                type="email"
+                                required
+                                placeholder="Your email address"
+                                style={{
+                                    flex: 1,
+                                    background: 'transparent',
+                                    border: 'none',
+                                    outline: 'none',
+                                    padding: '12px 0',
+                                    fontSize: 14,
+                                    color: '#334155',
+                                    fontFamily: 'inherit',
+                                }}
+                            />
+                            <button
+                                type="submit"
+                                style={{
+                                    background: '#F97316',
+                                    color: '#FFFFFF',
+                                    border: 'none',
+                                    borderRadius: 9999,
+                                    padding: '11px 24px',
+                                    fontSize: 14,
+                                    fontWeight: 700,
+                                    cursor: 'pointer',
+                                    fontFamily: 'inherit',
+                                    whiteSpace: 'nowrap',
+                                    transition: 'background 0.2s ease',
+                                }}
+                                onMouseEnter={(e) => {
+                                    (e.target as HTMLButtonElement).style.background = '#EA580C';
+                                }}
+                                onMouseLeave={(e) => {
+                                    (e.target as HTMLButtonElement).style.background = '#F97316';
+                                }}
+                            >
+                                Subscribe
+                            </button>
+                        </form>
                     </div>
                 </div>
             </section>

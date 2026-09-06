@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { ShoppingBag, Truck, ChefHat, ArrowRight } from 'lucide-react';
+import rightImage2 from '../../../assets/hero-right-images (2).png';
 
 const FEATURES = [
     {
@@ -9,13 +10,13 @@ const FEATURES = [
         icon: ShoppingBag,
     },
     {
-        id: 3,
+        id: 2,
         title: 'Home Delivery',
         description: 'Meals arrive where you are, reliably and hot. Easy for busy days, nights in, and sharing.',
         icon: Truck,
     },
     {
-        id: 4,
+        id: 3,
         title: 'Event Catering',
         description: 'Feed a room without the hassle. Tailored menus for gatherings, offices, and special moments.',
         icon: ChefHat,
@@ -109,7 +110,7 @@ export default function WhyChooseUs() {
                                 marginBottom: 20,
                                 lineHeight: 1.15,
                             }}>
-                                A better way to eat out, order in, and share a meal.
+                                Great meals, cold drinks, good times.
                             </h2>
 
                             <p style={{
@@ -122,7 +123,7 @@ export default function WhyChooseUs() {
                                 TableNest brings diners and standout restaurants together in one place. Find the right spot, choose how you want it, and enjoy the meal.
                             </p>
 
-                            <div className="why-actions" style={{
+                            <div style={{
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: 14,
@@ -145,72 +146,29 @@ export default function WhyChooseUs() {
                                 >
                                     Get Started
                                 </button>
-
-                                <button
-                                    className="why-btn-secondary"
-                                    onClick={() => navigate('/restaurants')}
-                                    style={{
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        gap: 8,
-                                        padding: '13px 26px',
-                                        borderRadius: 10,
-                                        fontSize: 14.5,
-                                        fontWeight: 600,
-                                        cursor: 'pointer',
-                                        fontFamily: 'inherit',
-                                    }}
-                                >
-                                    Explore Restaurants
-                                </button>
                             </div>
                         </div>
 
-                        {/* ─── RIGHT COLUMN: 2x2 Feature Grid ─── */}
-                        <div className="why-cards-grid" style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(2, 1fr)',
-                            gap: 20,
+                        {/* ─── RIGHT COLUMN: Image ─── */}
+                        <div style={{
+                            width: '100%',
+                            height: 280,
+                            borderRadius: 20,
+                            overflow: 'hidden',
+                            background: '#FFFFFF',
                         }}>
-                            {FEATURES.map((item) => {
-                                const Icon = item.icon;
-                                return (
-                                    <div key={item.id} className="why-card">
-                                        <div style={{
-                                            width: 44,
-                                            height: 44,
-                                            borderRadius: 12,
-                                            background: '#FFFFFF',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            marginBottom: 16,
-                                            boxShadow: '0 2px 8px rgba(249, 115, 22, 0.15)',
-                                        }}>
-                                            <Icon size={22} color="#F97316" />
-                                        </div>
-
-                                        <h3 style={{
-                                            fontSize: 16,
-                                            fontWeight: 700,
-                                            color: '#0F172A',
-                                            marginBottom: 8,
-                                            letterSpacing: '-0.3px',
-                                        }}>
-                                            {item.title}
-                                        </h3>
-
-                                        <p style={{
-                                            fontSize: 13,
-                                            color: '#64748B',
-                                            lineHeight: 1.6,
-                                            margin: 0,
-                                        }}>
-                                            {item.description}
-                                        </p>
-                                    </div>
-                                );
-                            })}
+                            <img
+                                src={rightImage2}
+                                alt="Why Choose TableNest"
+                                style={{
+                                    background:'orange',
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'contain',
+                                    display: 'block',
+                                    
+                                }}
+                            />
                         </div>
                     </div>
                 </div>
