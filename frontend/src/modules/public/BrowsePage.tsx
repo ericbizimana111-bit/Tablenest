@@ -70,7 +70,7 @@ export default function BrowsePage() {
             `}</style>
 
             <LandingHeader theme="light" />
-        <main style={{ maxWidth: 1200, margin: '0 auto', padding: '96px 24px 32px' }}>
+            <main style={{ maxWidth: 1200, margin: '0 auto', padding: '96px 24px 32px' }}>
 
                 <div style={{ display: 'flex', gap: 12, marginBottom: 24, alignItems: 'center' }}>
                     <div style={{ position: 'relative', flex: 1 }}>

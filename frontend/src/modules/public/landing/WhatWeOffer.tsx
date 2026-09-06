@@ -52,7 +52,7 @@ export default function WhatWeOffer() {
                             letterSpacing: '-0.8px',
                             lineHeight: 1.2,
                         }}>
-                            One Platform, Every Way to Enjoy Food
+                            Discover. Reserve. Dine.
                         </h2>
                     </div>
 
@@ -105,7 +105,7 @@ export default function WhatWeOffer() {
                                 marginBottom: 10,
                                 letterSpacing: '-0.3px',
                             }}>
-                                Easy To Order
+                                Discover & Order
                             </h3>
 
                             <p style={{
@@ -115,7 +115,7 @@ export default function WhatWeOffer() {
                                 maxWidth: 300,
                                 margin: '0 auto',
                             }}>
-                                You only need a few steps to start ordering food from your favorite restaurants.
+                                Browse restaurants, explore menus, and order in a few taps — everything you need is in one place.
                             </p>
                         </div>
 
@@ -164,7 +164,7 @@ export default function WhatWeOffer() {
                                 marginBottom: 10,
                                 letterSpacing: '-0.3px',
                             }}>
-                                Fastest Delivery
+                                Reserve in Seconds
                             </h3>
 
                             <p style={{
@@ -174,7 +174,7 @@ export default function WhatWeOffer() {
                                 maxWidth: 300,
                                 margin: '0 auto',
                             }}>
-                                Delivery that is always on time, even faster than you expect. Hot and fresh.
+                                Book a table without the back-and-forth. Pick a time, confirm, and show up when you mean to.
                             </p>
                         </div>
 
@@ -223,7 +223,7 @@ export default function WhatWeOffer() {
                                 marginBottom: 10,
                                 letterSpacing: '-0.3px',
                             }}>
-                                Best Quality
+                                Dine with Confidence
                             </h3>
 
                             <p style={{
@@ -233,7 +233,7 @@ export default function WhatWeOffer() {
                                 maxWidth: 300,
                                 margin: '0 auto',
                             }}>
-                                Quality is our number one priority. Only the finest ingredients make it to your plate.
+                                Real reviews, clear pricing, and reliable restaurants — so the experience matches what you expected.
                             </p>
                         </div>
                     </div>

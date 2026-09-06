@@ -128,13 +128,13 @@ export default function HeroSection() {
 
                             <button
                                 className="hero-action-btn"
-                                onClick={() => navigate('/restaurants')}
+                                onClick={() => navigate('/partner/register')}
                                 style={{
                                     display: 'inline-flex',
                                     alignItems: 'center',
                                     gap: 8,
                                     background: '#FFF7ED',
-                                    color: '#EA580C',
+                                    color: '#F97316',
                                     border: '1.5px solid #FED7AA',
                                     padding: '13px 24px',
                                     borderRadius: 10,
@@ -145,8 +145,7 @@ export default function HeroSection() {
                                     transition: 'all 0.2s',
                                 }}
                             >
-                                <Utensils size={16} />
-                                Book Restaurants
+                                List Your Restaurant
                             </button>
                         </div>
 
