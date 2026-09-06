@@ -5,71 +5,127 @@ export default function OwnerCTA() {
 
     return (
         <section style={{
-            padding: '0 48px 56px', maxWidth: 1280, margin: '0 auto', width: '100%',
+            width: '100%',
+            background: '#FFFFFF',
+            padding: '64px 0 88px',
         }}>
-            <div style={{
-                background: '#F97316', borderRadius: 18, padding: '48px 56px',
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                boxShadow: '0 10px 30px rgba(249,115,22,0.25)',
-                position: 'relative', overflow: 'hidden',
-            }}
-                className="owner-cta-inner"
-            >
-                {/* Decorative circles */}
-                <div style={{
-                    position: 'absolute', top: -40, right: 100,
-                    width: 120, height: 120, borderRadius: '50%',
-                    background: 'rgba(255,255,255,0.08)',
-                }} />
-                <div style={{
-                    position: 'absolute', bottom: -30, right: 200,
-                    width: 80, height: 80, borderRadius: '50%',
-                    background: 'rgba(255,255,255,0.06)',
-                }} />
-
-                <div style={{ position: 'relative', zIndex: 1 }}>
-                    <h3 style={{
-                        color: 'white', fontSize: 24, fontWeight: 800, marginBottom: 10,
-                        letterSpacing: '-0.5px',
-                    }}>
-                        Are you a restaurant owner?
-                    </h3>
-                    <p style={{
-                        color: 'rgba(255,255,255,0.9)', fontSize: 15, margin: 0,
-                        fontWeight: 300, maxWidth: 480,
-                    }}>
-                        Join TableNest and reach thousands of hungry customers every day. Grow your restaurant with us.
-                    </p>
-                </div>
-
-                <button
-                    onClick={() => navigate('/partner/register')}
+            <div style={{ maxWidth: 1280, margin: '0 auto', width: '100%', padding: '0 48px' }}>
+                <div
+                    className="owner-cta-inner"
                     style={{
-                        background: 'white', color: '#EA580C', padding: '14px 32px',
-                        borderRadius: 10, border: 'none', cursor: 'pointer',
-                        fontWeight: 700, fontSize: 14, fontFamily: 'Poppins',
-                        whiteSpace: 'nowrap', transition: 'all 0.3s',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                        position: 'relative', zIndex: 1,
-                    }}
-                    onMouseEnter={e => {
-                        e.currentTarget.style.background = '#172033';
-                        e.currentTarget.style.color = 'white';
-                        e.currentTarget.style.transform = 'scale(1.03)';
-                    }}
-                    onMouseLeave={e => {
-                        e.currentTarget.style.background = 'white';
-                        e.currentTarget.style.color = '#EA580C';
-                        e.currentTarget.style.transform = 'scale(1)';
+                        background: 'linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%)',
+                        border: '1.5px solid #FDBA74',
+                        borderRadius: 22,
+                        padding: '48px 56px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        boxShadow: '0 12px 36px -8px rgba(249, 115, 22, 0.14)',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        gap: 32,
                     }}
                 >
-                    List Your Restaurant →
-                </button>
+                    {/* Decorative subtle circles */}
+                    <div style={{
+                        position: 'absolute', top: -50, right: 120,
+                        width: 140, height: 140, borderRadius: '50%',
+                        background: 'rgba(249, 115, 22, 0.06)',
+                        pointerEvents: 'none',
+                    }} />
+                    <div style={{
+                        position: 'absolute', bottom: -40, right: 240,
+                        width: 90, height: 90, borderRadius: '50%',
+                        background: 'rgba(249, 115, 22, 0.05)',
+                        pointerEvents: 'none',
+                    }} />
+
+                    <div style={{ position: 'relative', zIndex: 1, maxWidth: 620 }}>
+                        <div style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 6,
+                            background: '#FFFFFF',
+                            border: '1px solid #FED7AA',
+                            borderRadius: 9999,
+                            padding: '4px 14px',
+                            marginBottom: 14,
+                        }}>
+                            <span style={{
+                                color: '#EA580C',
+                                fontSize: 11,
+                                fontWeight: 700,
+                                letterSpacing: '0.06em',
+                                textTransform: 'uppercase',
+                            }}>
+                                ✦ Partner with TableNest
+                            </span>
+                        </div>
+
+                        <h3 style={{
+                            color: '#0F172A',
+                            fontSize: 'clamp(22px, 2.5vw, 28px)',
+                            fontWeight: 800,
+                            marginBottom: 10,
+                            letterSpacing: '-0.5px',
+                            lineHeight: 1.25,
+                        }}>
+                            Great Food, Happy Diners, Thriving Restaurants.
+                        </h3>
+                        <p style={{
+                            color: '#475569',
+                            fontSize: 14.5,
+                            margin: 0,
+                            lineHeight: 1.65,
+                        }}>
+                            Join TableNest to reach thousands of diners daily, manage reservations seamlessly,
+                            and accelerate your revenue with automated order tracking and menu management.
+                        </p>
+                    </div>
+
+                    <button
+                        onClick={() => navigate('/partner/register')}
+                        style={{
+                            background: '#F97316',
+                            color: '#FFFFFF',
+                            padding: '16px 36px',
+                            borderRadius: 12,
+                            border: 'none',
+                            cursor: 'pointer',
+                            fontWeight: 700,
+                            fontSize: 14.5,
+                            fontFamily: 'Poppins',
+                            whiteSpace: 'nowrap',
+                            transition: 'all 0.25s ease',
+                            boxShadow: '0 4px 16px rgba(249, 115, 22, 0.3)',
+                            position: 'relative',
+                            zIndex: 1,
+                            flexShrink: 0,
+                        }}
+                        onMouseEnter={e => {
+                            e.currentTarget.style.background = '#EA580C';
+                            e.currentTarget.style.transform = 'translateY(-2px)';
+                            e.currentTarget.style.boxShadow = '0 8px 24px rgba(234, 88, 12, 0.38)';
+                        }}
+                        onMouseLeave={e => {
+                            e.currentTarget.style.background = '#F97316';
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = '0 4px 16px rgba(249, 115, 22, 0.3)';
+                        }}
+                    >
+                        List Your Restaurant →
+                    </button>
+                </div>
             </div>
 
             <style>{`
-                @media (max-width: 768px) {
-                    .owner-cta-inner { flex-direction: column !important; text-align: center !important; gap: 20px !important; padding: 36px 28px !important; }
+                @media (max-width: 900px) {
+                    .owner-cta-inner {
+                        flex-direction: column !important;
+                        text-align: center !important;
+                        gap: 24px !important;
+                        padding: 36px 28px !important;
+                    }
                 }
             `}</style>
         </section>

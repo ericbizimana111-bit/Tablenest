@@ -16,10 +16,7 @@ export default function CuisineCategories() {
     const navigate = useNavigate();
 
     return (
-        <section style={{
-            padding: '48px 48px 20px', background: '#FFFFFF',
-            maxWidth: 1280, margin: '0 auto', width: '100%',
-        }}>
+        <div style={{ width: '100%' }}>
             <div style={{
                 display: 'flex', justifyContent: 'center', gap: 32,
                 flexWrap: 'wrap',
@@ -38,18 +35,19 @@ export default function CuisineCategories() {
                     >
                         <div style={{
                             width: 72, height: 72, borderRadius: '50%', overflow: 'hidden',
-                            border: '3px solid #F1F5F9', boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                            border: '3px solid #FFFFFF', boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
                             transition: 'all 0.2s',
+                            background: '#FFFFFF',
                         }}
-                            onMouseEnter={e => { e.currentTarget.style.borderColor = '#F97316'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(249,115,22,0.2)'; }}
-                            onMouseLeave={e => { e.currentTarget.style.borderColor = '#F1F5F9'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)'; }}
+                            onMouseEnter={e => { e.currentTarget.style.borderColor = '#0F172A'; e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.18)'; }}
+                            onMouseLeave={e => { e.currentTarget.style.borderColor = '#FFFFFF'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)'; }}
                         >
                             {c.isMore ? (
                                 <div style={{
-                                    width: '100%', height: '100%', background: '#F1F5F9',
+                                    width: '100%', height: '100%', background: '#FFFFFF',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 }}>
-                                    <MoreHorizontal size={24} color="#475569" />
+                                    <MoreHorizontal size={24} color="#0F172A" />
                                 </div>
                             ) : (
                                 <img
@@ -61,7 +59,7 @@ export default function CuisineCategories() {
                             )}
                         </div>
                         <span style={{
-                            fontSize: 13, fontWeight: 600, color: '#475569',
+                            fontSize: 13, fontWeight: 600, color: '#0F172A',
                             textAlign: 'center', whiteSpace: 'nowrap',
                         }}>
                             {c.name}
@@ -69,6 +67,6 @@ export default function CuisineCategories() {
                     </div>
                 ))}
             </div>
-        </section>
+        </div>
     );
 }

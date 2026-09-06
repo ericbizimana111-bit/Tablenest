@@ -9,13 +9,15 @@ export default function RoleCards() {
 
     return (
         <section style={{
-            padding: '48px 48px 56px', background: '#F8FAFC',
-            maxWidth: 1280, margin: '0 auto', width: '100%',
+            width: '100%',
+            background: '#FFFFFF',
+            padding: '72px 0 80px',
         }}>
-            <div className="role-cards-grid" style={{
-                display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24,
-                alignItems: 'stretch',
-            }}>
+            <div style={{ maxWidth: 1280, margin: '0 auto', width: '100%', padding: '0 48px' }}>
+                <div className="role-cards-grid" style={{
+                    display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 28,
+                    alignItems: 'stretch',
+                }}>
                 {/* Customer Card */}
                 <div style={{
                     background: '#FFFFFF', borderRadius: 16, border: '1px solid #E2E8F0',
@@ -153,6 +155,7 @@ export default function RoleCards() {
                     </button>
                 </div>
             </div>
+        </div>
 
             <style>{`
                 @media (max-width: 768px) {

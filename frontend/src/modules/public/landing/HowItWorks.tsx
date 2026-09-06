@@ -30,15 +30,17 @@ const STEPS = [
 export default function HowItWorks() {
     return (
         <section style={{
-            padding: '72px 48px', background: '#FFFFFF',
-            maxWidth: 1280, margin: '0 auto', width: '100%',
+            width: '100%',
+            background: '#FFFFFF',
+            padding: '80px 0 88px',
         }}>
-            <h2 style={{
-                textAlign: 'center', fontSize: 30, fontWeight: 800, marginBottom: 56,
-                color: '#0F172A', letterSpacing: '-0.5px',
-            }}>
-                How It Works
-            </h2>
+            <div style={{ maxWidth: 1280, margin: '0 auto', width: '100%', padding: '0 48px' }}>
+                <h2 style={{
+                    textAlign: 'center', fontSize: 32, fontWeight: 800, marginBottom: 56,
+                    color: '#0F172A', letterSpacing: '-0.5px',
+                }}>
+                    How It Works
+                </h2>
 
             <div className="how-it-works-grid" style={{
                 display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24,
@@ -88,6 +90,7 @@ export default function HowItWorks() {
                         </p>
                     </div>
                 ))}
+                </div>
             </div>
 
             <style>{`

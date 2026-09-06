@@ -14,8 +14,28 @@ export default function LandingPage() {
         <div style={{ fontFamily: 'Poppins, sans-serif', background: '#F8FAFC', overflowX: 'hidden' }}>
             <LandingHeader theme="light" />
             <HeroSection />
-            <CuisineCategories />
-            <FeatureCards />
+            {/* Distinct Full-Width Section for Categories & Feature Cards */}
+            <section style={{
+                width: '100%',
+                background: '#FFF7ED',
+                borderTop: '1px solid #FED7AA',
+                borderBottom: '1px solid #FED7AA',
+                padding: '64px 0 72px',
+                position: 'relative',
+            }}>
+                <div style={{
+                    maxWidth: 1280,
+                    margin: '0 auto',
+                    width: '100%',
+                    padding: '0 48px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 40,
+                }}>
+                    <CuisineCategories />
+                    <FeatureCards />
+                </div>
+            </section>
             <RoleCards />
             <HowItWorks />
             <PopularRestaurants />

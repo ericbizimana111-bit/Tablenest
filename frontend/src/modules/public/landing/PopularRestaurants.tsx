@@ -15,12 +15,14 @@ export default function PopularRestaurants() {
 
     return (
         <section style={{
-            padding: '64px 48px', background: '#FFFFFF',
-            maxWidth: 1280, margin: '0 auto', width: '100%',
+            width: '100%',
+            background: '#F8FAFC',
+            padding: '72px 0 80px',
         }}>
-            <div style={{
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32,
-            }}>
+            <div style={{ maxWidth: 1280, margin: '0 auto', width: '100%', padding: '0 48px' }}>
+                <div style={{
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32,
+                }}>
                 <h2 style={{
                     fontSize: 28, fontWeight: 800, color: '#0F172A', letterSpacing: '-0.5px',
                 }}>
@@ -192,6 +194,7 @@ export default function PopularRestaurants() {
                         </div>
                     </div>
                 ))}
+                </div>
             </div>
 
             <style>{`
