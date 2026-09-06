@@ -1,15 +1,9 @@
 import { useNavigate } from 'react-router-dom';
-import { Utensils, ShoppingBag, Truck, ChefHat, ArrowRight } from 'lucide-react';
+import { ShoppingBag, Truck, ChefHat, ArrowRight } from 'lucide-react';
 
 const FEATURES = [
     {
         id: 1,
-        title: 'Dine In',
-        description: 'Sit down to meals worth lingering over, in restaurants that take the experience seriously.',
-        icon: Utensils,
-    },
-    {
-        id: 2,
         title: 'Takeaway',
         description: 'Order ahead, pick up fresh, and keep moving. Great food, zero wait when you are on the go.',
         icon: ShoppingBag,
