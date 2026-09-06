@@ -195,7 +195,7 @@ export default function Testimonials() {
                             <div style={{
                                 position: 'relative',
                                 marginBottom: -20,
-                                marginTop: -12,
+                                marginTop: -10,
                                 width: 64,
                                 height: 64,
                                 borderRadius: '50%',
@@ -207,7 +207,7 @@ export default function Testimonials() {
                                 <img
                                     src={t.photo}
                                     alt={t.name}
-                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: '50% 20%' }}
                                 />
                                 {/* Orange rating badge overlapping photo */}
                                 <div style={{
