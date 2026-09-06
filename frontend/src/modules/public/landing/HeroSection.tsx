@@ -1,447 +1,268 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Play, ArrowRight, Utensils, Sparkles, X } from 'lucide-react';
-import heroPastry from '../../../assets/hero_pastry.jpg';
-import heroCroquettes from '../../../assets/hero_croquettes.jpg';
-import heroChicken from '../../../assets/hero_chicken.jpg';
+import { MapPin, Utensils, Search, ArrowRight } from 'lucide-react';
+import heroPhoto from '../../../assets/hero-photo.png';
 
 export default function HeroSection() {
     const navigate = useNavigate();
-    const [showVideoModal, setShowVideoModal] = useState(false);
+    const [location, setLocation] = useState('');
+    const [cuisine, setCuisine] = useState('');
+
+    const handleSearch = () => {
+        navigate(`/restaurants?search=${cuisine}&location=${location}`);
+    };
 
     return (
         <>
             <style>{`
-                .hero-badge-pill {
-                    position: absolute;
-                    top: 12px;
-                    right: 12px;
-                    background: #F97316;
-                    color: #FFFFFF;
-                    font-size: 11px;
-                    font-weight: 700;
-                    padding: 4px 12px;
-                    border-radius: 9999px;
-                    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.35);
-                    letter-spacing: 0.02em;
-                    z-index: 2;
-                }
-                .hero-btn-primary {
-                    background: #F97316;
-                    color: #FFFFFF;
-                    transition: all 0.25s ease;
-                }
-                .hero-btn-primary:hover {
-                    background: #EA580C;
-                    transform: translateY(-2px);
-                    box-shadow: 0 8px 20px rgba(249, 115, 22, 0.35);
-                }
-                .hero-btn-secondary {
-                    background: #FFF7ED;
-                    color: #EA580C;
-                    border: 1.5px solid #FED7AA;
-                    transition: all 0.25s ease;
-                }
-                .hero-btn-secondary:hover {
-                    background: #FFEDD5;
-                    border-color: #FDBA74;
-                    transform: translateY(-2px);
-                }
-                .hero-watch-btn {
-                    transition: all 0.2s ease;
-                }
-                .hero-watch-btn:hover {
-                    color: #EA580C !important;
-                }
-                .hero-watch-btn:hover .hero-play-icon {
-                    background: #F97316 !important;
-                    color: #FFFFFF !important;
-                    transform: scale(1.08);
-                }
+                .hero-input::placeholder { color: #94A3B8; }
+                .hero-find-btn:hover { background: #EA580C !important; }
+                .hero-action-btn:hover { transform: translateY(-2px); }
+
                 @media (max-width: 960px) {
-                    .hero-grid {
-                        grid-template-columns: 1fr !important;
-                        gap: 40px !important;
-                    }
-                    .hero-stats-row {
-                        grid-template-columns: repeat(2, 1fr) !important;
-                        gap: 20px !important;
-                    }
+                    .hero-image-col { display: none !important; }
+                    .hero-content-col { max-width: 100% !important; }
                 }
                 @media (max-width: 600px) {
-                    .hero-sub-images {
-                        grid-template-columns: 1fr !important;
-                    }
-                    .hero-cta-group {
-                        flex-direction: column !important;
-                        width: 100% !important;
-                    }
-                    .hero-cta-group button {
-                        width: 100% !important;
-                        justify-content: center !important;
-                    }
+                    .hero-search-wrap { flex-direction: column !important; border-radius: 12px !important; }
+                    .hero-find-btn { border-radius: 10px !important; padding: 14px !important; width: 100% !important; justify-content: center !important; }
+                    .hero-action-btns { flex-direction: column !important; width: 100% !important; }
+                    .hero-action-btns button { width: 100% !important; justify-content: center !important; }
                 }
             `}</style>
 
             <section style={{
                 background: '#FFFFFF',
-                paddingTop: 100,
-                paddingBottom: 72,
-                width: '100%',
-                position: 'relative',
+                paddingTop: 88,
+                paddingBottom: 48,
+                minHeight: 580,
+                display: 'flex',
+                alignItems: 'center',
                 overflow: 'hidden',
+                position: 'relative',
             }}>
                 <div style={{
                     maxWidth: 1280,
-                    margin: '0 auto',
-                    padding: '0 40px',
                     width: '100%',
+                    margin: '0 auto',
+                    padding: '48px 40px 32px',
+                    display: 'grid',
+                    gridTemplateColumns: '1.15fr 0.85fr',
+                    gap: 48,
+                    alignItems: 'center',
                 }}>
-                    <div className="hero-grid" style={{
-                        display: 'grid',
-                        gridTemplateColumns: '1.05fr 1fr',
-                        gap: 48,
-                        alignItems: 'start',
-                    }}>
-                        {/* ─── LEFT COLUMN ─── */}
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            {/* Kicker */}
-                            <div style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: 8,
-                                color: '#F97316',
-                                fontSize: 13,
-                                fontWeight: 700,
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.08em',
-                                marginBottom: 14,
-                            }}>
-                                <span style={{ width: 22, height: 2.5, background: '#F97316', borderRadius: 2 }} />
-                                OUR STORY
-                            </div>
-
-                            {/* Headline */}
-                            <h1 style={{
-                                fontSize: 'clamp(32px, 3.8vw, 48px)',
-                                fontWeight: 800,
-                                lineHeight: 1.18,
-                                letterSpacing: '-1.2px',
-                                color: '#0F172A',
-                                marginBottom: 28,
-                            }}>
-                                Crafted with love, <span style={{ color: '#F97316' }}>spiced with passion</span>, and made to satisfy every bite.
-                            </h1>
-
-                            {/* Big Mille-Feuille Pastry Image */}
-                            <div style={{
-                                position: 'relative',
-                                borderRadius: 20,
-                                overflow: 'hidden',
-                                boxShadow: '0 16px 36px rgba(15, 23, 42, 0.08)',
-                                border: '1px solid #F1F5F9',
-                                height: 410,
-                            }}>
-                                <img
-                                    src={heroPastry}
-                                    alt="Delicate mille-feuille pastry"
-                                    style={{
-                                        width: '100%',
-                                        height: '100%',
-                                        objectFit: 'cover',
-                                        display: 'block',
-                                    }}
-                                />
-                                <div style={{
-                                    position: 'absolute',
-                                    bottom: 16,
-                                    left: 16,
-                                    background: 'rgba(15, 23, 42, 0.75)',
-                                    backdropFilter: 'blur(8px)',
-                                    color: '#FFFFFF',
-                                    padding: '8px 16px',
-                                    borderRadius: 9999,
-                                    fontSize: 12,
-                                    fontWeight: 600,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 6,
-                                }}>
-                                    <Sparkles size={14} color="#F97316" />
-                                    Chef's Signature Mille-Feuille
-                                </div>
-                            </div>
+                    {/* ─── LEFT CONTENT ─── */}
+                    <div className="hero-content-col">
+                        {/* Badge */}
+                        <div style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 6,
+                            background: '#FFF7ED',
+                            border: '1px solid #FED7AA',
+                            borderRadius: 9999,
+                            padding: '6px 16px',
+                            marginBottom: 24,
+                        }}>
+                            <span style={{ color: '#F97316', fontSize: 11.5, fontWeight: 700 }}>
+                                ✦ Your table is waiting
+                            </span>
                         </div>
 
-                        {/* ─── RIGHT COLUMN ─── */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
-                            {/* Two Side-by-Side Images */}
-                            <div className="hero-sub-images" style={{
-                                display: 'grid',
-                                gridTemplateColumns: '1fr 1fr',
-                                gap: 16,
-                            }}>
-                                {/* Photo 1: Croquettes */}
-                                <div style={{
-                                    position: 'relative',
-                                    borderRadius: 18,
-                                    overflow: 'hidden',
-                                    height: 195,
-                                    boxShadow: '0 10px 24px rgba(15, 23, 42, 0.06)',
-                                    border: '1px solid #F1F5F9',
-                                }}>
-                                    <span className="hero-badge-pill">From Kitchen To You</span>
-                                    <img
-                                        src={heroCroquettes}
-                                        alt="Crispy golden croquettes"
-                                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                                    />
-                                </div>
+                        {/* Headline */}
+                        <h1 style={{
+                            fontSize: 'clamp(38px, 4.8vw, 58px)',
+                            fontWeight: 800,
+                            lineHeight: 1.12,
+                            letterSpacing: '-1.8px',
+                            color: '#0F172A',
+                            marginBottom: 18,
+                        }}>
+                            Good food.<br />
+                            Great company.<br />
+                            That's <span style={{ color: '#F97316' }}>TableNest.</span>
+                        </h1>
 
-                                {/* Photo 2: Skillet Chicken */}
-                                <div style={{
-                                    position: 'relative',
-                                    borderRadius: 18,
-                                    overflow: 'hidden',
-                                    height: 195,
-                                    boxShadow: '0 10px 24px rgba(15, 23, 42, 0.06)',
-                                    border: '1px solid #F1F5F9',
-                                }}>
-                                    <span className="hero-badge-pill">Fresh & Organic</span>
-                                    <img
-                                        src={heroChicken}
-                                        alt="Skillet herb chicken"
-                                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                                    />
-                                </div>
-                            </div>
+                        {/* Subtext */}
+                        <p style={{
+                            fontSize: 16,
+                            color: '#64748B',
+                            lineHeight: 1.7,
+                            marginBottom: 32,
+                            fontWeight: 400,
+                            maxWidth: 500,
+                        }}>
+                            Find the best restaurants near you, book in seconds, and enjoy unforgettable dining experiences.
+                        </p>
 
-                            {/* Descriptive Paragraph */}
-                            <p style={{
-                                fontSize: 15,
-                                color: '#64748B',
-                                lineHeight: 1.75,
-                                margin: 0,
-                            }}>
-                                At TableNest, every restaurant is carefully selected and every dish is crafted with love. We connect amazing restaurants with hungry customers — giving owners the tools to thrive and diners the experiences they deserve. That's the TableNest promise.
-                            </p>
+                        {/* Action Buttons: Get Started & Book Restaurants */}
+                        <div className="hero-action-btns" style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 12,
+                            marginBottom: 30,
+                        }}>
+                            <button
+                                className="hero-action-btn"
+                                onClick={() => navigate('/register')}
+                                style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: 8,
+                                    background: '#F97316',
+                                    color: '#FFFFFF',
+                                    border: 'none',
+                                    padding: '13px 24px',
+                                    borderRadius: 10,
+                                    fontSize: 14.5,
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                    fontFamily: 'inherit',
+                                    boxShadow: '0 4px 14px rgba(249, 115, 22, 0.3)',
+                                    transition: 'all 0.2s',
+                                }}
+                            >
+                                Get Started
+                                <ArrowRight size={16} />
+                            </button>
 
-                            {/* 4 Stats in a row */}
-                            <div className="hero-stats-row" style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(4, 1fr)',
-                                gap: 14,
-                                padding: '16px 0',
-                                borderTop: '1px solid #F1F5F9',
-                                borderBottom: '1px solid #F1F5F9',
-                            }}>
-                                {[
-                                    { value: '10K+', label: 'Restaurants Onboarded' },
-                                    { value: '15K+', label: 'Satisfied Customers' },
-                                    { value: '10K+', label: 'Orders Completed' },
-                                    { value: '45+', label: 'Cities Covered' },
-                                ].map((stat) => (
-                                    <div key={stat.label}>
-                                        <div style={{
-                                            fontSize: 24,
-                                            fontWeight: 800,
-                                            color: '#0F172A',
-                                            lineHeight: 1.1,
-                                            marginBottom: 4,
-                                            letterSpacing: '-0.5px',
-                                        }}>
-                                            {stat.value}
-                                        </div>
-                                        <div style={{
-                                            fontSize: 12,
-                                            color: '#94A3B8',
-                                            lineHeight: 1.35,
-                                            fontWeight: 500,
-                                        }}>
-                                            {stat.label}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                            <button
+                                className="hero-action-btn"
+                                onClick={() => navigate('/restaurants')}
+                                style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: 8,
+                                    background: '#FFF7ED',
+                                    color: '#EA580C',
+                                    border: '1.5px solid #FED7AA',
+                                    padding: '13px 24px',
+                                    borderRadius: 10,
+                                    fontSize: 14.5,
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                    fontFamily: 'inherit',
+                                    transition: 'all 0.2s',
+                                }}
+                            >
+                                <Utensils size={16} />
+                                Book Restaurants
+                            </button>
+                        </div>
 
-                            {/* Avatars + Watch Intro */}
+                        {/* Search Bar */}
+                        <div className="hero-search-wrap" style={{
+                            display: 'flex',
+                            background: '#FFFFFF',
+                            border: '1.5px solid #E2E8F0',
+                            borderRadius: 12,
+                            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+                            overflow: 'hidden',
+                            maxWidth: 580,
+                        }}>
                             <div style={{
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: 24,
-                                flexWrap: 'wrap',
+                                padding: '0 16px',
+                                borderRight: '1px solid #E2E8F0',
+                                flex: 0.9,
                             }}>
-                                {/* Overlapping Avatars */}
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    {[
-                                        'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face',
-                                        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
-                                        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face',
-                                    ].map((url, i) => (
-                                        <img
-                                            key={i}
-                                            src={url}
-                                            alt="Customer"
-                                            style={{
-                                                width: 38,
-                                                height: 38,
-                                                borderRadius: '50%',
-                                                border: '2.5px solid #FFFFFF',
-                                                marginLeft: i === 0 ? 0 : -10,
-                                                objectFit: 'cover',
-                                                boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-                                            }}
-                                        />
-                                    ))}
-                                </div>
-
-                                {/* Watch Intro CTA */}
-                                <button
-                                    className="hero-watch-btn"
-                                    onClick={() => setShowVideoModal(true)}
+                                <MapPin size={17} color="#94A3B8" style={{ flexShrink: 0 }} />
+                                <input
+                                    value={location}
+                                    onChange={e => setLocation(e.target.value)}
+                                    onKeyDown={e => e.key === 'Enter' && handleSearch()}
+                                    placeholder="Location"
+                                    className="hero-input"
                                     style={{
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        gap: 10,
-                                        background: 'none',
                                         border: 'none',
-                                        cursor: 'pointer',
-                                        color: '#0F172A',
-                                        fontWeight: 600,
+                                        outline: 'none',
+                                        padding: '15px 10px',
                                         fontSize: 14,
-                                        fontFamily: 'inherit',
-                                        padding: 0,
+                                        fontFamily: 'Poppins',
+                                        width: '100%',
+                                        color: '#0F172A',
                                     }}
-                                >
-                                    <div
-                                        className="hero-play-icon"
-                                        style={{
-                                            width: 36,
-                                            height: 36,
-                                            borderRadius: '50%',
-                                            border: '1.5px solid #E2E8F0',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            color: '#F97316',
-                                            transition: 'all 0.2s ease',
-                                        }}
-                                    >
-                                        <Play size={14} fill="currentColor" style={{ marginLeft: 2 }} />
-                                    </div>
-                                    <span>Watch Intro</span>
-                                </button>
+                                />
                             </div>
-
-                            {/* ─── HERO CTA BUTTONS (Requested by user) ─── */}
-                            <div className="hero-cta-group" style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 14,
-                                marginTop: 4,
-                            }}>
-                                <button
-                                    className="hero-btn-primary"
-                                    onClick={() => navigate('/register')}
+                            <div style={{ display: 'flex', alignItems: 'center', padding: '0 16px', flex: 1.3 }}>
+                                <Utensils size={17} color="#94A3B8" style={{ flexShrink: 0 }} />
+                                <input
+                                    value={cuisine}
+                                    onChange={e => setCuisine(e.target.value)}
+                                    onKeyDown={e => e.key === 'Enter' && handleSearch()}
+                                    placeholder="What are you craving?"
+                                    className="hero-input"
                                     style={{
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        gap: 8,
                                         border: 'none',
-                                        padding: '14px 28px',
-                                        borderRadius: 12,
-                                        fontSize: 14.5,
-                                        fontWeight: 600,
-                                        cursor: 'pointer',
-                                        fontFamily: 'inherit',
+                                        outline: 'none',
+                                        padding: '15px 10px',
+                                        fontSize: 14,
+                                        fontFamily: 'Poppins',
+                                        width: '100%',
+                                        color: '#0F172A',
                                     }}
-                                >
-                                    Get Started
-                                    <ArrowRight size={16} />
-                                </button>
-
-                                <button
-                                    className="hero-btn-secondary"
-                                    onClick={() => navigate('/restaurants')}
-                                    style={{
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        gap: 8,
-                                        padding: '14px 28px',
-                                        borderRadius: 12,
-                                        fontSize: 14.5,
-                                        fontWeight: 600,
-                                        cursor: 'pointer',
-                                        fontFamily: 'inherit',
-                                    }}
-                                >
-                                    <Utensils size={16} />
-                                    Book Restaurants
-                                </button>
+                                />
                             </div>
+                            <button
+                                className="hero-find-btn"
+                                onClick={handleSearch}
+                                style={{
+                                    background: '#F97316',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0 26px',
+                                    cursor: 'pointer',
+                                    fontWeight: 600,
+                                    fontSize: 14,
+                                    fontFamily: 'Poppins',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 8,
+                                    transition: 'background 0.2s',
+                                    whiteSpace: 'nowrap',
+                                    flexShrink: 0,
+                                }}
+                            >
+                                <Search size={15} />
+                                Find a Table
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* ─── RIGHT: HERO PHOTO ─── */}
+                    <div className="hero-image-col" style={{
+                        position: 'relative',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}>
+                        <div style={{
+                            width: '100%',
+                            maxWidth: 460,
+                            height: 460,
+                            borderRadius: '50%',
+                            background: 'radial-gradient(circle, #FFF7ED 0%, #FED7AA 100%)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: 24,
+                            boxShadow: '0 20px 40px rgba(249, 115, 22, 0.12)',
+                        }}>
+                            <img
+                                src={heroPhoto}
+                                alt="Delicious gourmet salad bowl"
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'contain',
+                                    filter: 'drop-shadow(0 16px 24px rgba(0,0,0,0.15))',
+                                }}
+                            />
                         </div>
                     </div>
                 </div>
             </section>
-
-            {/* Video Modal Preview */}
-            {showVideoModal && (
-                <div style={{
-                    position: 'fixed',
-                    inset: 0,
-                    background: 'rgba(15, 23, 42, 0.75)',
-                    backdropFilter: 'blur(6px)',
-                    zIndex: 9999,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: 24,
-                }} onClick={() => setShowVideoModal(false)}>
-                    <div style={{
-                        background: '#0F172A',
-                        borderRadius: 20,
-                        padding: 24,
-                        maxWidth: 720,
-                        width: '100%',
-                        position: 'relative',
-                        color: '#FFFFFF',
-                    }} onClick={e => e.stopPropagation()}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                            <h3 style={{ fontSize: 18, fontWeight: 700 }}>Discover TableNest Experience</h3>
-                            <button
-                                onClick={() => setShowVideoModal(false)}
-                                style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer' }}
-                            >
-                                <X size={20} />
-                            </button>
-                        </div>
-                        <div style={{
-                            width: '100%',
-                            height: 380,
-                            borderRadius: 14,
-                            background: '#1E293B',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: 16,
-                        }}>
-                            <div style={{
-                                width: 64,
-                                height: 64,
-                                borderRadius: '50%',
-                                background: '#F97316',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                            }}>
-                                <Play size={28} fill="white" color="white" style={{ marginLeft: 3 }} />
-                            </div>
-                            <p style={{ color: '#CBD5E1', fontSize: 14 }}>TableNest Introduction & Dining Demo</p>
-                        </div>
-                    </div>
-                </div>
-            )}
         </>
     );
 }

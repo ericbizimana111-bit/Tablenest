@@ -1,5 +1,6 @@
 import LandingHeader from './landing/LandingHeader';
 import HeroSection from './landing/HeroSection';
+import OurStorySection from './landing/OurStorySection';
 import PopularDishes from './landing/PopularDishes';
 import WhyChooseUs from './landing/WhyChooseUs';
 import SpecialOffer from './landing/SpecialOffer';
@@ -18,25 +19,28 @@ export default function LandingPage() {
             {/* Navigation Header */}
             <LandingHeader theme="light" />
 
-            {/* 1. Hero & Our Story Section */}
+            {/* 1. Main Hero Section (with search and Get Started / Book Restaurants buttons) */}
             <HeroSection />
 
-            {/* 2. Trending Now / Popular Dishes */}
+            {/* 2. Our Story Section (Crafted with love, spiced with passion) */}
+            <OurStorySection />
+
+            {/* 3. Trending Now / Popular Dishes */}
             <PopularDishes />
 
-            {/* 3. Why Choose Us */}
+            {/* 4. Why Choose Us */}
             <WhyChooseUs />
 
-            {/* 4. Special Offer Banner */}
+            {/* 5. Special Offer Banner */}
             <SpecialOffer />
 
-            {/* 5. What Clients Say (Testimonials) */}
+            {/* 6. What Clients Say (Testimonials) */}
             <Testimonials />
 
-            {/* 6. What We Offer (Pillars) */}
+            {/* 7. What We Offer (Pillars) */}
             <WhatWeOffer />
 
-            {/* 7. Footer */}
+            {/* 8. Footer */}
             <LandingFooter />
         </div>
     );
