@@ -44,7 +44,21 @@ export default function Testimonials() {
                     gap: 20px;
                     flex-wrap: nowrap;
                     justify-content: flex-start;
-                    animation: testLoop 28s linear infinite;
+                    animation: testLoop 32s ease-in-out infinite;
+                    will-change: transform;
+                }
+
+                .test-track:hover {
+                    animation-play-state: paused;
+                }
+
+                .test-track:hover .test-card {
+                    border-color: #F97316;
+                    box-shadow: 0 16px 32px rgba(249, 115, 22, 0.12);
+                }
+
+                .test-card {
+                    transition: border-color 0.2s ease, box-shadow 0.2s ease;
                 }
 
                 @keyframes testLoop {
@@ -111,6 +125,7 @@ export default function Testimonials() {
                             {[...TESTIMONIALS, ...TESTIMONIALS, ...TESTIMONIALS].map((item, idx) => (
                                 <div
                                     key={idx}
+                                    className="test-card"
                                     style={{
                                         width: 280,
                                         flexShrink: 0,
