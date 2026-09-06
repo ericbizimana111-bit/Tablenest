@@ -1,46 +1,42 @@
 import LandingHeader from './landing/LandingHeader';
 import HeroSection from './landing/HeroSection';
-import CuisineCategories from './landing/CuisineCategories';
-import FeatureCards from './landing/FeatureCards';
-import RoleCards from './landing/RoleCards';
-import HowItWorks from './landing/HowItWorks';
-import PopularRestaurants from './landing/PopularRestaurants';
+import PopularDishes from './landing/PopularDishes';
+import WhyChooseUs from './landing/WhyChooseUs';
+import SpecialOffer from './landing/SpecialOffer';
 import Testimonials from './landing/Testimonials';
-import OwnerCTA from './landing/OwnerCTA';
+import WhatWeOffer from './landing/WhatWeOffer';
 import LandingFooter from './landing/LandingFooter';
 
 export default function LandingPage() {
     return (
-        <div style={{ fontFamily: 'Poppins, sans-serif', background: '#F8FAFC', overflowX: 'hidden' }}>
+        <div style={{
+            fontFamily: 'Poppins, sans-serif',
+            background: '#FFFFFF',
+            overflowX: 'hidden',
+            width: '100%',
+        }}>
+            {/* Navigation Header */}
             <LandingHeader theme="light" />
+
+            {/* 1. Hero & Our Story Section */}
             <HeroSection />
-            {/* Distinct Full-Width Section for Categories & Feature Cards */}
-            <section style={{
-                width: '100%',
-                background: '#FFF7ED',
-                borderTop: '1px solid #FED7AA',
-                borderBottom: '1px solid #FED7AA',
-                padding: '64px 0 72px',
-                position: 'relative',
-            }}>
-                <div style={{
-                    maxWidth: 1280,
-                    margin: '0 auto',
-                    width: '100%',
-                    padding: '0 48px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 40,
-                }}>
-                    <CuisineCategories />
-                    <FeatureCards />
-                </div>
-            </section>
-            <RoleCards />
-            <HowItWorks />
-            <PopularRestaurants />
+
+            {/* 2. Trending Now / Popular Dishes */}
+            <PopularDishes />
+
+            {/* 3. Why Choose Us */}
+            <WhyChooseUs />
+
+            {/* 4. Special Offer Banner */}
+            <SpecialOffer />
+
+            {/* 5. What Clients Say (Testimonials) */}
             <Testimonials />
-            <OwnerCTA />
+
+            {/* 6. What We Offer (Pillars) */}
+            <WhatWeOffer />
+
+            {/* 7. Footer */}
             <LandingFooter />
         </div>
     );
