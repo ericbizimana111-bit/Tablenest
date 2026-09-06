@@ -61,11 +61,19 @@ export default function OurStorySection() {
                 @media (max-width: 960px) {
                     .story-grid {
                         grid-template-columns: 1fr !important;
-                        gap: 40px !important;
+                        gap: 36px !important;
                     }
                     .story-stats-row {
                         grid-template-columns: repeat(2, 1fr) !important;
                         gap: 20px !important;
+                    }
+                }
+                @media (max-width: 600px) {
+                    .story-video-card {
+                        order: 1 !important;
+                    }
+                    .story-content-col {
+                        order: 2 !important;
                     }
                 }
                 @media (max-width: 600px) {
@@ -100,12 +108,105 @@ export default function OurStorySection() {
                 }}>
                     <div className="story-grid" style={{
                         display: 'grid',
-                        gridTemplateColumns: '1.05fr 1fr',
-                        gap: 48,
+                        gridTemplateColumns: '1.2fr 1.05fr',
+                        gap: 56,
                         alignItems: 'start',
                     }}>
-                        {/* ─── LEFT COLUMN ─── */}
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        {/* ─── LEFT COLUMN: VIDEO CARD ─── */}
+                        <div className="story-video-card" style={{ display: 'flex', flexDirection: 'column' }}>
+                            <div style={{
+                                position: 'relative',
+                                borderRadius: 18,
+                                overflow: 'hidden',
+                                background: '#0F172A',
+                                boxShadow: '0 20px 50px rgba(15, 23, 42, 0.12), 0 4px 16px rgba(15, 23, 42, 0.06)',
+                                cursor: 'pointer',
+                                transition: 'transform 0.25s ease, box-shadow 0.25s ease',
+                                aspectRatio: '16 / 9',
+                            }}
+                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 28px 60px rgba(15, 23, 42, 0.18), 0 6px 20px rgba(15, 23, 42, 0.08)'; }}
+                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 20px 50px rgba(15, 23, 42, 0.12), 0 4px 16px rgba(15, 23, 42, 0.06)'; }}
+                                onClick={() => setShowVideoModal(true)}
+                            >
+                                {/* Video Thumbnail */}
+                                <img
+                                    src={heroCroquettes}
+                                    alt="TableNest restaurant experience"
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'cover',
+                                        display: 'block',
+                                    }}
+                                />
+
+                                {/* Gradient Overlay */}
+                                <div style={{
+                                    position: 'absolute',
+                                    inset: 0,
+                                    background: 'linear-gradient(180deg, transparent 50%, rgba(15, 23, 42, 0.7) 100%)',
+                                }} />
+
+                                {/* Bottom Gradient for text readability */}
+                                <div style={{
+                                    position: 'absolute',
+                                    bottom: 0,
+                                    left: 0,
+                                    right: 0,
+                                    height: 80,
+                                    background: 'linear-gradient(0deg, #0F172A 0%, transparent 100%)',
+                                }} />
+
+                                {/* Play Button - Centered */}
+                                <div style={{
+                                    position: 'absolute',
+                                    top: '50%',
+                                    left: '50%',
+                                    transform: 'translate(-50%, -50%)',
+                                    width: 72,
+                                    height: 72,
+                                    borderRadius: '50%',
+                                    background: 'rgba(249, 115, 22, 0.95)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    boxShadow: '0 8px 24px rgba(249, 115, 22, 0.45)',
+                                    transition: 'all 0.2s ease',
+                                }}
+                                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translate(-50%, -50%) scale(1.08)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 32px rgba(249, 115, 22, 0.55)'; }}
+                                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'translate(-50%, -50%) scale(1)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 24px rgba(249, 115, 22, 0.45)'; }}
+                                >
+                                    <Play size={28} fill="white" color="white" style={{ marginLeft: 3 }} />
+                                </div>
+
+                                {/* Video Label */}
+                                <div style={{
+                                    position: 'absolute',
+                                    bottom: 16,
+                                    left: 16,
+                                    color: '#FFFFFF',
+                                    fontSize: 13,
+                                    fontWeight: 600,
+                                    letterSpacing: '0.02em',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 6,
+                                }}>
+                                    <span style={{
+                                        width: 8,
+                                        height: 8,
+                                        borderRadius: '50%',
+                                        background: '#F97316',
+                                        display: 'inline-block',
+                                        boxShadow: '0 0 0 3px rgba(249, 115, 22, 0.3)',
+                                    }} />
+                                    Watch Intro
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* ─── RIGHT COLUMN: TEXT CONTENT ─── */}
+                        <div className="story-content-col" style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
                             {/* Headline */}
                             <h2 style={{
                                 fontSize: 'clamp(30px, 3.6vw, 44px)',
@@ -113,14 +214,11 @@ export default function OurStorySection() {
                                 lineHeight: 1.18,
                                 letterSpacing: '-1.2px',
                                 color: '#0F172A',
-                                marginBottom: 26,
+                                marginBottom: 0,
                             }}>
                                 Real food. Real flavor. <span style={{ color: '#F97316' }}>Places you'll miss.</span>
                             </h2>
-                        </div>
 
-                        {/* ─── RIGHT COLUMN ─── */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
                             {/* Descriptive Paragraph */}
                             <p style={{
                                 fontSize: 15,
@@ -147,6 +245,7 @@ export default function OurStorySection() {
                                     fontSize: 14,
                                     fontFamily: 'inherit',
                                     padding: 0,
+                                    marginTop: 8,
                                 }}
                             >
                                 <div
