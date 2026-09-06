@@ -6,6 +6,7 @@ import WhyChooseUs from './landing/WhyChooseUs';
 import SpecialOffer from './landing/SpecialOffer';
 import Testimonials from './landing/Testimonials';
 import WhatWeOffer from './landing/WhatWeOffer';
+import NewsletterCTA from './landing/NewsletterCTA';
 import LandingFooter from './landing/LandingFooter';
 
 export default function LandingPage() {
@@ -19,28 +20,31 @@ export default function LandingPage() {
             {/* Navigation Header */}
             <LandingHeader theme="light" />
 
-            {/* 1. Main Hero Section (with search and Get Started / Book Restaurants buttons) */}
+            {/* 1. HERO */}
             <HeroSection />
 
-            {/* 2. Our Story Section (Crafted with love, spiced with passion) */}
-            <OurStorySection />
-
-            {/* 3. Trending Now / Popular Dishes */}
-            <PopularDishes />
-
-            {/* 4. Why Choose Us */}
-            <WhyChooseUs />
-
-            {/* 5. Special Offer Banner */}
-            <SpecialOffer />
-
-            {/* 6. What Clients Say (Testimonials) */}
-            <Testimonials />
-
-            {/* 7. What We Offer (Pillars) */}
+            {/* 2. WHAT WE OFFER */}
             <WhatWeOffer />
 
-            {/* 8. Footer */}
+            {/* 3. REAL FOOD. REAL FLAVOR. */}
+            <OurStorySection />
+
+            {/* 4. TRENDING NOW */}
+            <PopularDishes />
+
+            {/* 5. GREAT MEALS, COLD DRINKS, GOOD TIMES. */}
+            <WhyChooseUs />
+
+            {/* 6. SPECIAL OFFER */}
+            <SpecialOffer />
+
+            {/* 7. TRUSTED BY DINERS AND RESTAURANTS */}
+            <Testimonials />
+
+            {/* 8. NEWSLETTER CTA */}
+            <NewsletterCTA />
+
+            {/* 9. FOOTER */}
             <LandingFooter />
         </div>
     );

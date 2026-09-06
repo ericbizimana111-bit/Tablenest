@@ -95,11 +95,9 @@ export default function LandingFooter() {
                 {/* ─── Explore column ─── */}
                 <div style={{ fontFamily: 'Poppins, sans-serif' }}>
                     <h3 style={{
-                        fontSize: 12,
+                        fontSize: 14,
                         fontWeight: 700,
-                        color: '#F97316',
-                        letterSpacing: '0.1em',
-                        textTransform: 'uppercase',
+                        color: 'black',
                         marginBottom: 16,
                         fontFamily: 'Poppins, sans-serif',
                     }}>
@@ -134,10 +132,11 @@ export default function LandingFooter() {
                 {/* ─── Support column ─── */}
                 <div style={{ fontFamily: 'Poppins, sans-serif' }}>
                     <h3 style={{
-                        fontSize: 12,
+                        fontSize: 14,
                         fontWeight: 700,
-                        color: '#F97316',
-                        letterSpacing: '0.1em',
+                        color: 'black',
+
+
                         marginBottom: 16,
                         fontFamily: 'Poppins, sans-serif',
                     }}>
@@ -172,11 +171,10 @@ export default function LandingFooter() {
                 {/* ─── Newsletter column ─── */}
                 <div style={{ fontFamily: 'Poppins, sans-serif' }}>
                     <h3 style={{
-                        fontSize: 12,
+                        fontSize: 14,
                         fontWeight: 700,
-                        color: '#0F172A',
-                        letterSpacing: '0.1em',
-                        marginBottom: 12,
+                        color: 'black',
+                        marginBottom: 16,
                         fontFamily: 'Poppins, sans-serif',
                     }}>
                         Stay in the loop

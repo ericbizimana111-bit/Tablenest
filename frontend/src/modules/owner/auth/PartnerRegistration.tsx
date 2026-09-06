@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { restaurantsAPI, uploadsAPI } from '../../../shared/services/api';
 import { useAuth } from '../../../shared/hooks/useAuthContext';
@@ -22,6 +22,7 @@ import {
     Globe,
     MapPin,
     Phone,
+    AlertCircle,
     ShieldCheck,
     Info,
     Star,
@@ -56,11 +57,63 @@ type PartnerForm = {
     delivery: boolean;
 };
 
-function IconField({ icon: Icon, ...props }: { icon: any } & React.InputHTMLAttributes<HTMLInputElement>) {
+// Field error types per field name
+type FieldErrors = Partial<Record<keyof PartnerForm | 'images', string>>;
+
+function IconField({ icon: Icon, error, ...props }: { icon: any; error?: string } & React.InputHTMLAttributes<HTMLInputElement>) {
     return (
         <div className="pr-icon-input">
-            <Icon size={16} className="pr-icon-input-glyph" />
-            <input {...props} className="pr-input pr-input--icon" />
+            <Icon size={16} className={`pr-icon-input-glyph ${error ? 'pr-icon-input-glyph--error' : ''}`} />
+            <input {...props} className={`pr-input pr-input--icon ${error ? 'pr-input--error' : ''}`} />
+            {error && <AlertCircle size={14} className="pr-field-error-icon" />}
+        </div>
+    );
+}
+
+interface FieldWrapperProps {
+    children: React.ReactNode;
+    error?: string;
+}
+
+function FieldWrapper({ children, error }: FieldWrapperProps) {
+    return (
+        <div className={`pr-field ${error ? 'pr-field--error' : ''}`}>
+            {children}
+            {error && (
+                <div className="pr-field-error">
+                    <AlertCircle size={13} />
+                    <span>{error}</span>
+                </div>
+            )}
+        </div>
+    );
+}
+
+function IconField({ icon: Icon, error, ...props }: { icon: any; error?: string } & React.InputHTMLAttributes<HTMLInputElement>) {
+    return (
+        <div className="pr-icon-input">
+            <Icon size={16} className={`pr-icon-input-glyph ${error ? 'pr-icon-input-glyph--error' : ''}`} />
+            <input {...props} className={`pr-input pr-input--icon ${error ? 'pr-input--error' : ''}`} />
+            {error && <AlertCircle size={14} className="pr-field-error-icon" />}
+        </div>
+    );
+}
+
+interface FieldWrapperProps {
+    children: React.ReactNode;
+    error?: string;
+}
+
+function FieldWrapper({ children, error }: FieldWrapperProps) {
+    return (
+        <div className={`pr-field ${error ? 'pr-field--error' : ''}`}>
+            {children}
+            {error && (
+                <div className="pr-field-error">
+                    <AlertCircle size={13} />
+                    <span>{error}</span>
+                </div>
+            )}
         </div>
     );
 }
@@ -73,6 +126,30 @@ export default function PartnerRegistration() {
         fullName: '', email: '', password: '', restaurantName: '', cuisineType: 'Italian',
         description: '', seatingCapacity: '', priceRange: '$$', address: '', city: '', country: 'Rwanda', phone: '', dineIn: true, delivery: false,
     });
+
+    // Validation: check if current step's required fields are filled
+    const isStepValid = (currentStep: number): boolean => {
+        switch (currentStep) {
+            case 1:
+                return form.fullName.trim() !== '' &&
+                       form.email.trim() !== '' &&
+                       form.password.length >= 8 && /[A-Z]/.test(form.password) && /[0-9]/.test(form.password);
+            case 2:
+                return form.restaurantName.trim() !== '' &&
+                       form.cuisineType !== '' &&
+                       form.description.trim() !== '' &&
+                       form.seatingCapacity !== '' && !isNaN(Number(form.seatingCapacity)) && Number(form.seatingCapacity) > 0;
+            case 3:
+                return form.country.trim() !== '' &&
+                       form.city.trim() !== '' &&
+                       form.address.trim() !== '' &&
+                       form.phone.trim() !== '';
+            case 4:
+                return images.length > 0;
+            default:
+                return false;
+        }
+    };
 
     const [images, setImages] = useState<string[]>([]);
     const [uploading, setUploading] = useState(false);
@@ -472,7 +549,13 @@ export default function PartnerRegistration() {
                                 {step === 1 ? 'Back to home' : `Back to step ${step - 1}`}
                             </button>
                             {step < 4 ? (
-                                <button className="pr-btn-primary" onClick={() => setStep(s => s + 1)}>Continue</button>
+                                <button
+                                    className="pr-btn-primary"
+                                    onClick={() => isStepValid(step) ? setStep(s => s + 1) : toast.error('Please complete all fields before continuing.')}
+                                    disabled={!isStepValid(step)}
+                                >
+                                    Continue
+                                </button>
                             ) : (
                                 <button className="pr-btn-primary" onClick={submit} disabled={submitting}>
                                     {submitting && <Loader2 size={14} className="pr-spin" />}

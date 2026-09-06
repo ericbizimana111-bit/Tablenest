@@ -1,13 +1,36 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Play, X } from 'lucide-react';
 
 import heroCroquettes from '../../../assets/hero_croquettes.jpg';
 import heroChicken from '../../../assets/hero_chicken.jpg';
 
+const YOUTUBE_VIDEO_ID = 'LDiEvqi-cmU';
+
 export default function OurStorySection() {
     const navigate = useNavigate();
     const [showVideoModal, setShowVideoModal] = useState(false);
+    const iframeRef = useRef<HTMLIFrameElement>(null);
+
+    // Close on Escape key
+    useEffect(() => {
+        const handleKey = (e: KeyboardEvent) => {
+            if (e.key === 'Escape' && showVideoModal) {
+                setShowVideoModal(false);
+            }
+        };
+        if (showVideoModal) {
+            window.addEventListener('keydown', handleKey);
+        }
+        return () => window.removeEventListener('keydown', handleKey);
+    }, [showVideoModal]);
+
+    // Clean up iframe when modal closes
+    useEffect(() => {
+        if (!showVideoModal && iframeRef.current) {
+            iframeRef.current.src = '';
+        }
+    }, [showVideoModal]);
 
     return (
         <>
@@ -119,13 +142,13 @@ export default function OurStorySection() {
                                 borderRadius: 18,
                                 overflow: 'hidden',
                                 background: '#0F172A',
-                                boxShadow: '0 20px 50px rgba(15, 23, 42, 0.12), 0 4px 16px rgba(15, 23, 42, 0.06)',
+                                boxShadow: '0 8px 30px rgba(15, 23, 42, 0.08), 0 2px 8px rgba(15, 23, 42, 0.04)',
                                 cursor: 'pointer',
                                 transition: 'transform 0.25s ease, box-shadow 0.25s ease',
                                 aspectRatio: '16 / 9',
                             }}
-                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 28px 60px rgba(15, 23, 42, 0.18), 0 6px 20px rgba(15, 23, 42, 0.08)'; }}
-                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 20px 50px rgba(15, 23, 42, 0.12), 0 4px 16px rgba(15, 23, 42, 0.06)'; }}
+                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 14px 40px rgba(15, 23, 42, 0.14), 0 4px 12px rgba(15, 23, 42, 0.06)'; }}
+                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 30px rgba(15, 23, 42, 0.08), 0 2px 8px rgba(15, 23, 42, 0.04)'; }}
                                 onClick={() => setShowVideoModal(true)}
                             >
                                 {/* Video Thumbnail */}
@@ -200,7 +223,7 @@ export default function OurStorySection() {
                                         display: 'inline-block',
                                         boxShadow: '0 0 0 3px rgba(249, 115, 22, 0.3)',
                                     }} />
-                                    Watch Intro
+                                    Watch the Experience
                                 </div>
                             </div>
                         </div>
@@ -264,71 +287,100 @@ export default function OurStorySection() {
                                 >
                                     <Play size={14} fill="currentColor" style={{ marginLeft: 2 }} />
                                 </div>
-                                <span>Watch Intro</span>
+<span>Watch the Experience</span>
                             </button>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Video Modal Preview */}
+            {/* Full-Screen Video Modal */}
             {showVideoModal && (
-                <div style={{
-                    position: 'fixed',
-                    inset: 0,
-                    background: 'rgba(15, 23, 42, 0.75)',
-                    backdropFilter: 'blur(6px)',
-                    zIndex: 9999,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: 24,
-                }} onClick={() => setShowVideoModal(false)}>
-                    <div style={{
-                        background: '#0F172A',
-                        borderRadius: 20,
-                        padding: 24,
-                        maxWidth: 720,
-                        width: '100%',
-                        position: 'relative',
-                        color: '#FFFFFF',
-                    }} onClick={e => e.stopPropagation()}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                            <h3 style={{ fontSize: 18, fontWeight: 700 }}>Discover TableNest Experience</h3>
-                            <button
-                                onClick={() => setShowVideoModal(false)}
-                                style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer' }}
-                            >
-                                <X size={20} />
-                            </button>
-                        </div>
-                        <div style={{
+                <div
+                    style={{
+                        position: 'fixed',
+                        inset: 0,
+                        background: 'rgba(15, 23, 42, 0.85)',
+                        backdropFilter: 'blur(8px)',
+                        zIndex: 9999,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: 20,
+                        animation: 'fadeIn 0.2s ease-out',
+                    }}
+                    onClick={() => setShowVideoModal(false)}
+                >
+                    {/* Modal Container */}
+                    <div
+                        style={{
+                            position: 'relative',
                             width: '100%',
-                            height: 380,
-                            borderRadius: 14,
-                            background: '#1E293B',
+                            height: '100%',
+                            maxWidth: 1200,
+                            maxHeight: '100vh',
                             display: 'flex',
-                            flexDirection: 'column',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            gap: 16,
-                        }}>
-                            <div style={{
-                                width: 64,
-                                height: 64,
-                                borderRadius: '50%',
-                                background: '#F97316',
+                            background: 'transparent',
+                        }}
+                        onClick={e => e.stopPropagation()}
+                    >
+                        {/* Close Button - Top Right */}
+                        <button
+                            onClick={() => setShowVideoModal(false)}
+                            style={{
+                                position: 'absolute',
+                                top: 20,
+                                right: 20,
+                                width: 44,
+                                height: 44,
+                                borderRadius: 12,
+                                background: 'rgba(255, 255, 255, 0.15)',
+                                backdropFilter: 'blur(8px)',
+                                border: '1px solid rgba(255, 255, 255, 0.2)',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                            }}>
-                                <Play size={28} fill="white" color="white" style={{ marginLeft: 3 }} />
-                            </div>
-                            <p style={{ color: '#CBD5E1', fontSize: 14 }}>TableNest Introduction & Dining Demo</p>
-                        </div>
+                                cursor: 'pointer',
+                                color: '#FFFFFF',
+                                transition: 'all 0.2s ease',
+                                zIndex: 10,
+                            }}
+                            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255, 255, 255, 0.25)'; (e.currentTarget as HTMLElement).style.transform = 'scale(1.05)'; }}
+                            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255, 255, 255, 0.15)'; (e.currentTarget as HTMLElement).style.transform = 'scale(1)'; }}
+                        >
+                            <X size={22} />
+                        </button>
+
+                        {/* YouTube Player */}
+                        <iframe
+                            ref={iframeRef}
+                            src={`https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&rel=0`}
+                            title="TableNest Experience"
+                            allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+                            allowFullScreen
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                maxWidth: 1100,
+                                maxHeight: 'calc(100vh - 40px)',
+                                border: 'none',
+                                borderRadius: 12,
+                                aspectRatio: '16 / 9',
+                                objectFit: 'contain',
+                            }}
+                        />
                     </div>
                 </div>
             )}
+
+            <style>{`
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+            `}</style>
         </>
     );
 }
