@@ -49,12 +49,43 @@ export default function Testimonials() {
     return (
         <>
             <style>{`
+                .test-marquee {
+                    position: relative;
+                    overflow: hidden;
+                    border-radius: 24px;
+                    border: 1px solid #F1F5F9;
+                    background: linear-gradient(180deg, rgba(255,255,255,0.4), rgba(255,255,255,0.8));
+                    padding: 18px 0;
+                }
+
+                .test-marquee::before,
+                .test-marquee::after {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    width: 90px;
+                    z-index: 2;
+                    pointer-events: none;
+                }
+
+                .test-marquee::before {
+                    left: 0;
+                    background: linear-gradient(90deg, #FAFAFC 0%, rgba(250,250,252,0) 100%);
+                }
+
+                .test-marquee::after {
+                    right: 0;
+                    background: linear-gradient(270deg, #FAFAFC 0%, rgba(250,250,252,0) 100%);
+                }
+
                 .test-track {
                     display: flex;
                     gap: 20px;
                     flex-wrap: nowrap;
-                    justify-content: flex-start;
-                    animation: testLoop 28s ease-in-out infinite;
+                    width: max-content;
+                    min-width: max-content;
+                    animation: testLoop 28s linear infinite;
                     will-change: transform;
                 }
 
@@ -87,12 +118,13 @@ export default function Testimonials() {
                 }
 
                 @media (max-width: 768px) {
-                    .test-deck-wrap {
-                        height: auto !important;
-                        min-height: 380px !important;
+                    .test-marquee {
+                        border-radius: 18px;
+                        padding: 14px 0;
                     }
-                    .test-side-card {
-                        display: none !important;
+                    .test-marquee::before,
+                    .test-marquee::after {
+                        width: 48px;
                     }
                 }
             `}</style>
@@ -133,88 +165,86 @@ export default function Testimonials() {
                     </div>
 
                     {/* Testimonial Track */}
-                    <div
-                        ref={trackRef}
-                        className="test-track stagger is-visible"
-                        style={{
-                            overflow: 'hidden',
-                            margin: '0 auto 32px',
-                        }}
-                    >
-                        {[...TESTIMONIALS, ...TESTIMONIALS, ...TESTIMONIALS].map((item, idx) => (
-                            <div
-                                key={idx}
-                                className="test-card card-lift"
-                                style={{
-                                    width: 280,
-                                    flexShrink: 0,
-                                    background: '#FFFFFF',
-                                    borderRadius: 20,
-                                    border: '1.5px solid #F1F5F9',
-                                    padding: '26px 24px 24px',
-                                    boxShadow: '0 4px 14px rgba(15, 23, 42, 0.04)',
-                                    opacity: 1,
-                                    transform: 'none',
-                                }}
-                            >
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 14,
-                                    marginBottom: 16,
-                                }}>
-                                    <img
-                                        src={item.avatar}
-                                        alt={item.name}
-                                        className="img-reveal is-visible"
-                                        style={{
-                                            width: 46,
-                                            height: 46,
-                                            borderRadius: '50%',
-                                            objectFit: 'cover',
-                                            border: '2px solid #FFFFFF',
-                                            boxShadow: '0 2px 8px rgba(15, 23, 42, 0.08)',
-                                            flexShrink: 0,
-                                            opacity: 1,
-                                            transform: 'none',
-                                        }}
-                                    />
-                                    <div>
-                                        <h4 style={{
-                                            fontSize: 15.5,
-                                            fontWeight: 700,
-                                            color: '#0F172A',
-                                            margin: 0,
-                                            letterSpacing: '-0.2px',
-                                        }}>
-                                            {item.name}
-                                        </h4>
-                                        <p style={{
-                                            fontSize: 12.5,
-                                            color: '#64748B',
-                                            margin: '2px 0 0',
-                                        }}>
-                                            {item.role}
-                                        </p>
+                    <div className="test-marquee" style={{ margin: '0 auto 32px' }}>
+                        <div
+                            ref={trackRef}
+                            className="test-track stagger is-visible"
+                        >
+                            {[...TESTIMONIALS, ...TESTIMONIALS, ...TESTIMONIALS].map((item, idx) => (
+                                <div
+                                    key={idx}
+                                    className="test-card card-lift"
+                                    style={{
+                                        width: 280,
+                                        flexShrink: 0,
+                                        background: '#FFFFFF',
+                                        borderRadius: 20,
+                                        border: '1.5px solid #F1F5F9',
+                                        padding: '26px 24px 24px',
+                                        boxShadow: '0 4px 14px rgba(15, 23, 42, 0.04)',
+                                        opacity: 1,
+                                        transform: 'none',
+                                    }}
+                                >
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: 14,
+                                        marginBottom: 16,
+                                    }}>
+                                        <img
+                                            src={item.avatar}
+                                            alt={item.name}
+                                            className="img-reveal is-visible"
+                                            style={{
+                                                width: 46,
+                                                height: 46,
+                                                borderRadius: '50%',
+                                                objectFit: 'cover',
+                                                border: '2px solid #FFFFFF',
+                                                boxShadow: '0 2px 8px rgba(15, 23, 42, 0.08)',
+                                                flexShrink: 0,
+                                                opacity: 1,
+                                                transform: 'none',
+                                            }}
+                                        />
+                                        <div>
+                                            <h4 style={{
+                                                fontSize: 15.5,
+                                                fontWeight: 700,
+                                                color: '#0F172A',
+                                                margin: 0,
+                                                letterSpacing: '-0.2px',
+                                            }}>
+                                                {item.name}
+                                            </h4>
+                                            <p style={{
+                                                fontSize: 12.5,
+                                                color: '#64748B',
+                                                margin: '2px 0 0',
+                                            }}>
+                                                {item.role}
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div style={{ display: 'flex', gap: 4, marginBottom: 14 }}>
-                                    {[...Array(item.rating)].map((_, i) => (
-                                        <Star key={i} size={14} fill="#F59E0B" color="#F59E0B" />
-                                    ))}
-                                </div>
+                                    <div style={{ display: 'flex', gap: 4, marginBottom: 14 }}>
+                                        {[...Array(item.rating)].map((_, i) => (
+                                            <Star key={i} size={14} fill="#F59E0B" color="#F59E0B" />
+                                        ))}
+                                    </div>
 
-                                <p style={{
-                                    fontSize: 14,
-                                    color: '#334155',
-                                    lineHeight: 1.65,
-                                    margin: 0,
-                                }}>
-                                    {item.quote}
-                                </p>
-                            </div>
-                        ))}
+                                    <p style={{
+                                        fontSize: 14,
+                                        color: '#334155',
+                                        lineHeight: 1.65,
+                                        margin: 0,
+                                    }}>
+                                        {item.quote}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </section>
