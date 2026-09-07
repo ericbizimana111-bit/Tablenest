@@ -23,7 +23,7 @@ export default function CustomerHome() {
             limit: 8,
             cuisine: activeCuisine === 'All' ? undefined : activeCuisine,
         }).then(r => r.data),
-        });
+    });
 
     const restaurants = data?.restaurants || [];
 
@@ -61,7 +61,7 @@ export default function CustomerHome() {
                         Discover your next unforgettable dining experience.
                     </p>
                     <button
-                        onClick={() => navigate('/browse')}
+                        onClick={() => navigate('/restaurants')}
                         style={{ marginTop: 16, padding: '9px 20px', background: 'white', color: '#F97316', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins', display: 'flex', alignItems: 'center', gap: 6 }}
                     >
                         Browse Restaurants <ArrowRight size={14} />
@@ -79,7 +79,7 @@ export default function CustomerHome() {
                 <input
                     value={search}
                     onChange={e => setSearch(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && navigate(`/browse?search=${search}`)}
+                    onKeyDown={e => e.key === 'Enter' && navigate(`/restaurants?search=${search}`)}
                     placeholder="Search restaurants or dishes..."
                     style={{ width: '100%', padding: '14px 16px 14px 46px', border: '1.5px solid #E2E8F0', borderRadius: 12, fontSize: 15, fontFamily: 'Poppins', outline: 'none', background: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}
                     onFocus={e => (e.target.style.borderColor = '#F97316')}
@@ -121,7 +121,7 @@ export default function CustomerHome() {
             {/* Restaurants grid */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                 <h2 style={{ fontSize: 18, fontWeight: 700 }}>Popular Near You</h2>
-                <span onClick={() => navigate('/browse')} style={{ fontSize: 13, color: '#F97316', cursor: 'pointer', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 4 }}>
+                <span onClick={() => navigate('/restaurants')} style={{ fontSize: 13, color: '#F97316', cursor: 'pointer', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 4 }}>
                     View all <ArrowRight size={13} />
                 </span>
             </div>

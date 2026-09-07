@@ -14,7 +14,7 @@ export class OrdersService {
     private notificationsService: NotificationsService,
     private loyaltyService: LoyaltyService,
     private accessControl: AccessControlService,
-  ) {}
+  ) { }
 
   async create(customerId: string, data: any) {
     const order = await this.orderModel.create({
@@ -28,7 +28,7 @@ export class OrdersService {
       title: 'Order Placed',
       message: `Your order has been placed successfully. Total: $${data.total?.toFixed?.(2) ?? data.total}`,
       type: NotificationType.ORDER,
-      link: `/my-orders/${order._id}/track`,
+      link: `/my-orders/${order._id.toString()}/track`,
     });
 
     return order;
@@ -100,7 +100,7 @@ export class OrdersService {
         title: 'Order Update',
         message: `Your order status is now: ${status.replace(/_/g, ' ')}`,
         type: NotificationType.ORDER,
-        link: `/my-orders/${order._id}/track`,
+        link: `/my-orders/${order._id.toString()}/track`,
       });
 
       if (status === OrderStatus.DELIVERED) {

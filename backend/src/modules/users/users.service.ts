@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { User, UserDocument, UserRole } from './user.schema';
+import { User, UserDocument } from './user.schema';
 import { Restaurant, RestaurantDocument, RestaurantStatus } from '../restaurants/restaurant.schema';
 
 @Injectable()
@@ -9,7 +9,7 @@ export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Restaurant.name) private restaurantModel: Model<RestaurantDocument>,
-  ) {}
+  ) { }
 
   async updateProfile(userId: string, data: any) {
     const allowed = ['fullName', 'phone', 'avatar', 'address', 'activePlan'];

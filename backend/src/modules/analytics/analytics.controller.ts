@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards, Request } from '@nestjs/common';
 import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -13,7 +13,7 @@ export class AnalyticsController {
   constructor(
     private analyticsService: AnalyticsService,
     private accessControl: AccessControlService,
-  ) {}
+  ) { }
 
   @Get('restaurant/:restaurantId/dashboard')
   @Roles(UserRole.OWNER)

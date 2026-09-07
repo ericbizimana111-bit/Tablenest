@@ -13,14 +13,20 @@ describe("AppController (e2e)", () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.setGlobalPrefix("api");
     await app.init();
   });
 
-  it("/ (GET)", () => {
+  it("/api/restaurants/public (GET)", () => {
     return request(app.getHttpServer())
-      .get("/")
+      .get("/api/restaurants/public")
       .expect(200)
-      .expect("Hello World!");
+      .expect(({ body }) => {
+        expect(body).toEqual(expect.objectContaining({
+          restaurants: expect.any(Array),
+          total: expect.any(Number),
+        }));
+      });
   });
 
   afterEach(async () => {

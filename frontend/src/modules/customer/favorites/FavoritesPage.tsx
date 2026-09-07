@@ -49,7 +49,7 @@ export default function FavoritesPage() {
                     <Heart size={48} style={{ margin: '0 auto 16px', color: '#CBD5E1' }} />
                     <div style={{ fontSize: 18, fontWeight: 600, color: '#475569', marginBottom: 8 }}>No favorites yet</div>
                     <p style={{ fontSize: 14, color: '#94A3B8', marginBottom: 20 }}>Browse restaurants and tap the heart icon to save your favorites.</p>
-                    <button onClick={() => navigate('/browse')} style={{ padding: '10px 24px', background: '#F97316', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: 'pointer', fontFamily: 'Poppins' }}>Browse Restaurants</button>
+                    <button onClick={() => navigate('/restaurants')} style={{ padding: '10px 24px', background: '#F97316', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: 'pointer', fontFamily: 'Poppins' }}>Browse Restaurants</button>
                 </div>
             ) : (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 18 }}>

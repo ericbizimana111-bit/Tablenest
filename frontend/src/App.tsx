@@ -53,10 +53,10 @@ const PartnerRegistration = lazy(() => import('./modules/owner/auth/PartnerRegis
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: 30000 } } });
 
-const Loader = () => (    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#F8FAFC' }}>
-    <div style={{ width: 40, height: 40, border: '3px solid #FFF7ED', borderTop: '3px solid #F97316', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-  </div>
+const Loader = () => (<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#F8FAFC' }}>
+  <div style={{ width: 40, height: 40, border: '3px solid #FFF7ED', borderTop: '3px solid #F97316', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+  <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+</div>
 );
 
 export default function App() {
@@ -75,6 +75,7 @@ export default function App() {
               <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/partner/register" element={<PartnerRegistration />} />
               <Route path="/restaurants" element={<BrowsePage />} />
+              <Route path="/browse" element={<BrowsePage />} />
               <Route path="/restaurants/:id" element={<RestaurantDetailPage />} />
               <Route path="/about-us" element={<AboutUsPage />} />
               <Route path="/faq" element={<FAQPage />} />

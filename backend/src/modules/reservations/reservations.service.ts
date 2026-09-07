@@ -117,7 +117,7 @@ export class ReservationsService {
         const restaurant = await this.restaurantModel.findById(reservation.restaurantId).select('name');
         await this.notificationsService.create(reservation.customerId.toString(), {
           title: 'Booking Confirmed',
-          message: `Your booking at ${restaurant?.name || 'the restaurant'} for ${reservation.guests} guests on ${reservation.date} at ${reservation.time} has been confirmed.`,
+          message: `Your booking at ${restaurant?.name || 'the restaurant'} for ${reservation.guests} guests on ${reservation.date.toISOString()} at ${reservation.time} has been confirmed.`,
           type: NotificationType.BOOKING,
           link: '/my-bookings',
           metadata: { reservationId: reservation._id },
