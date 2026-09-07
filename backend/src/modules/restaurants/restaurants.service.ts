@@ -5,7 +5,7 @@ import { Restaurant, RestaurantDocument, RestaurantStatus } from './restaurant.s
 
 @Injectable()
 export class RestaurantsService {
-  constructor(@InjectModel(Restaurant.name) private restaurantModel: Model<RestaurantDocument>) {}
+  constructor(@InjectModel(Restaurant.name) private restaurantModel: Model<RestaurantDocument>) { }
 
   async findPublic(query: any = {}) {
     const { page = 1, limit = 20, search, cuisine, city, country, priceRange, sort } = query;
@@ -50,7 +50,7 @@ export class RestaurantsService {
   }
 
   async create(ownerId: string, data: any) {
-    return this.restaurantModel.create({ ...data, ownerId, status: RestaurantStatus.PENDING });
+    return this.restaurantModel.create({ ...data, ownerId, status: RestaurantStatus.ACTIVE });
   }
 
   async update(id: string, ownerId: string, data: any) {

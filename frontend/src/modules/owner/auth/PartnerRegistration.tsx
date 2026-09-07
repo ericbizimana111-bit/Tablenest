@@ -122,7 +122,7 @@ export default function PartnerRegistration() {
                 address: form.address, city: form.city, country: form.country, phone: form.phone, dineIn: form.dineIn, delivery: form.delivery, images,
                 logo: images.length > 0 ? images[0] : null,
             });
-            toast.success('Application submitted. Await approval.');
+            toast.success('Restaurant added and now visible to diners.');
             navigate(getRoleHomePath('owner'), { replace: true });
         } catch (unknownError) {
             const error = unknownError as { response?: { data?: { message?: string } } };
