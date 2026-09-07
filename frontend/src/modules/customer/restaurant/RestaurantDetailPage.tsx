@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
     ArrowLeft,
     Calendar,
@@ -32,6 +32,7 @@ export default function RestaurantDetailPage() {
     const { id = '' } = useParams();
     const navigate = useNavigate();
     const { isAuthenticated } = useAuthStore();
+    const queryClient = useQueryClient();
     const [searchParams, setSearchParams] = useSearchParams();
     const tab = (searchParams.get('tab') as TabKey) || 'overview';
     const [cart, setCart] = useState<CartItem[]>([]);
@@ -49,6 +50,13 @@ export default function RestaurantDetailPage() {
         queryFn: () => restaurantsAPI.getPublicById(id).then((r) => r.data),
         enabled: Boolean(id),
     });
+
+    const { data: favoritesData } = useQuery<{ restaurants: Restaurant[] }>({
+        queryKey: ['favorites'],
+        queryFn: () => usersAPI.getFavorites().then((r) => r.data),
+        enabled: isAuthenticated,
+    });
+    const isFavorite = Boolean(favoritesData?.restaurants.some((favorite) => favorite._id === id));
 
     const { data: menuData, isLoading: menuLoading } = useQuery<{ categories: MenuCategory[] }>({
         queryKey: ['restaurant-menu', id],
@@ -87,8 +95,12 @@ export default function RestaurantDetailPage() {
     });
 
     const favoriteMut = useMutation({
-        mutationFn: () => usersAPI.addFavorite(id),
-        onSuccess: () => toast.success('Added to favorites'),
+        mutationFn: () => isFavorite ? usersAPI.removeFavorite(id) : usersAPI.addFavorite(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['favorites'] });
+            queryClient.invalidateQueries({ queryKey: ['favorites-count'] });
+            toast.success(isFavorite ? 'Removed from favorites' : 'Added to favorites');
+        },
         onError: () => toast.error('Could not add favorite'),
     });
 
@@ -229,7 +241,7 @@ export default function RestaurantDetailPage() {
                                         onMouseEnter={e => { e.currentTarget.style.background = '#FFF7ED'; e.currentTarget.style.borderColor = '#FDE68A'; e.currentTarget.style.color = '#F97316'; }}
                                         onMouseLeave={e => { e.currentTarget.style.background = 'white'; e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.color = '#475569'; }}
                                     >
-                                        <Heart size={15} /> Save
+                                        <Heart size={15} fill={isFavorite ? '#F97316' : 'none'} color={isFavorite ? '#F97316' : undefined} /> {isFavorite ? 'Saved' : 'Save'}
                                     </button>
                                 )}
                             </div>

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, Plus, Printer, Clock, Users, Armchair, MoreHorizontal } from 'lucide-react';
-import { reservationsAPI } from '../../../shared/services/api';
+import { reservationsAPI, restaurantsAPI } from '../../../shared/services/api';
 import { useAuthStore } from '../../../shared/store/authStore';
 import { StatusBadge } from '../../../shared/components/ui/index';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, isSameDay, isToday } from 'date-fns';
@@ -24,7 +24,12 @@ export default function ReservationCalendar() {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [view, setView] = useState<'month' | 'week' | 'day'>('month');
 
-    const restaurantId = user?.restaurantId?.toString() || 'demo';
+    const { data: myRestaurant } = useQuery({
+        queryKey: ['my-restaurant'],
+        queryFn: () => restaurantsAPI.getMyRestaurant().then(r => r.data),
+        enabled: !user?.restaurantId,
+    });
+    const restaurantId = user?.restaurantId?.toString() || myRestaurant?._id?.toString() || '';
 
     const { data: calData = {} } = useQuery({
         queryKey: ['calendar', restaurantId, format(currentDate, 'M'), format(currentDate, 'yyyy')],
@@ -35,17 +40,17 @@ export default function ReservationCalendar() {
     const { data: dayRes } = useQuery({
         queryKey: ['day-reservations', restaurantId, format(selectedDate, 'yyyy-MM-dd')],
         queryFn: () => reservationsAPI.getByRestaurant(restaurantId, { date: format(selectedDate, 'yyyy-MM-dd') }).then(r => r.data),
-        
+        enabled: Boolean(restaurantId),
     });
 
     const confirmMut = useMutation({
         mutationFn: (id: string) => reservationsAPI.confirm(id),
-        onSuccess: () => { qc.invalidateQueries({ queryKey: ['day-reservations'] }); toast.success('Reservation confirmed'); },
+        onSuccess: () => { qc.invalidateQueries({ queryKey: ['day-reservations'] }); qc.invalidateQueries({ queryKey: ['calendar'] }); toast.success('Reservation confirmed'); },
     });
 
     const cancelMut = useMutation({
         mutationFn: (id: string) => reservationsAPI.cancel(id),
-        onSuccess: () => { qc.invalidateQueries({ queryKey: ['day-reservations'] }); toast.success('Reservation cancelled'); },
+        onSuccess: () => { qc.invalidateQueries({ queryKey: ['day-reservations'] }); qc.invalidateQueries({ queryKey: ['calendar'] }); toast.success('Reservation cancelled'); },
     });
 
     const monthStart = startOfMonth(currentDate);

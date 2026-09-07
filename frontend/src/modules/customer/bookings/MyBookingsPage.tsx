@@ -66,14 +66,15 @@ export default function MyBookingsPage() {
 
     const updateMut = useMutation({
         mutationFn: (data: { id: string; date: string; time: string; guests: number }) =>
-            import('../../../shared/services/api').then(mod => mod.default.patch(`/reservations/${data.id}`, { date: data.date, time: data.time, guests: data.guests })),
+            reservationsAPI.update(data.id, { date: data.date, time: data.time, guests: data.guests }),
         onSuccess: () => { qc.invalidateQueries({ queryKey: ['my-reservations'] }); toast.success('Booking updated!'); setModifyModal(null); },
         onError: () => toast.error('Failed to update booking'),
     });
 
     const reservations: Reservation[] = Array.isArray(data) ? data : (data as { reservations?: Reservation[] }).reservations || [];
-    const upcoming = reservations.filter((r) => ['pending', 'confirmed', 'arrived'].includes(r.status));
-    const past = reservations.filter((r) => r.status === 'completed');
+    const isFuture = (r: Reservation) => new Date(`${r.date?.slice(0, 10)}T${r.time || '00:00'}`) > new Date();
+    const upcoming = reservations.filter((r) => ['pending', 'confirmed'].includes(r.status) && isFuture(r));
+    const past = reservations.filter((r) => r.status !== 'cancelled' && !isFuture(r));
     const cancelled = reservations.filter((r) => r.status === 'cancelled');
 
     const tabData: Record<string, Reservation[]> = {
@@ -111,7 +112,7 @@ export default function MyBookingsPage() {
                         <div key={r._id} style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', overflow: 'hidden' }}>
                             <div style={{ display: 'flex' }}>
                                 <img
-                                    src={`https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=120&q=80`}
+                                    src={r.restaurantImage || `https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=120&q=80`}
                                     alt=""
                                     style={{ width: 110, height: 110, objectFit: 'cover', flexShrink: 0 }}
                                 />
@@ -147,11 +148,11 @@ export default function MyBookingsPage() {
                                             </button>
                                         </div>
                                     )}
-                            {r.status === 'completed' && (
-                                <button onClick={() => toast.success('Review feature coming soon')} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 14px', border: '1.5px solid #E2E8F0', borderRadius: 8, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500 }}>
-                                    Write Review
-                                </button>
-                            )}
+                                    {r.status === 'completed' && (
+                                        <button onClick={() => toast.success('Review feature coming soon')} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 14px', border: '1.5px solid #E2E8F0', borderRadius: 8, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500 }}>
+                                            Write Review
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         </div>

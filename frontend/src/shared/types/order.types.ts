@@ -47,6 +47,7 @@ export interface Reservation {
     customerId: string;
     restaurantId: string;
     restaurantName?: string;
+    restaurantImage?: string;
     tableId: string;
     tableNumber?: string;
     date: string;

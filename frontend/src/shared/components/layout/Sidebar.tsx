@@ -22,6 +22,11 @@ export default function Sidebar({ title, subtitle, navItems, bottomUser = true }
     const { user, logout } = useAuthStore();
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
+    const handleLogout = () => {
+        logout();
+        setShowLogoutConfirm(false);
+    };
+
     return (
         <>
             <aside style={{
@@ -102,7 +107,7 @@ export default function Sidebar({ title, subtitle, navItems, bottomUser = true }
                                     {user.email}
                                 </div>
                             </div>
-                            <button onClick={() => setShowLogoutConfirm(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8', padding: 4 }} title="Logout">
+                            <button onClick={() => setShowLogoutConfirm(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8', padding: 4 }} title="Logout" aria-label="Logout">
                                 <LogOut size={16} />
                             </button>
                         </div>
@@ -113,7 +118,7 @@ export default function Sidebar({ title, subtitle, navItems, bottomUser = true }
             <ConfirmModal
                 isOpen={showLogoutConfirm}
                 onClose={() => setShowLogoutConfirm(false)}
-                onConfirm={() => { logout(); setShowLogoutConfirm(false); }}
+                onConfirm={handleLogout}
             />
         </>
     );

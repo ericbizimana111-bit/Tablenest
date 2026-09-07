@@ -27,6 +27,9 @@ export class Reservation {
   restaurantName: string;
 
   @Prop({ default: null })
+  restaurantImage: string;
+
+  @Prop({ default: null })
   customerName: string;
 
   @Prop({ required: true })

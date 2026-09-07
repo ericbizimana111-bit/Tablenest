@@ -5,6 +5,7 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../users/user.schema';
 import { RestaurantsService } from './restaurants.service';
+import { CreateRestaurantDto, UpdateRestaurantDto } from './dto/restaurant.dto';
 
 @Controller('restaurants')
 export class RestaurantsController {
@@ -36,14 +37,14 @@ export class RestaurantsController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.OWNER)
   @Post()
-  create(@Request() req, @Body() data: any) {
-    return this.restaurantsService.create(req.user._id.toString(), data);
+  create(@Request() req, @Body() dto: CreateRestaurantDto) {
+    return this.restaurantsService.create(req.user._id.toString(), dto);
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.OWNER)
   @Put(':id')
-  update(@Request() req, @Param('id', MongoIdValidationPipe) id: string, @Body() data: any) {
-    return this.restaurantsService.update(id, req.user._id.toString(), data);
+  update(@Request() req, @Param('id', MongoIdValidationPipe) id: string, @Body() dto: UpdateRestaurantDto) {
+    return this.restaurantsService.update(id, req.user._id.toString(), dto);
   }
 }

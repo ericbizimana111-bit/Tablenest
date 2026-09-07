@@ -48,13 +48,18 @@ export class ReservationsController {
   }
 
   @Patch(':id/confirm')
-  confirm(@Param('id', MongoIdValidationPipe) id: string) {
-    return this.reservationsService.confirm(id);
+  confirm(@Request() req, @Param('id', MongoIdValidationPipe) id: string) {
+    return this.reservationsService.confirm(id, req.user);
   }
 
   @Patch(':id/cancel')
-  cancel(@Param('id', MongoIdValidationPipe) id: string) {
-    return this.reservationsService.cancel(id);
+  cancel(@Request() req, @Param('id', MongoIdValidationPipe) id: string) {
+    return this.reservationsService.cancel(id, req.user);
+  }
+
+  @Patch(':id')
+  update(@Request() req, @Param('id', MongoIdValidationPipe) id: string, @Body() data: any) {
+    return this.reservationsService.update(id, req.user, data);
   }
 
   @Patch(':id/arrived')

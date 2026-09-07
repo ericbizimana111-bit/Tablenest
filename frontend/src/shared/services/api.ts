@@ -188,6 +188,7 @@ export const reservationsAPI = {
     create: (data: Payload) => api.post('/reservations', data),
     confirm: (id: string) => api.patch(`/reservations/${id}/confirm`),
     cancel: (id: string) => api.patch(`/reservations/${id}/cancel`),
+    update: (id: string, data: Payload) => api.patch(`/reservations/${id}`, data),
     markArrived: (id: string) => api.patch(`/reservations/${id}/arrived`),
     getCalendarData: (restaurantId: string, month: number, year: number) =>
         api.get('/reservations/calendar', { params: { restaurantId, month, year } }),

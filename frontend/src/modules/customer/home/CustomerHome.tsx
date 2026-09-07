@@ -31,7 +31,9 @@ export default function CustomerHome() {
         queryKey: ['my-bookings-count'],
         queryFn: () => reservationsAPI.getMyReservations().then(r => r.data),
     });
-    const bookingsCount = (bookingsData?.reservations || []).filter((b: { status?: string }) => b.status === 'pending' || b.status === 'confirmed').length;
+    const bookings = Array.isArray(bookingsData) ? bookingsData : bookingsData?.reservations || [];
+    const bookingsCount = bookings.filter((b: { status?: string; date?: string; time?: string }) =>
+        ['pending', 'confirmed'].includes(b.status || '') && new Date(`${b.date?.slice(0, 10)}T${b.time || '00:00'}`) > new Date()).length;
 
     const { data: ordersData } = useQuery({
         queryKey: ['my-orders-count'],
@@ -43,7 +45,7 @@ export default function CustomerHome() {
         queryKey: ['favorites-count'],
         queryFn: () => usersAPI.getFavorites().then(r => r.data),
     });
-    const favoritesCount = (favData?.favorites || []).length;
+    const favoritesCount = (favData?.restaurants || favData?.favorites || []).length;
 
     return (
         <div className="fade-in">

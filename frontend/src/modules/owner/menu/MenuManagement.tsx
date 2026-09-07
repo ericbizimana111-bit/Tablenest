@@ -13,25 +13,21 @@ type ItemForm = { name: string; price: string; description: string; image: strin
 export default function MenuManagement() {
     const { user } = useAuthStore();
     const qc = useQueryClient();
-    const [apiRestaurantId, setApiRestaurantId] = useState('');
     const [activeCategory, setActiveCategory] = useState<MenuCategory | null>(null);
     const [showItemModal, setShowItemModal] = useState(false);
     const [showCatModal, setShowCatModal] = useState(false);
     const [editItem, setEditItem] = useState<MenuItem | null>(null);
     const [itemForm, setItemForm] = useState<ItemForm>({ name: '', price: '', description: '', image: '' });
     const [catName, setCatName] = useState('');
-    const restaurantId = user?.restaurantId?.toString() || apiRestaurantId;
 
-    React.useEffect(() => {
-        if (!user?.restaurantId) {
-            let active = true;
-            restaurantsAPI.getMyRestaurant()
-                .then(r => { if (active && r.data?._id) setApiRestaurantId(r.data._id); })
-                .catch(() => { });
-            return () => { active = false; };
-        }
-        return undefined;
-    }, [user]);
+    const { data: myRestaurant } = useQuery<{ _id: string }>({
+        queryKey: ['my-restaurant'],
+        queryFn: () => restaurantsAPI.getMyRestaurant().then(r => r.data),
+        enabled: !user?.restaurantId,
+        staleTime: 1000 * 60 * 5,
+    });
+
+    const restaurantId = user?.restaurantId?.toString() || myRestaurant?._id || '';
 
     const { data: categories = [] } = useQuery({
         queryKey: ['menu-categories', restaurantId],

@@ -66,7 +66,7 @@ function IconField({ icon: Icon, ...props }: { icon: React.ElementType } & React
 
 export default function PartnerRegistration() {
     const navigate = useNavigate();
-    const { registerOwner, isAuthenticated } = useAuth();
+    const { registerOwner, isAuthenticated, setUser, refreshUser } = useAuth();
     const [step, setStep] = useState(1);
     const [form, setForm] = useState<PartnerForm>({
         fullName: '', email: '', password: '', restaurantName: '', cuisineType: 'Italian',
@@ -116,12 +116,20 @@ export default function PartnerRegistration() {
             if (!isAuthenticated) {
                 await registerOwner({ fullName: form.fullName, email: form.email, password: form.password });
             }
-            await restaurantsAPI.create({
+            const created = await restaurantsAPI.create({
                 name: form.restaurantName, cuisineType: form.cuisineType, description: form.description,
                 seatingCapacity: +form.seatingCapacity, priceRange: form.priceRange,
                 address: form.address, city: form.city, country: form.country, phone: form.phone, dineIn: form.dineIn, delivery: form.delivery, images,
                 logo: images.length > 0 ? images[0] : null,
             });
+            try {
+                await refreshUser();
+            } catch {
+                const current = JSON.parse(localStorage.getItem('user') || 'null');
+                if (current && created?.data?._id) {
+                    setUser({ ...current, restaurantId: created.data._id });
+                }
+            }
             toast.success('Restaurant added and now visible to diners.');
             navigate(getRoleHomePath('owner'), { replace: true });
         } catch (unknownError) {

@@ -1,10 +1,11 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { Calendar, ShoppingBag, DollarSign, Star, Grid3X3, MoreHorizontal } from 'lucide-react';
-import { analyticsAPI, ordersAPI, reservationsAPI } from '../../../shared/services/api';
+import { Calendar, ShoppingBag, DollarSign, Star, Grid3X3, MoreHorizontal, Store } from 'lucide-react';
+import { analyticsAPI, ordersAPI, reservationsAPI, restaurantsAPI } from '../../../shared/services/api';
 import { useAuthStore } from '../../../shared/store/authStore';
 import { StatCard, Spinner, StatusBadge } from '../../../shared/components/ui/index';
+import { useNavigate } from 'react-router-dom';
 
 const ORANGE = '#F97316';
 interface DashboardReservation {
@@ -25,9 +26,19 @@ interface KitchenOrder {
 
 export default function OwnerDashboard() {
     const { user } = useAuthStore();
-    const restaurantId = user?.restaurantId?.toString() || '';
+    const navigate = useNavigate();
+    const fallbackRestaurantId = '';
 
-    const { data: dashData, isLoading } = useQuery({
+    const { data: myRestaurant, isLoading: loadingRestaurant, error: restaurantError } = useQuery({
+        queryKey: ['my-restaurant'],
+        queryFn: () => restaurantsAPI.getMyRestaurant().then(r => r.data),
+        retry: false,
+    });
+
+    const restaurantId = user?.restaurantId?.toString() || myRestaurant?._id?.toString() || fallbackRestaurantId;
+    const hasRestaurant = Boolean(restaurantId);
+
+    const { data: dashData } = useQuery({
         queryKey: ['owner-dashboard', restaurantId],
         queryFn: () => restaurantId ? analyticsAPI.getRestaurantDashboard(restaurantId).then(r => r.data) : Promise.resolve(null),
         enabled: !!restaurantId,
@@ -60,7 +71,29 @@ export default function OwnerDashboard() {
         enabled: !!restaurantId,
     });
 
-    if (isLoading) return <Spinner />;
+    if (loadingRestaurant) return <Spinner />;
+
+    if (!hasRestaurant) {
+        const message = restaurantError
+            ? "We couldn't load your restaurant. Please try refreshing."
+            : "You haven't registered a restaurant yet.";
+        return (
+            <div className="fade-in" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
+                <div style={{ background: 'white', borderRadius: 16, border: '1px solid #E2E8F0', padding: 40, textAlign: 'center', maxWidth: 480 }}>
+                    <div style={{ width: 64, height: 64, borderRadius: 16, background: '#FFF7ED', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                        <Store size={28} color="#F97316" />
+                    </div>
+                    <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>No restaurant yet</h2>
+                    <p style={{ fontSize: 14, color: '#475569', marginBottom: 20, lineHeight: 1.5 }}>{message}</p>
+                    {!restaurantError && (
+                        <button onClick={() => navigate('/partner/register')} style={{ padding: '11px 22px', background: '#F97316', color: 'white', border: 'none', borderRadius: 10, fontWeight: 600, fontSize: 14, cursor: 'pointer', fontFamily: 'Poppins' }}>
+                            Register your restaurant
+                        </button>
+                    )}
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="fade-in">

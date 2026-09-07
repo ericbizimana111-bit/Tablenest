@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { isValidObjectId, Model } from 'mongoose';
 import { Reservation, ReservationDocument, ReservationStatus } from './reservation.schema';
@@ -6,6 +6,7 @@ import { Restaurant, RestaurantDocument } from '../restaurants/restaurant.schema
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationType } from '../notifications/notification.schema';
 import * as crypto from 'crypto';
+import { AccessControlService } from '../../common/services/access-control.service';
 
 @Injectable()
 export class ReservationsService {
@@ -18,6 +19,7 @@ export class ReservationsService {
     @InjectModel(Reservation.name) private reservationModel: Model<ReservationDocument>,
     @InjectModel(Restaurant.name) private restaurantModel: Model<RestaurantDocument>,
     private notificationsService: NotificationsService,
+    private accessControl: AccessControlService,
   ) { }
 
   async create(customerId: string, data: any) {
@@ -41,10 +43,14 @@ export class ReservationsService {
       throw new BadRequestException('Guests must be between 1 and 20');
     }
 
+    const restaurant = await this.restaurantModel.findById(data.restaurantId).select('name ownerId images');
+    if (!restaurant) throw new NotFoundException('Restaurant not found');
     const bookingRef = 'TN-' + crypto.randomBytes(4).toString('hex').toUpperCase();
     const reservation = await this.reservationModel.create({
       ...data,
       customerId,
+      restaurantName: data.restaurantName || restaurant.name,
+      restaurantImage: data.restaurantImage || restaurant.images?.[0] || null,
       bookingRef,
       status: ReservationStatus.PENDING,
       tableId: data.tableId || null,
@@ -53,7 +59,6 @@ export class ReservationsService {
 
     // Notify restaurant owner
     try {
-      const restaurant = await this.restaurantModel.findById(data.restaurantId).select('name ownerId');
       if (restaurant?.ownerId) {
         await this.notificationsService.create(restaurant.ownerId.toString(), {
           title: 'New Booking Request',
@@ -108,8 +113,11 @@ export class ReservationsService {
     return this.findAll({ ...query, restaurantId });
   }
 
-  async confirm(id: string) {
+  async confirm(id: string, actor?: any) {
     this.assertValidId(id, 'id');
+    const existing = await this.reservationModel.findById(id);
+    if (!existing) throw new NotFoundException('Reservation not found');
+    if (actor) await this.accessControl.assertRestaurantOwner(actor, existing.restaurantId.toString());
     const reservation = await this.reservationModel.findByIdAndUpdate(id, { status: ReservationStatus.CONFIRMED }, { returnDocument: 'after' });
     // Notify customer
     if (reservation) {
@@ -127,23 +135,60 @@ export class ReservationsService {
     return reservation;
   }
 
-  async cancel(id: string) {
+  async cancel(id: string, actor?: any) {
     this.assertValidId(id, 'id');
+    const existing = await this.reservationModel.findById(id);
+    if (!existing) throw new NotFoundException('Reservation not found');
+    if (actor) {
+      const isCustomer = existing.customerId.toString() === actor._id.toString();
+      if (actor.role === 'owner') await this.accessControl.assertRestaurantOwner(actor, existing.restaurantId.toString());
+      else if (!isCustomer) throw new ForbiddenException('Cannot cancel this reservation');
+    }
     const reservation = await this.reservationModel.findByIdAndUpdate(id, { status: ReservationStatus.CANCELLED }, { returnDocument: 'after' });
-    // Notify customer
     if (reservation) {
       try {
         const restaurant = await this.restaurantModel.findById(reservation.restaurantId).select('name');
-        await this.notificationsService.create(reservation.customerId.toString(), {
-          title: 'Booking Cancelled',
-          message: `Your booking at ${restaurant?.name || 'the restaurant'} has been cancelled.`,
+        const isCustomer = actor?._id?.toString() === reservation.customerId.toString();
+        const recipientId = isCustomer
+          ? (await this.restaurantModel.findById(reservation.restaurantId).select('ownerId'))?.ownerId?.toString()
+          : reservation.customerId.toString();
+        if (!recipientId) return reservation;
+        await this.notificationsService.create(recipientId, {
+          title: isCustomer ? 'Booking Cancelled by Customer' : 'Booking Cancelled',
+          message: isCustomer
+            ? `A customer cancelled their booking at ${restaurant?.name || 'your restaurant'}.`
+            : `Your booking at ${restaurant?.name || 'the restaurant'} has been cancelled.`,
           type: NotificationType.BOOKING,
-          link: '/my-bookings',
+          link: isCustomer ? '/owner/reservations' : '/my-bookings',
           metadata: { reservationId: reservation._id },
         });
       } catch { /* notification failure should not block */ }
     }
     return reservation;
+  }
+
+  async update(id: string, actor: any, data: any) {
+    this.assertValidId(id, 'id');
+    const existing = await this.reservationModel.findById(id);
+    if (!existing) throw new NotFoundException('Reservation not found');
+    if (existing.customerId.toString() !== actor._id.toString()) {
+      throw new ForbiddenException('Cannot update this reservation');
+    }
+    if (![ReservationStatus.PENDING, ReservationStatus.CONFIRMED].includes(existing.status)) {
+      throw new BadRequestException('Only pending or confirmed future reservations can be updated');
+    }
+    const date = data.date ? new Date(data.date) : existing.date;
+    const reservationDateTime = new Date(`${date.toISOString().slice(0, 10)}T${data.time || existing.time}`);
+    if (reservationDateTime <= new Date()) throw new BadRequestException('Reservation must be in the future');
+    if (data.guests !== undefined && (data.guests < 1 || data.guests > 20)) {
+      throw new BadRequestException('Guests must be between 1 and 20');
+    }
+    return this.reservationModel.findByIdAndUpdate(id, {
+      date,
+      time: data.time || existing.time,
+      guests: data.guests ?? existing.guests,
+      status: ReservationStatus.PENDING,
+    }, { returnDocument: 'after' });
   }
 
   async markArrived(id: string) {

@@ -1,11 +1,15 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Restaurant, RestaurantDocument, RestaurantStatus } from './restaurant.schema';
+import { User, UserDocument } from '../users/user.schema';
 
 @Injectable()
 export class RestaurantsService {
-  constructor(@InjectModel(Restaurant.name) private restaurantModel: Model<RestaurantDocument>) { }
+  constructor(
+    @InjectModel(Restaurant.name) private restaurantModel: Model<RestaurantDocument>,
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+  ) { }
 
   async findPublic(query: any = {}) {
     const { page = 1, limit = 20, search, cuisine, city, country, priceRange, sort } = query;
@@ -50,7 +54,17 @@ export class RestaurantsService {
   }
 
   async create(ownerId: string, data: any) {
-    return this.restaurantModel.create({ ...data, ownerId, status: RestaurantStatus.ACTIVE });
+    const existing = await this.restaurantModel.findOne({ ownerId });
+    if (existing) {
+      throw new BadRequestException('You already have a registered restaurant');
+    }
+    const restaurant = await this.restaurantModel.create({
+      ...data,
+      ownerId,
+      status: RestaurantStatus.ACTIVE,
+    });
+    await this.userModel.findByIdAndUpdate(ownerId, { restaurantId: restaurant._id });
+    return restaurant;
   }
 
   async update(id: string, ownerId: string, data: any) {
