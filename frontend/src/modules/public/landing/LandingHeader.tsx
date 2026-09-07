@@ -34,6 +34,12 @@ export default function LandingHeader({ theme = 'dark' }: { theme?: 'dark' | 'li
         setMobileOpen(false);
     };
 
+    const handleLogout = () => {
+        setShowLogoutConfirm(false);
+        setMobileOpen(false);
+        logout();
+    };
+
     return (
         <>
             <style>{`
@@ -102,6 +108,8 @@ export default function LandingHeader({ theme = 'dark' }: { theme?: 'dark' | 'li
                             </span>
                             <button
                                 onClick={() => setShowLogoutConfirm(true)}
+                                type="button"
+                                aria-label="Logout"
                                 style={{
                                     padding: '8px 20px', border: `1.5px solid ${logoutBorder}`,
                                     borderRadius: 8, background: 'transparent', fontSize: 13,
@@ -203,6 +211,8 @@ export default function LandingHeader({ theme = 'dark' }: { theme?: 'dark' | 'li
                                 </button>
                                 <button
                                     onClick={() => setShowLogoutConfirm(true)}
+                                    type="button"
+                                    aria-label="Logout"
                                     style={{
                                         padding: '12px', borderRadius: 8, border: '1.5px solid rgba(255,255,255,0.2)',
                                         background: 'transparent', color: '#CBD5E1', fontSize: 15,
@@ -250,7 +260,7 @@ export default function LandingHeader({ theme = 'dark' }: { theme?: 'dark' | 'li
             <ConfirmModal
                 isOpen={showLogoutConfirm}
                 onClose={() => setShowLogoutConfirm(false)}
-                onConfirm={() => { logout(); setShowLogoutConfirm(false); setMobileOpen(false); }}
+                onConfirm={handleLogout}
             />
         </>
     );

@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapPin, Utensils, Search, ArrowRight } from 'lucide-react';
 import heroPhoto from '../../../assets/hero-photo.png';
+import heroSectionRightImage from '../../../assets/hero-section-right-image.png';
 import { useScrollReveal, useRevealChildren, useImageReveal } from '../../../shared/hooks/useScrollReveal';
 
 export default function HeroSection() {
@@ -21,14 +22,18 @@ export default function HeroSection() {
     useEffect(() => {
         if (!graphicRingRef.current) return;
         const el = graphicRingRef.current;
-        // Slight delayed gentle float start after entrance
         const onEnter = () => {
             requestAnimationFrame(() => {
                 el.classList.add('float-slow');
             });
         };
         const observer = new IntersectionObserver(
-            ([entry]) => { if (entry.isIntersecting) { onEnter(); observer.disconnect(); } },
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    onEnter();
+                    observer.disconnect();
+                }
+            },
             { threshold: 0.25 }
         );
         observer.observe(el);
@@ -83,40 +88,35 @@ export default function HeroSection() {
                         alignItems: 'center',
                     }}
                 >
-                    {/* ─── LEFT CONTENT ─── */}
                     <div ref={contentRef} className="hero-content-col stagger">
-                        {/* Badge */}
-                        <div className="badge-pulse"
-                            style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: 6,
-                                background: '#FFF7ED',
-                                border: '1px solid #FED7AA',
-                                borderRadius: 9999,
-                                padding: '6px 16px',
-                                marginBottom: 24,
-                            }}>
+                        <div className="badge-pulse" style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 6,
+                            background: '#FFF7ED',
+                            border: '1px solid #FED7AA',
+                            borderRadius: 9999,
+                            padding: '6px 16px',
+                            marginBottom: 24,
+                        }}>
                             <span style={{ color: '#F97316', fontSize: 11.5, fontWeight: 700 }}>
                                 ✦ Your table is waiting
                             </span>
                         </div>
 
-                        {/* Headline */}                            <h1 className="gradient-text"
-                            style={{
-                                fontSize: 'clamp(38px, 4.8vw, 58px)',
-                                fontWeight: 800,
-                                lineHeight: 1.12,
-                                letterSpacing: '-1.8px',
-                                color: '#0F172A',
-                                marginBottom: 18,
-                            }}>
-                            Good food.<br />
-                            Great company.<br />
-                            That's <span style={{ color: '#F97316' }}>TableNest.</span>
+                        <h1 style={{
+                            fontSize: 'clamp(38px, 4.8vw, 58px)',
+                            fontWeight: 800,
+                            lineHeight: 1.12,
+                            letterSpacing: '-1.8px',
+                            color: '#0F172A',
+                            marginBottom: 18,
+                        }}>
+                            <span style={{ color: '#0F172A' }}>Good</span> <span style={{ color: '#F97316' }}>food.</span><br />
+                            <span style={{ color: '#0F172A' }}>Great</span> <span style={{ color: '#F97316' }}>company.</span><br />
+                            <span style={{ color: '#0F172A' }}>That's</span> <span style={{ color: '#F97316' }}>TableNest.</span>
                         </h1>
 
-                        {/* Subtext */}
                         <p style={{
                             fontSize: 16,
                             color: '#64748B',
@@ -128,7 +128,6 @@ export default function HeroSection() {
                             Find the best restaurants near you, book in seconds, and enjoy unforgettable dining experiences.
                         </p>
 
-                        {/* Action Buttons: Get Started & Book Restaurants */}
                         <div className="hero-action-btns" style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -180,7 +179,6 @@ export default function HeroSection() {
                             </button>
                         </div>
 
-                        {/* Search Bar */}
                         <div className="hero-search-wrap" style={{
                             display: 'flex',
                             background: '#FFFFFF',
@@ -259,7 +257,6 @@ export default function HeroSection() {
                         </div>
                     </div>
 
-                    {/* ─── RIGHT: HERO PHOTO ─── */}
                     <div className="hero-image-col" style={{
                         position: 'relative',
                         display: 'flex',
@@ -280,9 +277,12 @@ export default function HeroSection() {
                                 padding: 24,
                                 boxShadow: '0 20px 40px rgba(249, 115, 22, 0.12)',
                                 willChange: 'transform',
+                                position: 'relative',
+                                overflow: 'visible',
                             }}
                         >
                             <img
+                                ref={heroImgRef}
                                 src={heroPhoto}
                                 alt="Delicious gourmet salad bowl"
                                 className="img-reveal"
@@ -290,10 +290,39 @@ export default function HeroSection() {
                                     width: '100%',
                                     height: '100%',
                                     objectFit: 'contain',
+                                    display: 'block',
                                     filter: 'drop-shadow(0 16px 24px rgba(0,0,0,0.15))',
                                     willChange: 'transform, opacity',
                                 }}
                             />
+
+                            <div style={{
+                                position: 'absolute',
+                                right: -18,
+                                bottom: 20,
+                                width: 128,
+                                height: 128,
+                                borderRadius: '50%',
+                                background: 'radial-gradient(circle, #FFF7ED 0%, #FED7AA 100%)',
+                                boxShadow: '0 16px 28px rgba(249, 115, 22, 0.2)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                zIndex: 2,
+                                pointerEvents: 'none',
+                            }}>
+                                <img
+                                    src={heroSectionRightImage}
+                                    alt="Featured food highlight"
+                                    style={{
+                                        width: '72%',
+                                        height: '72%',
+                                        objectFit: 'contain',
+                                        filter: 'drop-shadow(0 12px 20px rgba(15, 23, 42, 0.2))',
+                                        transform: 'rotate(10deg)',
+                                    }}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -301,3 +330,6 @@ export default function HeroSection() {
         </>
     );
 }
+
+
+

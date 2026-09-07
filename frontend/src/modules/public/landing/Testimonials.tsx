@@ -133,85 +133,89 @@ export default function Testimonials() {
                     </div>
 
                     {/* Testimonial Track */}
-                    <div ref={trackRef} style={{
-                        overflow: 'hidden',
-                        margin: '0 auto 32px',
-                    }}>
-                        <div className="test-track stagger">
-                            {[...TESTIMONIALS, ...TESTIMONIALS, ...TESTIMONIALS].map((item, idx) => (
-                                <div
-                                    key={idx}
-                                    className="test-card card-lift"
-                                    style={{
-                                        width: 280,
-                                        flexShrink: 0,
-                                        background: '#FFFFFF',
-                                        borderRadius: 20,
-                                        border: '1.5px solid #F1F5F9',
-                                        padding: '26px 24px 24px',
-                                        boxShadow: '0 4px 14px rgba(15, 23, 42, 0.04)',
-                                    }}
-                                >
-                                    <div style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: 14,
-                                        marginBottom: 16,
-                                    }}>
-                                        <img
-                                            src={item.avatar}
-                                            alt={item.name}
-                                            className="img-reveal"
-                                            style={{
-                                                width: 46,
-                                                height: 46,
-                                                borderRadius: '50%',
-                                                objectFit: 'cover',
-                                                border: '2px solid #FFFFFF',
-                                                boxShadow: '0 2px 8px rgba(15, 23, 42, 0.08)',
-                                                flexShrink: 0,
-                                            }}
-                                        />
-                                        <div>
-                                            <h4 style={{
-                                                fontSize: 15.5,
-                                                fontWeight: 700,
-                                                color: '#0F172A',
-                                                margin: 0,
-                                                letterSpacing: '-0.2px',
-                                            }}>
-                                                {item.name}
-                                            </h4>
-                                            <p style={{
-                                                fontSize: 12.5,
-                                                color: '#64748B',
-                                                margin: '2px 0 0',
-                                            }}>
-                                                {item.role}
-                                            </p>
-                                        </div>
+                    <div
+                        ref={trackRef}
+                        className="test-track stagger is-visible"
+                        style={{
+                            overflow: 'hidden',
+                            margin: '0 auto 32px',
+                        }}
+                    >
+                        {[...TESTIMONIALS, ...TESTIMONIALS, ...TESTIMONIALS].map((item, idx) => (
+                            <div
+                                key={idx}
+                                className="test-card card-lift"
+                                style={{
+                                    width: 280,
+                                    flexShrink: 0,
+                                    background: '#FFFFFF',
+                                    borderRadius: 20,
+                                    border: '1.5px solid #F1F5F9',
+                                    padding: '26px 24px 24px',
+                                    boxShadow: '0 4px 14px rgba(15, 23, 42, 0.04)',
+                                    opacity: 1,
+                                    transform: 'none',
+                                }}
+                            >
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 14,
+                                    marginBottom: 16,
+                                }}>
+                                    <img
+                                        src={item.avatar}
+                                        alt={item.name}
+                                        className="img-reveal is-visible"
+                                        style={{
+                                            width: 46,
+                                            height: 46,
+                                            borderRadius: '50%',
+                                            objectFit: 'cover',
+                                            border: '2px solid #FFFFFF',
+                                            boxShadow: '0 2px 8px rgba(15, 23, 42, 0.08)',
+                                            flexShrink: 0,
+                                            opacity: 1,
+                                            transform: 'none',
+                                        }}
+                                    />
+                                    <div>
+                                        <h4 style={{
+                                            fontSize: 15.5,
+                                            fontWeight: 700,
+                                            color: '#0F172A',
+                                            margin: 0,
+                                            letterSpacing: '-0.2px',
+                                        }}>
+                                            {item.name}
+                                        </h4>
+                                        <p style={{
+                                            fontSize: 12.5,
+                                            color: '#64748B',
+                                            margin: '2px 0 0',
+                                        }}>
+                                            {item.role}
+                                        </p>
                                     </div>
-
-                                    <div style={{ display: 'flex', gap: 4, marginBottom: 14 }}>
-                                        {[...Array(item.rating)].map((_, i) => (
-                                            <Star key={i} size={14} fill="#F59E0B" color="#F59E0B" />
-                                        ))}
-                                    </div>
-
-                                    <p style={{
-                                        fontSize: 14,
-                                        color: '#334155',
-                                        lineHeight: 1.65,
-                                        margin: 0,
-                                    }}>
-                                        {item.quote}
-                                    </p>
                                 </div>
-                            ))}
-                        </div>
+
+                                <div style={{ display: 'flex', gap: 4, marginBottom: 14 }}>
+                                    {[...Array(item.rating)].map((_, i) => (
+                                        <Star key={i} size={14} fill="#F59E0B" color="#F59E0B" />
+                                    ))}
+                                </div>
+
+                                <p style={{
+                                    fontSize: 14,
+                                    color: '#334155',
+                                    lineHeight: 1.65,
+                                    margin: 0,
+                                }}>
+                                    {item.quote}
+                                </p>
+                            </div>
+                        ))}
                     </div>
-
-
                 </div>
             </section>
         </>

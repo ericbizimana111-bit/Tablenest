@@ -164,183 +164,184 @@ export default function PopularDishes() {
                     </div>
 
                     {/* Nav arrows */}
-                        <div style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            marginBottom: 24,
-                            width: '100%',
-                        }}>
-                            <button
-                                className="dish-nav-btn"
-                                onClick={handlePrev}
-                                disabled={offset === 0}
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: 24,
+                        width: '100%',
+                    }}>
+                        <button
+                            className="dish-nav-btn"
+                            onClick={handlePrev}
+                            disabled={offset === 0}
+                            style={{
+                                width: 40,
+                                height: 40,
+                                borderRadius: 12,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: offset === 0 ? 'default' : 'pointer',
+                                opacity: offset === 0 ? 0.4 : 1,
+                                padding: 0,
+                            }}
+                        >
+                            <ChevronLeft size={20} />
+                        </button>
+
+                        <button
+                            className="dish-nav-btn"
+                            onClick={handleNext}
+                            disabled={offset + dishesPerView >= POPULAR_DISHES.length}
+                            style={{
+                                width: 40,
+                                height: 40,
+                                borderRadius: 12,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: offset + dishesPerView >= POPULAR_DISHES.length ? 'default' : 'pointer',
+                                opacity: offset + dishesPerView >= POPULAR_DISHES.length ? 0.4 : 1,
+                                padding: 0,
+                            }}
+                        >
+                            <ChevronRight size={20} />
+                        </button>
+                    </div>
+
+                    {/* Dish Cards Grid */}
+                    <div ref={gridRef} className="popular-dishes-grid stagger" style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(4, 1fr)',
+                        gap: 24,
+                    }}>
+                        {POPULAR_DISHES.slice(offset, offset + dishesPerView).map((dish) => (
+                            <div
+                                key={dish.id}
+                                className="dish-card card-lift"
                                 style={{
-                                    width: 40,
-                                    height: 40,
-                                    borderRadius: 12,
+                                    background: '#FFFFFF',
+                                    borderRadius: 22,
+                                    border: '1.5px solid #F1F5F9',
+                                    padding: '24px 20px 22px',
                                     display: 'flex',
+                                    flexDirection: 'column',
                                     alignItems: 'center',
-                                    justifyContent: 'center',
-                                    cursor: offset === 0 ? 'default' : 'pointer',
-                                    opacity: offset === 0 ? 0.4 : 1,
-                                    padding: 0,
+                                    textAlign: 'center',
+                                    position: 'relative',
+                                    boxShadow: '0 4px 20px rgba(15, 23, 42, 0.03)',
+                                    overflow: 'hidden',
                                 }}
                             >
-                                <ChevronLeft size={20} />
-                            </button>
-
-                            <button
-                                className="dish-nav-btn"
-                                onClick={handleNext}
-                                disabled={offset + dishesPerView >= POPULAR_DISHES.length}
-                                style={{
-                                    width: 40,
-                                    height: 40,
-                                    borderRadius: 12,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    cursor: offset + dishesPerView >= POPULAR_DISHES.length ? 'default' : 'pointer',
-                                    opacity: offset + dishesPerView >= POPULAR_DISHES.length ? 0.4 : 1,
-                                    padding: 0,
-                                }}
-                            >
-                                <ChevronRight size={20} />
-                            </button>
-                        </div>
-
-                        {/* Dish Cards Grid */}
-                        <div ref={gridRef} className="popular-dishes-grid stagger" style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(4, 1fr)',
-                            gap: 24,
-                        }}>
-                            {POPULAR_DISHES.slice(offset, offset + dishesPerView).map((dish) => (
-                                <div
-                                    key={dish.id}
-                                    className="dish-card card-lift"
+                                {/* Dish Cover Image */}
+                                <div className="img-zoom"
                                     style={{
-                                        background: '#FFFFFF',
-                                        borderRadius: 22,
-                                        border: '1.5px solid #F1F5F9',
-                                        padding: '24px 20px 22px',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        textAlign: 'center',
-                                        position: 'relative',
-                                        boxShadow: '0 4px 20px rgba(15, 23, 42, 0.03)',
+                                        width: '100%',
+                                        height: 168,
+                                        borderRadius: '22px 22px 0 0',
                                         overflow: 'hidden',
-                                    }}
-                                >
-                                    {/* Dish Cover Image */}
-                                    <div className="img-zoom"
+                                        margin: 0,
+                                        marginBottom: 18,
+                                        background: '#F1F5F9',
+                                    }}>
+                                    <img
+                                        src={dish.image}
+                                        alt={dish.name}
+                                        className="img-reveal is-visible"
                                         style={{
                                             width: '100%',
-                                            height: 168,
-                                            borderRadius: '22px 22px 0 0',
-                                            overflow: 'hidden',
-                                            margin: 0,
-                                            marginBottom: 18,
-                                            background: '#F1F5F9',
-                                        }}>
-                                        <img
-                                            src={dish.image}
-                                            alt={dish.name}
-                                            className="img-reveal"
+                                            height: '100%',
+                                            objectFit: 'cover',
+                                            display: 'block',
+                                            willChange: 'transform',
+                                            opacity: 1,
+                                        }}
+                                    />
+                                </div>
+
+                                {/* Dish Title */}
+                                <h3 style={{
+                                    fontSize: 17,
+                                    fontWeight: 700,
+                                    color: '#0F172A',
+                                    marginBottom: 8,
+                                    letterSpacing: '-0.3px',
+                                }}>
+                                    {dish.name}
+                                </h3>
+
+                                {/* Description */}
+                                <p style={{
+                                    fontSize: 13,
+                                    color: '#64748B',
+                                    lineHeight: 1.55,
+                                    marginBottom: 22,
+                                    minHeight: 40,
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 2,
+                                    WebkitBoxOrient: 'vertical',
+                                    overflow: 'hidden',
+                                }}>
+                                    {dish.description}
+                                </p>
+
+                                {/* Bottom Bar (Rating & buttons) */}
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    width: '100%',
+                                    paddingTop: 14,
+                                    borderTop: '1px solid #F1F5F9',
+                                    marginTop: 'auto',
+                                }}>
+                                    <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                                        {/* View Restaurant Button */}
+                                        <button
+                                            className="btn-press dish-order-btn"
+                                            onClick={() => navigate('/restaurants')}
                                             style={{
-                                                width: '100%',
-                                                height: '100%',
-                                                objectFit: 'cover',
-                                                display: 'block',
-                                                willChange: 'transform',
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                gap: 6,
+                                                border: 'none',
+                                                padding: '9px 18px',
+                                                borderRadius: 8,
+                                                fontSize: 12.5,
+                                                fontWeight: 600,
+                                                cursor: 'pointer',
+                                                fontFamily: 'inherit',
                                             }}
-                                        />
-                                    </div>
-
-                                    {/* Dish Title */}
-                                    <h3 style={{
-                                        fontSize: 17,
-                                        fontWeight: 700,
-                                        color: '#0F172A',
-                                        marginBottom: 8,
-                                        letterSpacing: '-0.3px',
-                                    }}>
-                                        {dish.name}
-                                    </h3>
-
-                                    {/* Description */}
-                                    <p style={{
-                                        fontSize: 13,
-                                        color: '#64748B',
-                                        lineHeight: 1.55,
-                                        marginBottom: 22,
-                                        minHeight: 40,
-                                        display: '-webkit-box',
-                                        WebkitLineClamp: 2,
-                                        WebkitBoxOrient: 'vertical',
-                                        overflow: 'hidden',
-                                    }}>
-                                        {dish.description}
-                                    </p>
-
-                                    {/* Bottom Bar (Rating & buttons) */}
-                                    <div style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                        width: '100%',
-                                        paddingTop: 14,
-                                        borderTop: '1px solid #F1F5F9',
-                                        marginTop: 'auto',
-                                    }}>
-                                        <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                                            {/* View Restaurant Button */}
-                                            <button
-                                                className="btn-press dish-order-btn"
-                                                onClick={() => navigate('/restaurants')}
-                                                style={{
-                                                    display: 'inline-flex',
-                                                    alignItems: 'center',
-                                                    gap: 6,
-                                                    border: 'none',
-                                                    padding: '9px 18px',
-                                                    borderRadius: 8,
-                                                    fontSize: 12.5,
-                                                    fontWeight: 600,
-                                                    cursor: 'pointer',
-                                                    fontFamily: 'inherit',
-                                                }}
-                                            >
-                                                View Restaurant
-                                            </button>
-                                            {/* Book Button */}
-                                            <button
-                                                className="btn-press dish-book-btn"
-                                                onClick={() => navigate('/restaurants')}
-                                                style={{
-                                                    display: 'inline-flex',
-                                                    alignItems: 'center',
-                                                    gap: 6,
-                                                    border: '1.5px solid #F97316',
-                                                    padding: '9px 18px',
-                                                    borderRadius: 8,
-                                                    fontSize: 12.5,
-                                                    fontWeight: 600,
-                                                    cursor: 'pointer',
-                                                    fontFamily: 'inherit',
-                                                    background: 'white',
-                                                    color: '#F97316',
-                                                }}
-                                            >
-                                                Book
-                                            </button>
-                                        </div>
+                                        >
+                                            View Restaurant
+                                        </button>
+                                        {/* Book Button */}
+                                        <button
+                                            className="btn-press dish-book-btn"
+                                            onClick={() => navigate('/restaurants')}
+                                            style={{
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                gap: 6,
+                                                border: '1.5px solid #F97316',
+                                                padding: '9px 18px',
+                                                borderRadius: 8,
+                                                fontSize: 12.5,
+                                                fontWeight: 600,
+                                                cursor: 'pointer',
+                                                fontFamily: 'inherit',
+                                                background: 'white',
+                                                color: '#F97316',
+                                            }}
+                                        >
+                                            Book
+                                        </button>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </section>
         </>
