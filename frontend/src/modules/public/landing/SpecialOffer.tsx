@@ -1,3 +1,4 @@
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, Tag, ArrowRight } from 'lucide-react';
 import { useScrollReveal, useRevealChildren, useImageReveal } from '../../../shared/hooks/useScrollReveal';
@@ -20,12 +21,11 @@ export default function SpecialOffer() {
                 .offer-order-btn {
                     background: #F97316;
                     color: #FFFFFF;
-                    transition: all 0.25s ease;
                 }
                 .offer-order-btn:hover {
                     background: #EA580C;
-                    transform: translateY(-2px);
-                    box-shadow: 0 6px 18px rgba(249, 115, 22, 0.35);
+                    transform: translateY(-3px);
+                    box-shadow: 0 8px 24px rgba(249, 115, 22, 0.4);
                 }
                 @media (max-width: 960px) {
                     .offer-banner-grid {

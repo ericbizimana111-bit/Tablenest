@@ -1,3 +1,4 @@
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingBag, Truck, ChefHat, ArrowRight } from 'lucide-react';
 import rightImage2 from '../../../assets/hero-right-images (2).png';
@@ -42,17 +43,18 @@ export default function WhyChooseUs() {
                     border: 1px solid #FED7AA;
                     border-radius: 20px;
                     padding: 26px 24px;
-                    transition: all 0.25s ease;
+                    transition: transform 0.3s var(--ease-out-expo),
+                        box-shadow 0.3s var(--ease-smooth),
+                        border-color 0.3s ease;
                 }
                 .why-card:hover {
-                    transform: translateY(-4px);
-                    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.12);
+                    transform: translateY(-6px) scale(1.01);
+                    box-shadow: 0 16px 36px rgba(249, 115, 22, 0.15);
                     border-color: #FDBA74;
                 }
                 .why-btn-primary {
                     background: #F97316;
                     color: #FFFFFF;
-                    transition: all 0.2s ease;
                 }
                 .why-btn-primary:hover {
                     background: #EA580C;
@@ -63,7 +65,6 @@ export default function WhyChooseUs() {
                     background: #FFFFFF;
                     color: #F97316;
                     border: 1.5px solid #F97316;
-                    transition: all 0.2s ease;
                 }
                 .why-btn-secondary:hover {
                     background: #FFF7ED;

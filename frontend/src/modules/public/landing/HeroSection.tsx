@@ -1,8 +1,8 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapPin, Utensils, Search, ArrowRight } from 'lucide-react';
 import heroPhoto from '../../../assets/hero-photo.png';
-import { useScrollReveal, useImageReveal } from '../../../shared/hooks/useScrollReveal';
+import { useScrollReveal, useRevealChildren, useImageReveal } from '../../../shared/hooks/useScrollReveal';
 
 export default function HeroSection() {
     const navigate = useNavigate();
@@ -10,10 +10,12 @@ export default function HeroSection() {
     const [cuisine, setCuisine] = useState('');
 
     const sectionRef = useRef<HTMLDivElement>(null);
-    const heroImgRef = useRef<HTMLDivElement>(null);
+    const contentRef = useRef<HTMLDivElement>(null);
+    const heroImgRef = useRef<HTMLImageElement>(null);
     const graphicRingRef = useRef<HTMLDivElement>(null);
 
     useScrollReveal(sectionRef, 'reveal');
+    useRevealChildren(contentRef, 'stagger');
     useImageReveal(heroImgRef);
 
     useEffect(() => {
@@ -80,32 +82,33 @@ export default function HeroSection() {
                     }}
                 >
                     {/* ─── LEFT CONTENT ─── */}
-                    <div className="hero-content-col stagger">
+                    <div ref={contentRef} className="hero-content-col stagger">
                         {/* Badge */}
-                        <div style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: 6,
-                            background: '#FFF7ED',
-                            border: '1px solid #FED7AA',
-                            borderRadius: 9999,
-                            padding: '6px 16px',
-                            marginBottom: 24,
-                        }}>
+                        <div className="badge-pulse"
+                            style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 6,
+                                background: '#FFF7ED',
+                                border: '1px solid #FED7AA',
+                                borderRadius: 9999,
+                                padding: '6px 16px',
+                                marginBottom: 24,
+                            }}>
                             <span style={{ color: '#F97316', fontSize: 11.5, fontWeight: 700 }}>
                                 ✦ Your table is waiting
                             </span>
                         </div>
 
-                        {/* Headline */}
-                        <h1 style={{
-                            fontSize: 'clamp(38px, 4.8vw, 58px)',
-                            fontWeight: 800,
-                            lineHeight: 1.12,
-                            letterSpacing: '-1.8px',
-                            color: '#0F172A',
-                            marginBottom: 18,
-                        }}>
+                        {/* Headline */}                            <h1 className="gradient-text"
+                                style={{
+                                    fontSize: 'clamp(38px, 4.8vw, 58px)',
+                                    fontWeight: 800,
+                                    lineHeight: 1.12,
+                                    letterSpacing: '-1.8px',
+                                    color: '#0F172A',
+                                    marginBottom: 18,
+                                }}>
                             Good food.<br />
                             Great company.<br />
                             That's <span style={{ color: '#F97316' }}>TableNest.</span>
@@ -131,7 +134,7 @@ export default function HeroSection() {
                             marginBottom: 30,
                         }}>
                             <button
-                                className="hero-action-btn"
+                                className="btn-press btn-glow hero-action-btn"
                                 onClick={() => navigate('/register')}
                                 style={{
                                     display: 'inline-flex',
@@ -147,7 +150,6 @@ export default function HeroSection() {
                                     cursor: 'pointer',
                                     fontFamily: 'inherit',
                                     boxShadow: '0 4px 14px rgba(249, 115, 22, 0.3)',
-                                    transition: 'all 0.2s',
                                 }}
                             >
                                 Get Started
@@ -155,7 +157,7 @@ export default function HeroSection() {
                             </button>
 
                             <button
-                                className="hero-action-btn"
+                                className="btn-press hero-action-btn"
                                 onClick={() => navigate('/partner/register')}
                                 style={{
                                     display: 'inline-flex',
@@ -170,7 +172,6 @@ export default function HeroSection() {
                                     fontWeight: 600,
                                     cursor: 'pointer',
                                     fontFamily: 'inherit',
-                                    transition: 'all 0.2s',
                                 }}
                             >
                                 List Your Restaurant
@@ -246,11 +247,9 @@ export default function HeroSection() {
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: 8,
-                                    transition: 'background 0.2s',
                                     whiteSpace: 'nowrap',
                                     flexShrink: 0,
-                                className: 'btn-press',
-                            }}
+                                }}
                             >
                                 <Search size={15} />
                                 Find a Table

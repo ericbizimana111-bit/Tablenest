@@ -1,23 +1,55 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Play, X } from 'lucide-react';
+import { useScrollReveal, useRevealChildren, useImageReveal } from '../../../shared/hooks/useScrollReveal';
 
 import heroCroquettes from '../../../assets/hero_croquettes.jpg';
 import heroChicken from '../../../assets/hero_chicken.jpg';
-import { useScrollReveal, useRevealChildren } from '../../../shared/hooks/useScrollReveal';
 
 const YOUTUBE_VIDEO_ID = 'LDiEvqi-cmU';
 
 export default function OurStorySection() {
+    const navigate = useNavigate();
+    const [showVideoModal, setShowVideoModal] = useState(false);
     const sectionRef = useRef<HTMLDivElement>(null);
     const gridRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
+    const videoCardRef = useRef<HTMLDivElement>(null);
 
     useScrollReveal(sectionRef, 'reveal');
     useRevealChildren(gridRef, 'stagger');
     useRevealChildren(contentRef, 'stagger');
-    const navigate = useNavigate();
-    const [showVideoModal, setShowVideoModal] = useState(false);
+
+    const scaleOnEnter = useCallback((el: HTMLElement | null) => {
+        if (!el) return;
+        const parent = el.closest('[data-story-card]');
+        if (!parent) return;
+        if (el.tagName === 'IMG' || el.tagName === 'BUTTON') {
+            parent.animate(
+                [
+                    { transform: 'translateY(0) scale(1)' },
+                    { transform: 'translateY(-4px) scale(1.02)' },
+                ],
+                { duration: 220, easing: 'ease-out' }
+            );
+        } else if (el.classList.contains('story-play-icon')) {
+            el.animate(
+                [
+                    { transform: 'translate(-50%, -50%) scale(1)' },
+                    { transform: 'translate(-50%, -50%) scale(1.08)' },
+                ],
+                { duration: 220, easing: 'ease-out' }
+            );
+        }
+    }, []);
+
+    const onMouseUp = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        const el = e.currentTarget;
+        const target = (e.target as HTMLElement).closest(
+            'img, button, [class*="story-play-icon"]'
+        ) as HTMLElement | null;
+        scaleOnEnter(target);
+    };
     const iframeRef = useRef<HTMLIFrameElement>(null);
 
     // Close on Escape key
@@ -145,17 +177,18 @@ export default function OurStorySection() {
                     }}>
                         {/* ─── LEFT COLUMN: VIDEO CARD ─── */}
                         <div className="story-video-card" style={{ display: 'flex', flexDirection: 'column' }}>
-                            <div style={{
-                                position: 'relative',
-                                borderRadius: 18,
-                                overflow: 'hidden',
-                                background: '#0F172A',
-                                boxShadow: '0 8px 30px rgba(15, 23, 42, 0.08), 0 2px 8px rgba(15, 23, 42, 0.04)',
-                                cursor: 'pointer',
-                                className="card-lift",
-                                transition: 'transform 0.25s ease, box-shadow 0.25s ease',
-                                aspectRatio: '16 / 9',
-                            }}
+                            <div
+                                className="card-lift"
+                                style={{
+                                    position: 'relative',
+                                    borderRadius: 18,
+                                    overflow: 'hidden',
+                                    background: '#0F172A',
+                                    boxShadow: '0 8px 30px rgba(15, 23, 42, 0.08), 0 2px 8px rgba(15, 23, 42, 0.04)',
+                                    cursor: 'pointer',
+                                    transition: 'transform 0.3s var(--ease-out-expo), box-shadow 0.3s var(--ease-smooth)',
+                                    aspectRatio: '16 / 9',
+                                }}
                                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 14px 40px rgba(15, 23, 42, 0.14), 0 4px 12px rgba(15, 23, 42, 0.06)'; }}
                                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 30px rgba(15, 23, 42, 0.08), 0 2px 8px rgba(15, 23, 42, 0.04)'; }}
                                 onClick={() => setShowVideoModal(true)}
@@ -238,7 +271,7 @@ export default function OurStorySection() {
                         </div>
 
                         {/* ─── RIGHT COLUMN: TEXT CONTENT ─── */}
-                        <div ref={contentRef} style={{ display: 'flex', flexDirection: 'column', gap: 28 }} className="story-content-col stagger">
+                        <div ref={contentRef} className="story-content-col stagger" style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
                             {/* Headline */}
                             <h2 style={{
                                 fontSize: 'clamp(30px, 3.6vw, 44px)',
@@ -296,7 +329,7 @@ export default function OurStorySection() {
                                 >
                                     <Play size={14} fill="currentColor" style={{ marginLeft: 2 }} />
                                 </div>
-<span>Watch the Experience</span>
+                                <span className="story-watch-text">Watch the Experience</span>
                             </button>
                         </div>
                     </div>

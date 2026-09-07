@@ -28,10 +28,8 @@ export default function CuisineCategories() {
                         style={{
                             display: 'flex', flexDirection: 'column', alignItems: 'center',
                             gap: 10, cursor: 'pointer', minWidth: 72,
-                            transition: 'transform 0.2s',
                         }}
-                        onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-3px)'}
-                        onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+                        className="card-lift"
                     >
                         <div style={{
                             width: 72, height: 72, borderRadius: '50%', overflow: 'hidden',

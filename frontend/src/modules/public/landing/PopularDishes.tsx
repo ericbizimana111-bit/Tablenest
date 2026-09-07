@@ -58,46 +58,50 @@ export default function PopularDishes() {
         <>
             <style>{`
                 .dish-card {
-                    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+                    transition: transform 0.35s var(--ease-out-expo),
+                        box-shadow 0.35s var(--ease-smooth),
+                        border-color 0.35s ease;
                 }
                 .dish-card:hover {
-                    transform: translateY(-6px);
-                    box-shadow: 0 20px 35px rgba(15, 23, 42, 0.08) !important;
+                    transform: translateY(-8px) scale(1.015);
+                    box-shadow: 0 24px 40px rgba(15, 23, 42, 0.1) !important;
                     border-color: #FED7AA !important;
                 }
                 .dish-order-btn {
                     background: #F97316;
                     color: #FFFFFF;
                     border-radius: 8px;
-                    transition: all 0.2s ease;
                 }
                 .dish-order-btn:hover {
                     background: #EA580C;
-                    transform: scale(1.04);
-                    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.35);
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 16px rgba(249, 115, 22, 0.4);
                 }
                 .dish-book-btn {
                     background: white;
                     color: #F97316;
                     border: 1.5px solid #F97316;
                     border-radius: 8px;
-                    transition: all 0.2s ease;
                 }
                 .dish-book-btn:hover {
                     background: #FFF7ED;
-                    transform: scale(1.04);
-                    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 16px rgba(249, 115, 22, 0.2);
                 }
                 .dish-nav-btn {
                     background: #FFFFFF;
                     border: 1.5px solid #F1F5F9;
                     color: #0F172A;
-                    transition: all 0.2s ease;
+                    transition: all 0.2s var(--ease-smooth);
                 }
-                .dish-nav-btn:hover {
+                .dish-nav-btn:hover:not(:disabled) {
                     border-color: #F97316;
                     color: #F97316;
                     background: #FFF7ED;
+                    transform: translateY(-2px);
+                }
+                .dish-nav-btn:active:not(:disabled) {
+                    transform: translateY(0);
                 }
                 @media (max-width: 1080px) {
                     .popular-dishes-grid {
@@ -231,15 +235,16 @@ export default function PopularDishes() {
                                     }}
                                 >
                                     {/* Dish Cover Image */}
-                                    <div style={{
-                                        width: '100%',
-                                        height: 168,
-                                        borderRadius: '22px 22px 0 0',
-                                        overflow: 'hidden',
-                                        margin: 0,
-                                        marginBottom: 18,
-                                        background: '#F1F5F9',
-                                    }}>
+                                    <div className="img-zoom"
+                                        style={{
+                                            width: '100%',
+                                            height: 168,
+                                            borderRadius: '22px 22px 0 0',
+                                            overflow: 'hidden',
+                                            margin: 0,
+                                            marginBottom: 18,
+                                            background: '#F1F5F9',
+                                        }}>
                                         <img
                                             src={dish.image}
                                             alt={dish.name}
@@ -249,6 +254,7 @@ export default function PopularDishes() {
                                                 height: '100%',
                                                 objectFit: 'cover',
                                                 display: 'block',
+                                                willChange: 'transform',
                                             }}
                                         />
                                     </div>

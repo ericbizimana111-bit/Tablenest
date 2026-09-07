@@ -46,18 +46,10 @@ export default function PopularRestaurants() {
                     <div
                         key={r._id}
                         onClick={() => navigate(`/restaurants/${r._id}`)}
-                        className="restaurant-card"
+                        className="restaurant-card card-lift"
                         style={{
                             border: '1px solid #E2E8F0', borderRadius: 14, overflow: 'hidden',
-                            cursor: 'pointer', background: 'white', transition: 'all 0.3s',
-                        }}
-                        onMouseEnter={e => {
-                            e.currentTarget.style.transform = 'translateY(-4px)';
-                            e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.08)';
-                        }}
-                        onMouseLeave={e => {
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.boxShadow = 'none';
+                            cursor: 'pointer', background: 'white',
                         }}
                     >
                         <div style={{ position: 'relative' }}>
@@ -151,18 +143,10 @@ export default function PopularRestaurants() {
                     <div
                         key={`fallback-${i}`}
                         onClick={() => navigate('/restaurants')}
-                        className="restaurant-card"
+                        className="restaurant-card card-lift"
                         style={{
                             border: '1px solid #E2E8F0', borderRadius: 14, overflow: 'hidden',
-                            cursor: 'pointer', background: 'white', transition: 'all 0.3s',
-                        }}
-                        onMouseEnter={e => {
-                            e.currentTarget.style.transform = 'translateY(-4px)';
-                            e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.08)';
-                        }}
-                        onMouseLeave={e => {
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.boxShadow = 'none';
+                            cursor: 'pointer', background: 'white',
                         }}
                     >
                         <div style={{ position: 'relative' }}>

@@ -113,18 +113,12 @@ export default function LandingFooter() {
                             <li key={label}>
                                 <Link
                                     to={to}
+                                    className="nav-link"
                                     style={{
                                         color: '#475569',
                                         fontSize: 13.5,
                                         textDecoration: 'none',
-                                        transition: 'color 0.2s ease',
                                         fontFamily: 'Poppins, sans-serif',
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        (e.target as HTMLElement).style.color = '#0F172A';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        (e.target as HTMLElement).style.color = '#475569';
                                     }}
                                 >
                                     {label}
@@ -152,18 +146,12 @@ export default function LandingFooter() {
                             <li key={label}>
                                 <Link
                                     to={to}
+                                    className="nav-link"
                                     style={{
                                         color: '#475569',
                                         fontSize: 13.5,
                                         textDecoration: 'none',
-                                        transition: 'color 0.2s ease',
                                         fontFamily: 'Poppins, sans-serif',
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        (e.target as HTMLElement).style.color = '#0F172A';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        (e.target as HTMLElement).style.color = '#475569';
                                     }}
                                 >
                                     {label}

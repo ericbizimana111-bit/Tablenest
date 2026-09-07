@@ -57,17 +57,15 @@ export default function RoleCards() {
                                 <span style={{ fontSize: 13.5, color: '#475569', fontWeight: 500 }}>{item.text}</span>
                             </div>
                         ))}
-                    </div>
-                    <button
+                    </div>                        <button
+                        className="btn-press"
                         onClick={() => navigate('/register')}
                         style={{
                             background: '#F97316', color: 'white', border: 'none', padding: '12px 28px',
                             borderRadius: 10, fontWeight: 600, fontSize: 14, fontFamily: 'Poppins',
                             cursor: 'pointer', alignSelf: 'flex-start',
-                            boxShadow: '0 2px 8px rgba(249,115,22,0.2)', transition: 'all 0.2s',
+                            boxShadow: '0 2px 8px rgba(249,115,22,0.2)',
                         }}
-                        onMouseEnter={e => { e.currentTarget.style.background = '#EA580C'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = '#F97316'; }}
                     >
                         Explore as Customer →
                     </button>
@@ -141,15 +139,14 @@ export default function RoleCards() {
                     </div>
 
                     <button
+                        className="btn-press"
                         onClick={() => navigate('/partner/register')}
                         style={{
                             background: '#166534', color: 'white', border: 'none', padding: '12px 28px',
                             borderRadius: 10, fontWeight: 600, fontSize: 14, fontFamily: 'Poppins',
                             cursor: 'pointer', alignSelf: 'flex-start',
-                            boxShadow: '0 2px 8px rgba(22,101,52,0.2)', transition: 'all 0.2s',
+                            boxShadow: '0 2px 8px rgba(22,101,52,0.2)',
                         }}
-                        onMouseEnter={e => { e.currentTarget.style.background = '#14532D'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = '#166534'; }}
                     >
                         Partner with Us →
                     </button>

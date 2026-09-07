@@ -85,6 +85,7 @@ export default function NewsletterCTA() {
                                 type="email"
                                 required
                                 placeholder="Your email address"
+                                className="input-focus"
                                 style={{
                                     flex: 1,
                                     background: 'transparent',
@@ -110,13 +111,6 @@ export default function NewsletterCTA() {
                                     cursor: 'pointer',
                                     fontFamily: 'inherit',
                                     whiteSpace: 'nowrap',
-                                    transition: 'background 0.2s ease',
-                                }}
-                                onMouseEnter={(e) => {
-                                    (e.target as HTMLButtonElement).style.background = '#EA580C';
-                                }}
-                                onMouseLeave={(e) => {
-                                    (e.target as HTMLButtonElement).style.background = '#F97316';
                                 }}
                             >
                                 Subscribe

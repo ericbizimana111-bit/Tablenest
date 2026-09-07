@@ -84,6 +84,7 @@ export default function OwnerCTA() {
                     </div>
 
                     <button
+                        className="btn-press"
                         onClick={() => navigate('/partner/register')}
                         style={{
                             background: '#F97316',
@@ -96,21 +97,10 @@ export default function OwnerCTA() {
                             fontSize: 14.5,
                             fontFamily: 'Poppins',
                             whiteSpace: 'nowrap',
-                            transition: 'all 0.25s ease',
                             boxShadow: '0 4px 16px rgba(249, 115, 22, 0.3)',
                             position: 'relative',
                             zIndex: 1,
                             flexShrink: 0,
-                        }}
-                        onMouseEnter={e => {
-                            e.currentTarget.style.background = '#EA580C';
-                            e.currentTarget.style.transform = 'translateY(-2px)';
-                            e.currentTarget.style.boxShadow = '0 8px 24px rgba(234, 88, 12, 0.38)';
-                        }}
-                        onMouseLeave={e => {
-                            e.currentTarget.style.background = '#F97316';
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.boxShadow = '0 4px 16px rgba(249, 115, 22, 0.3)';
                         }}
                     >
                         List Your Restaurant →

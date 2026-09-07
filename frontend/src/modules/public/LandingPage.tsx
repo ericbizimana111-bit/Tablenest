@@ -12,13 +12,6 @@ import LandingFooter from './landing/LandingFooter';
 
 export default function LandingPage() {
     const shellRef = useRef<HTMLDivElement>(null);
-    useEffect(() => {
-        requestAnimationFrame(() => {
-            if (!shellRef.current) return;
-            shellRef.current.classList.add('is-ready');
-        });
-    }, []);
-    const shellRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         requestAnimationFrame(() => {

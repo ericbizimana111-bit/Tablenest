@@ -77,14 +77,15 @@ export default function LandingHeader({ theme = 'dark' }: { theme?: 'dark' | 'li
                     className="ln-desktop-nav"
                 >
                     {NAV_LINKS.map(l => (
-                        <span
+                        <a
                             key={l.label}
                             className="ln-nav-link btn-press"
-                            style={{ fontSize: 14.5, color: linkColor, fontWeight: 500 }}
-                            onClick={() => handleNav(l.path)}
+                            href={l.path}
+                            style={{ fontSize: 14.5, color: linkColor, fontWeight: 500, textDecoration: 'none' }}
+                            onClick={(e) => { e.preventDefault(); handleNav(l.path); }}
                         >
                             {l.label}
-                        </span>
+                        </a>
                     ))}
                 </div>
 

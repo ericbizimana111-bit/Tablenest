@@ -16,11 +16,15 @@ export default function WhatWeOffer() {
                 .offer-item-card {
                     text-align: center;
                     padding: 20px;
-                    transition: all 0.3s ease;
+                    transition: transform 0.3s var(--ease-out-expo),
+                        box-shadow 0.3s var(--ease-smooth);
+                }
+                .offer-item-card:hover {
+                    transform: translateY(-4px);
                 }
                 .offer-item-card:hover .offer-illustration-box {
-                    transform: translateY(-6px);
-                    box-shadow: 0 16px 32px rgba(249, 115, 22, 0.12);
+                    transform: translateY(-8px);
+                    box-shadow: 0 20px 40px rgba(249, 115, 22, 0.15);
                 }
                 @media (max-width: 900px) {
                     .what-we-offer-grid {
@@ -76,7 +80,7 @@ export default function WhatWeOffer() {
                         {/* 1. Easy To Order */}
                         <div className="offer-item-card card-lift">
                             <div
-                                className="offer-illustration-box card-lift"
+                                className="offer-illustration-box shimmer card-lift"
                                 style={{
                                     width: '100%',
                                     height: 220,
@@ -87,7 +91,7 @@ export default function WhatWeOffer() {
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     marginBottom: 24,
-                                    transition: 'all 0.3s ease',
+                                    transition: 'transform 0.3s var(--ease-smooth), box-shadow 0.3s var(--ease-smooth)',
                                     position: 'relative',
                                     overflow: 'hidden',
                                 }}
@@ -133,7 +137,7 @@ export default function WhatWeOffer() {
                         {/* 2. Fastest Delivery */}
                         <div className="offer-item-card">
                             <div
-                                className="offer-illustration-box"
+                                className="offer-illustration-box shimmer card-lift"
                                 style={{
                                     width: '100%',
                                     height: 220,
@@ -144,7 +148,7 @@ export default function WhatWeOffer() {
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     marginBottom: 24,
-                                    transition: 'all 0.3s ease',
+                                    transition: 'transform 0.3s var(--ease-smooth), box-shadow 0.3s var(--ease-smooth)',
                                     position: 'relative',
                                     overflow: 'hidden',
                                 }}
@@ -192,7 +196,7 @@ export default function WhatWeOffer() {
                         {/* 3. Best Quality */}
                         <div className="offer-item-card">
                             <div
-                                className="offer-illustration-box"
+                                className="offer-illustration-box shimmer card-lift"
                                 style={{
                                     width: '100%',
                                     height: 220,
@@ -203,7 +207,7 @@ export default function WhatWeOffer() {
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     marginBottom: 24,
-                                    transition: 'all 0.3s ease',
+                                    transition: 'transform 0.3s var(--ease-smooth), box-shadow 0.3s var(--ease-smooth)',
                                     position: 'relative',
                                     overflow: 'hidden',
                                 }}

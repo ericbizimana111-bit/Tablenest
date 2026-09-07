@@ -32,23 +32,13 @@ export default function FeatureCards() {
                 {FEATURES.map(f => (
                     <div
                         key={f.title}
-                        className="feature-card"
+                        className="feature-card card-lift-deep"
                         style={{
                             border: '1px solid rgba(255, 255, 255, 0.8)',
                             borderRadius: 16,
                             padding: '30px 24px',
                             background: '#FFFFFF',
                             boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04)',
-                            transition: 'all 0.3s ease',
-                            cursor: 'default',
-                        }}
-                        onMouseEnter={e => {
-                            e.currentTarget.style.transform = 'translateY(-5px)';
-                            e.currentTarget.style.boxShadow = '0 20px 32px -8px rgba(0, 0, 0, 0.14)';
-                        }}
-                        onMouseLeave={e => {
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.boxShadow = '0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04)';
                         }}
                     >
                         <div style={{

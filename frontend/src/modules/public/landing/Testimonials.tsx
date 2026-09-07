@@ -1,3 +1,4 @@
+import { useState, useRef } from 'react';
 import { Star } from 'lucide-react';
 import { useScrollReveal, useRevealChildren } from '../../../shared/hooks/useScrollReveal';
 
@@ -53,7 +54,7 @@ export default function Testimonials() {
                     gap: 20px;
                     flex-wrap: nowrap;
                     justify-content: flex-start;
-                    animation: testLoop 32s ease-in-out infinite;
+                    animation: testLoop 28s ease-in-out infinite;
                     will-change: transform;
                 }
 
@@ -67,7 +68,13 @@ export default function Testimonials() {
                 }
 
                 .test-card {
-                    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+                    transition: transform 0.3s var(--ease-out-expo),
+                        box-shadow 0.3s var(--ease-smooth),
+                        border-color 0.3s ease;
+                }
+
+                .test-card:hover {
+                    transform: translateY(-4px) scale(1.01);
                 }
 
                 @keyframes testLoop {
