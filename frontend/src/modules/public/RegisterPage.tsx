@@ -6,9 +6,8 @@ import { getRoleHomePath } from '../../shared/utils/auth.utils';
 
 export default function RegisterPage() {
     const navigate = useNavigate();
-    const { register, registerOwner, isSubmitting } = useAuth();
+    const { register, isSubmitting } = useAuth();
 
-    type Role = 'customer' | 'owner';
     type RegisterForm = { fullName: string; email: string; password: string; confirm: string; phone: string };
 
     const [role, setRole] = useState<'customer' | null>(null);
@@ -99,24 +98,6 @@ export default function RegisterPage() {
         color: '#EF4444',
         marginTop: 4,
         display: 'block',
-    };
-
-    const socialButtonStyle: React.CSSProperties = {
-        flex: 1,
-        height: 42,
-        background: 'white',
-        border: '1.5px solid #E2E8F0',
-        borderRadius: 8,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 6,
-        color: '#475569',
-        fontSize: 13,
-        fontWeight: 600,
-        cursor: 'pointer',
-        fontFamily: 'Poppins, sans-serif',
-        transition: 'all 0.2s',
     };
 
     // ── Role Selection Screen ──

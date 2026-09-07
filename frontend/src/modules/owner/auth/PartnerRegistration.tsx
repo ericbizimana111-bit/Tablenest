@@ -472,9 +472,9 @@ export default function PartnerRegistration() {
                                                         </div>
                                                     ))}
                                                 </div>                                                    <div className="pr-hint">
-                                                        <Info size={13} style={{ flexShrink: 0, marginTop: 1 }} />
-                                                        The first image is your cover photo on cards and search results.
-                                                    </div>
+                                                    <Info size={13} style={{ flexShrink: 0, marginTop: 1 }} />
+                                                    The first image is your cover photo on cards and search results.
+                                                </div>
                                             </div>
                                         )}
 
@@ -491,7 +491,11 @@ export default function PartnerRegistration() {
                         )}
 
                         <div className="pr-actions">
-                            <button className="pr-btn-secondary" onClick={() => { setErrors({}); step > 1 ? setStep(s => s - 1) : navigate('/'); }}>
+                            <button className="pr-btn-secondary" onClick={() => {
+                                setErrors({});
+                                if (step > 1) setStep(s => s - 1);
+                                else navigate('/');
+                            }}>
                                 {step === 1 ? 'Back to home' : `Back to step ${step - 1}`}
                             </button>
                             {step < 4 ? (

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapPin, Utensils, Search, ArrowRight } from 'lucide-react';
 import heroPhoto from '../../../assets/hero-photo.png';
@@ -47,7 +47,8 @@ export default function HeroSection() {
                 .hero-action-btn:hover { transform: translateY(-2px); }
 
                 @media (max-width: 960px) {
-                    .hero-image-col { display: none !important; }
+                    .hero-layout { grid-template-columns: 1fr !important; }
+                    .hero-image-col { display: flex !important; margin-top: 20px; }
                     .hero-content-col { max-width: 100% !important; }
                 }
                 @media (max-width: 600px) {
@@ -70,6 +71,7 @@ export default function HeroSection() {
             }}>
                 <div
                     ref={sectionRef}
+                    className="hero-layout"
                     style={{
                         maxWidth: 1280,
                         width: '100%',
@@ -101,14 +103,14 @@ export default function HeroSection() {
                         </div>
 
                         {/* Headline */}                            <h1 className="gradient-text"
-                                style={{
-                                    fontSize: 'clamp(38px, 4.8vw, 58px)',
-                                    fontWeight: 800,
-                                    lineHeight: 1.12,
-                                    letterSpacing: '-1.8px',
-                                    color: '#0F172A',
-                                    marginBottom: 18,
-                                }}>
+                            style={{
+                                fontSize: 'clamp(38px, 4.8vw, 58px)',
+                                fontWeight: 800,
+                                lineHeight: 1.12,
+                                letterSpacing: '-1.8px',
+                                color: '#0F172A',
+                                marginBottom: 18,
+                            }}>
                             Good food.<br />
                             Great company.<br />
                             That's <span style={{ color: '#F97316' }}>TableNest.</span>

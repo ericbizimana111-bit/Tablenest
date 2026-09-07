@@ -1,55 +1,21 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from 'react';
 import { Play, X } from 'lucide-react';
-import { useScrollReveal, useRevealChildren, useImageReveal } from '../../../shared/hooks/useScrollReveal';
+import { useScrollReveal, useRevealChildren } from '../../../shared/hooks/useScrollReveal';
 
 import heroCroquettes from '../../../assets/hero_croquettes.jpg';
-import heroChicken from '../../../assets/hero_chicken.jpg';
 
 const YOUTUBE_VIDEO_ID = 'LDiEvqi-cmU';
 
 export default function OurStorySection() {
-    const navigate = useNavigate();
     const [showVideoModal, setShowVideoModal] = useState(false);
     const sectionRef = useRef<HTMLDivElement>(null);
     const gridRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
-    const videoCardRef = useRef<HTMLDivElement>(null);
 
     useScrollReveal(sectionRef, 'reveal');
     useRevealChildren(gridRef, 'stagger');
     useRevealChildren(contentRef, 'stagger');
 
-    const scaleOnEnter = useCallback((el: HTMLElement | null) => {
-        if (!el) return;
-        const parent = el.closest('[data-story-card]');
-        if (!parent) return;
-        if (el.tagName === 'IMG' || el.tagName === 'BUTTON') {
-            parent.animate(
-                [
-                    { transform: 'translateY(0) scale(1)' },
-                    { transform: 'translateY(-4px) scale(1.02)' },
-                ],
-                { duration: 220, easing: 'ease-out' }
-            );
-        } else if (el.classList.contains('story-play-icon')) {
-            el.animate(
-                [
-                    { transform: 'translate(-50%, -50%) scale(1)' },
-                    { transform: 'translate(-50%, -50%) scale(1.08)' },
-                ],
-                { duration: 220, easing: 'ease-out' }
-            );
-        }
-    }, []);
-
-    const onMouseUp = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        const el = e.currentTarget;
-        const target = (e.target as HTMLElement).closest(
-            'img, button, [class*="story-play-icon"]'
-        ) as HTMLElement | null;
-        scaleOnEnter(target);
-    };
     const iframeRef = useRef<HTMLIFrameElement>(null);
 
     // Close on Escape key

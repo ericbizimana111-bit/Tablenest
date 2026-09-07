@@ -4,11 +4,10 @@ import { useQuery } from '@tanstack/react-query';
 import { BarChart, Bar, AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { StatCard, Spinner, EmptyState } from '../../../shared/components/ui/index';
 import { DollarSign, ShoppingBag, Star, Users, BarChart2 } from 'lucide-react';
-import { analyticsAPI, ordersAPI, reservationsAPI, restaurantsAPI } from '../../../shared/services/api';
+import { analyticsAPI, ordersAPI, reservationsAPI } from '../../../shared/services/api';
 import { useAuthStore } from '../../../shared/store/authStore';
 
 const ORANGE = '#F97316';
-const COLORS = [ORANGE, '#F59E0B', '#16A34A', '#2563EB', '#7C3AED'];
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 export default function OwnerAnalytics() {
@@ -29,7 +28,7 @@ export default function OwnerAnalytics() {
         enabled: !!restaurantId,
     });
 
-    const { data: heatmap = [] } = useQuery({
+    useQuery({
         queryKey: ['owner-heatmap', restaurantId],
         queryFn: () => restaurantId ? analyticsAPI.getHeatmap(restaurantId).then(r => r.data) : Promise.resolve([]),
         enabled: !!restaurantId,
@@ -48,8 +47,8 @@ export default function OwnerAnalytics() {
     });
 
     // Build real chart data from API
-    const revenue = DAYS.map((d, i) => {
-        const match = revenueRaw.find((r: { _id: string; revenue: number }) => r._id?.toUpperCase()?.startsWith(d.toUpperCase()) || r._id?.toUpperCase()?.startsWith(DAYS[i]?.toUpperCase()));
+    const revenue = DAYS.map((d) => {
+        const match = revenueRaw.find((r: { _id: string; revenue: number }) => r._id?.toUpperCase()?.startsWith(d.toUpperCase()));
         return { day: d, revenue: match?.revenue || 0, orders: match?.orders || 0 };
     });
 
@@ -59,7 +58,7 @@ export default function OwnerAnalytics() {
     ).slice(0, 5);
 
     // Build customer data from heatmap
-    const custData = DAYS.map((d, i) => ({ day: d, new: 0, returning: 0 }));
+    const custData = DAYS.map((d) => ({ day: d, new: 0, returning: 0 }));
 
     const totalRevenue = revenue.reduce((sum: number, r: { revenue: number }) => sum + r.revenue, 0);
     const totalOrders = revenue.reduce((sum: number, r: { orders: number }) => sum + r.orders, 0);
@@ -141,7 +140,7 @@ export default function OwnerAnalytics() {
                         <table className="data-table">
                             <thead><tr>{['Item', 'Price'].map(h => <th key={h}>{h}</th>)}</tr></thead>
                             <tbody>
-                                {topItems.map((item: { name: string; price: number }, i: number) => (
+                                {topItems.map((item: { name: string; price: number }) => (
                                     <tr key={item.name}>
                                         <td style={{ fontWeight: 500, fontSize: 13 }}>{item.name}</td>
                                         <td style={{ fontSize: 13, fontWeight: 600 }}>${item.price?.toFixed(2) || '0.00'}</td>

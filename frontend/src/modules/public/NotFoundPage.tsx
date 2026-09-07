@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChefHat, Home, AlertCircle } from 'lucide-react';
+import { Home, AlertCircle } from 'lucide-react';
 
 
 export default function NotFoundPage() {

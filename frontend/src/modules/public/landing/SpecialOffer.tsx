@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, Tag, ArrowRight } from 'lucide-react';
 import { useScrollReveal, useRevealChildren, useImageReveal } from '../../../shared/hooks/useScrollReveal';

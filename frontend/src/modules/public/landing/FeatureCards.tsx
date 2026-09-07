@@ -1,4 +1,4 @@
-import { Search, Calendar, Utensils, ArrowRight } from 'lucide-react';
+import { Search, Calendar, Utensils } from 'lucide-react';
 
 const FEATURES = [
     {

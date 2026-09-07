@@ -1,4 +1,4 @@
-import { useEffect, useRef, RefObject } from 'react';
+import { useEffect, RefObject } from 'react';
 
 const isReducedMotion =
   typeof window !== 'undefined' &&

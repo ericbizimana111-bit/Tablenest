@@ -1,29 +1,7 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShoppingBag, Truck, ChefHat, ArrowRight } from 'lucide-react';
 import rightImage2 from '../../../assets/hero-right-images (2).png';
 import { useScrollReveal, useRevealChildren, useImageReveal } from '../../../shared/hooks/useScrollReveal';
-
-const FEATURES = [
-    {
-        id: 1,
-        title: 'Takeaway',
-        description: 'Order ahead, pick up fresh, and keep moving. Great food, zero wait when you are on the go.',
-        icon: ShoppingBag,
-    },
-    {
-        id: 2,
-        title: 'Home Delivery',
-        description: 'Meals arrive where you are, reliably and hot. Easy for busy days, nights in, and sharing.',
-        icon: Truck,
-    },
-    {
-        id: 3,
-        title: 'Event Catering',
-        description: 'Feed a room without the hassle. Tailored menus for gatherings, offices, and special moments.',
-        icon: ChefHat,
-    },
-];
 
 export default function WhyChooseUs() {
     const navigate = useNavigate();
@@ -171,12 +149,12 @@ export default function WhyChooseUs() {
                                 src={rightImage2}
                                 alt="Why Choose TableNest"
                                 style={{
-                                    background:'orange',
+                                    background: 'orange',
                                     width: '100%',
                                     height: '100%',
                                     objectFit: 'contain',
                                     display: 'block',
-                                    
+
                                 }}
                             />
                         </div>

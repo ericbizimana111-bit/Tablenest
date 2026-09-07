@@ -16,6 +16,13 @@ interface DashboardReservation {
     status?: string;
 }
 
+interface KitchenOrder {
+    _id?: string;
+    id?: string;
+    items?: unknown[];
+    status?: string;
+}
+
 export default function OwnerDashboard() {
     const { user } = useAuthStore();
     const restaurantId = user?.restaurantId?.toString() || '';
@@ -145,7 +152,7 @@ export default function OwnerDashboard() {
                 {/* Kitchen Queue */}
                 <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', overflow: 'hidden' }}>
                     <div style={{ padding: '16px 20px', borderBottom: '1px solid #E2E8F0', fontWeight: 600, fontSize: 15 }}>Kitchen Queue</div>
-                    {(Array.isArray(kitchenOrders) ? kitchenOrders : []).slice(0, 4).map((q: any) => (
+                    {(Array.isArray(kitchenOrders) ? kitchenOrders : []).slice(0, 4).map((q: KitchenOrder) => (
                         <div key={q._id || q.id} style={{ padding: '12px 20px', borderBottom: '1px solid #F1F5F9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <div>
                                 <div style={{ fontWeight: 500, fontSize: 13 }}>Order #{(q._id || '').slice(-5)}</div>

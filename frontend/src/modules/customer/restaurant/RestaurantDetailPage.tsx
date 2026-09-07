@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
@@ -92,7 +92,7 @@ export default function RestaurantDetailPage() {
         onError: () => toast.error('Could not add favorite'),
     });
 
-    const cartTotal = useMemo(() => cart.reduce((sum, item) => sum + item.price * item.quantity, 0), [cart]);
+    const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
     const addToCart = (item: MenuItem) => {
         if (!item.isAvailable) return;

@@ -171,8 +171,3 @@ export default function QRCodeManager() {
         </div>
     );
 }
-
-const [] = [
-    { _id: '1', tableNumber: '01', isActive: true }, { _id: '2', tableNumber: '02', isActive: true },
-    { _id: '3', tableNumber: '03', isActive: true }, { _id: '4', tableNumber: '04', isActive: false },
-];

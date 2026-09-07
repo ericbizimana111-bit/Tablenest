@@ -14,6 +14,11 @@ const STATUS_STEPS = [
     { key: 'delivered', label: 'Delivered', sub: 'Estimated 8:05 PM', icon: <Circle size={18} /> },
 ];
 
+type OrderTrackingData = Partial<Order> & {
+    driverName?: string;
+    driverRating?: number;
+};
+
 export default function OrderTrackingPage() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -26,7 +31,7 @@ export default function OrderTrackingPage() {
     });
 
     if (isLoading) return <Spinner />;
-    const o: any = (typeof order === "object" && order && !Array.isArray(order)) ? order : {};
+    const o: OrderTrackingData = order ?? {};
 
     const currentStep = STATUS_STEPS.findIndex(s => s.key === o.status);
 

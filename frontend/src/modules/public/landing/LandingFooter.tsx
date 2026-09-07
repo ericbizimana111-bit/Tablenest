@@ -1,7 +1,6 @@
 import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Utensils } from 'lucide-react';
 import { useScrollReveal, useRevealChildren } from '../../../shared/hooks/useScrollReveal';
 
 export default function LandingFooter() {
@@ -56,35 +55,35 @@ export default function LandingFooter() {
             >
                 {/* ─── Brand column ─── */}
                 <div style={{ fontFamily: 'Poppins, sans-serif' }}>                    <div className="card-lift" style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 10,
-                            marginBottom: 16,
-                        }}>
-                        <div style={{
-                            width: 36,
-                            height: 36,
-                            background: '#F97316',
-                            borderRadius: 10,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            boxShadow: '0 3px 10px rgba(249, 115, 22, 0.3)',
-                        }}>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M6 18h12a2 2 0 0 1 2 2v1H4v-1a2 2 0 0 1 2-2z" />
-                                <path d="M18 18a4 4 0 0 0-1.23-7.79 4.36 4.36 0 0 0-9.54 0A4 4 0 0 0 6 18" />
-                            </svg>
-                        </div>
-                        <span style={{
-                            fontWeight: 800,
-                            fontSize: 18,
-                            color: '#0F172A',
-                            letterSpacing: '0.05em',
-                        }}>
-                            TableNest
-                        </span>
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 10,
+                    marginBottom: 16,
+                }}>
+                    <div style={{
+                        width: 36,
+                        height: 36,
+                        background: '#F97316',
+                        borderRadius: 10,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 3px 10px rgba(249, 115, 22, 0.3)',
+                    }}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M6 18h12a2 2 0 0 1 2 2v1H4v-1a2 2 0 0 1 2-2z" />
+                            <path d="M18 18a4 4 0 0 0-1.23-7.79 4.36 4.36 0 0 0-9.54 0A4 4 0 0 0 6 18" />
+                        </svg>
                     </div>
+                    <span style={{
+                        fontWeight: 800,
+                        fontSize: 18,
+                        color: '#0F172A',
+                        letterSpacing: '0.05em',
+                    }}>
+                        TableNest
+                    </span>
+                </div>
 
                     <p style={{
                         fontSize: 13,

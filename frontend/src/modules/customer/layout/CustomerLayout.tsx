@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { Home, Search, Calendar, ShoppingBag, Heart, Bell, Settings, Users, Award } from 'lucide-react';
+import { Home, Calendar, ShoppingBag, Heart, Bell, Settings, Users, Award } from 'lucide-react';
 import Sidebar from '../../../shared/components/layout/Sidebar';
 import Topbar from '../../../shared/components/layout/Topbar';
 

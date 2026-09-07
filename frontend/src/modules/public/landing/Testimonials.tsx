@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { Star } from 'lucide-react';
 import { useScrollReveal, useRevealChildren } from '../../../shared/hooks/useScrollReveal';
 

@@ -206,13 +206,13 @@ export default function AccountSettingsPage() {
                     <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 20, position: 'sticky', top: 80 }}>
                         <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 4 }}>Quick Summary</div>
                         <div style={{ fontSize: 12, color: '#94A3B8', marginBottom: 16 }}>
-                            Member since {user ? new Date(user.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '—'}
+                            Member since {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '—'}
                         </div>
-                    {[
-                        { label: 'Total Bookings', value: String(userStats?.bookings ?? '—'), color: '#F97316' },
-                        { label: 'Total Orders', value: String(userStats?.orders ?? '—'), color: '#F97316' },
-                        { label: 'Loyalty Points', value: `${loyalty?.points ?? 0} pts`, color: '#F97316' },
-                    ].map(s => (
+                        {[
+                            { label: 'Total Bookings', value: String(userStats?.bookings ?? '—'), color: '#F97316' },
+                            { label: 'Total Orders', value: String(userStats?.orders ?? '—'), color: '#F97316' },
+                            { label: 'Loyalty Points', value: `${loyalty?.points ?? 0} pts`, color: '#F97316' },
+                        ].map(s => (
                             <div key={s.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #F1F5F9', fontSize: 14 }}>
                                 <span style={{ color: '#475569' }}>{s.label}</span>
                                 <span style={{ fontWeight: 600, color: s.color }}>{s.value}</span>
