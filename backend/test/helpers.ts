@@ -14,8 +14,10 @@ export type Ctx = {
 };
 
 /** Boots the real app (same pipeline as production) against this file's private in-memory database. */
-export async function bootstrap(opts: { rateLimit?: boolean } = {}): Promise<Ctx> {
-  const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
+export async function bootstrap(opts: { rateLimit?: boolean; overrides?: Array<[symbol | string, unknown]> } = {}): Promise<Ctx> {
+  let builder = Test.createTestingModule({ imports: [AppModule] });
+  for (const [token, value] of opts.overrides ?? []) builder = builder.overrideProvider(token).useValue(value);
+  const moduleRef = await builder.compile();
   const app = moduleRef.createNestApplication<NestExpressApplication>({ bodyParser: false, logger: false });
   configureApp(app, { rateLimit: opts.rateLimit ?? false, swagger: false });
   await app.init();

@@ -25,6 +25,7 @@ import { UploadsModule } from './modules/uploads/uploads.module';
 import { SettingsModule } from './modules/settings/settings.module';
 import { BillingModule } from './modules/billing/billing.module';
 import { AdminModule } from './modules/admin/admin.module';
+import { AssistantModule } from './modules/assistant/assistant.module';
 
 const nodeEnv = process.env.NODE_ENV || 'development';
 
@@ -69,6 +70,7 @@ const nodeEnv = process.env.NODE_ENV || 'development';
     UploadsModule,
     BillingModule,
     AdminModule,
+    AssistantModule,
   ],
 })
 export class AppModule {}

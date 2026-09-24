@@ -58,6 +58,7 @@ export function configureApp(app: NestExpressApplication, opts: SetupOptions = {
     app.use(['/api/auth/register', '/api/auth/register-owner'], limiter(60, 10, 'Too many accounts created from this network. Try again later.'));
     app.use(['/api/auth/forgot-password', '/api/auth/reset-password'], limiter(15, 10, 'Too many requests. Please wait a few minutes.'));
     app.use('/api/uploads', limiter(15, 60, 'Too many uploads. Please wait a few minutes.'));
+    app.use('/api/assistant/chat', limiter(15, Number(config.get('ASSISTANT_RATE_PER_15_MIN') || 40), 'You have asked a lot of questions — please wait a few minutes.'));
     app.use('/api', limiter(15, Number(config.get('RATE_LIMIT_PER_15_MIN') || 1500), 'Too many requests. Please slow down.'));
   }
 
