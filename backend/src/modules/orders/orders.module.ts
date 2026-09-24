@@ -8,7 +8,8 @@ import { LoyaltyModule } from '../loyalty/loyalty.module';
 import { ReferralsModule } from '../referrals/referrals.module';
 import { PaymentsModule } from '../payments/payments.module';
 import { PromotionsModule } from '../promotions/promotions.module';
-import { MenuItem, MenuItemSchema } from '../menu/menu.schema';
+import { BillingModule } from '../billing/billing.module';
+import { MenuCategory, MenuCategorySchema, MenuItem, MenuItemSchema } from '../menu/menu.schema';
 import { Restaurant, RestaurantSchema } from '../restaurants/restaurant.schema';
 import { Table, TableSchema } from '../tables/table.schema';
 import { User, UserSchema } from '../users/user.schema';
@@ -18,6 +19,7 @@ import { User, UserSchema } from '../users/user.schema';
     MongooseModule.forFeature([
       { name: Order.name, schema: OrderSchema },
       { name: MenuItem.name, schema: MenuItemSchema },
+      { name: MenuCategory.name, schema: MenuCategorySchema },
       { name: Restaurant.name, schema: RestaurantSchema },
       { name: Table.name, schema: TableSchema },
       { name: User.name, schema: UserSchema },
@@ -27,9 +29,10 @@ import { User, UserSchema } from '../users/user.schema';
     ReferralsModule,
     PaymentsModule,
     PromotionsModule,
+    BillingModule,
   ],
   controllers: [OrdersController],
   providers: [OrdersService],
-  exports: [OrdersService, MongooseModule],
+  exports: [OrdersService],
 })
 export class OrdersModule {}

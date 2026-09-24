@@ -1,39 +1,33 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Notification, NotificationDocument, NotificationType } from './notification.schema';
 
 @Injectable()
 export class NotificationsService {
   constructor(@InjectModel(Notification.name) private notificationModel: Model<NotificationDocument>) {}
 
-  async create(userId: string, data: { title: string; message: string; type: NotificationType; link?: string; metadata?: any }) {
-    return this.notificationModel.create({ userId, ...data });
+  create(userId: string, data: { title: string; message: string; type: NotificationType; link?: string; metadata?: Record<string, unknown> }) {
+    return this.notificationModel.create({ userId: new Types.ObjectId(userId), ...data });
   }
 
-  async findByUser(userId: string, query: any = {}) {
-    const { type, page = 1, limit = 20 } = query;
-    const filter: any = { userId };
-    if (type && type !== 'all') filter.type = type;
-    const skip = (page - 1) * limit;
+  async findByUser(userId: string, query: { type?: string; page?: number; limit?: number }) {
+    const page = Math.max(1, query.page || 1);
+    const limit = Math.min(100, Math.max(1, query.limit || 20));
+    const filter: Record<string, unknown> = { userId: new Types.ObjectId(userId) };
+    if (query.type && query.type !== 'all') filter.type = query.type;
     const [notifications, total, unread] = await Promise.all([
-      this.notificationModel.find(filter).skip(skip).limit(+limit).sort({ createdAt: -1 }),
+      this.notificationModel.find(filter).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit),
       this.notificationModel.countDocuments(filter),
-      this.notificationModel.countDocuments({ userId, isRead: false }),
+      this.notificationModel.countDocuments({ userId: filter.userId, isRead: false }),
     ]);
-    return { notifications, total, unread, page: +page, pages: Math.ceil(total / limit) };
-  }
-
-  async markRead(id: string) {
-    return this.notificationModel.findByIdAndUpdate(id, { isRead: true }, { returnDocument: 'after' });
+    return { notifications, total, unread, page, pages: Math.ceil(total / limit) };
   }
 
   async markReadForUser(userId: string, id: string) {
-    return this.notificationModel.findOneAndUpdate(
-      { _id: id, userId },
-      { isRead: true },
-      { returnDocument: 'after' },
-    );
+    const n = await this.notificationModel.findOneAndUpdate({ _id: id, userId }, { isRead: true }, { returnDocument: 'after' });
+    if (!n) throw new NotFoundException('Notification not found');
+    return n;
   }
 
   async markAllRead(userId: string) {
@@ -47,7 +41,6 @@ export class NotificationsService {
   }
 
   async getUnreadCount(userId: string) {
-    const count = await this.notificationModel.countDocuments({ userId, isRead: false });
-    return { count };
+    return { count: await this.notificationModel.countDocuments({ userId, isRead: false }) };
   }
 }

@@ -6,20 +6,33 @@ export type UserDocument = User & Document;
 export enum UserRole {
   OWNER = 'owner',
   CUSTOMER = 'customer',
+  ADMIN = 'admin',
 }
 
-@Schema({ timestamps: true })
+/** Fields that must never leave the server. They are `select: false` and also stripped by toJSON. */
+export const PRIVATE_USER_FIELDS = ['password', 'resetPasswordToken', 'resetPasswordExpires', 'tokenVersion', 'failedLoginAttempts', 'lockUntil'];
+
+@Schema({
+  timestamps: true,
+  toJSON: {
+    transform: (_doc, ret: Record<string, unknown>) => {
+      for (const f of PRIVATE_USER_FIELDS) delete ret[f];
+      delete ret.__v;
+      return ret;
+    },
+  },
+})
 export class User {
-  @Prop({ required: true })
+  @Prop({ required: true, trim: true })
   fullName: string;
 
-  @Prop({ required: true, unique: true, lowercase: true })
+  @Prop({ required: true, unique: true, lowercase: true, trim: true })
   email: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, select: false })
   password: string;
 
-  @Prop({ default: UserRole.CUSTOMER, enum: UserRole })
+  @Prop({ default: UserRole.CUSTOMER, enum: UserRole, index: true })
   role: UserRole;
 
   @Prop({ default: null })
@@ -31,17 +44,11 @@ export class User {
   @Prop({ default: null })
   address: string;
 
-  @Prop({ default: true })
+  @Prop({ default: true, index: true })
   isActive: boolean;
 
-  @Prop({ default: false })
-  emailVerified: boolean;
-
-  @Prop({ default: null, type: MongooseSchema.Types.ObjectId })
+  @Prop({ default: null, type: MongooseSchema.Types.ObjectId, ref: 'Restaurant' })
   restaurantId: Types.ObjectId;
-
-  @Prop({ default: 'Gourmet Pro' })
-  activePlan: string;
 
   @Prop({ type: Object, default: { bookingConfirmation: true, marketing: false, orderTracking: true } })
   notificationPrefs: {
@@ -50,14 +57,24 @@ export class User {
     orderTracking: boolean;
   };
 
-  @Prop({ default: null })
-  refreshToken: string;
-
-  @Prop({ default: null })
+  @Prop({ default: null, select: false })
   resetPasswordToken: string;
 
-  @Prop({ default: null })
+  @Prop({ default: null, select: false })
   resetPasswordExpires: Date;
+
+  /** Bumped on password change/reset, logout-all and deactivation — invalidates every issued JWT. */
+  @Prop({ default: 0, select: false })
+  tokenVersion: number;
+
+  @Prop({ default: 0, select: false })
+  failedLoginAttempts: number;
+
+  @Prop({ default: null, select: false })
+  lockUntil: Date;
+
+  @Prop({ default: null })
+  lastLoginAt: Date;
 
   @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Restaurant' }], default: [] })
   favoriteRestaurantIds: Types.ObjectId[];
@@ -82,6 +99,7 @@ export class User {
     isDefault: boolean;
   }>;
 
+  /** Display metadata only (brand, last4, expiry). Card numbers and CVVs are never stored. */
   @Prop({
     type: [{
       brand: String,

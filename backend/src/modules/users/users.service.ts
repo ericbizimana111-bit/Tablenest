@@ -1,208 +1,163 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { User, UserDocument } from './user.schema';
+import { User, UserDocument, UserRole } from './user.schema';
 import { Restaurant, RestaurantDocument, RestaurantStatus } from '../restaurants/restaurant.schema';
+import { UploadsService } from '../uploads/uploads.service';
+import type { Actor } from '../../common/services/access-control.service';
+import { AddressDto, NotificationPrefsDto, PaymentMethodDto, UpdateAddressDto, UpdateProfileDto } from './users.dto';
+
+const MAX_ADDRESSES = 10;
+const MAX_CARDS = 10;
+
+type Address = User['addresses'][number];
+type Card = User['paymentMethods'][number];
+const plain = <T>(v: T): T => ((v as { toObject?: () => T })?.toObject?.() ?? v);
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Restaurant.name) private restaurantModel: Model<RestaurantDocument>,
-  ) { }
+    private uploads: UploadsService,
+  ) {}
 
-  private cleanAddress(a: any) {
-    const str = (v: unknown) => (typeof v === 'string' ? v.trim().slice(0, 200) : '');
-    return {
-      label: str(a?.label) || 'Home',
-      street: str(a?.street),
-      city: str(a?.city),
-      state: str(a?.state),
-      zip: str(a?.zip),
-      isDefault: !!a?.isDefault,
-    };
+  private async load(userId: string) {
+    const user = await this.userModel.findById(userId);
+    if (!user) throw new NotFoundException('User not found');
+    return user;
   }
 
-  private detectBrand(digits: string, hint?: string) {
-    if (/^4/.test(digits)) return 'Visa';
-    if (/^(5[1-5]|2[2-7])/.test(digits)) return 'Mastercard';
-    if (/^3[47]/.test(digits)) return 'Amex';
-    if (/^6/.test(digits)) return 'Discover';
-    return hint || 'Card';
-  }
-
-  async updateProfile(userId: string, data: any) {
-    const allowed = ['fullName', 'phone', 'avatar', 'address'];
-    const update: Record<string, unknown> = {};
-    for (const key of allowed) {
-      if (data[key] !== undefined) update[key] = data[key];
-    }
-    const updated = await this.userModel.findByIdAndUpdate(
-      userId,
-      { $set: update },
-      { returnDocument: 'after' },
-    ).select('-password');
-    if (!updated) throw new NotFoundException('User not found');
+  async updateProfile(actor: Actor, dto: UpdateProfileDto) {
+    const user = await this.load(actor._id.toString());
+    if (dto.avatar !== undefined) await this.uploads.assertUsable(actor, [dto.avatar], [user.avatar]);
+    const updated = await this.userModel.findByIdAndUpdate(user._id, { $set: dto }, { returnDocument: 'after' });
+    if (dto.avatar !== undefined && user.avatar && user.avatar !== updated!.avatar) await this.uploads.releaseIfUnused([user.avatar]);
     return updated;
   }
 
-  async updateNotificationPrefs(userId: string, prefs: any) {
-    const clean = {
-      bookingConfirmation: !!prefs?.bookingConfirmation,
-      marketing: !!prefs?.marketing,
-      orderTracking: !!prefs?.orderTracking,
-    };
-    return this.userModel.findByIdAndUpdate(
-      userId,
-      { $set: { notificationPrefs: clean } },
-      { returnDocument: 'after' },
-    ).select('-password');
+  async updateNotificationPrefs(userId: string, dto: NotificationPrefsDto) {
+    const user = await this.load(userId);
+    const prefs = { ...(user.notificationPrefs || {}), ...dto };
+    return this.userModel.findByIdAndUpdate(userId, { $set: { notificationPrefs: prefs } }, { returnDocument: 'after' });
   }
 
-  async deleteAccount(userId: string) {
-    await this.userModel.findByIdAndUpdate(userId, { isActive: false });
+  /**
+   * Deactivates the account and revokes its sessions. Data is kept for order/booking history.
+   * An owner's restaurant is suspended so customers cannot order from an unattended restaurant.
+   */
+  async deactivate(userId: string) {
+    const user = await this.userModel.findByIdAndUpdate(userId, { isActive: false, $inc: { tokenVersion: 1 } });
+    if (user?.role === UserRole.OWNER) {
+      await this.restaurantModel.updateOne({ ownerId: user._id }, { status: RestaurantStatus.SUSPENDED, acceptingOrders: false });
+    }
     return { message: 'Account deactivated' };
   }
 
+  // ── Favorites ─────────────────────────────────────────────────────────────
   async getFavorites(userId: string) {
-    const user = await this.userModel.findById(userId).select('favoriteRestaurantIds');
-    if (!user) throw new NotFoundException('User not found');
-    const restaurants = await this.restaurantModel.find({
-      _id: { $in: user.favoriteRestaurantIds || [] },
-      status: RestaurantStatus.ACTIVE,
-    });
+    const user = await this.load(userId);
+    const restaurants = await this.restaurantModel
+      .find({ _id: { $in: user.favoriteRestaurantIds || [] }, status: RestaurantStatus.ACTIVE })
+      .select('-commissionRate -plan -rejectionReason -sponsoredUntil');
     return { restaurants, ids: (user.favoriteRestaurantIds || []).map((i) => i.toString()) };
   }
 
   async addFavorite(userId: string, restaurantId: string) {
-    const restaurant = await this.restaurantModel.findById(restaurantId);
-    if (!restaurant) throw new NotFoundException('Restaurant not found');
-
-    await this.userModel.findByIdAndUpdate(userId, {
-      $addToSet: { favoriteRestaurantIds: new Types.ObjectId(restaurantId) },
-    });
+    if (!(await this.restaurantModel.exists({ _id: restaurantId, status: RestaurantStatus.ACTIVE }))) {
+      throw new NotFoundException('Restaurant not found');
+    }
+    await this.userModel.updateOne({ _id: userId }, { $addToSet: { favoriteRestaurantIds: new Types.ObjectId(restaurantId) } });
     return { message: 'Added to favorites' };
   }
 
   async removeFavorite(userId: string, restaurantId: string) {
-    await this.userModel.findByIdAndUpdate(userId, {
-      $pull: { favoriteRestaurantIds: new Types.ObjectId(restaurantId) },
-    });
+    await this.userModel.updateOne({ _id: userId }, { $pull: { favoriteRestaurantIds: new Types.ObjectId(restaurantId) } });
     return { message: 'Removed from favorites' };
   }
 
+  // ── Addresses ─────────────────────────────────────────────────────────────
   async getAddresses(userId: string) {
-    const user = await this.userModel.findById(userId).select('addresses');
-    if (!user) throw new NotFoundException('User not found');
-    return { addresses: user.addresses || [] };
+    return { addresses: (await this.load(userId)).addresses || [] };
   }
 
-  async addAddress(userId: string, address: any) {
-    const user = await this.userModel.findById(userId);
-    if (!user) throw new NotFoundException('User not found');
+  private static address(a: Partial<Address> & { street: string }): Address {
+    return { label: a.label || 'Home', street: a.street, city: a.city || '', state: a.state || '', zip: a.zip || '', isDefault: !!a.isDefault };
+  }
 
-    const addresses = [...(user.addresses || [])];
-    const entry = this.cleanAddress(address);
-    if (!entry.street) throw new BadRequestException('Street address is required');
-    if (entry.isDefault || addresses.length === 0) {
-      addresses.forEach(a => { a.isDefault = false; });
-      entry.isDefault = true;
-    }
+  private async saveAddresses(userId: string, addresses: Address[]) {
+    if (addresses.length && !addresses.some((a) => a.isDefault)) addresses[0].isDefault = true;
+    await this.userModel.updateOne({ _id: userId }, { addresses });
+    return { addresses };
+  }
+
+  async addAddress(userId: string, dto: AddressDto) {
+    const user = await this.load(userId);
+    const addresses = (user.addresses || []).map(plain);
+    if (addresses.length >= MAX_ADDRESSES) throw new BadRequestException(`You can save at most ${MAX_ADDRESSES} addresses`);
+    const entry = UsersService.address(dto as Address);
+    if (entry.isDefault) addresses.forEach((a) => (a.isDefault = false));
     addresses.push(entry);
-
-    await this.userModel.findByIdAndUpdate(userId, { addresses });
-    return { addresses };
+    return this.saveAddresses(userId, addresses);
   }
 
-  async updateAddress(userId: string, index: number, address: any) {
-    const user = await this.userModel.findById(userId);
-    if (!user) throw new NotFoundException('User not found');
-    if (!user.addresses?.[index]) throw new NotFoundException('Address not found');
-
-    const addresses = [...user.addresses];
-    const entry = this.cleanAddress({ ...(addresses[index] as any).toObject?.() ?? addresses[index], ...address });
-    if (entry.isDefault) {
-      addresses.forEach(a => { a.isDefault = false; });
-    }
+  async updateAddress(userId: string, index: number, dto: UpdateAddressDto) {
+    const user = await this.load(userId);
+    const addresses = (user.addresses || []).map(plain);
+    if (!addresses[index]) throw new NotFoundException('Address not found');
+    const entry = UsersService.address({ ...addresses[index], ...dto } as Address);
+    if (entry.isDefault) addresses.forEach((a) => (a.isDefault = false));
     addresses[index] = entry;
-
-    await this.userModel.findByIdAndUpdate(userId, { addresses });
-    return { addresses };
+    return this.saveAddresses(userId, addresses);
   }
 
   async deleteAddress(userId: string, index: number) {
-    const user = await this.userModel.findById(userId);
-    if (!user) throw new NotFoundException('User not found');
+    const user = await this.load(userId);
     if (!user.addresses?.[index]) throw new NotFoundException('Address not found');
-
-    const addresses = user.addresses.filter((_, i) => i !== index);
-    if (addresses.length && !addresses.some(a => a.isDefault)) addresses[0].isDefault = true;
-    await this.userModel.findByIdAndUpdate(userId, { addresses });
-    return { addresses };
-  }
-
-  async getPaymentMethods(userId: string) {
-    const user = await this.userModel.findById(userId).select('paymentMethods');
-    if (!user) throw new NotFoundException('User not found');
-    return { paymentMethods: user.paymentMethods || [] };
-  }
-
-  async addPaymentMethod(userId: string, method: any) {
-    const user = await this.userModel.findById(userId);
-    if (!user) throw new NotFoundException('User not found');
-
-    const paymentMethods = [...(user.paymentMethods || [])];
-    const digits = String(method.cardNumber || method.last4 || '').replace(/\D/g, '');
-    if (digits.length < 4) throw new BadRequestException('A valid card number is required');
-    const expiryMonth = String(method.expiryMonth || '').padStart(2, '0');
-    const expiryYear = String(method.expiryYear || '');
-    if (!/^(0[1-9]|1[0-2])$/.test(expiryMonth) || !/^\d{2,4}$/.test(expiryYear)) {
-      throw new BadRequestException('A valid expiry date is required');
-    }
-    if (method.isDefault || paymentMethods.length === 0) {
-      paymentMethods.forEach(m => { m.isDefault = false; });
-    }
-    // Only non-sensitive metadata is stored — never the full number or CVV.
-    paymentMethods.push({
-      brand: this.detectBrand(digits, method.brand),
-      last4: digits.slice(-4),
-      expiryMonth,
-      expiryYear,
-      isDefault: !!method.isDefault || paymentMethods.length === 0,
-    });
-
-    await this.userModel.findByIdAndUpdate(userId, { paymentMethods });
-    return { paymentMethods };
-  }
-
-  async deletePaymentMethod(userId: string, index: number) {
-    const user = await this.userModel.findById(userId);
-    if (!user) throw new NotFoundException('User not found');
-    if (!user.paymentMethods?.[index]) throw new NotFoundException('Payment method not found');
-
-    const paymentMethods = user.paymentMethods.filter((_, i) => i !== index);
-    if (paymentMethods.length && !paymentMethods.some(m => m.isDefault)) paymentMethods[0].isDefault = true;
-    await this.userModel.findByIdAndUpdate(userId, { paymentMethods });
-    return { paymentMethods };
+    return this.saveAddresses(userId, user.addresses.map(plain).filter((_, i) => i !== index));
   }
 
   async setDefaultAddress(userId: string, index: number) {
-    const user = await this.userModel.findById(userId);
-    if (!user) throw new NotFoundException('User not found');
+    const user = await this.load(userId);
     if (!user.addresses?.[index]) throw new NotFoundException('Address not found');
+    return this.saveAddresses(userId, user.addresses.map(plain).map((a, i) => ({ ...a, isDefault: i === index })));
+  }
 
-    const addresses = user.addresses.map((a, i) => ({ ...(a as any).toObject?.() ?? a, isDefault: i === index }));
-    await this.userModel.findByIdAndUpdate(userId, { addresses });
-    return { addresses };
+  // ── Saved cards (display metadata only) ──────────────────────────────────
+  async getPaymentMethods(userId: string) {
+    return { paymentMethods: (await this.load(userId)).paymentMethods || [] };
+  }
+
+  private async saveCards(userId: string, cards: Card[]) {
+    if (cards.length && !cards.some((c) => c.isDefault)) cards[0].isDefault = true;
+    await this.userModel.updateOne({ _id: userId }, { paymentMethods: cards });
+    return { paymentMethods: cards };
+  }
+
+  async addPaymentMethod(userId: string, dto: PaymentMethodDto) {
+    const user = await this.load(userId);
+    const cards = (user.paymentMethods || []).map(plain);
+    if (cards.length >= MAX_CARDS) throw new BadRequestException(`You can save at most ${MAX_CARDS} cards`);
+    if (dto.isDefault) cards.forEach((c) => (c.isDefault = false));
+    cards.push({
+      brand: dto.brand || 'Card',
+      last4: dto.last4,
+      expiryMonth: dto.expiryMonth.padStart(2, '0'),
+      expiryYear: dto.expiryYear,
+      isDefault: !!dto.isDefault,
+    });
+    return this.saveCards(userId, cards);
+  }
+
+  async deletePaymentMethod(userId: string, index: number) {
+    const user = await this.load(userId);
+    if (!user.paymentMethods?.[index]) throw new NotFoundException('Payment method not found');
+    return this.saveCards(userId, user.paymentMethods.map(plain).filter((_, i) => i !== index));
   }
 
   async setDefaultPaymentMethod(userId: string, index: number) {
-    const user = await this.userModel.findById(userId);
-    if (!user) throw new NotFoundException('User not found');
+    const user = await this.load(userId);
     if (!user.paymentMethods?.[index]) throw new NotFoundException('Payment method not found');
-
-    const paymentMethods = user.paymentMethods.map((m, i) => ({ ...(m as any).toObject?.() ?? m, isDefault: i === index }));
-    await this.userModel.findByIdAndUpdate(userId, { paymentMethods });
-    return { paymentMethods };
+    return this.saveCards(userId, user.paymentMethods.map(plain).map((c, i) => ({ ...c, isDefault: i === index })));
   }
 }

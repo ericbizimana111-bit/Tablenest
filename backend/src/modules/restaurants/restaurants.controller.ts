@@ -5,14 +5,14 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../users/user.schema';
 import { RestaurantsService } from './restaurants.service';
-import { CreateRestaurantDto, UpdateRestaurantDto } from './dto/restaurant.dto';
+import { CreateRestaurantDto, PublicRestaurantQueryDto, UpdateRestaurantDto } from './dto/restaurant.dto';
 
 @Controller('restaurants')
 export class RestaurantsController {
   constructor(private restaurantsService: RestaurantsService) {}
 
   @Get('public')
-  findPublic(@Query() query: any) {
+  findPublic(@Query() query: PublicRestaurantQueryDto) {
     return this.restaurantsService.findPublic(query);
   }
 
@@ -44,22 +44,23 @@ export class RestaurantsController {
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.OWNER, UserRole.ADMIN)
   @Get(':id')
-  findById(@Param('id', MongoIdValidationPipe) id: string) {
-    return this.restaurantsService.findById(id);
+  findById(@Request() req, @Param('id', MongoIdValidationPipe) id: string) {
+    return this.restaurantsService.findManaged(req.user, id);
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.OWNER)
   @Post()
   create(@Request() req, @Body() dto: CreateRestaurantDto) {
-    return this.restaurantsService.create(req.user._id.toString(), dto);
+    return this.restaurantsService.create(req.user, dto);
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.OWNER)
+  @Roles(UserRole.OWNER, UserRole.ADMIN)
   @Put(':id')
   update(@Request() req, @Param('id', MongoIdValidationPipe) id: string, @Body() dto: UpdateRestaurantDto) {
-    return this.restaurantsService.update(id, req.user._id.toString(), dto);
+    return this.restaurantsService.update(req.user, id, dto);
   }
 }

@@ -1,73 +1,73 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { ConfigService } from '@nestjs/config';
 import { Model } from 'mongoose';
 import { Table, TableDocument, TableStatus } from './table.schema';
-import { AccessControlService } from '../../common/services/access-control.service';
+import { Reservation, ReservationDocument, ACTIVE_RESERVATION_STATUSES } from '../reservations/reservation.schema';
+import { AccessControlService, Actor } from '../../common/services/access-control.service';
+import { CreateTableDto, UpdateTableDto, UpdateTableStatusDto } from './tables.dto';
+import { dayStart, zonedNow } from '../../common/utils/time';
+import { RestaurantDocument } from '../restaurants/restaurant.schema';
 
 @Injectable()
 export class TablesService {
   constructor(
     @InjectModel(Table.name) private tableModel: Model<TableDocument>,
+    @InjectModel(Reservation.name) private reservationModel: Model<ReservationDocument>,
     private access: AccessControlService,
+    private config: ConfigService,
   ) {}
 
-  private async owned(user: any, id: string) {
+  private async owned(user: Actor, id: string) {
     const table = await this.tableModel.findById(id);
     if (!table) throw new NotFoundException('Table not found');
-    await this.access.assertRestaurantOwner(user, table.restaurantId.toString());
-    return table;
+    const restaurant = await this.access.assertRestaurantOwner(user, table.restaurantId.toString());
+    return { table, restaurant };
   }
 
-  async findByRestaurant(user: any, restaurantId: string) {
+  /** Active bookings on this table from today onwards (in the restaurant's time zone). */
+  private upcoming(table: TableDocument, restaurant: RestaurantDocument) {
+    const today = zonedNow(restaurant.timezone || this.config.get('DEFAULT_TIMEZONE', 'UTC')).date;
+    return this.reservationModel.find({ tableId: table._id, status: { $in: ACTIVE_RESERVATION_STATUSES }, date: { $gte: dayStart(today) } });
+  }
+
+  async findByRestaurant(user: Actor, restaurantId: string) {
     await this.access.assertRestaurantOwner(user, restaurantId);
     const tables = await this.tableModel.find({ restaurantId });
     return tables.sort((a, b) => a.tableNumber.localeCompare(b.tableNumber, undefined, { numeric: true }));
   }
 
-  async create(user: any, data: any) {
+  async create(user: Actor, dto: CreateTableDto) {
     const restaurantId = await this.access.getOwnerRestaurantId(user);
-    const tableNumber = String(data?.tableNumber || '').trim();
-    const capacity = Number(data?.capacity);
-    if (!tableNumber) throw new BadRequestException('Table number is required');
-    if (!Number.isInteger(capacity) || capacity < 1 || capacity > 30) {
-      throw new BadRequestException('Capacity must be between 1 and 30');
+    if (await this.tableModel.exists({ restaurantId, tableNumber: dto.tableNumber })) {
+      throw new ConflictException(`Table ${dto.tableNumber} already exists`);
     }
-    if (await this.tableModel.exists({ restaurantId, tableNumber })) {
-      throw new BadRequestException(`Table ${tableNumber} already exists`);
-    }
-    return this.tableModel.create({ restaurantId, tableNumber, capacity });
+    return this.tableModel.create({ restaurantId, tableNumber: dto.tableNumber, capacity: dto.capacity });
   }
 
-  async update(user: any, id: string, data: any) {
-    const table = await this.owned(user, id);
-    const update: Record<string, unknown> = {};
-    if (data.tableNumber !== undefined) {
-      const tableNumber = String(data.tableNumber).trim();
-      if (!tableNumber) throw new BadRequestException('Table number is required');
-      if (tableNumber !== table.tableNumber && (await this.tableModel.exists({ restaurantId: table.restaurantId, tableNumber }))) {
-        throw new BadRequestException(`Table ${tableNumber} already exists`);
-      }
-      update.tableNumber = tableNumber;
+  async update(user: Actor, id: string, dto: UpdateTableDto) {
+    const { table, restaurant } = await this.owned(user, id);
+    if (dto.tableNumber && dto.tableNumber !== table.tableNumber && (await this.tableModel.exists({ restaurantId: table.restaurantId, tableNumber: dto.tableNumber }))) {
+      throw new ConflictException(`Table ${dto.tableNumber} already exists`);
     }
-    if (data.capacity !== undefined) {
-      const capacity = Number(data.capacity);
-      if (!Number.isInteger(capacity) || capacity < 1 || capacity > 30) {
-        throw new BadRequestException('Capacity must be between 1 and 30');
+    if (dto.capacity !== undefined && dto.capacity < table.capacity) {
+      const biggest = (await this.upcoming(table, restaurant)).reduce((m, r) => Math.max(m, r.guests), 0);
+      if (biggest > dto.capacity) {
+        throw new ConflictException(`This table has an upcoming booking for ${biggest} guests. Move it before reducing capacity.`);
       }
-      update.capacity = capacity;
     }
-    if (data.serverNotes !== undefined) update.serverNotes = data.serverNotes;
-    return this.tableModel.findByIdAndUpdate(id, { $set: update }, { returnDocument: 'after' });
+    const updated = await this.tableModel.findByIdAndUpdate(id, { $set: dto }, { returnDocument: 'after' });
+    if (dto.tableNumber) await this.reservationModel.updateMany({ tableId: table._id }, { tableNumber: dto.tableNumber });
+    return updated;
   }
 
-  async updateStatus(user: any, id: string, status: TableStatus, guestId?: string, serverNotes?: string) {
+  async updateStatus(user: Actor, id: string, dto: UpdateTableStatusDto) {
     await this.owned(user, id);
-    if (!Object.values(TableStatus).includes(status)) throw new BadRequestException('Invalid status');
-    const update: any = { status };
-    if (guestId) update.currentGuestId = guestId;
-    if (serverNotes !== undefined) update.serverNotes = String(serverNotes).slice(0, 200) || null;
-    if (status === TableStatus.OCCUPIED) update.seatedAt = new Date();
-    if (status === TableStatus.AVAILABLE) {
+    const update: Record<string, unknown> = { status: dto.status };
+    if (dto.guestId) update.currentGuestId = dto.guestId;
+    if (dto.serverNotes !== undefined) update.serverNotes = dto.serverNotes;
+    if (dto.status === TableStatus.OCCUPIED) update.seatedAt = new Date();
+    if (dto.status === TableStatus.AVAILABLE) {
       update.currentGuestId = null;
       update.seatedAt = null;
       update.serverNotes = null;
@@ -75,13 +75,17 @@ export class TablesService {
     return this.tableModel.findByIdAndUpdate(id, update, { returnDocument: 'after' });
   }
 
-  async delete(user: any, id: string) {
-    await this.owned(user, id);
+  async delete(user: Actor, id: string) {
+    const { table, restaurant } = await this.owned(user, id);
+    const pending = await this.upcoming(table, restaurant);
+    if (pending.length) {
+      throw new ConflictException(`Table ${table.tableNumber} has ${pending.length} upcoming booking(s). Cancel or move them first.`);
+    }
     await this.tableModel.findByIdAndDelete(id);
     return { message: 'Table deleted' };
   }
 
-  async getFloorPlan(user: any, restaurantId: string) {
+  async getFloorPlan(user: Actor, restaurantId: string) {
     const tables = await this.findByRestaurant(user, restaurantId);
     const count = (s: TableStatus) => tables.filter((t) => t.status === s).length;
     return {

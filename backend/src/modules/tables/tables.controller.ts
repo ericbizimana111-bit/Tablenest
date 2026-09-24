@@ -5,11 +5,11 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../users/user.schema';
 import { TablesService } from './tables.service';
-import { TableStatus } from './table.schema';
+import { CreateTableDto, UpdateTableDto, UpdateTableStatusDto } from './tables.dto';
 
 @Controller('tables')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
-@Roles(UserRole.OWNER)
+@Roles(UserRole.OWNER, UserRole.ADMIN)
 export class TablesController {
   constructor(private tablesService: TablesService) {}
 
@@ -24,22 +24,19 @@ export class TablesController {
   }
 
   @Post()
-  create(@Request() req, @Body() data: any) {
-    return this.tablesService.create(req.user, data);
+  @Roles(UserRole.OWNER)
+  create(@Request() req, @Body() dto: CreateTableDto) {
+    return this.tablesService.create(req.user, dto);
   }
 
   @Put(':id')
-  update(@Request() req, @Param('id', MongoIdValidationPipe) id: string, @Body() data: any) {
-    return this.tablesService.update(req.user, id, data);
+  update(@Request() req, @Param('id', MongoIdValidationPipe) id: string, @Body() dto: UpdateTableDto) {
+    return this.tablesService.update(req.user, id, dto);
   }
 
   @Patch(':id/status')
-  updateStatus(
-    @Request() req,
-    @Param('id', MongoIdValidationPipe) id: string,
-    @Body() body: { status: TableStatus; guestId?: string; serverNotes?: string },
-  ) {
-    return this.tablesService.updateStatus(req.user, id, body.status, body.guestId, body.serverNotes);
+  updateStatus(@Request() req, @Param('id', MongoIdValidationPipe) id: string, @Body() dto: UpdateTableStatusDto) {
+    return this.tablesService.updateStatus(req.user, id, dto);
   }
 
   @Delete(':id')

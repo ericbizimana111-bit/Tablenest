@@ -4,11 +4,11 @@ import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../users/user.schema';
-import { StaffService } from './staff.service';
+import { CreateStaffDto, StaffService, UpdateStaffDto } from './staff.service';
 
 @Controller('staff')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
-@Roles(UserRole.OWNER)
+@Roles(UserRole.OWNER, UserRole.ADMIN)
 export class StaffController {
   constructor(private staffService: StaffService) {}
 
@@ -18,13 +18,14 @@ export class StaffController {
   }
 
   @Post()
-  create(@Request() req, @Body() data: any) {
-    return this.staffService.create(req.user, data);
+  @Roles(UserRole.OWNER)
+  create(@Request() req, @Body() dto: CreateStaffDto) {
+    return this.staffService.create(req.user, dto);
   }
 
   @Put(':id')
-  update(@Request() req, @Param('id', MongoIdValidationPipe) id: string, @Body() data: any) {
-    return this.staffService.update(req.user, id, data);
+  update(@Request() req, @Param('id', MongoIdValidationPipe) id: string, @Body() dto: UpdateStaffDto) {
+    return this.staffService.update(req.user, id, dto);
   }
 
   @Delete(':id')

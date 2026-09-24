@@ -37,3 +37,7 @@ export class Review {
 }
 
 export const ReviewSchema = SchemaFactory.createForClass(Review);
+// One review per order and per visit — enforced by the database, not just a pre-check.
+ReviewSchema.index({ orderId: 1 }, { unique: true, partialFilterExpression: { orderId: { $type: 'objectId' } } });
+ReviewSchema.index({ reservationId: 1 }, { unique: true, partialFilterExpression: { reservationId: { $type: 'objectId' } } });
+ReviewSchema.index({ restaurantId: 1, createdAt: -1 });

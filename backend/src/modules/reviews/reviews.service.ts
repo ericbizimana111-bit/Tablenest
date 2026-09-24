@@ -5,10 +5,12 @@ import { Review, ReviewDocument } from './review.schema';
 import { Restaurant, RestaurantDocument } from '../restaurants/restaurant.schema';
 import { Order, OrderDocument, OrderStatus } from '../orders/order.schema';
 import { Reservation, ReservationDocument, ReservationStatus } from '../reservations/reservation.schema';
-import { User, UserDocument } from '../users/user.schema';
+import { User, UserDocument, UserRole } from '../users/user.schema';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationType } from '../notifications/notification.schema';
-import { AccessControlService } from '../../common/services/access-control.service';
+import { AccessControlService, Actor } from '../../common/services/access-control.service';
+import { AuditService } from '../../common/audit/audit.service';
+import { CreateReviewDto } from './reviews.dto';
 
 @Injectable()
 export class ReviewsService {
@@ -20,13 +22,13 @@ export class ReviewsService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     private notifications: NotificationsService,
     private access: AccessControlService,
+    private audit: AuditService,
   ) {}
 
   /** Customers can review once per completed order or dining reservation. */
-  async create(customerId: string, data: any) {
-    const rating = Number(data?.rating);
-    if (!Number.isInteger(rating) || rating < 1 || rating > 5) throw new BadRequestException('Choose a rating from 1 to 5');
-    const comment = String(data?.comment || '').trim().slice(0, 1500) || null;
+  async create(customerId: string, data: CreateReviewDto) {
+    const { rating } = data;
+    const comment = data.comment || null;
 
     let restaurantId: Types.ObjectId;
     const refs: { orderId?: Types.ObjectId; reservationId?: Types.ObjectId } = {};
@@ -98,9 +100,9 @@ export class ReviewsService {
       }));
   }
 
-  async findByRestaurant(restaurantId: string, query: any = {}) {
-    const page = Math.max(1, parseInt(query.page) || 1);
-    const limit = Math.min(50, Math.max(1, parseInt(query.limit) || 10));
+  async findByRestaurant(restaurantId: string, query: { page?: number; limit?: number } = {}) {
+    const page = Math.max(1, query.page || 1);
+    const limit = Math.min(50, Math.max(1, query.limit || 10));
     const rid = new Types.ObjectId(restaurantId);
     const [reviews, total, dist] = await Promise.all([
       this.reviewModel.find({ restaurantId: rid }).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit),
@@ -144,11 +146,14 @@ export class ReviewsService {
     return updated;
   }
 
-  async delete(userId: string, id: string) {
+  /** Authors delete their own review; admins may remove any review (moderation). */
+  async delete(user: Actor, id: string) {
     const review = await this.reviewModel.findById(id);
     if (!review) throw new NotFoundException('Review not found');
-    if (review.customerId.toString() !== userId) throw new ForbiddenException('You can only delete your own reviews');
+    const isAdmin = user.role === UserRole.ADMIN;
+    if (!isAdmin && review.customerId.toString() !== user._id.toString()) throw new ForbiddenException('You can only delete your own reviews');
     await this.reviewModel.findByIdAndDelete(id);
+    if (isAdmin) await this.audit.record(user, 'admin.review_deleted', { type: 'review', id }, { restaurantId: review.restaurantId.toString() });
     if (review.orderId) await this.orderModel.updateOne({ _id: review.orderId }, { reviewed: false });
     await this.syncRestaurantRating(review.restaurantId);
     return { message: 'Review deleted' };

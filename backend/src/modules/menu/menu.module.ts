@@ -5,6 +5,7 @@ import { MenuService } from './menu.service';
 import { MenuItem, MenuItemSchema, MenuCategory, MenuCategorySchema } from './menu.schema';
 import { Order, OrderSchema } from '../orders/order.schema';
 import { Restaurant, RestaurantSchema } from '../restaurants/restaurant.schema';
+import { UploadsModule } from '../uploads/uploads.module';
 
 @Module({
   imports: [
@@ -14,9 +15,9 @@ import { Restaurant, RestaurantSchema } from '../restaurants/restaurant.schema';
       { name: Order.name, schema: OrderSchema },
       { name: Restaurant.name, schema: RestaurantSchema },
     ]),
+    UploadsModule,
   ],
   controllers: [MenuController],
   providers: [MenuService],
-  exports: [MenuService, MongooseModule],
 })
 export class MenuModule {}

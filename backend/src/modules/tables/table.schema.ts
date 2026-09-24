@@ -12,7 +12,7 @@ export enum TableStatus {
 
 @Schema({ timestamps: true })
 export class Table {
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, index: true })
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'Restaurant', index: true })
   restaurantId: Types.ObjectId;
 
   @Prop({ required: true, trim: true })
@@ -21,10 +21,11 @@ export class Table {
   @Prop({ required: true, min: 1, max: 30 })
   capacity: number;
 
+  /** Live floor state. `blocked` tables are also excluded from online booking. */
   @Prop({ default: TableStatus.AVAILABLE, enum: TableStatus })
   status: TableStatus;
 
-  @Prop({ default: null, type: MongooseSchema.Types.ObjectId })
+  @Prop({ default: null, type: MongooseSchema.Types.ObjectId, ref: 'User' })
   currentGuestId: Types.ObjectId;
 
   @Prop({ default: null })
@@ -38,3 +39,4 @@ export class Table {
 }
 
 export const TableSchema = SchemaFactory.createForClass(Table);
+TableSchema.index({ restaurantId: 1, tableNumber: 1 }, { unique: true });

@@ -1,35 +1,31 @@
-import { BadRequestException, Controller, Get, Put, Patch, Delete, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Request, UseGuards } from '@nestjs/common';
 import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from './user.schema';
 import { UsersService } from './users.service';
+import { AddressDto, NotificationPrefsDto, PaymentMethodDto, UpdateAddressDto, UpdateProfileDto } from './users.dto';
 
+/** Everything here acts on the signed-in user only; no endpoint accepts a user id. */
 @Controller('users')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  private idx(v: string) {
-    const n = Number(v);
-    if (!Number.isInteger(n) || n < 0) throw new BadRequestException('Invalid index');
-    return n;
-  }
-
   @Put('profile')
-  updateProfile(@Request() req, @Body() data: any) {
-    return this.usersService.updateProfile(req.user._id.toString(), data);
+  updateProfile(@Request() req, @Body() dto: UpdateProfileDto) {
+    return this.usersService.updateProfile(req.user, dto);
   }
 
   @Patch('notification-prefs')
-  updateNotificationPrefs(@Request() req, @Body() prefs: any) {
-    return this.usersService.updateNotificationPrefs(req.user._id.toString(), prefs);
+  updateNotificationPrefs(@Request() req, @Body() dto: NotificationPrefsDto) {
+    return this.usersService.updateNotificationPrefs(req.user._id.toString(), dto);
   }
 
   @Delete('account')
   deleteAccount(@Request() req) {
-    return this.usersService.deleteAccount(req.user._id.toString());
+    return this.usersService.deactivate(req.user._id.toString());
   }
 
   @Get('favorites')
@@ -56,23 +52,23 @@ export class UsersController {
   }
 
   @Post('addresses')
-  addAddress(@Request() req, @Body() body: any) {
-    return this.usersService.addAddress(req.user._id.toString(), body);
+  addAddress(@Request() req, @Body() dto: AddressDto) {
+    return this.usersService.addAddress(req.user._id.toString(), dto);
   }
 
   @Put('addresses/:index')
-  updateAddress(@Request() req, @Param('index') index: string, @Body() body: any) {
-    return this.usersService.updateAddress(req.user._id.toString(), +index, body);
+  updateAddress(@Request() req, @Param('index', ParseIntPipe) index: number, @Body() dto: UpdateAddressDto) {
+    return this.usersService.updateAddress(req.user._id.toString(), index, dto);
   }
 
   @Delete('addresses/:index')
-  deleteAddress(@Request() req, @Param('index') index: string) {
-    return this.usersService.deleteAddress(req.user._id.toString(), this.idx(index));
+  deleteAddress(@Request() req, @Param('index', ParseIntPipe) index: number) {
+    return this.usersService.deleteAddress(req.user._id.toString(), index);
   }
 
   @Patch('addresses/:index/default')
-  setDefaultAddress(@Request() req, @Param('index') index: string) {
-    return this.usersService.setDefaultAddress(req.user._id.toString(), this.idx(index));
+  setDefaultAddress(@Request() req, @Param('index', ParseIntPipe) index: number) {
+    return this.usersService.setDefaultAddress(req.user._id.toString(), index);
   }
 
   @Get('payment-methods')
@@ -81,17 +77,17 @@ export class UsersController {
   }
 
   @Post('payment-methods')
-  addPaymentMethod(@Request() req, @Body() body: any) {
-    return this.usersService.addPaymentMethod(req.user._id.toString(), body);
+  addPaymentMethod(@Request() req, @Body() dto: PaymentMethodDto) {
+    return this.usersService.addPaymentMethod(req.user._id.toString(), dto);
   }
 
   @Delete('payment-methods/:index')
-  deletePaymentMethod(@Request() req, @Param('index') index: string) {
-    return this.usersService.deletePaymentMethod(req.user._id.toString(), this.idx(index));
+  deletePaymentMethod(@Request() req, @Param('index', ParseIntPipe) index: number) {
+    return this.usersService.deletePaymentMethod(req.user._id.toString(), index);
   }
 
   @Patch('payment-methods/:index/default')
-  setDefaultPaymentMethod(@Request() req, @Param('index') index: string) {
-    return this.usersService.setDefaultPaymentMethod(req.user._id.toString(), this.idx(index));
+  setDefaultPaymentMethod(@Request() req, @Param('index', ParseIntPipe) index: number) {
+    return this.usersService.setDefaultPaymentMethod(req.user._id.toString(), index);
   }
 }

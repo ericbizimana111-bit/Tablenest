@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Query, Request, UseGuards } from '@nestjs/common';
-import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
 import { AuthGuard } from '@nestjs/passport';
+import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../users/user.schema';
@@ -9,7 +9,7 @@ import { AccessControlService } from '../../common/services/access-control.servi
 
 @Controller('analytics')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
-@Roles(UserRole.OWNER)
+@Roles(UserRole.OWNER, UserRole.ADMIN)
 export class AnalyticsController {
   constructor(
     private analyticsService: AnalyticsService,
@@ -18,23 +18,19 @@ export class AnalyticsController {
 
   @Get('restaurant/:restaurantId/dashboard')
   async getRestaurantDashboard(@Request() req, @Param('restaurantId', MongoIdValidationPipe) restaurantId: string) {
-    await this.accessControl.assertRestaurantOwner(req.user, restaurantId);
-    return this.analyticsService.getRestaurantDashboard(restaurantId);
+    const restaurant = await this.accessControl.assertRestaurantOwner(req.user, restaurantId);
+    return this.analyticsService.getRestaurantDashboard(restaurant);
   }
 
   @Get('restaurant/:restaurantId/overview')
-  async getOverview(
-    @Request() req,
-    @Param('restaurantId', MongoIdValidationPipe) restaurantId: string,
-    @Query('days') days?: string,
-  ) {
-    await this.accessControl.assertRestaurantOwner(req.user, restaurantId);
-    return this.analyticsService.getOverview(restaurantId, Number(days) || 30);
+  async getOverview(@Request() req, @Param('restaurantId', MongoIdValidationPipe) restaurantId: string, @Query('days') days?: string) {
+    const restaurant = await this.accessControl.assertRestaurantOwner(req.user, restaurantId);
+    return this.analyticsService.getOverview(restaurant, Number(days) || 30);
   }
 
   @Get('restaurant/:restaurantId/heatmap')
   async getHeatmap(@Request() req, @Param('restaurantId', MongoIdValidationPipe) restaurantId: string) {
-    await this.accessControl.assertRestaurantOwner(req.user, restaurantId);
-    return this.analyticsService.getReservationsHeatmap(restaurantId);
+    const restaurant = await this.accessControl.assertRestaurantOwner(req.user, restaurantId);
+    return this.analyticsService.getReservationsHeatmap(restaurant);
   }
 }

@@ -1,7 +1,7 @@
-import { Controller, Post, Get, Body, UseGuards, Request, Patch } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
-import { RegisterDto, LoginDto, ForgotPasswordDto, ResetPasswordDto, ChangePasswordDto, RegisterOwnerDto } from './auth.dto';
+import { ChangePasswordDto, ForgotPasswordDto, LoginDto, RegisterDto, ResetPasswordDto } from './auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -13,21 +13,24 @@ export class AuthController {
   }
 
   @Post('register-owner')
-  registerOwner(@Body() dto: RegisterOwnerDto) {
+  registerOwner(@Body() dto: RegisterDto) {
     return this.authService.registerOwner(dto);
   }
 
   @Post('login')
+  @HttpCode(200)
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
   }
 
   @Post('forgot-password')
+  @HttpCode(200)
   forgotPassword(@Body() dto: ForgotPasswordDto) {
     return this.authService.forgotPassword(dto.email);
   }
 
   @Post('reset-password')
+  @HttpCode(200)
   resetPassword(@Body() dto: ResetPasswordDto) {
     return this.authService.resetPassword(dto);
   }
@@ -36,6 +39,14 @@ export class AuthController {
   @Patch('change-password')
   changePassword(@Request() req, @Body() dto: ChangePasswordDto) {
     return this.authService.changePassword(req.user._id.toString(), dto);
+  }
+
+  /** Revokes every token issued to this account (all devices). */
+  @UseGuards(AuthGuard('jwt'))
+  @Post('logout-all')
+  @HttpCode(200)
+  logoutAll(@Request() req) {
+    return this.authService.logoutAll(req.user._id.toString());
   }
 
   @UseGuards(AuthGuard('jwt'))

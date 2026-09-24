@@ -1,62 +1,64 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { ConfigService } from '@nestjs/config';
 import { Model } from 'mongoose';
-import { Restaurant, RestaurantDocument, RestaurantStatus } from './restaurant.schema';
+import { PRIVATE_RESTAURANT_FIELDS, Restaurant, RestaurantDocument, RestaurantStatus } from './restaurant.schema';
 import { User, UserDocument } from '../users/user.schema';
-
-const DAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-const escapeRegex = (v: string) => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-export const DEFAULT_HOURS = Object.fromEntries(
-  DAYS.map((d) => [d, { open: '10:00', close: '22:00', closed: false }]),
-);
-
-/** Whether a restaurant is open right now, based on its weekly hours. */
-export function isOpenNow(hours: Restaurant['openingHours'] | undefined, now = new Date()): boolean {
-  const today = hours?.[DAYS[now.getDay()]];
-  if (!today) return true; // no schedule configured → assume open
-  if (today.closed) return false;
-  const [oh, om] = String(today.open || '00:00').split(':').map(Number);
-  const [ch, cm] = String(today.close || '23:59').split(':').map(Number);
-  const mins = now.getHours() * 60 + now.getMinutes();
-  const open = oh * 60 + (om || 0);
-  const close = ch * 60 + (cm || 0);
-  return close > open ? mins >= open && mins < close : mins >= open || mins < close;
-}
+import { CreateRestaurantDto, PublicRestaurantQueryDto, UpdateRestaurantDto } from './dto/restaurant.dto';
+import { DEFAULT_HOURS, isOpenAt } from '../../common/utils/time';
+import { escapeRegex } from '../../common/dto/pagination.dto';
+import { AccessControlService, Actor } from '../../common/services/access-control.service';
+import { UploadsService } from '../uploads/uploads.service';
+import { SettingsService } from '../settings/settings.service';
+import { AuditService } from '../../common/audit/audit.service';
 
 @Injectable()
 export class RestaurantsService {
+  private readonly logger = new Logger('Restaurants');
+
   constructor(
     @InjectModel(Restaurant.name) private restaurantModel: Model<RestaurantDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
+    private access: AccessControlService,
+    private uploads: UploadsService,
+    private settings: SettingsService,
+    private audit: AuditService,
+    private config: ConfigService,
   ) {}
 
-  private decorate(doc: RestaurantDocument | null) {
-    if (!doc) return doc;
-    const obj = doc.toObject() as any;
-    obj.openNow = isOpenNow(obj.openingHours) && obj.acceptingOrders !== false;
+  timezoneOf(r: { timezone?: string | null }) {
+    return r.timezone || this.config.get<string>('DEFAULT_TIMEZONE', 'UTC');
+  }
+
+  /** Adds live fields (openNow, sponsored). `publicView` also strips commercial/moderation data. */
+  private present(doc: RestaurantDocument, publicView: boolean) {
+    const obj = doc.toObject() as Record<string, any>;
+    obj.openNow = isOpenAt(obj.openingHours, this.timezoneOf(obj)) && obj.acceptingOrders !== false;
+    obj.sponsored = !!obj.sponsoredUntil && new Date(obj.sponsoredUntil) > new Date();
+    if (publicView) for (const f of PRIVATE_RESTAURANT_FIELDS) delete obj[f];
+    delete obj.__v;
     return obj;
   }
 
-  async findPublic(query: any = {}) {
+  async findPublic(query: PublicRestaurantQueryDto) {
     const { search, cuisine, city, country, priceRange, sort, service, minRating } = query;
-    const page = Math.max(1, parseInt(query.page) || 1);
-    const limit = Math.min(48, Math.max(1, parseInt(query.limit) || 12));
-    const filter: any = { status: RestaurantStatus.ACTIVE };
-    if (cuisine && cuisine !== 'all') filter.cuisineType = { $regex: `^${escapeRegex(String(cuisine))}$`, $options: 'i' };
-    if (city) filter.city = { $regex: escapeRegex(String(city)), $options: 'i' };
-    if (country) filter.country = { $regex: escapeRegex(String(country)), $options: 'i' };
-    if (priceRange) filter.priceRange = { $in: String(priceRange).split(',') };
-    if (minRating) filter.rating = { $gte: Number(minRating) || 0 };
+    const page = Math.max(1, query.page || 1);
+    const limit = Math.min(48, Math.max(1, query.limit || 12));
+    const filter: Record<string, any> = { status: RestaurantStatus.ACTIVE };
+    if (cuisine && cuisine !== 'all') filter.cuisineType = { $regex: `^${escapeRegex(cuisine)}$`, $options: 'i' };
+    if (city) filter.city = { $regex: escapeRegex(city), $options: 'i' };
+    if (country) filter.country = { $regex: escapeRegex(country), $options: 'i' };
+    if (priceRange) filter.priceRange = { $in: priceRange.split(',') };
+    if (minRating) filter.rating = { $gte: minRating };
     if (service === 'delivery') filter.delivery = true;
     if (service === 'dine_in') filter.dineIn = true;
     if (service === 'pickup') filter.pickup = true;
     if (search) {
-      const rx = { $regex: escapeRegex(String(search)), $options: 'i' };
+      const rx = { $regex: escapeRegex(search), $options: 'i' };
       filter.$or = [{ name: rx }, { cuisineType: rx }, { city: rx }, { country: rx }, { description: rx }];
     }
 
-    const sortMap: Record<string, any> = {
+    const sortMap: Record<string, Record<string, 1 | -1>> = {
       rating: { rating: -1, totalReviews: -1 },
       rating_asc: { rating: 1 },
       newest: { createdAt: -1 },
@@ -65,21 +67,28 @@ export class RestaurantsService {
       price_asc: { priceRange: 1, rating: -1 },
       price_desc: { priceRange: -1, rating: -1 },
     };
-    const sortObj = sortMap[sort] || sortMap.rating;
+    const sortObj = sortMap[sort || 'rating'];
 
     const [restaurants, total] = await Promise.all([
-      this.restaurantModel.find(filter).sort(sortObj).skip((page - 1) * limit).limit(limit),
+      this.restaurantModel.find(filter).sort({ ...sortObj, _id: 1 }).skip((page - 1) * limit).limit(limit),
       this.restaurantModel.countDocuments(filter),
     ]);
-    return { restaurants: restaurants.map((r) => this.decorate(r)), total, page, pages: Math.ceil(total / limit) };
+    return { restaurants: restaurants.map((r) => this.present(r, true)), total, page, pages: Math.ceil(total / limit) };
   }
 
+  /** Sponsored placements first (paid), then the best-rated restaurants. */
   async featured(limit = 8) {
-    const restaurants = await this.restaurantModel
-      .find({ status: RestaurantStatus.ACTIVE })
+    limit = Math.min(24, Math.max(1, limit));
+    const now = new Date();
+    const sponsored = await this.restaurantModel
+      .find({ status: RestaurantStatus.ACTIVE, sponsoredUntil: { $gt: now } })
+      .sort({ rating: -1 })
+      .limit(limit);
+    const rest = await this.restaurantModel
+      .find({ status: RestaurantStatus.ACTIVE, _id: { $nin: sponsored.map((r) => r._id) } })
       .sort({ rating: -1, totalReviews: -1 })
-      .limit(Math.min(24, limit));
-    return { restaurants: restaurants.map((r) => this.decorate(r)) };
+      .limit(limit - sponsored.length);
+    return { restaurants: [...sponsored, ...rest].map((r) => this.present(r, true)) };
   }
 
   async cuisines() {
@@ -92,13 +101,13 @@ export class RestaurantsService {
   }
 
   async platformStats() {
-    const [restaurants, cities] = await Promise.all([
+    const [restaurants, cities, rated] = await Promise.all([
       this.restaurantModel.countDocuments({ status: RestaurantStatus.ACTIVE }),
       this.restaurantModel.distinct('city', { status: RestaurantStatus.ACTIVE }),
-    ]);
-    const rated = await this.restaurantModel.aggregate([
-      { $match: { status: RestaurantStatus.ACTIVE, totalReviews: { $gt: 0 } } },
-      { $group: { _id: null, avg: { $avg: '$rating' }, reviews: { $sum: '$totalReviews' } } },
+      this.restaurantModel.aggregate([
+        { $match: { status: RestaurantStatus.ACTIVE, totalReviews: { $gt: 0 } } },
+        { $group: { _id: null, avg: { $avg: '$rating' }, reviews: { $sum: '$totalReviews' } } },
+      ]),
     ]);
     return {
       restaurants,
@@ -108,47 +117,53 @@ export class RestaurantsService {
     };
   }
 
-  async findById(id: string) {
-    const restaurant = await this.restaurantModel.findById(id);
-    if (!restaurant) throw new NotFoundException('Restaurant not found');
-    return this.decorate(restaurant);
+  /** Owner/admin view of any restaurant they manage, whatever its status. */
+  async findManaged(user: Actor, id: string) {
+    const restaurant = await this.access.assertRestaurantOwner(user, id);
+    return this.present(restaurant, false);
   }
 
   async findPublicById(id: string) {
     const restaurant = await this.restaurantModel.findOne({ _id: id, status: RestaurantStatus.ACTIVE });
     if (!restaurant) throw new NotFoundException('Restaurant not found');
-    return this.decorate(restaurant);
+    return this.present(restaurant, true);
   }
 
   async findByOwner(ownerId: string) {
-    return this.restaurantModel.findOne({ ownerId });
+    const restaurant = await this.restaurantModel.findOne({ ownerId });
+    return restaurant ? this.present(restaurant, false) : null;
   }
 
-  async create(ownerId: string, data: any) {
-    const existing = await this.restaurantModel.findOne({ ownerId });
-    if (existing) throw new BadRequestException('You already have a registered restaurant');
+  async create(user: Actor, dto: CreateRestaurantDto) {
+    const ownerId = user._id.toString();
+    if (await this.restaurantModel.exists({ ownerId })) throw new ConflictException('You already have a registered restaurant');
+    await this.uploads.assertUsable(user, [...(dto.images || []), dto.logo]);
+
+    const { requireRestaurantApproval } = await this.settings.get();
+    const status = requireRestaurantApproval ? RestaurantStatus.PENDING : RestaurantStatus.ACTIVE;
     const restaurant = await this.restaurantModel.create({
-      ...data,
-      openingHours: data.openingHours && Object.keys(data.openingHours).length ? data.openingHours : DEFAULT_HOURS,
+      ...dto,
+      openingHours: dto.openingHours && Object.keys(dto.openingHours).length ? dto.openingHours : DEFAULT_HOURS,
       ownerId,
-      status: RestaurantStatus.ACTIVE,
-      approvedAt: new Date(),
+      status,
+      approvedAt: status === RestaurantStatus.ACTIVE ? new Date() : null,
     });
-    await this.userModel.findByIdAndUpdate(ownerId, { restaurantId: restaurant._id });
-    return restaurant;
+    await this.userModel.updateOne({ _id: ownerId }, { restaurantId: restaurant._id });
+    await this.audit.record(user, 'restaurant.created', { type: 'restaurant', id: restaurant._id }, { status });
+    return this.present(restaurant, false);
   }
 
-  async update(id: string, ownerId: string, data: any) {
-    const restaurant = await this.restaurantModel.findById(id);
-    if (!restaurant) throw new NotFoundException('Restaurant not found');
-    if (restaurant.ownerId.toString() !== ownerId) throw new ForbiddenException('You do not manage this restaurant');
-    const allowed = [
-      'name', 'description', 'cuisineType', 'address', 'city', 'country', 'phone', 'email', 'website',
-      'priceRange', 'seatingCapacity', 'dineIn', 'delivery', 'pickup', 'acceptingOrders', 'deliveryFee',
-      'minOrder', 'taxRate', 'prepTime', 'images', 'openingHours', 'logo',
-    ];
-    const update: Record<string, unknown> = {};
-    for (const key of allowed) if (data[key] !== undefined) update[key] = data[key];
-    return this.restaurantModel.findByIdAndUpdate(id, { $set: update }, { returnDocument: 'after' });
+  async update(user: Actor, id: string, dto: UpdateRestaurantDto) {
+    const restaurant = await this.access.assertRestaurantOwner(user, id);
+    const currentImages = [...(restaurant.images || []), restaurant.logo];
+    await this.uploads.assertUsable(user, [...(dto.images || []), dto.logo], currentImages);
+
+    const updated = await this.restaurantModel.findByIdAndUpdate(id, { $set: dto }, { returnDocument: 'after', runValidators: true });
+    const stillUsed = new Set([...(updated!.images || []), updated!.logo]);
+    await this.uploads.releaseIfUnused(currentImages.filter((u) => u && !stillUsed.has(u)));
+    if (this.access.isAdmin(user)) {
+      await this.audit.record(user, 'admin.restaurant_updated', { type: 'restaurant', id }, { fields: Object.keys(dto) });
+    }
+    return this.present(updated!, false);
   }
 }

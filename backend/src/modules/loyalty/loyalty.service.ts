@@ -3,14 +3,21 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import * as crypto from 'crypto';
 import { Loyalty, LoyaltyDocument, LoyaltyVoucher } from './loyalty.schema';
+import { SettingsService } from '../settings/settings.service';
 
 export const REWARDS = [
   { id: 'free-delivery', title: 'Free Delivery', description: 'Waive the delivery fee on one order', points: 200, category: 'Delivery', discountType: 'free_delivery', discountValue: 0, validDays: 30 },
-  { id: 'five-off', title: '$5 Off', description: '$5 off any order', points: 300, category: 'Discount', discountType: 'flat', discountValue: 5, validDays: 30 },
+  { id: 'five-off', title: '5 Off', description: '5 off any order', points: 300, category: 'Discount', discountType: 'flat', discountValue: 5, validDays: 30 },
   { id: 'ten-percent', title: '10% Off', description: '10% off your order subtotal', points: 500, category: 'Discount', discountType: 'percentage', discountValue: 10, validDays: 30 },
-  { id: 'fifteen-off', title: '$15 Off', description: '$15 off any order', points: 800, category: 'Discount', discountType: 'flat', discountValue: 15, validDays: 45 },
+  { id: 'fifteen-off', title: '15 Off', description: '15 off any order', points: 800, category: 'Discount', discountType: 'flat', discountValue: 15, validDays: 45 },
   { id: 'quarter-off', title: '25% Off', description: '25% off your order subtotal', points: 1500, category: 'VIP', discountType: 'percentage', discountValue: 25, validDays: 60 },
 ] as const;
+
+/** Flat rewards are shown in the platform currency ("5 USD Off"). */
+const withCurrency = (r: (typeof REWARDS)[number], currency: string) =>
+  r.discountType === 'flat'
+    ? { ...r, title: `${r.discountValue} ${currency} Off`, description: `${r.discountValue} ${currency} off any order` }
+    : r;
 
 export const TIERS = [
   { name: 'Bronze', min: 0 },
@@ -21,7 +28,10 @@ export const TIERS = [
 
 @Injectable()
 export class LoyaltyService {
-  constructor(@InjectModel(Loyalty.name) private loyaltyModel: Model<LoyaltyDocument>) {}
+  constructor(
+    @InjectModel(Loyalty.name) private loyaltyModel: Model<LoyaltyDocument>,
+    private settings: SettingsService,
+  ) {}
 
   private async ensure(userId: string) {
     return this.loyaltyModel.findOneAndUpdate(
@@ -32,7 +42,7 @@ export class LoyaltyService {
   }
 
   async getByUser(userId: string) {
-    const loyalty = await this.ensure(userId);
+    const [loyalty, { currency }] = await Promise.all([this.ensure(userId), this.settings.get()]);
     const obj = loyalty!.toObject();
     const lifetime = Math.max(obj.lifetimePoints || 0, obj.points || 0);
     const tier = [...TIERS].reverse().find((t) => lifetime >= t.min) || TIERS[0];
@@ -44,7 +54,7 @@ export class LoyaltyService {
       tier: tier.name,
       nextTier: next ? { name: next.name, pointsNeeded: next.min - lifetime } : null,
       tierProgress: next ? Math.min(100, ((lifetime - tier.min) / (next.min - tier.min)) * 100) : 100,
-      rewards: REWARDS,
+      rewards: REWARDS.map((r) => withCurrency(r, currency)),
     };
   }
 
@@ -62,8 +72,9 @@ export class LoyaltyService {
   }
 
   async redeemReward(userId: string, rewardId: string) {
-    const reward = REWARDS.find((r) => r.id === rewardId);
-    if (!reward) throw new NotFoundException('Reward not found');
+    const base = REWARDS.find((r) => r.id === rewardId);
+    if (!base) throw new NotFoundException('Reward not found');
+    const reward = withCurrency(base, (await this.settings.get()).currency);
 
     const code = `TN-${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
     const voucher: LoyaltyVoucher = {
@@ -90,16 +101,32 @@ export class LoyaltyService {
     return { voucher, points: updated.points };
   }
 
-  /** Finds an unused, unexpired voucher owned by the user. */
+  /** Finds an unused, unexpired voucher owned by the user (read-only; see `claimVoucher`). */
   async findVoucher(userId: string, code: string) {
     const loyalty = await this.loyaltyModel.findOne({ userId: new Types.ObjectId(userId) });
     return loyalty?.vouchers?.find((v) => v.code === code.toUpperCase() && !v.used && v.expiresAt > new Date()) || null;
   }
 
-  async consumeVoucher(userId: string, code: string) {
-    await this.loyaltyModel.updateOne(
-      { userId: new Types.ObjectId(userId), 'vouchers.code': code.toUpperCase() },
+  /**
+   * Marks a voucher used in one conditional write. Returns false if it was already used, expired or
+   * not owned — so two simultaneous checkouts can never both spend the same voucher.
+   */
+  async claimVoucher(userId: string, code: string) {
+    const res = await this.loyaltyModel.updateOne(
+      {
+        userId: new Types.ObjectId(userId),
+        vouchers: { $elemMatch: { code: code.toUpperCase(), used: false, expiresAt: { $gt: new Date() } } },
+      },
       { $set: { 'vouchers.$.used': true } },
+    );
+    return res.modifiedCount === 1;
+  }
+
+  /** Gives a voucher back (order failed or was cancelled). */
+  async restoreVoucher(userId: string, code: string) {
+    await this.loyaltyModel.updateOne(
+      { userId: new Types.ObjectId(userId), vouchers: { $elemMatch: { code: code.toUpperCase(), used: true } } },
+      { $set: { 'vouchers.$.used': false } },
     );
   }
 }

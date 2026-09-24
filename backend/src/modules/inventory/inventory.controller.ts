@@ -4,11 +4,11 @@ import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../users/user.schema';
-import { InventoryService } from './inventory.service';
+import { CreateInventoryDto, InventoryService, UpdateInventoryDto } from './inventory.service';
 
 @Controller('inventory')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
-@Roles(UserRole.OWNER)
+@Roles(UserRole.OWNER, UserRole.ADMIN)
 export class InventoryController {
   constructor(private inventoryService: InventoryService) {}
 
@@ -23,13 +23,14 @@ export class InventoryController {
   }
 
   @Post()
-  create(@Request() req, @Body() data: any) {
-    return this.inventoryService.create(req.user, data);
+  @Roles(UserRole.OWNER)
+  create(@Request() req, @Body() dto: CreateInventoryDto) {
+    return this.inventoryService.create(req.user, dto);
   }
 
   @Put(':id')
-  update(@Request() req, @Param('id', MongoIdValidationPipe) id: string, @Body() data: any) {
-    return this.inventoryService.update(req.user, id, data);
+  update(@Request() req, @Param('id', MongoIdValidationPipe) id: string, @Body() dto: UpdateInventoryDto) {
+    return this.inventoryService.update(req.user, id, dto);
   }
 
   @Delete(':id')

@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsEmail, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 
 const normalizeEmail = ({ value }: { value: unknown }) =>
   typeof value === 'string' ? value.trim().toLowerCase() : value;
@@ -26,7 +26,7 @@ export class RegisterDto {
   @IsOptional()
   @Transform(trim)
   @IsString()
-  @MaxLength(30)
+  @Matches(/^\+?[\d\s()-]{6,20}$/, { message: 'Enter a valid phone number' })
   phone?: string;
 
   @IsOptional()
@@ -36,14 +36,14 @@ export class RegisterDto {
   referralCode?: string;
 }
 
-export class RegisterOwnerDto extends RegisterDto {}
-
 export class LoginDto {
   @Transform(normalizeEmail)
   @IsEmail({}, { message: 'Enter a valid email address' })
   email: string;
 
   @IsString()
+  @IsNotEmpty({ message: 'Password is required' })
+  @MaxLength(100)
   password: string;
 }
 
@@ -55,6 +55,7 @@ export class ForgotPasswordDto {
 
 export class ResetPasswordDto {
   @IsString()
+  @Matches(/^[a-f0-9]{64}$/, { message: 'This reset link is invalid or has expired' })
   token: string;
 
   @IsString()
@@ -67,6 +68,8 @@ export class ResetPasswordDto {
 
 export class ChangePasswordDto {
   @IsString()
+  @IsNotEmpty()
+  @MaxLength(100)
   currentPassword: string;
 
   @IsString()

@@ -1,17 +1,15 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { MenuItem, MenuItemDocument, MenuCategory, MenuCategoryDocument } from './menu.schema';
-import { Order, OrderDocument } from '../orders/order.schema';
+import { Order, OrderDocument, OrderStatus } from '../orders/order.schema';
 import { Restaurant, RestaurantDocument, RestaurantStatus } from '../restaurants/restaurant.schema';
-import { AccessControlService } from '../../common/services/access-control.service';
+import { AccessControlService, Actor } from '../../common/services/access-control.service';
+import { UploadsService } from '../uploads/uploads.service';
+import { escapeRegex } from '../../common/dto/pagination.dto';
+import { CreateCategoryDto, CreateMenuItemDto, UpdateCategoryDto, UpdateMenuItemDto } from './menu.dto';
 
-const escapeRegex = (v: string) => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-const pick = (data: any, keys: string[]) => {
-  const out: Record<string, unknown> = {};
-  for (const k of keys) if (data?.[k] !== undefined) out[k] = data[k];
-  return out;
-};
+const MAX_MENU_ITEMS = 500;
 
 @Injectable()
 export class MenuService {
@@ -21,117 +19,140 @@ export class MenuService {
     @InjectModel(Order.name) private orderModel: Model<OrderDocument>,
     @InjectModel(Restaurant.name) private restaurantModel: Model<RestaurantDocument>,
     private access: AccessControlService,
+    private uploads: UploadsService,
   ) {}
 
+  /** Whether the caller may see a restaurant's full (incl. unavailable / not-yet-live) menu. */
+  private async canManage(user: Actor | undefined, restaurantId: string) {
+    return !!user && (await this.access.managesRestaurant(user, restaurantId));
+  }
+
+  private async assertVisible(user: Actor | undefined, restaurantId: string) {
+    if (await this.canManage(user, restaurantId)) return true;
+    if (!(await this.restaurantModel.exists({ _id: restaurantId, status: RestaurantStatus.ACTIVE }))) {
+      throw new NotFoundException('Restaurant not found');
+    }
+    return false;
+  }
+
   // ── Categories ────────────────────────────────────────────────────────────
-  getCategories(restaurantId: string) {
+  async getCategories(user: Actor | undefined, restaurantId: string) {
+    await this.assertVisible(user, restaurantId);
     return this.categoryModel.find({ restaurantId }).sort({ sortOrder: 1, createdAt: 1 });
   }
 
-  async createCategory(user: any, data: any) {
+  async createCategory(user: Actor, dto: CreateCategoryDto) {
     const restaurantId = await this.access.getOwnerRestaurantId(user);
-    const name = String(data?.name || '').trim();
-    if (!name) throw new BadRequestException('Category name is required');
+    if (await this.categoryModel.exists({ restaurantId, name: { $regex: `^${escapeRegex(dto.name)}$`, $options: 'i' } })) {
+      throw new ConflictException('A category with this name already exists');
+    }
     const count = await this.categoryModel.countDocuments({ restaurantId });
-    return this.categoryModel.create({ name, restaurantId, sortOrder: data.sortOrder ?? count + 1 });
+    return this.categoryModel.create({ name: dto.name, restaurantId, sortOrder: dto.sortOrder ?? count + 1 });
   }
 
-  private async ownedCategory(user: any, id: string) {
+  private async ownedCategory(user: Actor, id: string) {
     const category = await this.categoryModel.findById(id);
     if (!category) throw new NotFoundException('Category not found');
     await this.access.assertRestaurantOwner(user, category.restaurantId.toString());
     return category;
   }
 
-  async updateCategory(user: any, id: string, data: any) {
+  async updateCategory(user: Actor, id: string, dto: UpdateCategoryDto) {
     await this.ownedCategory(user, id);
-    return this.categoryModel.findByIdAndUpdate(id, { $set: pick(data, ['name', 'sortOrder']) }, { returnDocument: 'after' });
+    return this.categoryModel.findByIdAndUpdate(id, { $set: dto }, { returnDocument: 'after' });
   }
 
-  async deleteCategory(user: any, id: string) {
+  async deleteCategory(user: Actor, id: string) {
     await this.ownedCategory(user, id);
-    const items = await this.menuItemModel.countDocuments({ categoryId: id });
-    if (items > 0) throw new BadRequestException('Move or delete the dishes in this category first');
+    if (await this.menuItemModel.exists({ categoryId: id })) {
+      throw new ConflictException('Move or delete the dishes in this category first');
+    }
     await this.categoryModel.findByIdAndDelete(id);
     return { message: 'Category deleted' };
   }
 
   // ── Items ─────────────────────────────────────────────────────────────────
-  getItems(restaurantId: string, categoryId?: string) {
-    const filter: any = { restaurantId };
-    if (categoryId) filter.categoryId = categoryId;
-    return this.menuItemModel.find(filter).sort({ createdAt: -1 });
+  /** Managers get every dish; everyone else only what can currently be ordered. */
+  async getItems(user: Actor | undefined, restaurantId: string, categoryId?: string) {
+    const manager = await this.assertVisible(user, restaurantId);
+    const filter: Record<string, unknown> = { restaurantId };
+    if (categoryId) {
+      if (!Types.ObjectId.isValid(categoryId)) throw new BadRequestException('Invalid categoryId');
+      filter.categoryId = categoryId;
+    }
+    if (!manager) filter.isAvailable = true;
+    return this.menuItemModel.find(filter).sort({ createdAt: -1 }).limit(MAX_MENU_ITEMS);
   }
 
-  async getItemById(id: string) {
+  async getItemById(user: Actor | undefined, id: string) {
     const item = await this.menuItemModel.findById(id);
     if (!item) throw new NotFoundException('Menu item not found');
+    const manager = await this.canManage(user, item.restaurantId.toString());
+    if (!manager) {
+      const live = await this.restaurantModel.exists({ _id: item.restaurantId, status: RestaurantStatus.ACTIVE });
+      if (!live || !item.isAvailable) throw new NotFoundException('Menu item not found');
+    }
     return item;
   }
 
-  private validateItem(data: any, partial = false) {
-    const clean = pick(data, ['name', 'description', 'price', 'image', 'isAvailable', 'isSoldOut', 'tags', 'preparationTime', 'categoryId']);
-    if (!partial || clean.name !== undefined) {
-      if (!String(clean.name || '').trim()) throw new BadRequestException('Dish name is required');
-      clean.name = String(clean.name).trim();
+  private async assertCategoryOf(categoryId: string, restaurantId: string | Types.ObjectId) {
+    if (!(await this.categoryModel.exists({ _id: categoryId, restaurantId }))) {
+      throw new BadRequestException('Category does not belong to your restaurant');
     }
-    if (!partial || clean.price !== undefined) {
-      const price = Number(clean.price);
-      if (!Number.isFinite(price) || price < 0) throw new BadRequestException('Enter a valid price');
-      clean.price = Math.round(price * 100) / 100;
-    }
-    if (clean.tags !== undefined && !Array.isArray(clean.tags)) clean.tags = [];
-    return clean;
   }
 
-  async createItem(user: any, data: any) {
+  async createItem(user: Actor, dto: CreateMenuItemDto) {
     const restaurantId = await this.access.getOwnerRestaurantId(user);
-    const clean = this.validateItem(data);
-    if (!Types.ObjectId.isValid(String(clean.categoryId))) throw new BadRequestException('Choose a category');
-    const category = await this.categoryModel.findOne({ _id: clean.categoryId, restaurantId } as any);
-    if (!category) throw new BadRequestException('Category does not belong to your restaurant');
-    return this.menuItemModel.create({ ...clean, restaurantId });
+    await this.assertCategoryOf(dto.categoryId, restaurantId);
+    if ((await this.menuItemModel.countDocuments({ restaurantId })) >= MAX_MENU_ITEMS) {
+      throw new BadRequestException(`A menu can have at most ${MAX_MENU_ITEMS} dishes`);
+    }
+    await this.uploads.assertUsable(user, [dto.image]);
+    return this.menuItemModel.create({ ...dto, restaurantId });
   }
 
-  private async ownedItem(user: any, id: string) {
+  private async ownedItem(user: Actor, id: string) {
     const item = await this.menuItemModel.findById(id);
     if (!item) throw new NotFoundException('Menu item not found');
     await this.access.assertRestaurantOwner(user, item.restaurantId.toString());
     return item;
   }
 
-  async updateItem(user: any, id: string, data: any) {
+  async updateItem(user: Actor, id: string, dto: UpdateMenuItemDto) {
     const item = await this.ownedItem(user, id);
-    const clean = this.validateItem(data, true);
-    if (clean.categoryId) {
-      const ok = await this.categoryModel.exists({ _id: clean.categoryId, restaurantId: item.restaurantId });
-      if (!ok) throw new BadRequestException('Category does not belong to your restaurant');
-    }
-    return this.menuItemModel.findByIdAndUpdate(id, { $set: clean }, { returnDocument: 'after' });
+    if (dto.categoryId) await this.assertCategoryOf(dto.categoryId, item.restaurantId);
+    if (dto.image !== undefined) await this.uploads.assertUsable(user, [dto.image], [item.image]);
+    const updated = await this.menuItemModel.findByIdAndUpdate(id, { $set: dto }, { returnDocument: 'after', runValidators: true });
+    if (dto.image !== undefined && item.image && item.image !== updated!.image) await this.uploads.releaseIfUnused([item.image]);
+    return updated;
   }
 
-  async toggleAvailability(user: any, id: string) {
+  async toggleAvailability(user: Actor, id: string) {
     const item = await this.ownedItem(user, id);
     return this.menuItemModel.findByIdAndUpdate(id, { isAvailable: !item.isAvailable }, { returnDocument: 'after' });
   }
 
-  async deleteItem(user: any, id: string) {
-    await this.ownedItem(user, id);
+  async deleteItem(user: Actor, id: string) {
+    const item = await this.ownedItem(user, id);
     await this.menuItemModel.findByIdAndDelete(id);
+    await this.uploads.releaseIfUnused([item.image]);
     return { message: 'Item deleted' };
   }
 
   // ── Public discovery ──────────────────────────────────────────────────────
-  async getFullMenu(restaurantId: string) {
+  async getFullMenu(user: Actor | undefined, restaurantId: string) {
+    await this.assertVisible(user, restaurantId);
     const [categories, items] = await Promise.all([
       this.categoryModel.find({ restaurantId }).sort({ sortOrder: 1, createdAt: 1 }),
-      this.menuItemModel.find({ restaurantId, isAvailable: true }).sort({ createdAt: 1 }),
+      this.menuItemModel.find({ restaurantId, isAvailable: true }).sort({ createdAt: 1 }).limit(MAX_MENU_ITEMS),
     ]);
+    const byCategory = new Map<string, MenuItemDocument[]>();
+    for (const i of items) {
+      const k = i.categoryId.toString();
+      byCategory.set(k, [...(byCategory.get(k) || []), i]);
+    }
     return categories
-      .map((cat) => ({
-        ...cat.toObject(),
-        items: items.filter((i) => i.categoryId.toString() === cat._id.toString()),
-      }))
+      .map((cat) => ({ ...cat.toObject(), items: byCategory.get(cat._id.toString()) || [] }))
       .filter((c) => c.items.length > 0);
   }
 
@@ -149,18 +170,19 @@ export class MenuService {
       });
   }
 
+  /** Best sellers over the last 90 days, topped up with recent dishes when there is little order history. */
   async popularDishes(limit = 8) {
     limit = Math.min(24, Math.max(1, limit));
+    const since = new Date(Date.now() - 90 * 86400000);
     const ranked = await this.orderModel.aggregate([
-      { $match: { status: { $ne: 'cancelled' } } },
+      { $match: { status: { $ne: OrderStatus.CANCELLED }, createdAt: { $gte: since } } },
       { $unwind: '$items' },
       { $group: { _id: '$items.menuItemId', sold: { $sum: '$items.quantity' } } },
       { $sort: { sold: -1 } },
       { $limit: limit * 3 },
     ]);
-    const rankedIds = ranked.map((r) => r._id).filter(Boolean);
-    const soldMap = new Map(ranked.map((r) => [String(r._id), r.sold]));
-    let items = await this.menuItemModel.find({ _id: { $in: rankedIds }, isAvailable: true, image: { $ne: null } });
+    const soldMap = new Map(ranked.map((r) => [String(r._id), r.sold as number]));
+    let items = await this.menuItemModel.find({ _id: { $in: ranked.map((r) => r._id).filter(Boolean) }, isAvailable: true, image: { $ne: null } });
     items.sort((a, b) => (soldMap.get(String(b._id)) || 0) - (soldMap.get(String(a._id)) || 0));
 
     if (items.length < limit) {
@@ -175,12 +197,10 @@ export class MenuService {
   }
 
   async searchDishes(q: string) {
-    const term = q.trim();
+    const term = q.trim().slice(0, 100);
     if (term.length < 2) return { dishes: [] };
     const rx = { $regex: escapeRegex(term), $options: 'i' };
-    const items = await this.menuItemModel
-      .find({ isAvailable: true, $or: [{ name: rx }, { description: rx }, { tags: rx }] })
-      .limit(20);
+    const items = await this.menuItemModel.find({ isAvailable: true, $or: [{ name: rx }, { description: rx }, { tags: rx }] }).limit(20);
     return { dishes: await this.withRestaurants(items) };
   }
 }

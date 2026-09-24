@@ -6,10 +6,10 @@ export type MenuCategoryDocument = MenuCategory & Document;
 
 @Schema({ timestamps: true })
 export class MenuItem {
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, index: true })
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'Restaurant', index: true })
   restaurantId: Types.ObjectId;
 
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, index: true })
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'MenuCategory', index: true })
   categoryId: Types.ObjectId;
 
   @Prop({ required: true, trim: true })
@@ -18,6 +18,7 @@ export class MenuItem {
   @Prop({ default: null })
   description: string;
 
+  /** Current price. Orders snapshot the price at checkout, so changing it never alters past orders. */
   @Prop({ required: true, min: 0 })
   price: number;
 
@@ -33,16 +34,16 @@ export class MenuItem {
   @Prop({ type: [String], default: [] })
   tags: string[];
 
-  @Prop({ default: 0 })
+  @Prop({ default: 0, min: 0 })
   preparationTime: number;
 }
 
 export const MenuItemSchema = SchemaFactory.createForClass(MenuItem);
-MenuItemSchema.index({ name: 'text', description: 'text' });
+MenuItemSchema.index({ restaurantId: 1, isAvailable: 1 });
 
 @Schema({ timestamps: true })
 export class MenuCategory {
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, index: true })
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'Restaurant', index: true })
   restaurantId: Types.ObjectId;
 
   @Prop({ required: true, trim: true })

@@ -17,7 +17,7 @@ export class ReferralsController {
 
   @Get()
   getMyReferrals(@Request() req) {
-    return this.referralsService.getByUser(req.user._id.toString());
+    return this.referralsService.getByUser(req.user._id.toString(), req.user.fullName);
   }
 
   @Post('invite')
