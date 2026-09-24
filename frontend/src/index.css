@@ -223,3 +223,12 @@
   95% { transform: rotate(8deg); }
   98% { transform: rotate(-4deg); }
 }
+
+/* Printing (table QR sheets, receipts): no chrome, no grain, crisp paper. */
+@media print {
+  body { background: #fff; }
+  body::before { display: none; }
+  #main { padding: 0 !important; }
+  .qr-card { border-color: #d5c7b0; }
+  @page { margin: 12mm; }
+}

@@ -164,9 +164,9 @@ export function DashboardLayout({ area }: { area: 'owner' | 'admin' }) {
   const statusTone = restaurant?.status === 'active' ? 'herb' : restaurant?.status === 'pending' ? 'saffron' : 'tomato';
 
   return (
-    <div className="min-h-dvh lg:grid lg:grid-cols-[264px_minmax(0,1fr)]">
+    <div className="min-h-dvh lg:grid lg:grid-cols-[264px_minmax(0,1fr)] print:block">
       <ScrollToTop />
-      <aside className="sticky top-0 hidden h-dvh flex-col gap-8 overflow-y-auto bg-herb-950 px-3 py-6 lg:flex">
+      <aside className="sticky top-0 hidden h-dvh print:!hidden flex-col gap-8 overflow-y-auto bg-herb-950 px-3 py-6 lg:flex">
         {brand}
         <Sidebar groups={groups} />
         {foot}
@@ -180,7 +180,7 @@ export function DashboardLayout({ area }: { area: 'owner' | 'admin' }) {
       </Drawer>
 
       <div className="min-w-0">
-        <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-line bg-paper/85 px-4 backdrop-blur-xl sm:px-6">
+        <header className="sticky top-0 z-30 flex h-16 print:hidden items-center gap-3 border-b border-line bg-paper/85 px-4 backdrop-blur-xl sm:px-6">
           <IconButton label="Open menu" className="lg:hidden" onClick={() => setMenu(true)}>
             <MenuIcon className="size-5" />
           </IconButton>
