@@ -83,9 +83,10 @@ export class SponsorshipDto {
 }
 
 export class AdminOrdersQueryDto extends PaginationQueryDto {
+  /** A single status, or `active` for everything still in progress. */
   @IsOptional()
-  @IsEnum(OrderStatus)
-  status?: OrderStatus;
+  @IsIn([...Object.values(OrderStatus), 'active'])
+  status?: OrderStatus | 'active';
 
   @IsOptional()
   @IsMongoId()

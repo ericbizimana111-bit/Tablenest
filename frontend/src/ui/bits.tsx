@@ -250,3 +250,22 @@ export function Chip({ active, onClick, children, icon }: { active?: boolean; on
     </button>
   );
 }
+
+/** Newer/older pager for server-paginated lists. Renders nothing for a single page. */
+export function Pager({ page, pages, onChange }: { page: number; pages: number; onChange: (p: number) => void }) {
+  if (pages <= 1) return null;
+  const btn = 'inline-flex h-9 items-center gap-1 rounded-full border border-line bg-card px-3.5 text-[13px] font-semibold text-ink-2 transition hover:border-line-2 disabled:pointer-events-none disabled:opacity-40';
+  return (
+    <div className="mt-5 flex items-center justify-center gap-3">
+      <button className={btn} disabled={page <= 1} onClick={() => onChange(page - 1)}>
+        Previous
+      </button>
+      <span className="text-sm text-ink-3 tabular-nums">
+        {page} of {pages}
+      </span>
+      <button className={btn} disabled={page >= pages} onClick={() => onChange(page + 1)}>
+        Next
+      </button>
+    </div>
+  );
+}

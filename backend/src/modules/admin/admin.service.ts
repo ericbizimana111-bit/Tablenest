@@ -4,6 +4,7 @@ import { Model, Types } from 'mongoose';
 import { User, UserDocument, UserRole } from '../users/user.schema';
 import { Restaurant, RestaurantDocument, RestaurantStatus } from '../restaurants/restaurant.schema';
 import { Order, OrderDocument, OrderStatus } from '../orders/order.schema';
+import { ACTIVE_STATUSES } from '../orders/orders.service';
 import { Reservation, ReservationDocument, ReservationStatus } from '../reservations/reservation.schema';
 import { Upload, UploadDocument } from '../uploads/upload.schema';
 import { AuditLog, AuditLogDocument } from '../../common/audit/audit-log.schema';
@@ -145,7 +146,7 @@ export class AdminService {
   listOrders(q: AdminOrdersQueryDto) {
     const { page: p, limit, skip } = pageParams(q, 25);
     const filter: Record<string, unknown> = {};
-    if (q.status) filter.status = q.status;
+    if (q.status) filter.status = q.status === 'active' ? { $in: ACTIVE_STATUSES } : q.status;
     if (q.restaurantId) filter.restaurantId = new Types.ObjectId(q.restaurantId);
     if (q.customerId) filter.customerId = new Types.ObjectId(q.customerId);
     return page(this.orderModel.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).exec(), this.orderModel.countDocuments(filter).exec(), p, limit);

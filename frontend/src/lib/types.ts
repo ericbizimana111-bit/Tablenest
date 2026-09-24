@@ -391,7 +391,8 @@ export interface PlatformSettings extends PublicSettings {
 
 export interface SupportTicket {
   _id: Id;
-  userId: Id;
+  /** Populated with the author on the admin list. */
+  userId: Id | { _id: Id; fullName: string; email: string; role: Role } | null;
   subject: string;
   description: string;
   type: string;

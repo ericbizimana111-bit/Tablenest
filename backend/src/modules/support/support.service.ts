@@ -84,7 +84,7 @@ export class SupportService {
     const updated = await this.ticketModel.findByIdAndUpdate(id, update, { returnDocument: 'after' });
     if (isStaff) {
       this.notifications
-        .create(ticket.userId.toString(), { title: 'Support replied', message: message.slice(0, 120), type: NotificationType.SYSTEM, link: '/notifications' })
+        .create(ticket.userId.toString(), { title: 'Support replied', message: message.slice(0, 120), type: NotificationType.SYSTEM, link: '/help' })
         .catch(() => undefined);
     }
     return updated;
@@ -105,7 +105,7 @@ export class SupportService {
       filter.$or = [{ subject: rx }, { description: rx }];
     }
     const [tickets, total] = await Promise.all([
-      this.ticketModel.find(filter).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit),
+      this.ticketModel.find(filter).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit).populate('userId', 'fullName email role'),
       this.ticketModel.countDocuments(filter),
     ]);
     return { tickets, total, page, pages: Math.ceil(total / limit) };

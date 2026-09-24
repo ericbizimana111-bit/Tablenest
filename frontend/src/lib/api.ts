@@ -269,8 +269,9 @@ export const adminApi = {
   charges: (q: { status?: string; period?: string; restaurantId?: string; page?: number }) =>
     get<{ charges: Charge[]; total: number; page: number; pages: number }>('/admin/charges', q),
   markPaid: (b: { ids?: string[]; restaurantId?: string; period?: string }) => post<{ updated: number }>('/admin/charges/mark-paid', b),
+  voidCharge: (id: string, reason: string) => post<Charge>(`/admin/charges/${id}/void`, { reason }),
   runSubscriptions: (period?: string) => post<{ period: string; restaurants: number; created: number }>('/admin/billing/run-subscriptions', { period }),
-  reconcile: () => post<{ ordersChecked: number; reservationsChecked: number }>('/admin/billing/reconcile'),
+  reconcile: () => post<{ ordersChecked?: number; reservationsChecked: number }>('/admin/billing/reconcile'),
   settings: () => get<PlatformSettings>('/admin/settings'),
   saveSettings: (b: Partial<PlatformSettings>) => put<PlatformSettings>('/admin/settings', b),
   support: (q: { status?: string; page?: number }) => get<{ tickets: SupportTicket[]; total: number; page: number; pages: number }>('/admin/support', q),
