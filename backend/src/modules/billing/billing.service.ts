@@ -248,6 +248,15 @@ export class BillingService {
     return { updated: res.modifiedCount };
   }
 
+  /** Voids every charge derived from one order/reservation. Returns how many were voided. */
+  async voidForSource(sourceId: string, reason: string) {
+    const res = await this.chargeModel.updateMany(
+      { sourceId: new Types.ObjectId(sourceId), status: { $ne: ChargeStatus.VOID } },
+      { status: ChargeStatus.VOID, $set: { 'meta.voidReason': reason } },
+    );
+    return res.modifiedCount;
+  }
+
   async voidCharge(actor: Actor, id: string, reason: string) {
     const charge = await this.chargeModel.findOneAndUpdate(
       { _id: id, status: { $ne: ChargeStatus.VOID } },

@@ -470,6 +470,52 @@ export class OrdersService {
     return order;
   }
 
+  /**
+   * Administrative correction, outside the normal flow and always audited:
+   * - mark an active order `delivered` (e.g. the restaurant forgot to close it), or
+   * - cancel any order, including a delivered one (refund / fraud); its platform charges are voided.
+   * Loyalty points already awarded are not clawed back.
+   */
+  async adminCorrect(actor: Actor, id: string, status: OrderStatus.DELIVERED | OrderStatus.CANCELLED, note: string) {
+    const existing = await this.orderModel.findById(id).select('+voucherCode +promotionId +commissionRate +commissionAmount');
+    if (!existing) throw new NotFoundException('Order not found');
+    if (existing.status === status) throw new BadRequestException(`Order is already ${status}`);
+    if (status === OrderStatus.DELIVERED && !ACTIVE_STATUSES.includes(existing.status)) {
+      throw new BadRequestException('Only an active order can be marked delivered');
+    }
+    if (ORDER_FLOW[existing.status].includes(status)) return this.transition(existing, status, `Admin: ${note}`, 'admin', actor);
+
+    // delivered → cancelled: the only move not in the normal flow.
+    const order = await this.orderModel.findOneAndUpdate(
+      { _id: existing._id, status: existing.status },
+      {
+        status,
+        paymentStatus: existing.paymentStatus === 'paid' ? 'refunded' : existing.paymentStatus,
+        $push: { statusHistory: { status, time: new Date(), note: `Admin correction: ${note}`, by: 'admin' } },
+      },
+      { returnDocument: 'after' },
+    );
+    if (!order) throw new ConflictException('This order was just updated — refresh and try again');
+    await this.payments.cancel(order._id.toString());
+    const voided = await this.billing.voidForSource(order._id.toString(), `Order cancelled by admin: ${note}`);
+    await this.audit.record(actor, 'admin.order_corrected', { type: 'order', id: order._id }, { from: existing.status, to: status, note, voidedCharges: voided });
+    return order;
+  }
+
+  /** Re-creates any missing revenue entries for delivered orders (idempotent). */
+  async reconcileRevenue(sinceDays = 90) {
+    let checked = 0;
+    const cursor = this.orderModel
+      .find({ status: OrderStatus.DELIVERED, updatedAt: { $gte: new Date(Date.now() - sinceDays * 86400000) } })
+      .select('+commissionRate +commissionAmount')
+      .cursor();
+    for await (const order of cursor) {
+      await this.billing.recordOrderRevenue(order);
+      checked++;
+    }
+    return { ordersChecked: checked };
+  }
+
   // ── Dashboard data ────────────────────────────────────────────────────────
   async getStats(restaurantId: string) {
     const restaurant = await this.restaurantModel.findById(restaurantId).select('timezone');
