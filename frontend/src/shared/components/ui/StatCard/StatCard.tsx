@@ -12,60 +12,29 @@ interface StatCardProps {
     onClick?: () => void;
 }
 
-export function StatCard({
-    label,
-    value,
-    icon,
-    trend,
-    trendUp,
-    sub,
-    color = '#F97316',
-    onClick,
-}: StatCardProps) {
+export function StatCard({ label, value, icon, trend, trendUp, sub, color = '#f9691a', onClick }: StatCardProps) {
     return (
         <div
             onClick={onClick}
-            style={{
-                background: 'white',
-                borderRadius: 12,
-                padding: '18px 20px',
-                border: '1px solid #E2E8F0',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
-                fontFamily: 'Poppins, sans-serif',
-                cursor: onClick ? 'pointer' : 'default',
-                transition: 'box-shadow 0.15s',
-            }}
-            onMouseEnter={e => { if (onClick) (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)'; }}
-            onMouseLeave={e => { if (onClick) (e.currentTarget as HTMLElement).style.boxShadow = '0 1px 3px rgba(0,0,0,0.06)'; }}
+            className="card card-hover"
+            style={{ padding: '20px 22px', cursor: onClick ? 'pointer' : 'default' }}
         >
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14 }}>
                 {icon && (
-                    <div style={{
-                        background: `${color}15`,
-                        color,
-                        padding: 10,
-                        borderRadius: 10,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}>
+                    <div style={{ background: `${color}17`, color, padding: 10, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         {icon}
                     </div>
                 )}
                 {trend && (
-                    <span style={{
-                        display: 'flex', alignItems: 'center', gap: 3,
-                        fontSize: 12, fontWeight: 500,
-                        color: trendUp ? '#16A34A' : '#DC2626',
-                    }}>
+                    <span className={`badge ${trendUp ? 'badge-green' : 'badge-red'}`}>
                         {trendUp ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
                         {trend}
                     </span>
                 )}
             </div>
-            <div style={{ fontSize: 13, color: '#475569', marginBottom: 4 }}>{label}</div>
-            <div style={{ fontSize: 26, fontWeight: 700, color: '#0F172A', lineHeight: 1.2 }}>{value}</div>
-            {sub && <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 4 }}>{sub}</div>}
+            <div style={{ fontSize: 13, color: '#857a70', marginBottom: 4, fontWeight: 500 }}>{label}</div>
+            <div style={{ fontSize: 27, fontWeight: 800, color: '#1a130d', lineHeight: 1.2, fontFamily: 'var(--font-display)' }}>{value}</div>
+            {sub && <div style={{ fontSize: 12, color: '#b3a89d', marginTop: 4 }}>{sub}</div>}
         </div>
     );
 }

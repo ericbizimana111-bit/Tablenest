@@ -1,349 +1,92 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import dishWings from '../../../assets/dish_wings.jpg';
-import dishCake from '../../../assets/dish_cake.jpg';
-import dishChicken from '../../../assets/dish_chicken.jpg';
-import dishBurger from '../../../assets/dish_burger.jpg';
+import { useQuery } from '@tanstack/react-query';
+import { ChevronLeft, ChevronRight, Star, Flame } from 'lucide-react';
+import { menuAPI } from '../../../shared/services/api';
 import { useScrollReveal, useRevealChildren } from '../../../shared/hooks/useScrollReveal';
 
-const POPULAR_DISHES = [
-    {
-        id: 1,
-        name: 'Buffalo Wings',
-        description: 'A popular favorite for sharing, from kitchens that get the balance right.',
-        rating: '4.8',
-        image: dishWings,
-    },
-    {
-        id: 2,
-        name: 'Chocolate Lava Cake',
-        description: 'Warm, refined, and hard to skip — a dessert worth making room for.',
-        rating: '4.9',
-        image: dishCake,
-    },
-    {
-        id: 3,
-        name: 'Roasted Chicken',
-        description: 'Simple, seasoned well, and served with the kind of care people notice.',
-        rating: '4.7',
-        image: dishChicken,
-    },
-    {
-        id: 4,
-        name: 'Beef Burger',
-        description: 'A solid favorite on the menu, built for a satisfying first bite.',
-        rating: '4.8',
-        image: dishBurger,
-    },
-];
+interface PopularDish {
+    _id: string;
+    name: string;
+    description?: string;
+    price: number;
+    image?: string;
+    sold: number;
+    restaurant: { _id: string; name: string; rating?: number };
+}
 
 export default function PopularDishes() {
     const navigate = useNavigate();
     const sectionRef = useRef<HTMLDivElement>(null);
     const headerRef = useRef<HTMLDivElement>(null);
     const gridRef = useRef<HTMLDivElement>(null);
-
     useScrollReveal(sectionRef, 'reveal');
     useRevealChildren(headerRef, 'stagger');
     useRevealChildren(gridRef, 'stagger');
 
-    const [offset, setOffset] = React.useState(0);
-    const dishesPerView = window.innerWidth <= 1080 ? 2 : window.innerWidth <= 600 ? 1 : 4;
+    const { data, isLoading } = useQuery<{ dishes: PopularDish[] }>({
+        queryKey: ['landing-popular-dishes'],
+        queryFn: () => menuAPI.getPopular(8).then((r) => r.data),
+        staleTime: 60_000,
+    });
+    const dishes = data?.dishes || [];
 
-    const handlePrev = () => setOffset(o => Math.max(0, o - dishesPerView));
-    const handleNext = () => setOffset(o => Math.min(POPULAR_DISHES.length - dishesPerView, o + dishesPerView));
+    const [offset, setOffset] = useState(0);
+    const perView = typeof window !== 'undefined' && window.innerWidth <= 1080 ? (window.innerWidth <= 600 ? 1 : 2) : 4;
+    const handlePrev = () => setOffset((o) => Math.max(0, o - perView));
+    const handleNext = () => setOffset((o) => Math.min(Math.max(0, dishes.length - perView), o + perView));
+
+    const goToDish = (d: PopularDish) => navigate(`/restaurants/${d.restaurant._id}?tab=menu`);
 
     return (
-        <>
-            <style>{`
-                .dish-card {
-                    transition: transform 0.35s var(--ease-out-expo),
-                        box-shadow 0.35s var(--ease-smooth),
-                        border-color 0.35s ease;
-                }
-                .dish-card:hover {
-                    transform: translateY(-8px) scale(1.015);
-                    box-shadow: 0 24px 40px rgba(15, 23, 42, 0.1) !important;
-                    border-color: #FED7AA !important;
-                }
-                .dish-order-btn {
-                    background: #F97316;
-                    color: #FFFFFF;
-                    border-radius: 8px;
-                }
-                .dish-order-btn:hover {
-                    background: #EA580C;
-                    transform: translateY(-2px);
-                    box-shadow: 0 6px 16px rgba(249, 115, 22, 0.4);
-                }
-                .dish-book-btn {
-                    background: white;
-                    color: #F97316;
-                    border: 1.5px solid #F97316;
-                    border-radius: 8px;
-                }
-                .dish-book-btn:hover {
-                    background: #FFF7ED;
-                    transform: translateY(-2px);
-                    box-shadow: 0 6px 16px rgba(249, 115, 22, 0.2);
-                }
-                .dish-nav-btn {
-                    background: #FFFFFF;
-                    border: 1.5px solid #F1F5F9;
-                    color: #0F172A;
-                    transition: all 0.2s var(--ease-smooth);
-                }
-                .dish-nav-btn:hover:not(:disabled) {
-                    border-color: #F97316;
-                    color: #F97316;
-                    background: #FFF7ED;
-                    transform: translateY(-2px);
-                }
-                .dish-nav-btn:active:not(:disabled) {
-                    transform: translateY(0);
-                }
-                @media (max-width: 1080px) {
-                    .popular-dishes-grid {
-                        grid-template-columns: repeat(2, 1fr) !important;
-                        gap: 24px !important;
-                    }
-                }
-                @media (max-width: 600px) {
-                    .popular-dishes-grid {
-                        grid-template-columns: 1fr !important;
-                    }
-                }
-            `}</style>
-
-            <section style={{
-                background: '#FAFAFC',
-                padding: '88px 0 96px',
-                width: '100%',
-                position: 'relative',
-            }}>
-                <div ref={sectionRef} style={{
-                    maxWidth: 1280,
-                    margin: '0 auto',
-                    padding: '0 40px',
-                    width: '100%',
-                }}>
-                    {/* Section Header */}
-                    <div ref={headerRef} style={{ textAlign: 'center', marginBottom: 54 }}>
-                        <div style={{
-                            display: 'inline-block',
-                            color: '#F97316',
-                            fontSize: 12.5,
-                            fontWeight: 700,
-                            letterSpacing: '0.1em',
-                            textTransform: 'uppercase',
-                            marginBottom: 10,
-                        }}>
-                            TRENDING NOW
-                        </div>
-
-                        <h2 style={{
-                            fontSize: 'clamp(28px, 3.2vw, 40px)',
-                            fontWeight: 800,
-                            color: '#0F172A',
-                            letterSpacing: '-0.8px',
-                            marginBottom: 12,
-                        }}>
-                            Dishes people are ordering right now
-                        </h2>
-
-                        <p style={{
-                            fontSize: 15,
-                            color: '#64748B',
-                            maxWidth: 620,
-                            margin: '0 auto',
-                            lineHeight: 1.65,
-                        }}>
-                            A short list of popular dishes from restaurants on TableNest — what people are enjoying most, right now.
-                        </p>
+        <section style={{ background: 'var(--color-sand)', padding: '88px 0 96px' }}>
+            <div ref={sectionRef} style={{ maxWidth: 1280, margin: '0 auto', padding: '0 40px' }}>
+                <div ref={headerRef} style={{ textAlign: 'center', marginBottom: 48 }}>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--color-brand-600)', fontSize: 12.5, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>
+                        <Flame size={14} /> Trending now
                     </div>
-
-                    {/* Nav arrows */}
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: 24,
-                        width: '100%',
-                    }}>
-                        <button
-                            className="dish-nav-btn"
-                            onClick={handlePrev}
-                            disabled={offset === 0}
-                            style={{
-                                width: 40,
-                                height: 40,
-                                borderRadius: 12,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                cursor: offset === 0 ? 'default' : 'pointer',
-                                opacity: offset === 0 ? 0.4 : 1,
-                                padding: 0,
-                            }}
-                        >
-                            <ChevronLeft size={20} />
-                        </button>
-
-                        <button
-                            className="dish-nav-btn"
-                            onClick={handleNext}
-                            disabled={offset + dishesPerView >= POPULAR_DISHES.length}
-                            style={{
-                                width: 40,
-                                height: 40,
-                                borderRadius: 12,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                cursor: offset + dishesPerView >= POPULAR_DISHES.length ? 'default' : 'pointer',
-                                opacity: offset + dishesPerView >= POPULAR_DISHES.length ? 0.4 : 1,
-                                padding: 0,
-                            }}
-                        >
-                            <ChevronRight size={20} />
-                        </button>
-                    </div>
-
-                    {/* Dish Cards Grid */}
-                    <div ref={gridRef} className="popular-dishes-grid stagger" style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(4, 1fr)',
-                        gap: 24,
-                    }}>
-                        {POPULAR_DISHES.slice(offset, offset + dishesPerView).map((dish) => (
-                            <div
-                                key={dish.id}
-                                className="dish-card card-lift"
-                                style={{
-                                    background: '#FFFFFF',
-                                    borderRadius: 22,
-                                    border: '1.5px solid #F1F5F9',
-                                    padding: '24px 20px 22px',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                    textAlign: 'center',
-                                    position: 'relative',
-                                    boxShadow: '0 4px 20px rgba(15, 23, 42, 0.03)',
-                                    overflow: 'hidden',
-                                }}
-                            >
-                                {/* Dish Cover Image */}
-                                <div className="img-zoom"
-                                    style={{
-                                        width: '100%',
-                                        height: 168,
-                                        borderRadius: '22px 22px 0 0',
-                                        overflow: 'hidden',
-                                        margin: 0,
-                                        marginBottom: 18,
-                                        background: '#F1F5F9',
-                                    }}>
-                                    <img
-                                        src={dish.image}
-                                        alt={dish.name}
-                                        className="img-reveal is-visible"
-                                        style={{
-                                            width: '100%',
-                                            height: '100%',
-                                            objectFit: 'cover',
-                                            display: 'block',
-                                            willChange: 'transform',
-                                            opacity: 1,
-                                        }}
-                                    />
-                                </div>
-
-                                {/* Dish Title */}
-                                <h3 style={{
-                                    fontSize: 17,
-                                    fontWeight: 700,
-                                    color: '#0F172A',
-                                    marginBottom: 8,
-                                    letterSpacing: '-0.3px',
-                                }}>
-                                    {dish.name}
-                                </h3>
-
-                                {/* Description */}
-                                <p style={{
-                                    fontSize: 13,
-                                    color: '#64748B',
-                                    lineHeight: 1.55,
-                                    marginBottom: 22,
-                                    minHeight: 40,
-                                    display: '-webkit-box',
-                                    WebkitLineClamp: 2,
-                                    WebkitBoxOrient: 'vertical',
-                                    overflow: 'hidden',
-                                }}>
-                                    {dish.description}
-                                </p>
-
-                                {/* Bottom Bar (Rating & buttons) */}
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                    width: '100%',
-                                    paddingTop: 14,
-                                    borderTop: '1px solid #F1F5F9',
-                                    marginTop: 'auto',
-                                }}>
-                                    <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                                        {/* View Restaurant Button */}
-                                        <button
-                                            className="btn-press dish-order-btn"
-                                            onClick={() => navigate('/restaurants')}
-                                            style={{
-                                                display: 'inline-flex',
-                                                alignItems: 'center',
-                                                gap: 6,
-                                                border: 'none',
-                                                padding: '9px 18px',
-                                                borderRadius: 8,
-                                                fontSize: 12.5,
-                                                fontWeight: 600,
-                                                cursor: 'pointer',
-                                                fontFamily: 'inherit',
-                                            }}
-                                        >
-                                            View Restaurant
-                                        </button>
-                                        {/* Book Button */}
-                                        <button
-                                            className="btn-press dish-book-btn"
-                                            onClick={() => navigate('/restaurants')}
-                                            style={{
-                                                display: 'inline-flex',
-                                                alignItems: 'center',
-                                                gap: 6,
-                                                border: '1.5px solid #F97316',
-                                                padding: '9px 18px',
-                                                borderRadius: 8,
-                                                fontSize: 12.5,
-                                                fontWeight: 600,
-                                                cursor: 'pointer',
-                                                fontFamily: 'inherit',
-                                                background: 'white',
-                                                color: '#F97316',
-                                            }}
-                                        >
-                                            Book
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                    <h2 style={{ fontSize: 'clamp(28px, 3.2vw, 40px)', fontWeight: 700, color: 'var(--color-ink)', marginBottom: 12 }}>
+                        Dishes people are ordering right now
+                    </h2>
+                    <p style={{ fontSize: 15, color: 'var(--color-ink-mute)', maxWidth: 600, margin: '0 auto', lineHeight: 1.65 }}>
+                        Ranked live from real orders placed on TableNest — updated as people order.
+                    </p>
                 </div>
-            </section>
-        </>
+
+                {!isLoading && dishes.length > perView && (
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginBottom: 20 }}>
+                        <button onClick={handlePrev} disabled={offset === 0} className="btn-icon" style={{ background: '#fff', border: '1.5px solid var(--color-line)', opacity: offset === 0 ? 0.4 : 1 }}>
+                            <ChevronLeft size={18} />
+                        </button>
+                        <button onClick={handleNext} disabled={offset + perView >= dishes.length} className="btn-icon" style={{ background: '#fff', border: '1.5px solid var(--color-line)', opacity: offset + perView >= dishes.length ? 0.4 : 1 }}>
+                            <ChevronRight size={18} />
+                        </button>
+                    </div>
+                )}
+
+                <div ref={gridRef} className="stagger" style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(perView, 4)}, 1fr)`, gap: 24 }}>
+                    {isLoading
+                        ? Array.from({ length: perView }).map((_, i) => <div key={i} className="skeleton" style={{ height: 300, borderRadius: 22 }} />)
+                        : dishes.slice(offset, offset + perView).map((dish) => (
+                              <div key={dish._id} onClick={() => goToDish(dish)} className="card card-hover" style={{ overflow: 'hidden', cursor: 'pointer', display: 'flex', flexDirection: 'column' }}>
+                                  <div style={{ height: 168, background: 'var(--color-sand)', overflow: 'hidden', position: 'relative' }}>
+                                      {dish.image && <img src={dish.image} alt={dish.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                                      <span className="badge badge-brand" style={{ position: 'absolute', top: 10, left: 10, background: 'rgba(255,255,255,0.92)' }}>${dish.price.toFixed(2)}</span>
+                                  </div>
+                                  <div style={{ padding: '18px 18px 20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                                      <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--color-ink)', marginBottom: 4 }}>{dish.name}</h3>
+                                      <p style={{ fontSize: 12.5, color: 'var(--color-ink-mute)', marginBottom: 12 }}>{dish.restaurant?.name}</p>
+                                      <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 12, borderTop: '1px solid var(--color-line)' }}>
+                                          <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12.5, fontWeight: 700, color: 'var(--color-ink)' }}>
+                                              <Star size={13} fill="#f9691a" color="#f9691a" /> {dish.restaurant?.rating?.toFixed(1) ?? '—'}
+                                          </span>
+                                          <span style={{ fontSize: 11.5, color: 'var(--color-ink-mute)' }}>{dish.sold > 0 ? `${dish.sold}+ ordered` : 'New'}</span>
+                                      </div>
+                                  </div>
+                              </div>
+                          ))}
+                </div>
+            </div>
+        </section>
     );
 }

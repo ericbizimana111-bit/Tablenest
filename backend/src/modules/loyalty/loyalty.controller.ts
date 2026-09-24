@@ -1,9 +1,15 @@
-import { Controller, Get, Post, Body, UseGuards, Request } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { IsString } from 'class-validator';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../users/user.schema';
 import { LoyaltyService } from './loyalty.service';
+
+class RedeemDto {
+  @IsString()
+  rewardId: string;
+}
 
 @Controller('loyalty')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -15,15 +21,9 @@ export class LoyaltyController {
     return this.loyaltyService.getByUser(req.user._id.toString());
   }
 
-  @Post('add')
-  @Roles(UserRole.CUSTOMER)
-  addPoints(@Request() req, @Body() body: { points: number; description: string }) {
-    return this.loyaltyService.addPoints(req.user._id.toString(), body.points, body.description);
-  }
-
   @Post('redeem')
   @Roles(UserRole.CUSTOMER)
-  redeemPoints(@Request() req, @Body() body: { points: number; description: string }) {
-    return this.loyaltyService.redeemPoints(req.user._id.toString(), body.points, body.description);
+  redeem(@Request() req, @Body() body: RedeemDto) {
+    return this.loyaltyService.redeemReward(req.user._id.toString(), body.rewardId);
   }
 }

@@ -108,6 +108,7 @@ export default function App() {
                 <Route path="qrcodes" element={<QRCodeManager />} />
                 <Route path="analytics" element={<OwnerAnalytics />} />
                 <Route path="reviews" element={<OwnerReviews />} />
+                <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="settings" element={<OwnerSettings />} />
               </Route>
 

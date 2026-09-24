@@ -17,10 +17,10 @@ const NAV = [
 
 export default function CustomerLayout() {
     return (
-        <div style={{ display: 'flex', minHeight: '100vh', background: '#F8FAFC', fontFamily: 'Poppins, sans-serif' }}>
+        <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--color-cream)' }}>
             <Sidebar title="TableNest" subtitle="Dashboard" navItems={NAV} />
             <div style={{ marginLeft: 220, flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <Topbar placeholder="Search restaurants or dishes" notifPath="/notifications" settingsPath="/settings" />
+                <Topbar placeholder="Search restaurants or dishes" notifPath="/notifications" settingsPath="/settings" showCart />
                 <main style={{ marginTop: 60, padding: '28px 32px', flex: 1 }}>
                     <Outlet />
                 </main>

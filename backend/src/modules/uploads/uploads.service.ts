@@ -19,7 +19,6 @@ export class UploadsService {
     'image/png',
     'image/gif',
     'image/webp',
-    'image/svg+xml',
   ];
 
   private readonly allowedDocumentTypes = [
@@ -106,7 +105,7 @@ export class UploadsService {
 
     // Prevent path traversal attacks
     const resolved = path.resolve(filePath);
-    if (!resolved.startsWith(this.uploadsDir)) {
+    if (!resolved.startsWith(this.uploadsDir + path.sep)) {
       throw new BadRequestException('Invalid filename');
     }
 

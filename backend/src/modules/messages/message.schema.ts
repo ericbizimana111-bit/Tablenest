@@ -1,15 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document, Types, Schema as MongooseSchema } from 'mongoose';
 
 export type MessageDocument = Message & Document;
 export type ConversationDocument = Conversation & Document;
 
 @Schema({ timestamps: true })
 export class Message {
-  @Prop({ required: true })
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId })
   conversationId: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId })
   senderId: Types.ObjectId;
 
   @Prop({ required: true })
@@ -35,7 +35,7 @@ export class Conversation {
   @Prop({ default: null })
   lastMessageAt: Date;
 
-  @Prop({ default: null })
+  @Prop({ default: null, type: MongooseSchema.Types.ObjectId })
   restaurantId: Types.ObjectId;
 }
 

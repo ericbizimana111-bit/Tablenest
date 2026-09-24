@@ -2,6 +2,7 @@ import { useRef, useEffect } from 'react';
 import LandingHeader from './landing/LandingHeader';
 import HeroSection from './landing/HeroSection';
 import OurStorySection from './landing/OurStorySection';
+import PopularRestaurants from './landing/PopularRestaurants';
 import PopularDishes from './landing/PopularDishes';
 import WhyChooseUs from './landing/WhyChooseUs';
 import SpecialOffer from './landing/SpecialOffer';
@@ -37,10 +38,13 @@ export default function LandingPage() {
             {/* 1. HERO */}
             <HeroSection />
 
-            {/* 2. WHAT WE OFFER */}
+            {/* 2. POPULAR RESTAURANTS (live data) */}
+            <PopularRestaurants />
+
+            {/* 3. WHAT WE OFFER */}
             <WhatWeOffer />
 
-            {/* 3. REAL FOOD. REAL FLAVOR. */}
+            {/* 4. REAL FOOD. REAL FLAVOR. */}
             <OurStorySection />
 
             {/* 4. TRENDING NOW */}

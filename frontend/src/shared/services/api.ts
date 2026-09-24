@@ -31,18 +31,13 @@ export function getStoredToken(): string | null {
     return inMemoryToken ?? localStorage.getItem(AUTH_TOKEN_KEY);
 }
 
-// Restore token from localStorage on load
 const initialToken = localStorage.getItem(AUTH_TOKEN_KEY);
-if (initialToken) {
-    setAuthToken(initialToken);
-}
+if (initialToken) setAuthToken(initialToken);
 
 // ── Interceptors ───────────────────────────────────────────────────────────
 api.interceptors.request.use((config) => {
     const token = getStoredToken();
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
+    if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
 });
 
@@ -53,7 +48,7 @@ api.interceptors.response.use(
     (error) => {
         const status = error.response?.status;
         const url = error.config?.url ?? '';
-        const isAuthRoute = /\/auth\/(login|register|forgot-password|reset-password)/.test(url);
+        const isAuthRoute = /\/auth\/(login|register|register-owner|forgot-password|reset-password)/.test(url);
         const hadAuthHeader = Boolean(error.config?.headers?.Authorization);
 
         if (status === 401 && !isAuthRoute && hadAuthHeader && unauthorizedHandler) {
@@ -62,23 +57,18 @@ api.interceptors.response.use(
                 unauthorizedHandler();
                 setTimeout(() => { isHandling401 = false; }, 2000);
             }
-            // Suppress 401 toasts - the handler redirects to login
             return Promise.reject(error);
         }
-
         return Promise.reject(error);
     },
 );
 
 export default api;
 
-// ── Shared types ───────────────────────────────────────────────────────────
 type Payload = Record<string, unknown>;
 type Params = Record<string, unknown> | undefined;
 
-/* =================================================================
-   AUTH
-================================================================= */
+/* AUTH ============================================================= */
 export const authAPI = {
     register: (data: Payload) => api.post('/auth/register', data),
     registerOwner: (data: Payload) => api.post('/auth/register-owner', data),
@@ -89,14 +79,9 @@ export const authAPI = {
     getMe: () => api.get('/auth/me'),
 };
 
-/* =================================================================
-   USERS
-================================================================= */
+/* USERS ============================================================= */
 export const usersAPI = {
-    getAll: (params?: Params) => api.get('/users', { params }),
-    getById: (id: string) => api.get(`/users/${id}`),
     updateProfile: (data: Payload) => api.put('/users/profile', data),
-    updateNotifPrefs: (prefs: Payload) => api.patch('/users/notification-prefs', prefs),
     updateNotificationPrefs: (prefs: Payload) => api.patch('/users/notification-prefs', prefs),
     getFavorites: () => api.get('/users/favorites'),
     addFavorite: (restaurantId: string) => api.post(`/users/favorites/${restaurantId}`),
@@ -105,42 +90,35 @@ export const usersAPI = {
     addAddress: (data: Payload) => api.post('/users/addresses', data),
     updateAddress: (index: number, data: Payload) => api.put(`/users/addresses/${index}`, data),
     deleteAddress: (index: number) => api.delete(`/users/addresses/${index}`),
+    setDefaultAddress: (index: number) => api.patch(`/users/addresses/${index}/default`),
     getPaymentMethods: () => api.get('/users/payment-methods'),
     addPaymentMethod: (data: Payload) => api.post('/users/payment-methods', data),
     deletePaymentMethod: (index: number) => api.delete(`/users/payment-methods/${index}`),
-    suspend: (id: string) => api.patch(`/users/${id}/suspend`),
-    activate: (id: string) => api.patch(`/users/${id}/activate`),
+    setDefaultPaymentMethod: (index: number) => api.patch(`/users/payment-methods/${index}/default`),
     deleteAccount: () => api.delete('/users/account'),
-    getStats: () => api.get('/users/stats'),
 };
 
-/* =================================================================
-   RESTAURANTS
-================================================================= */
+/* RESTAURANTS ============================================================= */
 export const restaurantsAPI = {
     getPublic: (params?: Params) => api.get('/restaurants/public', { params }),
     getPublicById: (id: string) => api.get(`/restaurants/public/${id}`),
-    getAll: (params?: Params) => api.get('/restaurants', { params }),
-    getPending: () => api.get('/restaurants/pending'),
+    getFeatured: (limit?: number) => api.get('/restaurants/public/featured', { params: { limit } }),
+    getCuisines: () => api.get('/restaurants/public/cuisines'),
+    getPlatformStats: () => api.get('/restaurants/public/stats'),
     getMyRestaurant: () => api.get('/restaurants/my-restaurant'),
     getById: (id: string) => api.get(`/restaurants/${id}`),
     create: (data: Payload) => api.post('/restaurants', data),
     update: (id: string, data: Payload) => api.put(`/restaurants/${id}`, data),
-    approve: (id: string) => api.patch(`/restaurants/${id}/approve`),
-    reject: (id: string, reason: string) => api.patch(`/restaurants/${id}/reject`, { reason }),
-    suspend: (id: string) => api.patch(`/restaurants/${id}/suspend`),
-    delete: (id: string) => api.delete(`/restaurants/${id}`),
-    getStats: () => api.get('/restaurants/stats'),
 };
 
-/* =================================================================
-   MENU
-================================================================= */
+/* MENU ============================================================= */
 export const menuAPI = {
     getFullMenu: (restaurantId: string) => api.get(`/menu/restaurant/${restaurantId}`),
     getCategories: (restaurantId: string) => api.get(`/menu/categories/${restaurantId}`),
-    getItems: (restaurantId: string, categoryId?: string) =>
-        api.get(`/menu/items/${restaurantId}`, { params: { categoryId } }),
+    getItems: (restaurantId: string, categoryId?: string) => api.get(`/menu/items/${restaurantId}`, { params: { categoryId } }),
+    getItemById: (id: string) => api.get(`/menu/item/${id}`),
+    getPopular: (limit?: number) => api.get('/menu/popular', { params: { limit } }),
+    search: (q: string) => api.get('/menu/search', { params: { q } }),
     createCategory: (data: Payload) => api.post('/menu/categories', data),
     updateCategory: (id: string, data: Payload) => api.put(`/menu/categories/${id}`, data),
     deleteCategory: (id: string) => api.delete(`/menu/categories/${id}`),
@@ -150,9 +128,7 @@ export const menuAPI = {
     deleteItem: (id: string) => api.delete(`/menu/items/${id}`),
 };
 
-/* =================================================================
-   TABLES
-================================================================= */
+/* TABLES ============================================================= */
 export const tablesAPI = {
     getByRestaurant: (restaurantId: string) => api.get(`/tables/restaurant/${restaurantId}`),
     getFloorPlan: (restaurantId: string) => api.get(`/tables/floor-plan/${restaurantId}`),
@@ -162,52 +138,47 @@ export const tablesAPI = {
     delete: (id: string) => api.delete(`/tables/${id}`),
 };
 
-/* =================================================================
-   ORDERS
-================================================================= */
+/* ORDERS ============================================================= */
 export const ordersAPI = {
     getAll: (params?: Params) => api.get('/orders', { params }),
     getMyOrders: (params?: Params) => api.get('/orders/my-orders', { params }),
     getByRestaurant: (restaurantId: string, params?: Params) => api.get(`/orders/restaurant/${restaurantId}`, { params }),
     getById: (id: string) => api.get(`/orders/${id}`),
+    quote: (data: Payload) => api.post('/orders/quote', data),
     create: (data: Payload) => api.post('/orders', data),
     updateStatus: (id: string, data: Payload) => api.patch(`/orders/${id}/status`, data),
     cancel: (id: string) => api.patch(`/orders/${id}/cancel`),
-    getStats: (restaurantId?: string) => api.get('/orders/stats', { params: { restaurantId } }),
-    getRevenue: (restaurantId: string, days?: number) => api.get('/orders/revenue', { params: { restaurantId, days } }),
+    getStats: () => api.get('/orders/stats'),
+    getRevenue: (days?: number) => api.get('/orders/revenue', { params: { days } }),
 };
 
-/* =================================================================
-   RESERVATIONS
-================================================================= */
+/* RESERVATIONS ============================================================= */
 export const reservationsAPI = {
-    getAll: (params?: Params) => api.get('/reservations', { params }),
+    getAvailability: (restaurantId: string, date: string, guests: number) =>
+        api.get('/reservations/availability', { params: { restaurantId, date, guests } }),
     getMyReservations: () => api.get('/reservations/my-reservations'),
     getByRestaurant: (restaurantId: string, params?: Params) => api.get(`/reservations/restaurant/${restaurantId}`, { params }),
     getById: (id: string) => api.get(`/reservations/${id}`),
     create: (data: Payload) => api.post('/reservations', data),
     confirm: (id: string) => api.patch(`/reservations/${id}/confirm`),
-    cancel: (id: string) => api.patch(`/reservations/${id}/cancel`),
+    cancel: (id: string, reason?: string) => api.patch(`/reservations/${id}/cancel`, { reason }),
     update: (id: string, data: Payload) => api.patch(`/reservations/${id}`, data),
     markArrived: (id: string) => api.patch(`/reservations/${id}/arrived`),
-    getCalendarData: (restaurantId: string, month: number, year: number) =>
-        api.get('/reservations/calendar', { params: { restaurantId, month, year } }),
-    getStats: (restaurantId?: string) => api.get('/reservations/stats', { params: { restaurantId } }),
+    setStatus: (id: string, status: string, reason?: string) => api.patch(`/reservations/${id}/status`, { status, reason }),
+    getCalendarData: (month: number, year: number) => api.get('/reservations/calendar', { params: { month, year } }),
+    getStats: () => api.get('/reservations/stats'),
 };
 
-/* =================================================================
-   REVIEWS
-================================================================= */
+/* REVIEWS ============================================================= */
 export const reviewsAPI = {
+    getFeatured: (limit?: number) => api.get('/reviews/featured', { params: { limit } }),
     getByRestaurant: (restaurantId: string, params?: Params) => api.get(`/reviews/restaurant/${restaurantId}`, { params }),
     create: (data: Payload) => api.post('/reviews', data),
     reply: (id: string, reply: string) => api.patch(`/reviews/${id}/reply`, { reply }),
     delete: (id: string) => api.delete(`/reviews/${id}`),
 };
 
-/* =================================================================
-   NOTIFICATIONS
-================================================================= */
+/* NOTIFICATIONS ============================================================= */
 export const notificationsAPI = {
     getAll: (params?: Params) => api.get('/notifications', { params }),
     getUnreadCount: () => api.get('/notifications/unread-count'),
@@ -216,10 +187,10 @@ export const notificationsAPI = {
     clearAll: () => api.delete('/notifications/clear-all'),
 };
 
-/* =================================================================
-   PROMOTIONS
-================================================================= */
+/* PROMOTIONS ============================================================= */
 export const promotionsAPI = {
+    getFeatured: (limit?: number) => api.get('/promotions/featured', { params: { limit } }),
+    getActiveForRestaurant: (restaurantId: string) => api.get(`/promotions/active/${restaurantId}`),
     getByRestaurant: (restaurantId: string) => api.get(`/promotions/restaurant/${restaurantId}`),
     create: (data: Payload) => api.post('/promotions', data),
     update: (id: string, data: Payload) => api.put(`/promotions/${id}`, data),
@@ -227,53 +198,33 @@ export const promotionsAPI = {
     delete: (id: string) => api.delete(`/promotions/${id}`),
 };
 
-/* =================================================================
-   ANALYTICS
-================================================================= */
+/* ANALYTICS ============================================================= */
 export const analyticsAPI = {
-    getPlatformOverview: () => api.get('/analytics/platform-overview'),
-    getSignups: (days?: number) => api.get('/analytics/signups', { params: { days } }),
-    getBookingsByDay: (days?: number) => api.get('/analytics/bookings-by-day', { params: { days } }),
-    getCuisineDistribution: () => api.get('/analytics/cuisine-distribution'),
     getRestaurantDashboard: (restaurantId: string) => api.get(`/analytics/restaurant/${restaurantId}/dashboard`),
+    getOverview: (restaurantId: string, days?: number) => api.get(`/analytics/restaurant/${restaurantId}/overview`, { params: { days } }),
     getHeatmap: (restaurantId: string) => api.get(`/analytics/restaurant/${restaurantId}/heatmap`),
-    getRevenueByDay: (days?: number) => api.get('/analytics/revenue-by-day', { params: { days } }),
-    getOrdersByDay: (days?: number) => api.get('/analytics/orders-by-day', { params: { days } }),
 };
 
-/* =================================================================
-   SUPPORT TICKETS
-================================================================= */
+/* SUPPORT TICKETS ============================================================= */
 export const supportAPI = {
-    getAll: (params?: Params) => api.get('/support', { params }),
-    getStats: () => api.get('/support/stats'),
     getMyTickets: () => api.get('/support/my-tickets'),
     getById: (id: string) => api.get(`/support/${id}`),
     create: (data: Payload) => api.post('/support', data),
-    updateStatus: (id: string, status: string) => api.patch(`/support/${id}/status`, { status }),
-    addResponse: (id: string, message: string) => api.post(`/support/${id}/respond`, { message }),
 };
 
-/* =================================================================
-   LOYALTY
-================================================================= */
+/* LOYALTY ============================================================= */
 export const loyaltyAPI = {
     get: () => api.get('/loyalty'),
-    addPoints: (points: number, description: string) => api.post('/loyalty/add', { points, description }),
-    redeemPoints: (points: number, description: string) => api.post('/loyalty/redeem', { points, description }),
+    redeem: (rewardId: string) => api.post('/loyalty/redeem', { rewardId }),
 };
 
-/* =================================================================
-   REFERRALS
-================================================================= */
+/* REFERRALS ============================================================= */
 export const referralsAPI = {
     get: () => api.get('/referrals'),
-    track: (code: string, body: Payload) => api.post(`/referrals/track/${code}`, body),
+    invite: (email: string) => api.post('/referrals/invite', { email }),
 };
 
-/* =================================================================
-   INVENTORY
-================================================================= */
+/* INVENTORY ============================================================= */
 export const inventoryAPI = {
     getByRestaurant: (restaurantId: string) => api.get(`/inventory/restaurant/${restaurantId}`),
     getLowStock: (restaurantId: string) => api.get(`/inventory/restaurant/${restaurantId}/low-stock`),
@@ -282,9 +233,7 @@ export const inventoryAPI = {
     delete: (id: string) => api.delete(`/inventory/${id}`),
 };
 
-/* =================================================================
-   STAFF
-================================================================= */
+/* STAFF ============================================================= */
 export const staffAPI = {
     getByRestaurant: (restaurantId: string) => api.get(`/staff/restaurant/${restaurantId}`),
     create: (data: Payload) => api.post('/staff', data),
@@ -292,9 +241,7 @@ export const staffAPI = {
     delete: (id: string) => api.delete(`/staff/${id}`),
 };
 
-/* =================================================================
-   MESSAGES
-================================================================= */
+/* MESSAGES ============================================================= */
 export const messagesAPI = {
     getConversations: () => api.get('/messages/conversations'),
     getMessages: (conversationId: string) => api.get(`/messages/conversations/${conversationId}`),
@@ -302,31 +249,21 @@ export const messagesAPI = {
     sendMessage: (data: Payload) => api.post('/messages/send', data),
 };
 
-/* =================================================================
-   UPLOADS
-================================================================= */
+/* UPLOADS ============================================================= */
 export const uploadsAPI = {
     uploadImage: (file: File) => {
         const form = new FormData();
         form.append('file', file);
-        return api.post('/uploads/image', form, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-        });
+        return api.post('/uploads/image', form, { headers: { 'Content-Type': 'multipart/form-data' } });
+    },
+    uploadImages: (files: File[]) => {
+        const form = new FormData();
+        files.forEach((f) => form.append('files', f));
+        return api.post('/uploads/images', form, { headers: { 'Content-Type': 'multipart/form-data' } });
     },
 };
 
-/* =================================================================
-   PAYMENTS
-================================================================= */
+/* PAYMENTS ============================================================= */
 export const paymentsAPI = {
     getMyPayments: () => api.get('/payments'),
-    create: (data: Payload) => api.post('/payments', data),
-};
-
-/* =================================================================
-   CALENDAR (getCalendarData alias used in some components)
-================================================================= */
-export const calendarAPI = {
-    getData: (restaurantId: string, month: number, year: number) =>
-        reservationsAPI.getCalendarData(restaurantId, month, year),
 };

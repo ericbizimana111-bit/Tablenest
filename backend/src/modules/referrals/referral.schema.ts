@@ -1,17 +1,17 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document, Types, Schema as MongooseSchema } from 'mongoose';
 
 export type ReferralDocument = Referral & Document;
 
 @Schema({ timestamps: true })
 export class Referral {
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true, unique: true, type: MongooseSchema.Types.ObjectId })
   userId: Types.ObjectId;
 
   @Prop({ required: true, unique: true })
   code: string;
 
-  @Prop({ type: [{ referredUserId: Types.ObjectId, email: String, name: String, status: String, reward: Number, invitedAt: Date }], default: [] })
+  @Prop({ type: [{ referredUserId: MongooseSchema.Types.ObjectId, email: String, name: String, status: String, reward: Number, invitedAt: Date }], default: [] })
   referrals: Array<{
     referredUserId: Types.ObjectId;
     email: string;

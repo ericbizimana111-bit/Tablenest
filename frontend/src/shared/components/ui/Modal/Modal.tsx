@@ -11,21 +11,9 @@ interface ModalProps {
     footer?: React.ReactNode;
 }
 
-export function Modal({
-    isOpen,
-    onClose,
-    title,
-    children,
-    width = 520,
-    showClose = true,
-    footer,
-}: ModalProps) {
+export function Modal({ isOpen, onClose, title, children, width = 520, showClose = true, footer }: ModalProps) {
     useEffect(() => {
-        if (isOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
+        document.body.style.overflow = isOpen ? 'hidden' : '';
         return () => { document.body.style.overflow = ''; };
     }, [isOpen]);
 
@@ -39,66 +27,38 @@ export function Modal({
 
     return (
         <div
+            className="animate-fade-in"
             style={{
-                position: 'fixed', inset: 0,
-                background: 'rgba(0,0,0,0.5)',
-                display: 'flex', alignItems: 'center',
-                justifyContent: 'center', zIndex: 1000, padding: 20,
+                position: 'fixed', inset: 0, background: 'rgba(26,19,13,0.5)', backdropFilter: 'blur(3px)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20,
             }}
             onClick={onClose}
         >
             <div
+                className="animate-pop"
                 style={{
-                    background: 'white', borderRadius: 16,
-                    width: '100%', maxWidth: width,
-                    maxHeight: '90vh', overflow: 'auto',
-                    boxShadow: '0 20px 60px rgba(0,0,0,0.2)',
-                    fontFamily: 'Poppins, sans-serif',
-                    animation: 'fadeIn 0.2s ease-out',
+                    background: '#fff', borderRadius: 20, width: '100%', maxWidth: width, maxHeight: '90vh',
+                    overflow: 'auto', boxShadow: '0 24px 70px -12px rgba(26,19,13,0.35)',
                 }}
-                onClick={e => e.stopPropagation()}
+                onClick={(e) => e.stopPropagation()}
             >
-                {/* Header */}
                 {(title || showClose) && (
-                    <div style={{
-                        display: 'flex', alignItems: 'center',
-                        justifyContent: 'space-between',
-                        padding: '18px 24px',
-                        borderBottom: title ? '1px solid #E2E8F0' : 'none',
-                    }}>
-                        {title && (
-                            <h3 style={{ fontSize: 17, fontWeight: 600, color: '#0F172A', margin: 0 }}>
-                                {title}
-                            </h3>
-                        )}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: title ? '1px solid #ece2d6' : 'none' }}>
+                        {title && <h3 style={{ fontSize: 18, fontWeight: 700, color: '#1a130d', margin: 0, fontFamily: 'var(--font-display)' }}>{title}</h3>}
                         {showClose && (
                             <button
                                 onClick={onClose}
-                                style={{
-                                    background: 'none', border: 'none', cursor: 'pointer',
-                                    color: '#475569', padding: 4, borderRadius: 6,
-                                    display: 'flex', alignItems: 'center',
-                                    marginLeft: 'auto',
-                                }}
+                                className="btn-icon"
+                                style={{ background: '#f6eee4', border: 'none', color: '#4a4038', marginLeft: 'auto' }}
                             >
-                                <X size={20} />
+                                <X size={18} />
                             </button>
                         )}
                     </div>
                 )}
-
-                {/* Body */}
-                <div style={{ padding: '20px 24px' }}>
-                    {children}
-                </div>
-
-                {/* Footer */}
+                <div style={{ padding: '22px 24px' }}>{children}</div>
                 {footer && (
-                    <div style={{
-                        padding: '14px 24px',
-                        borderTop: '1px solid #E2E8F0',
-                        display: 'flex', justifyContent: 'flex-end', gap: 10,
-                    }}>
+                    <div style={{ padding: '16px 24px', borderTop: '1px solid #ece2d6', display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
                         {footer}
                     </div>
                 )}

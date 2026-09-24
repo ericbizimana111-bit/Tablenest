@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { Home, Utensils, Calendar, Grid, Monitor, Users, Package, Tag, QrCode, BarChart2, Star, Settings } from 'lucide-react';
+import { Home, Utensils, Calendar, Grid, Monitor, Users, Package, Tag, QrCode, BarChart2, Star, Bell, Settings } from 'lucide-react';
 import Sidebar from '../../../shared/components/layout/Sidebar';
 import Topbar from '../../../shared/components/layout/Topbar';
 
@@ -16,15 +16,16 @@ const NAV = [
     { label: 'QR Codes', path: '/owner/qrcodes', icon: <QrCode size={18} /> },
     { label: 'Analytics', path: '/owner/analytics', icon: <BarChart2 size={18} /> },
     { label: 'Reviews', path: '/owner/reviews', icon: <Star size={18} /> },
+    { label: 'Notifications', path: '/owner/notifications', icon: <Bell size={18} /> },
     { label: 'Settings', path: '/owner/settings', icon: <Settings size={18} /> },
 ];
 
 export default function OwnerLayout() {
     return (
-        <div style={{ display: 'flex', minHeight: '100vh', background: '#F8FAFC', fontFamily: 'Poppins, sans-serif' }}>
-            <Sidebar title="TableNest" subtitle="Dashboard" navItems={NAV} />
+        <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--color-cream)' }}>
+            <Sidebar title="TableNest" subtitle="Restaurant manager" navItems={NAV} />
             <div style={{ marginLeft: 220, flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <Topbar placeholder="Search orders, tables..." notifPath="/owner/settings" settingsPath="/owner/settings" />
+                <Topbar placeholder="Search orders, tables…" notifPath="/owner/notifications" settingsPath="/owner/settings" />
                 <main style={{ marginTop: 60, padding: '28px 32px', flex: 1 }}>
                     <Outlet />
                 </main>

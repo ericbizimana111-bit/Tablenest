@@ -1,41 +1,49 @@
-import { Controller, Get, Post, Put, Patch, Delete, Body, Param, UseGuards, Request } from '@nestjs/common';
-import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { UserRole } from '../users/user.schema';
 import { TablesService } from './tables.service';
 import { TableStatus } from './table.schema';
 
 @Controller('tables')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Roles(UserRole.OWNER)
 export class TablesController {
-    constructor(private tablesService: TablesService) { }
+  constructor(private tablesService: TablesService) {}
 
-    @Get('restaurant/:restaurantId')
-    findByRestaurant(@Param('restaurantId', MongoIdValidationPipe) restaurantId: string) {
-        return this.tablesService.findByRestaurant(restaurantId);
-    }
+  @Get('restaurant/:restaurantId')
+  findByRestaurant(@Request() req, @Param('restaurantId', MongoIdValidationPipe) restaurantId: string) {
+    return this.tablesService.findByRestaurant(req.user, restaurantId);
+  }
 
-    @Get('floor-plan/:restaurantId')
-    getFloorPlan(@Param('restaurantId', MongoIdValidationPipe) restaurantId: string) {
-        return this.tablesService.getFloorPlan(restaurantId);
-    }
+  @Get('floor-plan/:restaurantId')
+  getFloorPlan(@Request() req, @Param('restaurantId', MongoIdValidationPipe) restaurantId: string) {
+    return this.tablesService.getFloorPlan(req.user, restaurantId);
+  }
 
-    @Post()
-    create(@Body() data: any) {
-        return this.tablesService.create(data.restaurantId, data);
-    }
+  @Post()
+  create(@Request() req, @Body() data: any) {
+    return this.tablesService.create(req.user, data);
+  }
 
-    @Put(':id')
-    update(@Param('id', MongoIdValidationPipe) id: string, @Body() data: any) {
-        return this.tablesService.update(id, data);
-    }
+  @Put(':id')
+  update(@Request() req, @Param('id', MongoIdValidationPipe) id: string, @Body() data: any) {
+    return this.tablesService.update(req.user, id, data);
+  }
 
-    @Patch(':id/status')
-    updateStatus(@Param('id', MongoIdValidationPipe) id: string, @Body() body: { status: TableStatus; guestId?: string }) {
-        return this.tablesService.updateStatus(id, body.status, body.guestId);
-    }
+  @Patch(':id/status')
+  updateStatus(
+    @Request() req,
+    @Param('id', MongoIdValidationPipe) id: string,
+    @Body() body: { status: TableStatus; guestId?: string; serverNotes?: string },
+  ) {
+    return this.tablesService.updateStatus(req.user, id, body.status, body.guestId, body.serverNotes);
+  }
 
-    @Delete(':id')
-    delete(@Param('id', MongoIdValidationPipe) id: string) {
-        return this.tablesService.delete(id);
-    }
+  @Delete(':id')
+  delete(@Request() req, @Param('id', MongoIdValidationPipe) id: string) {
+    return this.tablesService.delete(req.user, id);
+  }
 }

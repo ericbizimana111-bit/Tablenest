@@ -21,8 +21,10 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { SupportModule } from './modules/support/support.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
 import { CommonModule } from './common/common.module';
+import { AppController } from './app.controller';
 
 @Module({
+  controllers: [AppController],
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
     CommonModule,

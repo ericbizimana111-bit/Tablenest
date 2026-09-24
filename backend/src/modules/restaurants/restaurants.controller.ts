@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Put, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
-import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
+import { Body, Controller, Get, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../users/user.schema';
@@ -14,6 +14,21 @@ export class RestaurantsController {
   @Get('public')
   findPublic(@Query() query: any) {
     return this.restaurantsService.findPublic(query);
+  }
+
+  @Get('public/featured')
+  featured(@Query('limit') limit?: string) {
+    return this.restaurantsService.featured(Number(limit) || 8);
+  }
+
+  @Get('public/cuisines')
+  cuisines() {
+    return this.restaurantsService.cuisines();
+  }
+
+  @Get('public/stats')
+  stats() {
+    return this.restaurantsService.platformStats();
   }
 
   @Get('public/:id')

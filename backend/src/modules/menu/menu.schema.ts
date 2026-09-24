@@ -1,27 +1,24 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document, Types, Schema as MongooseSchema } from 'mongoose';
 
 export type MenuItemDocument = MenuItem & Document;
 export type MenuCategoryDocument = MenuCategory & Document;
 
 @Schema({ timestamps: true })
-
-
 export class MenuItem {
-
-  @Prop({ required: true })
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, index: true })
   restaurantId: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, index: true })
   categoryId: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ required: true, trim: true })
   name: string;
 
   @Prop({ default: null })
   description: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, min: 0 })
   price: number;
 
   @Prop({ default: null })
@@ -33,7 +30,7 @@ export class MenuItem {
   @Prop({ default: false })
   isSoldOut: boolean;
 
-  @Prop({ default: [] })
+  @Prop({ type: [String], default: [] })
   tags: string[];
 
   @Prop({ default: 0 })
@@ -41,15 +38,14 @@ export class MenuItem {
 }
 
 export const MenuItemSchema = SchemaFactory.createForClass(MenuItem);
+MenuItemSchema.index({ name: 'text', description: 'text' });
 
 @Schema({ timestamps: true })
-
 export class MenuCategory {
-
-  @Prop({ required: true })
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, index: true })
   restaurantId: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ required: true, trim: true })
   name: string;
 
   @Prop({ default: 0 })

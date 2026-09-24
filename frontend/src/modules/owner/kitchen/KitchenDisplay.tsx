@@ -1,133 +1,119 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ordersAPI, restaurantsAPI } from '../../../shared/services/api';
 import { useAuthStore } from '../../../shared/store/authStore';
 import { StatusBadge } from '../../../shared/components/ui/index';
-import { ChefHat, Clock } from 'lucide-react';
+import { ChefHat, Clock, Bike, ShoppingBasket, UtensilsCrossed, X } from 'lucide-react';
+import type { Order } from '../../../shared/types/order.types';
 import toast from 'react-hot-toast';
 
-type OrderItem = { name: string; quantity: number; price: number };
-type KitchenOrder = {
-    _id: string;
-    status: string;
-    total: number;
-    items: OrderItem[];
-    createdAt: string;
-    notes?: string;
-};
-
 const COLUMNS = [
-    { key: 'placed', label: 'New Orders', statuses: ['placed'] },
+    { key: 'placed', label: 'New orders', statuses: ['placed'] },
     { key: 'confirmed', label: 'Confirmed', statuses: ['confirmed'] },
     { key: 'preparing', label: 'Preparing', statuses: ['preparing'] },
-    { key: 'ready', label: 'Ready', statuses: ['ready', 'out_for_delivery'] },
+    { key: 'ready', label: 'Ready / out', statuses: ['ready', 'out_for_delivery'] },
 ];
 
-const NEXT_STATUS: Record<string, string> = {
-    placed: 'confirmed',
-    confirmed: 'preparing',
-    preparing: 'ready',
-    ready: 'out_for_delivery',
-    out_for_delivery: 'delivered',
-};
+function nextStatus(order: Order): string | null {
+    if (order.status === 'placed') return 'confirmed';
+    if (order.status === 'confirmed') return 'preparing';
+    if (order.status === 'preparing') return 'ready';
+    if (order.status === 'ready') return order.orderType === 'delivery' ? 'out_for_delivery' : 'delivered';
+    if (order.status === 'out_for_delivery') return 'delivered';
+    return null;
+}
+const NEXT_LABEL: Record<string, string> = { confirmed: 'Confirm', preparing: 'Start preparing', ready: 'Mark ready', out_for_delivery: 'Send out', delivered: 'Complete' };
+const TYPE_ICON: Record<string, React.ReactNode> = { delivery: <Bike size={11} />, pickup: <ShoppingBasket size={11} />, dine_in: <UtensilsCrossed size={11} /> };
 
 export default function KitchenDisplay() {
     const { user } = useAuthStore();
-    const queryClient = useQueryClient();
+    const qc = useQueryClient();
+    const [apiRestaurantId, setApiRestaurantId] = useState('');
 
-    const { data: myRestaurant } = useQuery<{ _id: string }>({
-        queryKey: ['my-restaurant'],
-        queryFn: () => restaurantsAPI.getMyRestaurant().then(r => r.data),
-        enabled: !user?.restaurantId,
-    });
+    useEffect(() => {
+        if (!user?.restaurantId) restaurantsAPI.getMyRestaurant().then((r) => r.data?._id && setApiRestaurantId(r.data._id)).catch(() => undefined);
+    }, [user]);
+    const restaurantId = user?.restaurantId?.toString() || apiRestaurantId;
 
-    const restaurantId = user?.restaurantId?.toString() || myRestaurant?._id || '';
-
-    const { data, isLoading } = useQuery<{ orders: KitchenOrder[] }>({
+    const { data, isLoading } = useQuery<{ orders: Order[] }>({
         queryKey: ['kitchen-orders', restaurantId],
-        queryFn: () => ordersAPI.getByRestaurant(restaurantId, { limit: 50 }).then(r => r.data),
+        queryFn: () => ordersAPI.getByRestaurant(restaurantId, { status: 'active', limit: 100 }).then((r) => r.data),
         enabled: !!restaurantId,
-        refetchInterval: 15000,
+        refetchInterval: 12000,
     });
 
     const updateMut = useMutation({
-        mutationFn: ({ id, status }: { id: string; status: string }) =>
-            ordersAPI.updateStatus(id, { status }),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['kitchen-orders', restaurantId] });
-            toast.success('Order updated');
-        },
-        onError: () => toast.error('Could not update order'),
+        mutationFn: ({ id, status }: { id: string; status: string }) => ordersAPI.updateStatus(id, { status }),
+        onSuccess: () => { qc.invalidateQueries({ queryKey: ['kitchen-orders'] }); toast.success('Order updated'); },
+        onError: (e: any) => toast.error(e.response?.data?.message || 'Could not update order'),
+    });
+    const cancelMut = useMutation({
+        mutationFn: (id: string) => ordersAPI.cancel(id),
+        onSuccess: () => { qc.invalidateQueries({ queryKey: ['kitchen-orders'] }); toast.success('Order cancelled'); },
     });
 
-    const orders = (data?.orders || []).filter(o => !['delivered', 'cancelled'].includes(o.status));
-
-    const getColumnOrders = (statuses: string[]) =>
-        orders.filter(o => statuses.includes(o.status));
+    const orders = data?.orders || [];
+    const colOrders = (statuses: string[]) => orders.filter((o) => statuses.includes(o.status)).sort((a, b) => (a.createdAt || '').localeCompare(b.createdAt || ''));
 
     return (
-        <div className="fade-in">
+        <div className="animate-fade-up">
             <div style={{ marginBottom: 20 }}>
                 <h1 style={{ fontSize: 22, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <ChefHat size={24} color="#F97316" /> Kitchen Display
+                    <ChefHat size={24} color="var(--color-brand-500)" /> Kitchen display
                 </h1>
-                <p style={{ fontSize: 13, color: '#475569' }}>Live order board for kitchen staff.</p>
+                <p style={{ fontSize: 13, color: 'var(--color-ink-mute)' }}>Live order board — updates automatically every 12s.</p>
             </div>
 
-            {!restaurantId ? (
-                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 40, textAlign: 'center', color: '#475569' }}>
-                    No restaurant linked to this account.
-                </div>
-            ) : isLoading ? (
-                <div style={{ color: '#475569' }}>Loading orders...</div>
+            {!restaurantId || isLoading ? (
+                <div className="skeleton" style={{ height: 300 }} />
             ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-                    {COLUMNS.map(col => (
-                        <div key={col.key} style={{ background: '#F8FAFC', borderRadius: 12, border: '1px solid #E2E8F0', minHeight: 420 }}>
-                            <div style={{ padding: '14px 16px', borderBottom: '1px solid #E2E8F0', background: 'white', borderRadius: '12px 12px 0 0' }}>
-                                <div style={{ fontWeight: 600, fontSize: 14 }}>{col.label}</div>
-                                <div style={{ fontSize: 12, color: '#94A3B8' }}>{getColumnOrders(col.statuses).length} orders</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }} className="kitchen-grid">
+                    {COLUMNS.map((col) => (
+                        <div key={col.key} style={{ background: 'var(--color-sand)', borderRadius: 16, minHeight: 420, border: '1px solid var(--color-line)' }}>
+                            <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--color-line)', background: '#fff', borderRadius: '16px 16px 0 0' }}>
+                                <div style={{ fontWeight: 700, fontSize: 14 }}>{col.label}</div>
+                                <div style={{ fontSize: 12, color: 'var(--color-ink-mute)' }}>{colOrders(col.statuses).length} orders</div>
                             </div>
                             <div style={{ padding: 12, display: 'flex', flexDirection: 'column', gap: 10 }}>
-                                {getColumnOrders(col.statuses).map(order => (
-                                    <div key={order._id} style={{ background: 'white', borderRadius: 10, border: '1px solid #E2E8F0', padding: 14 }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                                            <span style={{ fontWeight: 700, fontSize: 13 }}>#{order._id.slice(-6).toUpperCase()}</span>
-                                            <StatusBadge status={order.status} />
-                                        </div>
-                                        <div style={{ fontSize: 12, color: '#475569', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 4 }}>
-                                            <Clock size={12} /> {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                        </div>
-                                        {order.items?.map((item, idx) => (
-                                            <div key={idx} style={{ fontSize: 13, marginBottom: 4 }}>
-                                                {item.quantity}x {item.name}
+                                {colOrders(col.statuses).map((order) => {
+                                    const next = nextStatus(order);
+                                    return (
+                                        <div key={order._id} className="card" style={{ padding: 14 }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                                                <span style={{ fontWeight: 800, fontSize: 13 }}>{order.orderNumber}</span>
+                                                <span className="badge badge-brand">{TYPE_ICON[order.orderType]} {order.orderType.replace('_', ' ')}</span>
                                             </div>
-                                        ))}
-                                        {order.notes && (
-                                            <div style={{ fontSize: 11, color: '#94A3B8', fontStyle: 'italic', marginTop: 6 }}>{order.notes}</div>
-                                        )}
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
-                                            <span style={{ fontWeight: 600, color: '#F97316' }}>${order.total?.toFixed(2)}</span>
-                                            {NEXT_STATUS[order.status] && (
-                                                <button
-                                                    onClick={() => updateMut.mutate({ id: order._id, status: NEXT_STATUS[order.status] })}
-                                                    disabled={updateMut.isPending}
-                                                    style={{ padding: '6px 10px', background: '#F97316', color: 'white', border: 'none', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}
-                                                >
-                                                    Advance
-                                                </button>
-                                            )}
+                                            <div style={{ fontSize: 11.5, color: 'var(--color-ink-mute)', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 4 }}>
+                                                <Clock size={11} /> {order.createdAt ? new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                                                {order.tableNumber && <span>· Table {order.tableNumber}</span>}
+                                            </div>
+                                            {order.items.map((item, idx) => (
+                                                <div key={idx} style={{ fontSize: 12.5, marginBottom: 3 }}>{item.quantity}x {item.name}</div>
+                                            ))}
+                                            {order.notes && <div style={{ fontSize: 11, color: 'var(--color-ink-mute)', fontStyle: 'italic', marginTop: 6 }}>"{order.notes}"</div>}
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10, gap: 6 }}>
+                                                <span style={{ fontWeight: 800, color: 'var(--color-brand-600)' }}>${order.total.toFixed(2)}</span>
+                                                <div style={{ display: 'flex', gap: 6 }}>
+                                                    {order.status === 'placed' && (
+                                                        <button onClick={() => cancelMut.mutate(order._id)} className="btn-icon" style={{ width: 26, height: 26, padding: 0, color: '#c0271b', border: '1px solid #ffd4d0' }} title="Cancel"><X size={12} /></button>
+                                                    )}
+                                                    {next && (
+                                                        <button onClick={() => updateMut.mutate({ id: order._id, status: next })} disabled={updateMut.isPending} className="btn btn-primary btn-sm">
+                                                            {NEXT_LABEL[next]}
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
-                                {getColumnOrders(col.statuses).length === 0 && (
-                                    <div style={{ textAlign: 'center', color: '#CBD5E1', fontSize: 12, padding: 20 }}>No orders</div>
-                                )}
+                                    );
+                                })}
+                                {colOrders(col.statuses).length === 0 && <div style={{ textAlign: 'center', color: '#c9bdaf', fontSize: 12, padding: 20 }}>No orders</div>}
                             </div>
                         </div>
                     ))}
                 </div>
             )}
+            <style>{`@media (max-width: 1100px) { .kitchen-grid { grid-template-columns: 1fr 1fr !important; } } @media (max-width: 640px) { .kitchen-grid { grid-template-columns: 1fr !important; } }`}</style>
         </div>
     );
 }

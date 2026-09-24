@@ -150,3 +150,14 @@ export function passwordStrength(password: string): 0 | 1 | 2 | 3 {
     if (password.length < 10) return 2;
     return 3;
 }
+
+/** Extracts a human-readable message from an API error, falling back to a default. */
+export function getErrorMessage(err: unknown, fallback: string): string {
+    if (err && typeof err === 'object' && 'response' in err) {
+        const data = (err as { response?: { data?: { message?: string | string[] } } }).response?.data;
+        const msg = data?.message;
+        if (Array.isArray(msg)) return msg[0] || fallback;
+        if (typeof msg === 'string') return msg;
+    }
+    return fallback;
+}

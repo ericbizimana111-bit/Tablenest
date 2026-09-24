@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document, Types, Schema as MongooseSchema } from 'mongoose';
 
 export type PaymentDocument = Payment & Document;
 
@@ -12,13 +12,13 @@ export enum PaymentStatus {
 
 @Schema({ timestamps: true })
 export class Payment {
-  @Prop({ required: true })
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId })
   userId: Types.ObjectId;
 
-  @Prop({ default: null })
+  @Prop({ default: null, type: MongooseSchema.Types.ObjectId })
   orderId: Types.ObjectId;
 
-  @Prop({ default: null })
+  @Prop({ default: null, type: MongooseSchema.Types.ObjectId })
   reservationId: Types.ObjectId;
 
   @Prop({ required: true })

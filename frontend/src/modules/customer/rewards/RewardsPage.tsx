@@ -1,80 +1,66 @@
 import React from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { loyaltyAPI } from '../../../shared/services/api';
-import { Award, Star, Gift, Clock } from 'lucide-react';
-import { Spinner } from '../../../shared/components/ui/index';
-import type { LoyaltyTransaction } from '../../../shared/types/user.types';
+import { Award, Star, Gift, Clock, Copy, Ticket } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { loyaltyAPI } from '../../../shared/services/api';
+import { Spinner } from '../../../shared/components/ui/index';
+import type { Loyalty, LoyaltyTransaction } from '../../../shared/types/user.types';
 
-const TIERS = [
-    { name: 'Bronze', min: 0, max: 1000, color: '#CD7F32', bg: '#FEF3C7' },
-    { name: 'Silver', min: 1000, max: 5000, color: '#94A3B8', bg: '#F1F5F9' },
-    { name: 'Gold', min: 5000, max: 15000, color: '#F59E0B', bg: '#FEF3C7' },
-    { name: 'Platinum', min: 15000, max: 999999, color: '#2563EB', bg: '#DBEAFE' },
-];
-const REWARDS = [
-    { title: '10% Off Next Order', points: 500, category: 'Discount', expires: '30 days' },
-    { title: 'Free Dessert', points: 750, category: 'Dining', expires: '60 days' },
-    { title: 'Priority Booking', points: 1000, category: 'Access', expires: '90 days' },
-    { title: 'Chef\'s Table Experience', points: 5000, category: 'VIP', expires: '180 days' },
-    { title: 'Free Wine Pairing', points: 2000, category: 'Dining', expires: '60 days' },
-    { title: '25% Off Weekend Dining', points: 1500, category: 'Discount', expires: '30 days' },
-];
+const TIER_COLOR: Record<string, { color: string; bg: string }> = {
+    Bronze: { color: '#CD7F32', bg: '#FEF3C7' },
+    Silver: { color: '#94A3B8', bg: '#F1F5F9' },
+    Gold: { color: '#F59E0B', bg: '#FEF3C7' },
+    Platinum: { color: '#2563EB', bg: '#DBEAFE' },
+};
 
 export default function RewardsPage() {
     const queryClient = useQueryClient();
-    const { data: loyalty, isLoading } = useQuery({
+    const { data: loyalty, isLoading } = useQuery<Loyalty>({
         queryKey: ['loyalty'],
-        queryFn: () => loyaltyAPI.get().then(r => r.data),
+        queryFn: () => loyaltyAPI.get().then((r) => r.data),
     });
 
     const redeemMut = useMutation({
-        mutationFn: ({ points, description }: { points: number; description: string }) =>
-            loyaltyAPI.redeemPoints(points, description),
-        onSuccess: () => {
+        mutationFn: (rewardId: string) => loyaltyAPI.redeem(rewardId),
+        onSuccess: (res) => {
             queryClient.invalidateQueries({ queryKey: ['loyalty'] });
-            toast.success('Reward redeemed!');
+            toast.success(`Reward redeemed! Code ${res.data.voucher.code} is ready to use at checkout.`);
         },
-        onError: (err: { response?: { data?: { message?: string } } }) =>
-            toast.error(err.response?.data?.message || 'Could not redeem reward'),
+        onError: (err: { response?: { data?: { message?: string } } }) => toast.error(err.response?.data?.message || 'Could not redeem reward'),
     });
 
-    if (isLoading) return <Spinner />;
+    const copyCode = (code: string) => { navigator.clipboard.writeText(code); toast.success('Code copied'); };
 
-    const points = loyalty?.points || 0;
-    const currentTier = TIERS.find(t => points >= t.min && points < t.max) || TIERS[2];
-    const nextTier = TIERS[TIERS.indexOf(currentTier) + 1];
-    const progress = nextTier ? ((points - currentTier.min) / (nextTier.min - currentTier.min)) * 100 : 100;
+    if (isLoading || !loyalty) return <Spinner />;
+
+    const tierStyle = TIER_COLOR[loyalty.tier] || TIER_COLOR.Bronze;
 
     return (
-        <div className="fade-in">
+        <div className="animate-fade-up">
             <div style={{ marginBottom: 24 }}>
-                <h1 style={{ fontSize: 24, fontWeight: 700 }}>Loyalty Rewards</h1>
-                <p style={{ fontSize: 14, color: '#475569', marginTop: 2 }}>Earn points on every dining experience and unlock exclusive rewards.</p>
+                <h1 style={{ fontSize: 24, fontWeight: 700 }}>Loyalty rewards</h1>
+                <p style={{ fontSize: 14, color: 'var(--color-ink-mute)', marginTop: 2 }}>Earn points on every order and booking, then redeem them for real discounts.</p>
             </div>
 
-            {/* Points card */}
-            <div style={{ background: 'linear-gradient(135deg, #F97316 0%, #EA580C 100%)', borderRadius: 16, padding: '28px 32px', marginBottom: 24, color: 'white' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, alignItems: 'center' }}>
+            <div style={{ background: 'linear-gradient(135deg, var(--color-brand-500), var(--color-brand-700))', borderRadius: 18, padding: '28px 32px', marginBottom: 24, color: 'white' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, alignItems: 'center' }} className="rewards-hero-grid">
                     <div>
-                        <div style={{ fontSize: 13, opacity: 0.8, marginBottom: 4 }}>Your Points Balance</div>
-                        <div style={{ fontSize: 52, fontWeight: 800, lineHeight: 1, marginBottom: 8 }}>{points.toLocaleString()}</div>
+                        <div style={{ fontSize: 13, opacity: 0.85, marginBottom: 4 }}>Your points balance</div>
+                        <div style={{ fontSize: 52, fontWeight: 800, lineHeight: 1, marginBottom: 8, fontFamily: 'var(--font-display)' }}>{loyalty.points.toLocaleString()}</div>
                         <div style={{ fontSize: 14, opacity: 0.85 }}>pts available</div>
                     </div>
                     <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-                            <div style={{ background: 'rgba(255,255,255,0.2)', padding: '6px 14px', borderRadius: 9999, display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 600 }}>
-                                <Award size={16} /> {currentTier.name} Member
-                            </div>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,0.2)', padding: '6px 14px', borderRadius: 9999, fontSize: 13, fontWeight: 700, marginBottom: 14 }}>
+                            <Award size={16} /> {loyalty.tier} member
                         </div>
-                        {nextTier && (
+                        {loyalty.nextTier && (
                             <div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, opacity: 0.8, marginBottom: 4 }}>
-                                    <span>{currentTier.name}</span>
-                                    <span>{nextTier.name} ({(nextTier.min - points).toLocaleString()} pts away)</span>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, opacity: 0.85, marginBottom: 4 }}>
+                                    <span>{loyalty.tier}</span>
+                                    <span>{loyalty.nextTier.name} ({loyalty.nextTier.pointsNeeded.toLocaleString()} pts away)</span>
                                 </div>
-                                <div style={{ height: 8, background: 'rgba(255,255,255,0.2)', borderRadius: 9999, overflow: 'hidden' }}>
-                                    <div style={{ width: `${Math.min(progress, 100)}%`, height: '100%', background: 'white', borderRadius: 9999, transition: 'width 0.5s' }} />
+                                <div style={{ height: 8, background: 'rgba(255,255,255,0.25)', borderRadius: 9999, overflow: 'hidden' }}>
+                                    <div style={{ width: `${Math.min(loyalty.tierProgress, 100)}%`, height: '100%', background: 'white', borderRadius: 9999, transition: 'width 0.6s ease' }} />
                                 </div>
                             </div>
                         )}
@@ -82,44 +68,65 @@ export default function RewardsPage() {
                 </div>
             </div>
 
-            {/* Tier cards */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 28 }}>
-                {TIERS.map(tier => (
-                    <div key={tier.name} style={{ background: tier.name === currentTier.name ? tier.bg : 'white', borderRadius: 10, border: `2px solid ${tier.name === currentTier.name ? tier.color : '#E2E8F0'}`, padding: 16, textAlign: 'center' }}>
-                        <Award size={24} style={{ color: tier.color, margin: '0 auto 8px' }} />
-                        <div style={{ fontWeight: 700, fontSize: 14, color: tier.color, marginBottom: 4 }}>{tier.name}</div>
-                        <div style={{ fontSize: 11, color: '#94A3B8' }}>{tier.max === 999999 ? `${tier.min.toLocaleString()}+ pts` : `${tier.min.toLocaleString()} - ${tier.max.toLocaleString()} pts`}</div>
-                        {tier.name === currentTier.name && <div style={{ marginTop: 8, fontSize: 11, fontWeight: 600, color: tier.color }}>Current Tier</div>}
-                    </div>
-                ))}
+                {['Bronze', 'Silver', 'Gold', 'Platinum'].map((name) => {
+                    const isCurrent = name === loyalty.tier;
+                    const c = TIER_COLOR[name];
+                    return (
+                        <div key={name} className="card" style={{ background: isCurrent ? c.bg : '#fff', border: `2px solid ${isCurrent ? c.color : 'var(--color-line)'}`, padding: 16, textAlign: 'center' }}>
+                            <Award size={22} style={{ color: c.color, margin: '0 auto 8px' }} />
+                            <div style={{ fontWeight: 700, fontSize: 14, color: c.color }}>{name}</div>
+                            {isCurrent && <div style={{ marginTop: 6, fontSize: 11, fontWeight: 700, color: c.color }}>Current tier</div>}
+                        </div>
+                    );
+                })}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20 }}>
-                {/* Available rewards */}
+            {!!loyalty.vouchers?.length && (
+                <div style={{ marginBottom: 28 }}>
+                    <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}><Ticket size={17} color="var(--color-brand-500)" /> Your active vouchers</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px,1fr))', gap: 12 }}>
+                        {loyalty.vouchers.map((v) => (
+                            <div key={v.code} className="card" style={{ padding: 16, border: '1.5px dashed var(--color-brand-300)' }}>
+                                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>{v.title}</div>
+                                <div style={{ fontSize: 12, color: 'var(--color-ink-mute)', marginBottom: 10 }}>Expires {new Date(v.expiresAt).toLocaleDateString()}</div>
+                                <button onClick={() => copyCode(v.code)} className="btn btn-outline btn-sm" style={{ width: '100%' }}>
+                                    {v.code} <Copy size={12} />
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20 }} className="rewards-body-grid">
                 <div>
-                    <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 16 }}>Available Rewards</div>
+                    <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 16 }}>Redeem points</div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                        {REWARDS.map(reward => {
-                            const canRedeem = points >= reward.points;
+                        {loyalty.rewards.map((reward) => {
+                            const canRedeem = loyalty.points >= reward.points;
                             return (
-                                <div key={reward.title} style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 18 }}>
+                                <div key={reward.id} className="card" style={{ padding: 18 }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
-                                        <div style={{ background: '#FEE2E2', color: '#F97316', padding: 8, borderRadius: 8 }}><Gift size={18} /></div>
-                                        <span style={{ background: '#F1F5F9', color: '#475569', padding: '2px 8px', borderRadius: 9999, fontSize: 11, fontWeight: 500 }}>{reward.category}</span>
+                                        <div style={{ background: 'var(--color-brand-100)', color: 'var(--color-brand-600)', padding: 8, borderRadius: 10 }}><Gift size={18} /></div>
+                                        <span className="badge badge-gray">{reward.category}</span>
                                     </div>
-                                    <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 4 }}>{reward.title}</div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: '#94A3B8', marginBottom: 12 }}>
-                                        <Clock size={11} /> Expires in {reward.expires}
+                                    <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>{reward.title}</div>
+                                    <div style={{ fontSize: 12, color: 'var(--color-ink-mute)', marginBottom: 4 }}>{reward.description}</div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--color-ink-mute)', marginBottom: 12 }}>
+                                        <Clock size={11} /> Valid {reward.validDays} days
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontWeight: 700, color: '#F97316', fontSize: 14 }}>
-                                            <Star size={12} fill="#F97316" color="#F97316" /> {reward.points.toLocaleString()} pts
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontWeight: 700, color: 'var(--color-brand-600)', fontSize: 14 }}>
+                                            <Star size={12} fill="#f9691a" color="#f9691a" /> {reward.points.toLocaleString()} pts
                                         </div>
                                         <button
                                             disabled={!canRedeem || redeemMut.isPending}
-                                            onClick={() => redeemMut.mutate({ points: reward.points, description: reward.title })}
-                                            style={{ padding: '6px 14px', background: canRedeem ? '#F97316' : '#F1F5F9', color: canRedeem ? 'white' : '#94A3B8', border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: canRedeem ? 'pointer' : 'not-allowed', fontFamily: 'Poppins' }}>
-                                            {canRedeem ? 'Redeem' : 'Not enough pts'}
+                                            onClick={() => redeemMut.mutate(reward.id)}
+                                            className="btn btn-sm"
+                                            style={{ background: canRedeem ? 'var(--color-ink)' : 'var(--color-sand)', color: canRedeem ? '#fff' : 'var(--color-ink-mute)' }}
+                                        >
+                                            {canRedeem ? 'Redeem' : 'Locked'}
                                         </button>
                                     </div>
                                 </div>
@@ -128,23 +135,26 @@ export default function RewardsPage() {
                     </div>
                 </div>
 
-                {/* Transaction history */}
-                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', overflow: 'hidden' }}>
-                    <div style={{ padding: '16px 20px', borderBottom: '1px solid #E2E8F0', fontWeight: 600, fontSize: 15 }}>Points History</div>
-                    {(loyalty?.transactions || []).map((tx: LoyaltyTransaction, i: number) => (
-                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 20px', borderBottom: '1px solid #F1F5F9' }}>
-                            <div>
-                                <div style={{ fontSize: 13, fontWeight: 500 }}>{tx.description}</div>
-                                <div style={{ fontSize: 11, color: '#94A3B8' }}>{tx.date ? new Date(tx.date).toLocaleDateString() : tx.dateLabel}</div>
+                <div className="card" style={{ overflow: 'hidden' }}>
+                    <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--color-line)', fontWeight: 700, fontSize: 15 }}>Points history</div>
+                    {!loyalty.transactions.length ? (
+                        <div style={{ padding: 20, fontSize: 13, color: 'var(--color-ink-mute)' }}>No activity yet.</div>
+                    ) : (
+                        loyalty.transactions.map((tx: LoyaltyTransaction, i: number) => (
+                            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 20px', borderBottom: '1px solid var(--color-sand)' }}>
+                                <div style={{ minWidth: 0 }}>
+                                    <div style={{ fontSize: 13, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{tx.description}</div>
+                                    <div style={{ fontSize: 11, color: 'var(--color-ink-mute)' }}>{tx.date ? new Date(tx.date).toLocaleDateString() : ''}</div>
+                                </div>
+                                <span style={{ fontWeight: 700, fontSize: 13, color: tx.points > 0 ? '#17803d' : '#c0271b', flexShrink: 0 }}>
+                                    {tx.points > 0 ? '+' : ''}{tx.points} pts
+                                </span>
                             </div>
-                            <span style={{ fontWeight: 700, fontSize: 14, color: tx.points > 0 ? '#16A34A' : '#DC2626' }}>
-                                {tx.points > 0 ? '+' : ''}{tx.points} pts
-                            </span>
-                        </div>
-                    ))}
+                        ))
+                    )}
                 </div>
             </div>
+            <style>{`@media (max-width: 900px) { .rewards-body-grid, .rewards-hero-grid { grid-template-columns: 1fr !important; } }`}</style>
         </div>
     );
 }
-

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Message, MessageDocument, Conversation, ConversationDocument } from './message.schema';
@@ -14,11 +14,18 @@ export class MessagesService {
         return this.conversationModel.find({ participants: userId }).sort({ lastMessageAt: -1 });
     }
 
-    async getMessages(conversationId: string) {
+    private async assertParticipant(userId: string, conversationId: string) {
+        const convo = await this.conversationModel.findOne({ _id: conversationId, participants: userId });
+        if (!convo) throw new ForbiddenException('Not a participant in this conversation');
+    }
+
+    async getMessages(userId: string, conversationId: string) {
+        await this.assertParticipant(userId, conversationId);
         return this.messageModel.find({ conversationId }).sort({ createdAt: 1 });
     }
 
     async sendMessage(senderId: string, conversationId: string, content: string) {
+        await this.assertParticipant(senderId, conversationId);
         const message = await this.messageModel.create({ conversationId, senderId, content });
         await this.conversationModel.findByIdAndUpdate(conversationId, {
             lastMessage: content,
@@ -27,7 +34,8 @@ export class MessagesService {
         return message;
     }
 
-    async createConversation(participants: string[], restaurantId?: string) {
-        return this.conversationModel.create({ participants, restaurantId, lastMessageAt: new Date() });
+    async createConversation(userId: string, participants: string[], restaurantId?: string) {
+        const all = [...new Set([userId, ...(participants || [])])];
+        return this.conversationModel.create({ participants: all, restaurantId, lastMessageAt: new Date() });
     }
 }

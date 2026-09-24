@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Patch, Delete, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Put, Patch, Delete, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
 import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -10,6 +10,12 @@ import { UsersService } from './users.service';
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 export class UsersController {
   constructor(private usersService: UsersService) {}
+
+  private idx(v: string) {
+    const n = Number(v);
+    if (!Number.isInteger(n) || n < 0) throw new BadRequestException('Invalid index');
+    return n;
+  }
 
   @Put('profile')
   updateProfile(@Request() req, @Body() data: any) {
@@ -61,7 +67,12 @@ export class UsersController {
 
   @Delete('addresses/:index')
   deleteAddress(@Request() req, @Param('index') index: string) {
-    return this.usersService.deleteAddress(req.user._id.toString(), +index);
+    return this.usersService.deleteAddress(req.user._id.toString(), this.idx(index));
+  }
+
+  @Patch('addresses/:index/default')
+  setDefaultAddress(@Request() req, @Param('index') index: string) {
+    return this.usersService.setDefaultAddress(req.user._id.toString(), this.idx(index));
   }
 
   @Get('payment-methods')
@@ -76,6 +87,11 @@ export class UsersController {
 
   @Delete('payment-methods/:index')
   deletePaymentMethod(@Request() req, @Param('index') index: string) {
-    return this.usersService.deletePaymentMethod(req.user._id.toString(), +index);
+    return this.usersService.deletePaymentMethod(req.user._id.toString(), this.idx(index));
+  }
+
+  @Patch('payment-methods/:index/default')
+  setDefaultPaymentMethod(@Request() req, @Param('index') index: string) {
+    return this.usersService.setDefaultPaymentMethod(req.user._id.toString(), this.idx(index));
   }
 }

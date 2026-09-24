@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
@@ -8,7 +8,11 @@ import * as crypto from 'crypto';
 import { User, UserDocument, UserRole } from '../users/user.schema';
 import { Loyalty, LoyaltyDocument } from '../loyalty/loyalty.schema';
 import { Referral, ReferralDocument } from '../referrals/referral.schema';
-import { RegisterDto, LoginDto, ResetPasswordDto, ChangePasswordDto, RegisterOwnerDto } from './auth.dto';
+import { MailService } from '../../common/services/mail.service';
+import { ChangePasswordDto, LoginDto, RegisterDto, RegisterOwnerDto, ResetPasswordDto } from './auth.dto';
+
+const sha256 = (v: string) => crypto.createHash('sha256').update(v).digest('hex');
+const SIGNUP_BONUS = 100;
 
 @Injectable()
 export class AuthService {
@@ -18,89 +22,111 @@ export class AuthService {
     @InjectModel(Referral.name) private referralModel: Model<ReferralDocument>,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private mail: MailService,
   ) {}
 
-  async register(dto: RegisterDto) {
+  private async createAccount(dto: RegisterDto, role: UserRole) {
     const exists = await this.userModel.findOne({ email: dto.email });
-    if (exists) throw new BadRequestException('Email already registered');
+    if (exists) throw new BadRequestException('An account with this email already exists');
 
-    const hashed = await bcrypt.hash(dto.password, 12);
     const user = await this.userModel.create({
       fullName: dto.fullName,
       email: dto.email,
-      password: hashed,
-      role: UserRole.CUSTOMER,
+      password: await bcrypt.hash(dto.password, 12),
+      phone: dto.phone,
+      role,
+      activePlan: role === UserRole.OWNER ? 'Business' : 'Gourmet Pro',
     });
 
-    // Create loyalty account
-    await this.loyaltyModel.create({ userId: user._id, points: 0 });
-
-    // Create referral code
-    const code = 'NEST-' + user.fullName.toUpperCase().slice(0, 4) + '-' + Date.now().toString(36).toUpperCase();
+    const prefix = user.fullName.replace(/[^A-Za-z]/g, '').toUpperCase().slice(0, 4).padEnd(4, 'X');
+    const code = `NEST-${prefix}-${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
     await this.referralModel.create({ userId: user._id, code });
 
-    const tokens = await this.generateTokens(user);
-    return { user: this.sanitize(user), ...tokens };
+    const bonus = role === UserRole.CUSTOMER ? SIGNUP_BONUS : 0;
+    await this.loyaltyModel.create({
+      userId: user._id,
+      points: bonus,
+      transactions: bonus ? [{ kind: 'earn', points: bonus, description: 'Welcome bonus', date: new Date() }] : [],
+    });
+
+    if (role === UserRole.CUSTOMER && dto.referralCode) {
+      await this.referralModel.findOneAndUpdate(
+        { code: dto.referralCode.toUpperCase(), userId: { $ne: user._id } },
+        {
+          $push: {
+            referrals: {
+              referredUserId: user._id,
+              email: user.email,
+              name: user.fullName,
+              status: 'pending',
+              reward: 0,
+              invitedAt: new Date(),
+            },
+          },
+        },
+      );
+    }
+    return user;
+  }
+
+  async register(dto: RegisterDto) {
+    const user = await this.createAccount(dto, UserRole.CUSTOMER);
+    return { user: this.sanitize(user), ...this.generateTokens(user) };
   }
 
   async registerOwner(dto: RegisterOwnerDto) {
-    const exists = await this.userModel.findOne({ email: dto.email });
-    if (exists) throw new BadRequestException('Email already registered');
-
-    const hashed = await bcrypt.hash(dto.password, 12);
-    const user = await this.userModel.create({
-      fullName: dto.fullName,
-      email: dto.email,
-      password: hashed,
-      phone: dto.phone,
-      role: UserRole.OWNER,
-      activePlan: 'Business',
-    });
-
-    await this.loyaltyModel.create({ userId: user._id, points: 0 });
-    const code = 'NEST-' + user.fullName.toUpperCase().slice(0, 4) + '-' + Date.now().toString(36).toUpperCase();
-    await this.referralModel.create({ userId: user._id, code });
-
-    const tokens = await this.generateTokens(user);
-    return { user: this.sanitize(user), ...tokens };
+    const user = await this.createAccount(dto, UserRole.OWNER);
+    return { user: this.sanitize(user), ...this.generateTokens(user) };
   }
 
   async login(dto: LoginDto) {
     const user = await this.userModel.findOne({ email: dto.email });
-    if (!user) throw new UnauthorizedException('Invalid credentials');
-    if (!user.isActive) throw new UnauthorizedException('Account suspended');
+    if (!user) throw new UnauthorizedException('Incorrect email or password');
+    if (!user.isActive) throw new UnauthorizedException('This account has been deactivated');
 
     const valid = await bcrypt.compare(dto.password, user.password);
-    if (!valid) throw new UnauthorizedException('Invalid credentials');
+    if (!valid) throw new UnauthorizedException('Incorrect email or password');
 
-    const tokens = await this.generateTokens(user);
-    return { user: this.sanitize(user), ...tokens };
+    return { user: this.sanitize(user), ...this.generateTokens(user) };
   }
 
   async forgotPassword(email: string) {
-    const user = await this.userModel.findOne({ email });
-    if (!user) throw new NotFoundException('No account with that email');
+    const response: Record<string, unknown> = {
+      message: 'If an account exists for that email, a reset link has been sent.',
+    };
+    const user = await this.userModel.findOne({ email, isActive: true });
+    if (!user) return response;
 
     const token = crypto.randomBytes(32).toString('hex');
-    const expires = new Date(Date.now() + 3600000); // 1 hour
     await this.userModel.findByIdAndUpdate(user._id, {
-      resetPasswordToken: token,
-      resetPasswordExpires: expires,
+      resetPasswordToken: sha256(token),
+      resetPasswordExpires: new Date(Date.now() + 60 * 60 * 1000),
     });
 
-    return { message: 'Password reset link sent' };
+    const base = this.configService.get<string>('FRONTEND_URL', 'http://localhost:5173');
+    const resetUrl = `${base}/reset-password?token=${token}`;
+    await this.mail.send(
+      user.email,
+      'Reset your TableNest password',
+      `<p>Hi ${user.fullName},</p><p>Use the link below to choose a new password. It expires in 1 hour.</p><p><a href="${resetUrl}">Reset password</a></p><p>If you did not request this, you can ignore this email.</p>`,
+    );
+
+    // Without SMTP configured (local development) surface the link so the flow stays testable.
+    if (!this.mail.isConfigured && this.configService.get('NODE_ENV') !== 'production') {
+      response.devResetUrl = `/reset-password?token=${token}`;
+    }
+    return response;
   }
 
   async resetPassword(dto: ResetPasswordDto) {
     const user = await this.userModel.findOne({
-      resetPasswordToken: dto.token,
+      resetPasswordToken: sha256(dto.token),
       resetPasswordExpires: { $gt: new Date() },
     });
-    if (!user) throw new BadRequestException('Invalid or expired reset token');
+    if (!user) throw new BadRequestException('This reset link is invalid or has expired');
 
-    const hashed = await bcrypt.hash(dto.password, 12);
     await this.userModel.findByIdAndUpdate(user._id, {
-      password: hashed,
+      password: await bcrypt.hash(dto.password, 12),
       resetPasswordToken: null,
       resetPasswordExpires: null,
     });
@@ -112,29 +138,30 @@ export class AuthService {
     if (!user) throw new NotFoundException('User not found');
 
     const valid = await bcrypt.compare(dto.currentPassword, user.password);
-    if (!valid) throw new BadRequestException('Current password incorrect');
+    if (!valid) throw new BadRequestException('Current password is incorrect');
 
-    const hashed = await bcrypt.hash(dto.newPassword, 12);
-    await this.userModel.findByIdAndUpdate(userId, { password: hashed });
+    await this.userModel.findByIdAndUpdate(userId, { password: await bcrypt.hash(dto.newPassword, 12) });
     return { message: 'Password updated successfully' };
   }
 
   async getMe(userId: string) {
-    const user = await this.userModel.findById(userId).select('-password');
+    const user = await this.userModel
+      .findById(userId)
+      .select('-password -resetPasswordToken -resetPasswordExpires');
     if (!user) throw new NotFoundException('User not found');
     return user;
   }
 
-  private async generateTokens(user: UserDocument) {
+  private generateTokens(user: UserDocument) {
     const payload = { sub: user._id.toString(), email: user.email, role: user.role };
-    const secret = this.configService.get<string>('JWT_SECRET', 'tablenest_secret_key_2024');
-    const accessToken = this.jwtService.sign(payload, { secret, expiresIn: '7d' });
-    return { accessToken };
+    return { accessToken: this.jwtService.sign(payload) };
   }
 
   private sanitize(user: UserDocument) {
-    const obj = user.toObject();
+    const obj = user.toObject() as Record<string, unknown>;
     delete obj.password;
+    delete obj.resetPasswordToken;
+    delete obj.resetPasswordExpires;
     return obj;
   }
 }

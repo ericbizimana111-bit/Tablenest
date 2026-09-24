@@ -23,28 +23,59 @@ export interface OrderItem {
     image?: string;
 }
 
+export type OrderType = 'delivery' | 'pickup' | 'dine_in';
+
 export interface Order {
     _id: string;
+    orderNumber?: string;
     customerId: string;
+    customerName?: string;
+    customerPhone?: string;
     restaurantId: string;
     restaurantName?: string;
     restaurantImage?: string;
     items: OrderItem[];
+    subtotal: number;
+    discount: number;
+    promoCode?: string;
+    deliveryFee: number;
+    tax: number;
+    tip: number;
     total: number;
+    orderType: OrderType;
+    paymentMethod: 'cash' | 'card';
+    paymentStatus: 'pending' | 'paid' | 'refunded';
+    cardLast4?: string;
     status: OrderStatus;
     deliveryAddress?: string;
     driverId?: string;
     estimatedDelivery?: string;
     notes?: string;
     tableId?: string;
+    tableNumber?: string;
+    reviewed?: boolean;
     statusHistory?: Array<{ status: string; time: string; note: string }>;
     createdAt?: string;
     updatedAt?: string;
 }
 
+export interface OrderQuote {
+    subtotal: number;
+    discount: number;
+    promoCode: string | null;
+    deliveryFee: number;
+    tax: number;
+    tip: number;
+    total: number;
+    taxRate: number;
+    minOrder: number;
+}
+
 export interface Reservation {
     _id: string;
     customerId: string;
+    customerName?: string;
+    customerPhone?: string;
     restaurantId: string;
     restaurantName?: string;
     restaurantImage?: string;
@@ -55,10 +86,23 @@ export interface Reservation {
     guests: number;
     status: ReservationStatus;
     specialRequests?: string;
+    cancelReason?: string;
     bookingRef?: string;
     qrCode?: string;
     createdAt?: string;
     updatedAt?: string;
+}
+
+export interface AvailabilitySlot {
+    time: string;
+    available: boolean;
+}
+
+export interface AvailabilityResponse {
+    date: string;
+    closed: boolean;
+    guests: number;
+    slots: AvailabilitySlot[];
 }
 
 export interface Payment {

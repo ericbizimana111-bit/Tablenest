@@ -37,7 +37,7 @@ export class User {
   @Prop({ default: false })
   emailVerified: boolean;
 
-  @Prop({ default: null })
+  @Prop({ default: null, type: MongooseSchema.Types.ObjectId })
   restaurantId: Types.ObjectId;
 
   @Prop({ default: 'Gourmet Pro' })
@@ -59,7 +59,7 @@ export class User {
   @Prop({ default: null })
   resetPasswordExpires: Date;
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'Restaurant' }], default: [] })
+  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Restaurant' }], default: [] })
   favoriteRestaurantIds: Types.ObjectId[];
 
   @Prop({

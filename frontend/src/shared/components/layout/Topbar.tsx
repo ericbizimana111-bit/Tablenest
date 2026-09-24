@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Bell, Settings, Search } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Bell, Settings, Search, ShoppingBag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
+import { useOrderStore } from '../../store/orderStore';
 import { notificationsAPI } from '../../services/api';
 
 interface TopbarProps {
@@ -9,85 +10,72 @@ interface TopbarProps {
     onSearch?: (q: string) => void;
     notifPath?: string;
     settingsPath?: string;
+    showCart?: boolean;
 }
 
-export default function Topbar({ placeholder = 'Search...', onSearch, notifPath, settingsPath }: TopbarProps) {
+export default function Topbar({ placeholder = 'Search...', onSearch, notifPath, settingsPath, showCart }: TopbarProps) {
     const { user } = useAuthStore();
     const navigate = useNavigate();
+    const { cart, cartItemCount } = useOrderStore();
     const [unread, setUnread] = useState(0);
     const [query, setQuery] = useState('');
 
     useEffect(() => {
-        if (user) {
-            notificationsAPI.getUnreadCount().then(r => setUnread(r.data.count)).catch(() => { });
-        }
+        if (!user) return;
+        const load = () => notificationsAPI.getUnreadCount().then((r) => setUnread(r.data.count)).catch(() => undefined);
+        load();
+        const id = setInterval(load, 60000);
+        return () => clearInterval(id);
     }, [user]);
 
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setQuery(e.target.value);
-        onSearch?.(e.target.value);
+    const submitSearch = () => {
+        if (!query.trim()) return;
+        if (onSearch) onSearch(query);
+        else navigate(`/restaurants?search=${encodeURIComponent(query)}`);
     };
+
+    const itemCount = cartItemCount();
 
     return (
         <header style={{
             position: 'fixed', top: 0, left: 220, right: 0, height: 60,
             background: 'white', borderBottom: '1px solid #E2E8F0',
-            display: 'flex', alignItems: 'center', padding: '0 24px',
-            gap: 16, zIndex: 30,
+            display: 'flex', alignItems: 'center', padding: '0 24px', gap: 16, zIndex: 30,
         }}>
-            {/* Search */}
             <div style={{ position: 'relative', flex: 1, maxWidth: 420 }}>
                 <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} />
                 <input
                     value={query}
-                    onChange={handleSearch}
+                    onChange={(e) => { setQuery(e.target.value); onSearch?.(e.target.value); }}
+                    onKeyDown={(e) => e.key === 'Enter' && submitSearch()}
                     placeholder={placeholder}
-                    style={{
-                        width: '100%', padding: '8px 12px 8px 36px',
-                        border: '1.5px solid #E2E8F0', borderRadius: 8,
-                        fontSize: 14, fontFamily: 'Poppins, sans-serif',
-                        outline: 'none', background: '#F8FAFC',
-                    }}
-                    onFocus={e => (e.target.style.borderColor = '#F97316')}
-                    onBlur={e => (e.target.style.borderColor = '#E2E8F0')}
+                    className="input"
+                    style={{ paddingLeft: 36, background: '#F8FAFC' }}
                 />
             </div>
 
-            <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
-                {/* Bell */}
-                <button
-                    onClick={() => notifPath && navigate(notifPath)}
-                    style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', padding: 8, borderRadius: 8, color: '#475569' }}
-                >
+            <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+                {showCart && cart && itemCount > 0 && (
+                    <button onClick={() => navigate(`/restaurants/${cart.restaurantId}?tab=menu`)} className="btn-icon" style={{ position: 'relative', background: 'none', border: 'none', color: '#475569' }} title="View cart">
+                        <ShoppingBag size={20} />
+                        <span style={{ position: 'absolute', top: 2, right: 2, background: 'var(--color-brand-500)', color: 'white', borderRadius: 9999, fontSize: 10, fontWeight: 700, padding: '0 4px', minWidth: 16, textAlign: 'center' }}>{itemCount}</span>
+                    </button>
+                )}
+                <button onClick={() => notifPath && navigate(notifPath)} className="btn-icon" style={{ position: 'relative', background: 'none', border: 'none', color: '#475569' }}>
                     <Bell size={20} />
                     {unread > 0 && (
-                        <span style={{
-                            position: 'absolute', top: 4, right: 4,
-                            background: '#F97316', color: 'white', borderRadius: 9999,
-                            fontSize: 10, fontWeight: 700, padding: '0 4px', minWidth: 16, textAlign: 'center',
-                        }}>{unread > 9 ? '9+' : unread}</span>
+                        <span style={{ position: 'absolute', top: 2, right: 2, background: 'var(--color-brand-500)', color: 'white', borderRadius: 9999, fontSize: 10, fontWeight: 700, padding: '0 4px', minWidth: 16, textAlign: 'center' }}>{unread > 9 ? '9+' : unread}</span>
                     )}
                 </button>
-
-                {/* Settings */}
-                <button
-                    onClick={() => settingsPath && navigate(settingsPath)}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 8, borderRadius: 8, color: '#475569' }}
-                >
+                <button onClick={() => settingsPath && navigate(settingsPath)} className="btn-icon" style={{ background: 'none', border: 'none', color: '#475569' }}>
                     <Settings size={20} />
                 </button>
-
-                {/* Avatar */}
-                <div style={{
-                    width: 36, height: 36, borderRadius: '50%',
-                    background: '#F97316', color: 'white',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontWeight: 600, fontSize: 14, cursor: 'pointer', overflow: 'hidden',
-                }}>
-                    {user?.avatar
-                        ? <img src={user.avatar} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        : user?.fullName?.charAt(0).toUpperCase()}
-                </div>
+                <button
+                    onClick={() => settingsPath && navigate(settingsPath)}
+                    style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--color-brand-500)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14, cursor: 'pointer', overflow: 'hidden', border: 'none' }}
+                >
+                    {user?.avatar ? <img src={user.avatar} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : user?.fullName?.charAt(0).toUpperCase()}
+                </button>
             </div>
         </header>
     );

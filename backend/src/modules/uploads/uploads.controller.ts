@@ -24,7 +24,7 @@ const imageStorage = diskStorage({
 });
 
 const imageFilter = (_req: any, file: Express.Multer.File, cb: any) => {
-  if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp|svg\+xml)$/)) {
+  if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
     return cb(new Error('Only image files are allowed'), false);
   }
   cb(null, true);
@@ -42,6 +42,7 @@ const documentFilter = (_req: any, file: Express.Multer.File, cb: any) => {
 };
 
 @Controller('uploads')
+@UseGuards(AuthGuard('jwt'))
 export class UploadsController {
   constructor(private readonly uploadsService: UploadsService) {}
 
@@ -95,7 +96,6 @@ export class UploadsController {
 
   // ── Delete uploaded file (requires auth) ────────────────────────────
   @Delete(':filename')
-  @UseGuards(AuthGuard('jwt'))
   deleteFile(@Param('filename') filename: string) {
     return this.uploadsService.deleteFile(filename);
   }

@@ -1,14 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document, Types, Schema as MongooseSchema } from 'mongoose';
 
 export type StaffDocument = Staff & Document;
 
 @Schema({ timestamps: true })
 export class Staff {
-  @Prop({ required: true })
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, index: true })
   restaurantId: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ default: null, type: MongooseSchema.Types.ObjectId })
   userId: Types.ObjectId;
 
   @Prop({ required: true })
@@ -20,7 +20,7 @@ export class Staff {
   @Prop({ default: null })
   phone: string;
 
-  @Prop({ default: 'staff' })
+  @Prop({ default: 'Server' })
   role: string;
 
   @Prop({ default: true })

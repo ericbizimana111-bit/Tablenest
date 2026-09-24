@@ -21,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>('JWT_SECRET', 'tablenest_secret_key_2024'),
+      secretOrKey: configService.get<string>('JWT_SECRET', 'tablenest_dev_secret_change_me'),
     });
   }
 

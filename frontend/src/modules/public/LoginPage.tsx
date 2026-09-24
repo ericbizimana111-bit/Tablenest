@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Loader2, ChefHat } from 'lucide-react';
 import { useAuth } from '../../shared/hooks/useAuthContext';
+import { getErrorMessage } from '../../shared/utils';
 import { getRoleHomePath } from '../../shared/utils/auth.utils';
 
 export default function LoginPage() {
@@ -34,11 +35,7 @@ export default function LoginPage() {
             const loggedInUser = await login(email, password);
             navigate(getRoleHomePath(loggedInUser.role), { replace: true });
         } catch (err: unknown) {
-            const message =
-                err instanceof Error
-                    ? err.message
-                    : 'Invalid credentials. Please try again.';
-            setErrors({ general: message });
+            setErrors({ general: getErrorMessage(err, 'Invalid credentials. Please try again.') });
         }
     };
 

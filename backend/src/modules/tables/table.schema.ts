@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document, Types, Schema as MongooseSchema } from 'mongoose';
 
 export type TableDocument = Table & Document;
 
@@ -12,19 +12,19 @@ export enum TableStatus {
 
 @Schema({ timestamps: true })
 export class Table {
-  @Prop({ required: true })
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, index: true })
   restaurantId: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ required: true, trim: true })
   tableNumber: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, min: 1, max: 30 })
   capacity: number;
 
   @Prop({ default: TableStatus.AVAILABLE, enum: TableStatus })
   status: TableStatus;
 
-  @Prop({ default: null })
+  @Prop({ default: null, type: MongooseSchema.Types.ObjectId })
   currentGuestId: Types.ObjectId;
 
   @Prop({ default: null })
@@ -35,19 +35,6 @@ export class Table {
 
   @Prop({ default: null })
   qrCode: string;
-
-  @Prop({
-    type: {
-      x:Number,
-      y:Number,
-    }
-  })
-
-  postion:{
-    x:number,
-    y:number,
-  }
-
 }
 
 export const TableSchema = SchemaFactory.createForClass(Table);

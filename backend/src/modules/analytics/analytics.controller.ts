@@ -1,4 +1,4 @@
-import { Controller, Get, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Param, Query, Request, UseGuards } from '@nestjs/common';
 import { MongoIdValidationPipe } from '../../common/pipes/mongo-id.pipe';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -9,21 +9,30 @@ import { AccessControlService } from '../../common/services/access-control.servi
 
 @Controller('analytics')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
+@Roles(UserRole.OWNER)
 export class AnalyticsController {
   constructor(
     private analyticsService: AnalyticsService,
     private accessControl: AccessControlService,
-  ) { }
+  ) {}
 
   @Get('restaurant/:restaurantId/dashboard')
-  @Roles(UserRole.OWNER)
   async getRestaurantDashboard(@Request() req, @Param('restaurantId', MongoIdValidationPipe) restaurantId: string) {
     await this.accessControl.assertRestaurantOwner(req.user, restaurantId);
     return this.analyticsService.getRestaurantDashboard(restaurantId);
   }
 
+  @Get('restaurant/:restaurantId/overview')
+  async getOverview(
+    @Request() req,
+    @Param('restaurantId', MongoIdValidationPipe) restaurantId: string,
+    @Query('days') days?: string,
+  ) {
+    await this.accessControl.assertRestaurantOwner(req.user, restaurantId);
+    return this.analyticsService.getOverview(restaurantId, Number(days) || 30);
+  }
+
   @Get('restaurant/:restaurantId/heatmap')
-  @Roles(UserRole.OWNER)
   async getHeatmap(@Request() req, @Param('restaurantId', MongoIdValidationPipe) restaurantId: string) {
     await this.accessControl.assertRestaurantOwner(req.user, restaurantId);
     return this.analyticsService.getReservationsHeatmap(restaurantId);

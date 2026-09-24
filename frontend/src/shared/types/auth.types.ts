@@ -40,6 +40,8 @@ export interface RegisterPayload {
     email: string;
     password: string;
     role?: UserRole;
+    phone?: string;
+    referralCode?: string;
 }
 
 export interface AuthResponse {

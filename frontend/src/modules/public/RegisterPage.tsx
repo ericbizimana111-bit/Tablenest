@@ -1,17 +1,19 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { User, Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft, Loader2, ChefHat, Store } from 'lucide-react';
 import { useAuth } from '../../shared/hooks/useAuthContext';
 import { getRoleHomePath } from '../../shared/utils/auth.utils';
+import { getErrorMessage } from '../../shared/utils';
 
 export default function RegisterPage() {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const { register, isSubmitting } = useAuth();
 
-    type RegisterForm = { fullName: string; email: string; password: string; confirm: string; phone: string };
+    type RegisterForm = { fullName: string; email: string; password: string; confirm: string; referralCode: string };
 
     const [role, setRole] = useState<'customer' | null>(null);
-    const [form, setForm] = useState<RegisterForm>({ fullName: '', email: '', password: '', confirm: '', phone: '' });
+    const [form, setForm] = useState<RegisterForm>({ fullName: '', email: '', password: '', confirm: '', referralCode: searchParams.get('ref') || '' });
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
     const [errors, setErrors] = useState<Partial<Record<keyof RegisterForm | 'general', string>>>({});
@@ -21,7 +23,7 @@ export default function RegisterPage() {
 
     const getPasswordStrength = (pw: string) => {
         if (pw.length === 0) return { level: 0, label: '', color: '' };
-        if (pw.length < 6) return { level: 1, label: 'Weak', color: '#EF4444' };
+        if (pw.length < 8 || !/[A-Za-z]/.test(pw) || !/[0-9]/.test(pw)) return { level: 1, label: 'Weak', color: '#EF4444' };
         if (pw.length < 10) return { level: 2, label: 'Fair', color: '#F59E0B' };
         if (/[A-Z]/.test(pw) && /[0-9]/.test(pw) && /[^A-Za-z0-9]/.test(pw) && pw.length >= 12)
             return { level: 4, label: 'Strong', color: '#22C55E' };
@@ -36,7 +38,8 @@ export default function RegisterPage() {
         if (!form.email) errs.email = 'Email is required';
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = 'Please enter a valid email';
         if (!form.password) errs.password = 'Password is required';
-        else if (form.password.length < 6) errs.password = 'At least 6 characters required';
+        else if (form.password.length < 8) errs.password = 'At least 8 characters required';
+        else if (!/[A-Za-z]/.test(form.password) || !/\d/.test(form.password)) errs.password = 'Include at least one letter and one number';
         if (form.password !== form.confirm) errs.confirm = 'Passwords do not match';
         setErrors(errs);
         return Object.keys(errs).length === 0;
@@ -52,11 +55,11 @@ export default function RegisterPage() {
                 fullName: form.fullName,
                 email: form.email,
                 password: form.password,
+                referralCode: form.referralCode.trim() || undefined,
             });
             navigate(getRoleHomePath(user.role), { replace: true });
         } catch (err: unknown) {
-            const message = err instanceof Error ? err.message : 'Registration failed. Please try again.';
-            setErrors({ general: message });
+            setErrors({ general: getErrorMessage(err, 'Registration failed. Please try again.') });
         }
     };
 
@@ -701,6 +704,25 @@ export default function RegisterPage() {
                                 </button>
                             </div>
                             {errors.confirm && <span style={errorTextStyle}>{errors.confirm}</span>}
+                        </div>
+
+                        {/* Referral code (optional) */}
+                        <div style={{ marginBottom: 18 }}>
+                            <label style={labelStyle} htmlFor="referralCode">Referral code <span style={{ fontWeight: 400, color: '#94A3B8' }}>(optional)</span></label>
+                            <input
+                                id="referralCode"
+                                type="text"
+                                value={form.referralCode}
+                                onChange={e => update('referralCode', e.target.value.toUpperCase())}
+                                onFocus={() => setFocusedField('referralCode')}
+                                onBlur={() => setFocusedField(null)}
+                                placeholder="NEST-XXXX-XXXXXX"
+                                style={{
+                                    ...inputBase,
+                                    paddingLeft: 14,
+                                    ...(focusedField === 'referralCode' ? inputFocused : {}),
+                                }}
+                            />
                         </div>
 
                         {/* Submit */}

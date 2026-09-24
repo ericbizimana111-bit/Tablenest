@@ -1,36 +1,57 @@
 export interface Address {
-    id: string;
     label: string;
-    icon?: 'home' | 'work' | 'other';
     street: string;
-    apt?: string;
     city: string;
-    postalCode: string;
-    country: string;
+    state: string;
+    zip: string;
     isDefault: boolean;
 }
 
 export interface PaymentMethod {
-    id: string;
+    brand: 'Visa' | 'Mastercard' | 'Amex' | 'Discover' | 'Card';
     last4: string;
-    holder: string;
-    expiry: string;
-    brand: 'Visa' | 'Mastercard' | 'Amex' | 'Card';
-    isPrimary: boolean;
+    expiryMonth: string;
+    expiryYear: string;
+    isDefault: boolean;
 }
 
 export interface LoyaltyTransaction {
-    type: 'earn' | 'redeem';
+    kind: 'earn' | 'redeem';
     points: number;
     description: string;
     date?: string;
-    dateLabel?: string;
+}
+
+export interface LoyaltyVoucher {
+    code: string;
+    title: string;
+    discountType: 'percentage' | 'flat' | 'free_delivery';
+    discountValue: number;
+    expiresAt: string;
+    used: boolean;
+}
+
+export interface LoyaltyReward {
+    id: string;
+    title: string;
+    description: string;
+    points: number;
+    category: string;
+    discountType: 'percentage' | 'flat' | 'free_delivery';
+    discountValue: number;
+    validDays: number;
 }
 
 export interface Loyalty {
     userId: string;
     points: number;
+    lifetimePoints: number;
     transactions: LoyaltyTransaction[];
+    vouchers: LoyaltyVoucher[];
+    tier: string;
+    nextTier: { name: string; pointsNeeded: number } | null;
+    tierProgress: number;
+    rewards: LoyaltyReward[];
 }
 
 export interface ReferralRecord {

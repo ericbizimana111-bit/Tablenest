@@ -21,8 +21,8 @@ import { Referral, ReferralSchema } from '../referrals/referral.schema';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET', 'tablenest_secret_key_2024'),
-        signOptions: { expiresIn: '7d' },
+        secret: configService.get<string>('JWT_SECRET', 'tablenest_dev_secret_change_me'),
+        signOptions: { expiresIn: configService.get<string>('JWT_EXPIRES_IN', '7d') as any },
       }),
       inject: [ConfigService],
     }),

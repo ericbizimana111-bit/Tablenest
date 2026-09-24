@@ -3,8 +3,11 @@ import {
   IsBoolean,
   IsIn,
   IsNumber,
+  IsObject,
   IsOptional,
   IsString,
+  Max,
+  MaxLength,
   Min,
   MinLength,
   ValidateIf,
@@ -14,19 +17,22 @@ const PRICE_RANGES = ['$', '$$', '$$$', '$$$$'] as const;
 
 export class CreateRestaurantDto {
   @IsString()
-  @MinLength(1)
+  @MinLength(2)
+  @MaxLength(100)
   name: string;
 
   @IsString()
-  @MinLength(1)
+  @MinLength(2)
   cuisineType: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(2000)
   description?: string;
 
   @IsNumber()
   @Min(1)
+  @Max(2000)
   seatingCapacity: number;
 
   @IsOptional()
@@ -34,7 +40,7 @@ export class CreateRestaurantDto {
   priceRange?: string;
 
   @IsString()
-  @MinLength(1)
+  @MinLength(3)
   address: string;
 
   @IsOptional()
@@ -50,12 +56,49 @@ export class CreateRestaurantDto {
   phone?: string;
 
   @IsOptional()
+  @IsString()
+  email?: string;
+
+  @IsOptional()
+  @IsString()
+  website?: string;
+
+  @IsOptional()
   @IsBoolean()
   dineIn?: boolean;
 
   @IsOptional()
   @IsBoolean()
   delivery?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  pickup?: boolean;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  deliveryFee?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  minOrder?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(0.4)
+  taxRate?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(5)
+  prepTime?: number;
+
+  @IsOptional()
+  @IsObject()
+  openingHours?: Record<string, { open: string; close: string; closed: boolean }>;
 
   @IsOptional()
   @IsArray()
@@ -71,7 +114,8 @@ export class CreateRestaurantDto {
 export class UpdateRestaurantDto {
   @IsOptional()
   @IsString()
-  @MinLength(1)
+  @MinLength(2)
+  @MaxLength(100)
   name?: string;
 
   @IsOptional()
@@ -80,11 +124,13 @@ export class UpdateRestaurantDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(2000)
   description?: string;
 
   @IsOptional()
   @IsNumber()
   @Min(1)
+  @Max(2000)
   seatingCapacity?: number;
 
   @IsOptional()
@@ -108,12 +154,53 @@ export class UpdateRestaurantDto {
   phone?: string;
 
   @IsOptional()
+  @IsString()
+  email?: string;
+
+  @IsOptional()
+  @IsString()
+  website?: string;
+
+  @IsOptional()
   @IsBoolean()
   dineIn?: boolean;
 
   @IsOptional()
   @IsBoolean()
   delivery?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  pickup?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  acceptingOrders?: boolean;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  deliveryFee?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  minOrder?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(0.4)
+  taxRate?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(5)
+  prepTime?: number;
+
+  @IsOptional()
+  @IsObject()
+  openingHours?: Record<string, { open: string; close: string; closed: boolean }>;
 
   @IsOptional()
   @IsArray()

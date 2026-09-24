@@ -1,237 +1,167 @@
 import React, { useState } from 'react';
-import { Home, Briefcase, Plus, Pencil, Trash2, CreditCard } from 'lucide-react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Home, Plus, Trash2, CreditCard, Star } from 'lucide-react';
+import { usersAPI } from '../../../shared/services/api';
+import { Spinner } from '../../../shared/components/ui/index';
+import type { Address, PaymentMethod } from '../../../shared/types/user.types';
 import toast from 'react-hot-toast';
-// Re-export from the existing AddressesPaymentsPage (plural)
-// This file exists to match the spec's folder structure which uses 'AddressesPaymentPage'
 
+type AddressForm = { label: string; street: string; city: string; state: string; zip: string; isDefault: boolean };
+type CardForm = { number: string; expiry: string; isDefault: boolean };
 
-
-type DisplayAddress = {
-    id: string;
-    label: string;
-    icon: 'home' | 'work' | 'other';
-    address: string;
-    city: string;
-    country: string;
-    isDefault: boolean;
-};
-
-type DisplayCard = {
-    id: string;
-    last4: string;
-    holder: string;
-    expiry: string;
-    brand: 'Visa' | 'Mastercard' | 'Amex' | 'Card';
-    isPrimary: boolean;
-};
-
-type AddressForm = { label: string; street: string; apt: string; city: string; postalCode: string };
-
-type CardForm = { number: string; name: string; expiry: string; cvv: string; zip: string };
-
-
-
+const emptyAddr: AddressForm = { label: 'Home', street: '', city: '', state: '', zip: '', isDefault: false };
+const emptyCard: CardForm = { number: '', expiry: '', isDefault: false };
 
 export default function AddressesPaymentsPage() {
-    const [addresses, setAddresses] = useState<DisplayAddress[]>([]);
-    const [cards, setCards] = useState<DisplayCard[]>([]);
+    const qc = useQueryClient();
     const [showAddrForm, setShowAddrForm] = useState(false);
     const [showCardForm, setShowCardForm] = useState(false);
-    const [addrForm, setAddrForm] = useState<AddressForm>({ label: '', street: '', apt: '', city: '', postalCode: '' });
-    const [cardForm, setCardForm] = useState<CardForm>({ number: '', name: '', expiry: '', cvv: '', zip: '' });
+    const [addrForm, setAddrForm] = useState<AddressForm>(emptyAddr);
+    const [cardForm, setCardForm] = useState<CardForm>(emptyCard);
 
-    const addAddress = () => {
-        setAddresses(a => [...a, { id: Date.now().toString(), label: addrForm.label, icon: 'home', address: `${addrForm.street}${addrForm.apt ? ', ' + addrForm.apt : ''}`, city: `${addrForm.city} ${addrForm.postalCode}`, country: 'United States', isDefault: false }]);
-        setAddrForm({ label: '', street: '', apt: '', city: '', postalCode: '' });
-        setShowAddrForm(false);
-        toast.success('Address saved!');
-    };
+    const { data: addrData, isLoading: loadingAddr } = useQuery<{ addresses: Address[] }>({ queryKey: ['addresses'], queryFn: () => usersAPI.getAddresses().then((r) => r.data) });
+    const { data: cardData, isLoading: loadingCards } = useQuery<{ paymentMethods: PaymentMethod[] }>({ queryKey: ['payment-methods'], queryFn: () => usersAPI.getPaymentMethods().then((r) => r.data) });
+    const addresses = addrData?.addresses || [];
+    const cards = cardData?.paymentMethods || [];
 
-    const addCard = () => {
-        setCards(c => [...c, { id: Date.now().toString(), last4: cardForm.number.slice(-4) || '0000', holder: cardForm.name.toUpperCase(), expiry: cardForm.expiry, brand: 'Card', isPrimary: false }]);
-        setCardForm({ number: '', name: '', expiry: '', cvv: '', zip: '' });
-        setShowCardForm(false);
-        toast.success('Card added!');
-    };
+    const addAddrMut = useMutation({
+        mutationFn: () => usersAPI.addAddress(addrForm),
+        onSuccess: () => { qc.invalidateQueries({ queryKey: ['addresses'] }); setAddrForm(emptyAddr); setShowAddrForm(false); toast.success('Address saved'); },
+        onError: (e: any) => toast.error(e.response?.data?.message || 'Could not save address'),
+    });
+    const setDefaultAddrMut = useMutation({
+        mutationFn: (i: number) => usersAPI.setDefaultAddress(i),
+        onSuccess: () => qc.invalidateQueries({ queryKey: ['addresses'] }),
+    });
+    const deleteAddrMut = useMutation({
+        mutationFn: (i: number) => usersAPI.deleteAddress(i),
+        onSuccess: () => { qc.invalidateQueries({ queryKey: ['addresses'] }); toast.success('Address removed'); },
+    });
 
-    const setPrimary = (id: string) => setCards(c => c.map(card => ({ ...card, isPrimary: card.id === id })));
-    const setDefaultAddr = (id: string) => setAddresses(a => a.map(addr => ({ ...addr, isDefault: addr.id === id })));
+    const addCardMut = useMutation({
+        mutationFn: () => {
+            const [expiryMonth, expiryYear] = cardForm.expiry.split('/').map((s) => s.trim());
+            return usersAPI.addPaymentMethod({ cardNumber: cardForm.number.replace(/\s/g, ''), expiryMonth, expiryYear, isDefault: cardForm.isDefault });
+        },
+        onSuccess: () => { qc.invalidateQueries({ queryKey: ['payment-methods'] }); setCardForm(emptyCard); setShowCardForm(false); toast.success('Card added'); },
+        onError: (e: any) => toast.error(e.response?.data?.message || 'Could not add card'),
+    });
+    const deleteCardMut = useMutation({
+        mutationFn: (i: number) => usersAPI.deletePaymentMethod(i),
+        onSuccess: () => { qc.invalidateQueries({ queryKey: ['payment-methods'] }); toast.success('Card removed'); },
+    });
+    const setDefaultCardMut = useMutation({
+        mutationFn: (i: number) => usersAPI.setDefaultPaymentMethod(i),
+        onSuccess: () => qc.invalidateQueries({ queryKey: ['payment-methods'] }),
+    });
 
     return (
-        <div className="fade-in">
+        <div className="animate-fade-up">
             <div style={{ marginBottom: 24 }}>
-                <h1 style={{ fontSize: 24, fontWeight: 700 }}>Addresses & Payments</h1>
-                <p style={{ fontSize: 14, color: '#475569', marginTop: 2 }}>Manage your delivery locations and payment methods.</p>
+                <h1 style={{ fontSize: 24, fontWeight: 700 }}>Addresses & payments</h1>
+                <p style={{ fontSize: 14, color: 'var(--color-ink-mute)', marginTop: 2 }}>Manage your delivery locations and payment methods.</p>
             </div>
 
-            {/* Saved Addresses */}
             <div style={{ marginBottom: 32 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                    <div>
-                        <h2 style={{ fontSize: 18, fontWeight: 700 }}>Saved Addresses</h2>
-                        <p style={{ fontSize: 13, color: '#475569' }}>Manage your delivery and billing locations.</p>
-                    </div>
-                    <button onClick={() => setShowAddrForm(!showAddrForm)}
-                        style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 16px', background: '#F97316', color: 'white', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>
-                        <Plus size={14} /> Add New Address
-                    </button>
+                    <h2 style={{ fontSize: 18, fontWeight: 700 }}>Saved addresses</h2>
+                    <button onClick={() => setShowAddrForm((s) => !s)} className="btn btn-primary btn-sm"><Plus size={14} /> Add address</button>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: showAddrForm ? 14 : 0 }}>
-                    {addresses.map(addr => (
-                        <div key={addr.id} style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 18 }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                    {addr.icon === 'home' ? <Home size={16} color="#F97316" /> : <Briefcase size={16} color="#F97316" />}
-                                    <span style={{ fontWeight: 700, fontSize: 15 }}>{addr.label}</span>
-                                    {addr.isDefault && <span style={{ background: '#DCFCE7', color: '#16A34A', fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 9999 }}>DEFAULT</span>}
+                {loadingAddr ? <Spinner /> : (
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }} className="two-col">
+                        {addresses.map((addr, i) => (
+                            <div key={i} className="card" style={{ padding: 18 }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                        <Home size={16} color="var(--color-brand-500)" />
+                                        <span style={{ fontWeight: 700, fontSize: 15 }}>{addr.label}</span>
+                                        {addr.isDefault && <span className="badge badge-green">Default</span>}
+                                    </div>
+                                    <button onClick={() => deleteAddrMut.mutate(i)} className="btn-icon" style={{ color: '#c0271b' }}><Trash2 size={14} /></button>
                                 </div>
-                                <div style={{ display: 'flex', gap: 6 }}>
-                                    <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#475569', padding: 4 }}><Pencil size={14} /></button>
-                                    <button onClick={() => setAddresses(a => a.filter(x => x.id !== addr.id))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#DC2626', padding: 4 }}><Trash2 size={14} /></button>
-                                </div>
+                                <div style={{ fontSize: 13.5, color: 'var(--color-ink-soft)', marginBottom: 12 }}>{addr.street}, {addr.city}{addr.state ? `, ${addr.state}` : ''} {addr.zip}</div>
+                                {!addr.isDefault && (
+                                    <button onClick={() => setDefaultAddrMut.mutate(i)} className="btn btn-ghost btn-sm" style={{ color: 'var(--color-brand-600)', padding: 0 }}>Set as default</button>
+                                )}
                             </div>
-                            <div style={{ fontSize: 14, color: '#475569', marginBottom: 2 }}>{addr.address}</div>
-                            <div style={{ fontSize: 13, color: '#475569', marginBottom: 2 }}>{addr.city}</div>
-                            <div style={{ fontSize: 13, color: '#475569', marginBottom: 12 }}>{addr.country}</div>
-                            {!addr.isDefault && (
-                                <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13 }}>
-                                    <input type="checkbox" checked={addr.isDefault} onChange={() => setDefaultAddr(addr.id)} style={{ accentColor: '#F97316' }} />
-                                    Set as default
-                                </label>
-                            )}
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                        {addresses.length === 0 && !showAddrForm && <div style={{ color: 'var(--color-ink-mute)', fontSize: 13.5 }}>No saved addresses yet.</div>}
+                    </div>
+                )}
 
                 {showAddrForm && (
-                    <div style={{ background: 'white', borderRadius: 12, border: '2px dashed #E2E8F0', padding: 24, marginTop: 14 }}>
-                        <div style={{ fontWeight: 600, fontSize: 15, color: '#F97316', marginBottom: 16 }}>New Address</div>
+                    <div className="card" style={{ padding: 22, marginTop: 14, border: '2px dashed var(--color-brand-300)' }}>
+                        <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--color-brand-600)', marginBottom: 14 }}>New address</div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
-                            <div>
-                                <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>Label (e.g. Home, Office)</label>
-                                <input value={addrForm.label} onChange={e => setAddrForm(f => ({ ...f, label: e.target.value }))} placeholder="Gym, Parents House..."
-                                    style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E2E8F0', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
-                            </div>
-                            <div>
-                                <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>Street Address</label>
-                                <input value={addrForm.street} onChange={e => setAddrForm(f => ({ ...f, street: e.target.value }))} placeholder="123 Main St"
-                                    style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E2E8F0', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
-                            </div>
+                            <div><label className="label">Label</label><input value={addrForm.label} onChange={(e) => setAddrForm((f) => ({ ...f, label: e.target.value }))} placeholder="Home, Office…" className="input" /></div>
+                            <div><label className="label">Street address</label><input value={addrForm.street} onChange={(e) => setAddrForm((f) => ({ ...f, street: e.target.value }))} placeholder="123 Main St" className="input" /></div>
                         </div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 16 }}>
-                            <div>
-                                <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>Apt / Suite</label>
-                                <input value={addrForm.apt} onChange={e => setAddrForm(f => ({ ...f, apt: e.target.value }))} placeholder="Apt 4C"
-                                    style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E2E8F0', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
-                            </div>
-                            <div>
-                                <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>City</label>
-                                <input value={addrForm.city} onChange={e => setAddrForm(f => ({ ...f, city: e.target.value }))} placeholder="New York"
-                                    style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E2E8F0', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
-                            </div>
-                            <div>
-                                <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>Postal Code</label>
-                                <input value={addrForm.postalCode} onChange={e => setAddrForm(f => ({ ...f, postalCode: e.target.value }))} placeholder="10001"
-                                    style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E2E8F0', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
-                            </div>
+                            <div><label className="label">City</label><input value={addrForm.city} onChange={(e) => setAddrForm((f) => ({ ...f, city: e.target.value }))} className="input" /></div>
+                            <div><label className="label">State</label><input value={addrForm.state} onChange={(e) => setAddrForm((f) => ({ ...f, state: e.target.value }))} className="input" /></div>
+                            <div><label className="label">ZIP</label><input value={addrForm.zip} onChange={(e) => setAddrForm((f) => ({ ...f, zip: e.target.value }))} className="input" /></div>
                         </div>
                         <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-                            <button onClick={() => setShowAddrForm(false)} style={{ padding: '9px 18px', border: '1px solid #E2E8F0', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins' }}>Cancel</button>
-                            <button onClick={addAddress} style={{ padding: '9px 18px', background: '#F97316', color: 'white', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>Save Address</button>
+                            <button onClick={() => setShowAddrForm(false)} className="btn btn-outline">Cancel</button>
+                            <button onClick={() => addAddrMut.mutate()} disabled={!addrForm.street || !addrForm.city || addAddrMut.isPending} className="btn btn-primary">{addAddrMut.isPending ? 'Saving…' : 'Save address'}</button>
                         </div>
                     </div>
                 )}
             </div>
 
-            {/* Payment Methods */}
             <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                    <div>
-                        <h2 style={{ fontSize: 18, fontWeight: 700 }}>Payment Methods</h2>
-                        <p style={{ fontSize: 13, color: '#475569' }}>Securely manage your saved credit and debit cards.</p>
-                    </div>
-                    <button onClick={() => setShowCardForm(!showCardForm)}
-                        style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 16px', background: '#F97316', color: 'white', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>
-                        <Plus size={14} /> Add Payment Method
-                    </button>
+                    <h2 style={{ fontSize: 18, fontWeight: 700 }}>Payment methods</h2>
+                    <button onClick={() => setShowCardForm((s) => !s)} className="btn btn-primary btn-sm"><Plus size={14} /> Add card</button>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: showCardForm ? 14 : 0 }}>
-                    {cards.map(card => (
-                        <div key={card.id} style={{ borderRadius: 12, border: '1px solid #E2E8F0', padding: 18, background: card.isPrimary ? '#172033' : 'white' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}>
-                                <span style={{ fontSize: 11, fontWeight: 600, color: card.isPrimary ? '#94A3B8' : '#475569', letterSpacing: '0.08em' }}>
-                                    {card.isPrimary ? 'PRIMARY CARD' : card.brand}
-                                </span>
-                                <div style={{ display: 'flex', gap: 6 }}>
-                                    <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: card.isPrimary ? '#475569' : '#475569', padding: 4 }}><Pencil size={14} /></button>
-                                    <button onClick={() => setCards(c => c.filter(x => x.id !== card.id))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#DC2626', padding: 4 }}><Trash2 size={14} /></button>
+                {loadingCards ? <Spinner /> : (
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }} className="two-col">
+                        {cards.map((card, i) => (
+                            <div key={i} className="card" style={{ padding: 18, background: card.isDefault ? 'var(--color-ink)' : '#fff', color: card.isDefault ? '#fff' : 'inherit' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 18 }}>
+                                    <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', opacity: 0.8 }}>{card.isDefault ? 'DEFAULT CARD' : card.brand.toUpperCase()}</span>
+                                    <button onClick={() => deleteCardMut.mutate(i)} className="btn-icon" style={{ color: card.isDefault ? '#fff' : '#c0271b' }}><Trash2 size={14} /></button>
                                 </div>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-                                <CreditCard size={20} color={card.isPrimary ? 'white' : '#475569'} />
-                                <span style={{ fontWeight: 600, fontSize: 16, color: card.isPrimary ? 'white' : '#0F172A', letterSpacing: '0.1em' }}>
-                                    ···· {card.last4}
-                                </span>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <div>
-                                    <div style={{ fontSize: 11, color: card.isPrimary ? '#94A3B8' : '#94A3B8', marginBottom: 2 }}>Card Holder</div>
-                                    <div style={{ fontSize: 13, fontWeight: 700, color: card.isPrimary ? 'white' : '#0F172A', letterSpacing: '0.05em' }}>{card.holder}</div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+                                    <CreditCard size={20} />
+                                    <span style={{ fontWeight: 700, fontSize: 17, letterSpacing: '0.1em' }}>···· {card.last4}</span>
                                 </div>
-                                <div>
-                                    <div style={{ fontSize: 11, color: card.isPrimary ? '#94A3B8' : '#94A3B8', marginBottom: 2 }}>Expires</div>
-                                    <div style={{ fontSize: 13, fontWeight: 700, color: card.isPrimary ? 'white' : '#0F172A' }}>{card.expiry}</div>
-                                </div>
+                                <div style={{ fontSize: 12, opacity: 0.75 }}>Expires {card.expiryMonth}/{card.expiryYear}</div>
+                                {!card.isDefault && (
+                                    <button onClick={() => setDefaultCardMut.mutate(i)} className="btn btn-ghost btn-sm" style={{ marginTop: 10, padding: 0, color: 'var(--color-brand-600)' }}>
+                                        <Star size={12} /> Set as default
+                                    </button>
+                                )}
                             </div>
-                            {!card.isPrimary && (
-                                <button onClick={() => setPrimary(card.id)} style={{ marginTop: 12, width: '100%', padding: '6px', border: 'none', background: 'none', color: '#F97316', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>
-                                    Set as primary
-                                </button>
-                            )}
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                        {cards.length === 0 && !showCardForm && <div style={{ color: 'var(--color-ink-mute)', fontSize: 13.5 }}>No saved cards yet.</div>}
+                    </div>
+                )}
 
                 {showCardForm && (
-                    <div style={{ background: 'white', borderRadius: 12, border: '2px dashed #E2E8F0', padding: 24, marginTop: 14 }}>
-                        <div style={{ fontWeight: 600, fontSize: 15, color: '#F97316', marginBottom: 16 }}>Add Payment Method</div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
-                            <div style={{ gridColumn: '1 / -1' }}>
-                                <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>Card Number</label>
-                                <div style={{ position: 'relative' }}>
-                                    <CreditCard size={15} color="#94A3B8" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)' }} />
-                                    <input value={cardForm.number} onChange={e => setCardForm(f => ({ ...f, number: e.target.value }))} placeholder="0000 0000 0000 0000" maxLength={19}
-                                        style={{ width: '100%', padding: '9px 12px 9px 36px', border: '1.5px solid #E2E8F0', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
-                                </div>
+                    <div className="card" style={{ padding: 22, marginTop: 14, border: '2px dashed var(--color-brand-300)' }}>
+                        <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--color-brand-600)', marginBottom: 14 }}>Add card</div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12, marginBottom: 16 }}>
+                            <div>
+                                <label className="label">Card number</label>
+                                <input value={cardForm.number} onChange={(e) => setCardForm((f) => ({ ...f, number: e.target.value }))} placeholder="4242 4242 4242 4242" maxLength={19} className="input" />
                             </div>
                             <div>
-                                <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>Cardholder Name</label>
-                                <input value={cardForm.name} onChange={e => setCardForm(f => ({ ...f, name: e.target.value }))} placeholder="Full Name"
-                                    style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E2E8F0', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
+                                <label className="label">Expiry (MM/YY)</label>
+                                <input value={cardForm.expiry} onChange={(e) => setCardForm((f) => ({ ...f, expiry: e.target.value }))} placeholder="12/28" maxLength={5} className="input" />
                             </div>
                         </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 16 }}>
-                            {([
-                                { label: 'Expiry Date', key: 'expiry', placeholder: 'MM/YY' },
-                                { label: 'CVV', key: 'cvv', placeholder: '***' },
-                                { label: 'Billing ZIP', key: 'zip', placeholder: '10001' },
-                            ] as Array<{ label: string; key: keyof CardForm; placeholder: string }>).map(f => (
-                                <div key={f.key}>
-                                    <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 5 }}>{f.label}</label>
-                                    <input value={cardForm[f.key]} onChange={e => setCardForm(p => ({ ...p, [f.key]: e.target.value }))} placeholder={f.placeholder}
-                                        style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E2E8F0', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
-                                </div>
-                            ))}
-                        </div>
                         <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-                            <button onClick={() => setShowCardForm(false)} style={{ padding: '9px 18px', border: '1px solid #E2E8F0', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins' }}>Cancel</button>
-                            <button onClick={addCard} style={{ padding: '9px 18px', background: '#F97316', color: 'white', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>Add Card</button>
+                            <button onClick={() => setShowCardForm(false)} className="btn btn-outline">Cancel</button>
+                            <button onClick={() => addCardMut.mutate()} disabled={cardForm.number.length < 12 || !cardForm.expiry.includes('/') || addCardMut.isPending} className="btn btn-primary">{addCardMut.isPending ? 'Adding…' : 'Add card'}</button>
                         </div>
+                        <p style={{ fontSize: 11.5, color: 'var(--color-ink-mute)', marginTop: 10 }}>Only the card brand and last 4 digits are stored — never the full number.</p>
                     </div>
                 )}
             </div>
+            <style>{`@media (max-width: 700px) { .two-col { grid-template-columns: 1fr !important; } }`}</style>
         </div>
     );
 }

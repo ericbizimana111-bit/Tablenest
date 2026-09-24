@@ -1,206 +1,202 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Pencil, Trash2 } from 'lucide-react';
-import { menuAPI, restaurantsAPI } from '../../../shared/services/api';
+import { Pencil, Trash2, Plus, ImagePlus, UtensilsCrossed } from 'lucide-react';
+import { menuAPI, restaurantsAPI, uploadsAPI } from '../../../shared/services/api';
 import { useAuthStore } from '../../../shared/store/authStore';
-import { Modal, Spinner, Toggle } from '../../../shared/components/ui/index';
+import { Modal, Spinner, Toggle, EmptyState } from '../../../shared/components/ui/index';
+import type { MenuCategory, MenuItem } from '../../../shared/types/restaurant.types';
 import toast from 'react-hot-toast';
 
-type MenuCategory = { _id: string; name: string; count?: number };
-type MenuItem = { _id: string; name: string; price?: string | number; description?: string; image?: string; categoryId?: string; isSoldOut?: boolean; isAvailable?: boolean };
-type ItemForm = { name: string; price: string; description: string; image: string };
+type ItemForm = { name: string; price: string; description: string; image: string; categoryId: string };
+const emptyItem: ItemForm = { name: '', price: '', description: '', image: '', categoryId: '' };
 
 export default function MenuManagement() {
     const { user } = useAuthStore();
     const qc = useQueryClient();
-    const [activeCategory, setActiveCategory] = useState<MenuCategory | null>(null);
+    const fileRef = useRef<HTMLInputElement>(null);
+    const [apiRestaurantId, setApiRestaurantId] = useState('');
+    const [activeCategory, setActiveCategory] = useState<string | null>(null);
     const [showItemModal, setShowItemModal] = useState(false);
     const [showCatModal, setShowCatModal] = useState(false);
     const [editItem, setEditItem] = useState<MenuItem | null>(null);
-    const [itemForm, setItemForm] = useState<ItemForm>({ name: '', price: '', description: '', image: '' });
+    const [itemForm, setItemForm] = useState<ItemForm>(emptyItem);
     const [catName, setCatName] = useState('');
+    const [uploading, setUploading] = useState(false);
 
-    const { data: myRestaurant } = useQuery<{ _id: string }>({
-        queryKey: ['my-restaurant'],
-        queryFn: () => restaurantsAPI.getMyRestaurant().then(r => r.data),
-        enabled: !user?.restaurantId,
-        staleTime: 1000 * 60 * 5,
-    });
+    useEffect(() => {
+        if (!user?.restaurantId) {
+            restaurantsAPI.getMyRestaurant().then((r) => r.data?._id && setApiRestaurantId(r.data._id)).catch(() => undefined);
+        }
+    }, [user]);
+    const restaurantId = user?.restaurantId?.toString() || apiRestaurantId;
 
-    const restaurantId = user?.restaurantId?.toString() || myRestaurant?._id || '';
-
-    const { data: categories = [] } = useQuery({
+    const { data: categories = [] } = useQuery<MenuCategory[]>({
         queryKey: ['menu-categories', restaurantId],
-        queryFn: () => menuAPI.getCategories(restaurantId).then(r => r.data),
+        queryFn: () => menuAPI.getCategories(restaurantId).then((r) => r.data),
         enabled: !!restaurantId,
     });
 
-    const { data: items = [], isLoading } = useQuery({
-        queryKey: ['menu-items', restaurantId, activeCategory?._id],
-        queryFn: () => menuAPI.getItems(restaurantId, activeCategory?._id).then(r => r.data),
+    const { data: items = [], isLoading } = useQuery<MenuItem[]>({
+        queryKey: ['menu-items', restaurantId],
+        queryFn: () => menuAPI.getItems(restaurantId).then((r) => r.data),
         enabled: !!restaurantId,
     });
 
-    const toggleMut = useMutation({
-        mutationFn: (id: string) => menuAPI.toggleAvailability(id),
-        onSuccess: () => qc.invalidateQueries({ queryKey: ['menu-items'] }),
-    });
-
-    const deleteMut = useMutation({
-        mutationFn: (id: string) => menuAPI.deleteItem(id),
-        onSuccess: () => { qc.invalidateQueries({ queryKey: ['menu-items'] }); toast.success('Item deleted'); },
-    });
+    const toggleMut = useMutation({ mutationFn: (id: string) => menuAPI.toggleAvailability(id), onSuccess: () => qc.invalidateQueries({ queryKey: ['menu-items'] }) });
+    const deleteMut = useMutation({ mutationFn: (id: string) => menuAPI.deleteItem(id), onSuccess: () => { qc.invalidateQueries({ queryKey: ['menu-items'] }); toast.success('Item deleted'); } });
 
     const saveItemMut = useMutation({
-        mutationFn: (data: ItemForm) => editItem
-            ? menuAPI.updateItem(editItem._id, data)
-            : menuAPI.createItem({ ...data, restaurantId, categoryId: activeCategory?._id }),
+        mutationFn: (data: ItemForm) => {
+            const payload = { name: data.name, price: Number(data.price), description: data.description, image: data.image, categoryId: data.categoryId };
+            return editItem ? menuAPI.updateItem(editItem._id, payload) : menuAPI.createItem(payload);
+        },
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: ['menu-items'] });
-            setShowItemModal(false);
-            setEditItem(null);
-            setItemForm({ name: '', price: '', description: '', image: '' });
+            setShowItemModal(false); setEditItem(null); setItemForm(emptyItem);
             toast.success(editItem ? 'Item updated' : 'Item created');
         },
+        onError: (e: any) => toast.error(e.response?.data?.message || 'Could not save item'),
     });
 
     const saveCatMut = useMutation({
-        mutationFn: () => menuAPI.createCategory({ name: catName, restaurantId }),
+        mutationFn: () => menuAPI.createCategory({ name: catName }),
         onSuccess: () => { qc.invalidateQueries({ queryKey: ['menu-categories'] }); setShowCatModal(false); setCatName(''); toast.success('Category added'); },
+        onError: (e: any) => toast.error(e.response?.data?.message || 'Could not add category'),
+    });
+    const deleteCatMut = useMutation({
+        mutationFn: (id: string) => menuAPI.deleteCategory(id),
+        onSuccess: () => { qc.invalidateQueries({ queryKey: ['menu-categories'] }); setActiveCategory(null); toast.success('Category deleted'); },
+        onError: (e: any) => toast.error(e.response?.data?.message || 'Could not delete — remove its dishes first'),
     });
 
     const openEdit = (item: MenuItem) => {
         setEditItem(item);
-        setItemForm({ name: item.name, price: item.price?.toString() || '', description: item.description || '', image: item.image || '' });
+        setItemForm({ name: item.name, price: item.price?.toString() || '', description: item.description || '', image: item.image || '', categoryId: item.categoryId });
+        setShowItemModal(true);
+    };
+    const openAdd = () => {
+        setEditItem(null);
+        setItemForm({ ...emptyItem, categoryId: activeCategory || categories[0]?._id || '' });
         setShowItemModal(true);
     };
 
-    const allItems = (items.length ? items : []).filter((i: MenuItem) =>
-        !activeCategory || i.categoryId === activeCategory._id || !activeCategory._id
-    );
-    const allCategories = categories.length ? categories : [];
+    const onPickImage = async (file: File) => {
+        setUploading(true);
+        try {
+            const res = await uploadsAPI.uploadImage(file);
+            setItemForm((f) => ({ ...f, image: res.data.url }));
+        } catch { toast.error('Upload failed'); } finally { setUploading(false); }
+    };
+
+    const visibleItems = activeCategory ? items.filter((i) => i.categoryId === activeCategory) : items;
+    const countFor = (catId: string) => items.filter((i) => i.categoryId === catId).length;
 
     return (
-        <div className="fade-in">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
+        <div className="animate-fade-up">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
                 <div>
-                    <h1 style={{ fontSize: 24, fontWeight: 700 }}>Menu Management</h1>
-                    <p style={{ fontSize: 14, color: '#475569', marginTop: 2 }}>Configure your restaurant's offerings and availability.</p>
+                    <h1 style={{ fontSize: 24, fontWeight: 700 }}>Menu management</h1>
+                    <p style={{ fontSize: 14, color: 'var(--color-ink-mute)', marginTop: 2 }}>Configure your restaurant's dishes and availability.</p>
                 </div>
                 <div style={{ display: 'flex', gap: 10 }}>
-                    <button onClick={() => setShowCatModal(true)}
-                        style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 16px', border: '1.5px solid #E2E8F0', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 500 }}>
-                        + Add Category
-                    </button>
-                    <button onClick={() => { setEditItem(null); setItemForm({ name: '', price: '', description: '', image: '' }); setShowItemModal(true); }}
-                        style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 16px', background: '#F97316', color: 'white', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>
-                        + Add Item
-                    </button>
+                    <button onClick={() => setShowCatModal(true)} className="btn btn-outline btn-sm"><Plus size={14} /> Category</button>
+                    <button onClick={openAdd} disabled={!categories.length} className="btn btn-primary btn-sm"><Plus size={14} /> Dish</button>
                 </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 20 }}>
-                {/* Category sidebar */}
-                <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 12, height: 'fit-content' }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', letterSpacing: '0.08em', padding: '4px 8px', marginBottom: 6 }}>CATEGORIES</div>
-                    {allCategories.map((cat: MenuCategory) => {
-                        const count = [].filter(i => i.categoryId === cat._id).length || cat.count || 0;
-                        const isActive = activeCategory?._id === cat._id || (!activeCategory && cat._id === allCategories[0]?._id);
+            <div style={{ display: 'grid', gridTemplateColumns: '210px 1fr', gap: 20 }} className="menu-layout">
+                <div className="card" style={{ padding: 10, height: 'fit-content' }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-ink-mute)', letterSpacing: '0.08em', padding: '6px 8px' }}>CATEGORIES</div>
+                    <div onClick={() => setActiveCategory(null)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '9px 10px', borderRadius: 8, cursor: 'pointer', marginBottom: 2, background: !activeCategory ? 'var(--color-brand-100)' : 'transparent', color: !activeCategory ? 'var(--color-brand-700)' : 'var(--color-ink-soft)' }}>
+                        <span style={{ fontSize: 13.5, fontWeight: !activeCategory ? 700 : 500 }}>All dishes</span>
+                        <span style={{ fontSize: 12, background: !activeCategory ? 'var(--color-brand-500)' : 'var(--color-sand)', color: !activeCategory ? '#fff' : 'var(--color-ink-soft)', padding: '1px 7px', borderRadius: 9999 }}>{items.length}</span>
+                    </div>
+                    {categories.map((cat) => {
+                        const isActive = activeCategory === cat._id;
                         return (
-                            <div key={cat._id} onClick={() => setActiveCategory(isActive ? null : cat)}
-                                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '9px 10px', borderRadius: 8, cursor: 'pointer', marginBottom: 2, background: isActive ? '#FEE2E2' : 'transparent', color: isActive ? '#F97316' : '#475569' }}>
-                                <span style={{ fontSize: 14, fontWeight: isActive ? 600 : 400 }}>{cat.name}</span>
-                                <span style={{ fontSize: 12, background: isActive ? '#F97316' : '#F1F5F9', color: isActive ? 'white' : '#475569', padding: '1px 7px', borderRadius: 9999 }}>{count || 12}</span>
+                            <div key={cat._id} onClick={() => setActiveCategory(cat._id)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '9px 10px', borderRadius: 8, cursor: 'pointer', marginBottom: 2, background: isActive ? 'var(--color-brand-100)' : 'transparent', color: isActive ? 'var(--color-brand-700)' : 'var(--color-ink-soft)' }}>
+                                <span style={{ fontSize: 13.5, fontWeight: isActive ? 700 : 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cat.name}</span>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+                                    <span style={{ fontSize: 12, background: isActive ? 'var(--color-brand-500)' : 'var(--color-sand)', color: isActive ? '#fff' : 'var(--color-ink-soft)', padding: '1px 7px', borderRadius: 9999 }}>{countFor(cat._id)}</span>
+                                    <button onClick={(e) => { e.stopPropagation(); if (confirm(`Delete category "${cat.name}"?`)) deleteCatMut.mutate(cat._id); }} className="btn-icon" style={{ width: 20, height: 20, padding: 0, color: '#c0271b' }}><Trash2 size={11} /></button>
+                                </span>
                             </div>
                         );
                     })}
+                    {categories.length === 0 && <div style={{ fontSize: 12.5, color: 'var(--color-ink-mute)', padding: 8 }}>Add a category to get started.</div>}
                 </div>
 
-                {/* Items grid */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
-                    {isLoading ? <Spinner /> : (
-                        (allItems.length ? allItems : []).map((item: MenuItem) => (
-                            <div key={item._id} style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', overflow: 'hidden' }}>
-                                <div style={{ position: 'relative' }}>
-                                    <img src={item.image || `https://images.unsplash.com/photo-${FOOD_IMGS[item.name?.charCodeAt(0) % FOOD_IMGS.length]}?w=400&q=80`}
-                                        alt={item.name} style={{ width: '100%', height: 160, objectFit: 'cover' }} />
-                                    {item.isSoldOut && (
-                                        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', background: 'rgba(0,0,0,0.7)', color: 'white', padding: '6px 14px', borderRadius: 6, fontSize: 13, fontWeight: 600 }}>Sold Out</div>
-                                    )}
-                                </div>
-                                <div style={{ padding: 14 }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
-                                        <div style={{ fontWeight: 600, fontSize: 15 }}>{item.name}</div>
-                                        <div style={{ color: '#F97316', fontWeight: 700, fontSize: 15 }}>${item.price}</div>
+                <div>
+                    {isLoading ? <Spinner /> : visibleItems.length === 0 ? (
+                        <EmptyState icon={<UtensilsCrossed size={40} />} title="No dishes here yet" message="Add your first dish to this category." action={categories.length ? { label: 'Add dish', onClick: openAdd } : undefined} />
+                    ) : (
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }} className="menu-items-grid">
+                            {visibleItems.map((item) => (
+                                <div key={item._id} className="card" style={{ overflow: 'hidden' }}>
+                                    <div style={{ position: 'relative', height: 150, background: 'var(--color-sand)' }}>
+                                        {item.image && <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                                        {item.isSoldOut && <div style={{ position: 'absolute', inset: 0, background: 'rgba(26,19,13,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 13 }}>Sold out</div>}
                                     </div>
-                                    <p style={{ fontSize: 12, color: '#94A3B8', marginBottom: 12, lineHeight: 1.5 }}>{item.description?.slice(0, 60) || 'Fresh seasonal ingredients...'}...</p>
-                                    <div style={{ borderTop: '1px solid #F1F5F9', paddingTop: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                            <div style={{ width: 8, height: 8, borderRadius: '50%', background: item.isAvailable !== false ? '#16A34A' : '#DC2626' }} />
-                                            <span style={{ fontSize: 12, color: item.isAvailable !== false ? '#16A34A' : '#DC2626' }}>
-                                                {item.isAvailable !== false ? 'Available' : 'Unavailable'}
-                                            </span>
+                                    <div style={{ padding: 14 }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6, gap: 8 }}>
+                                            <div style={{ fontWeight: 700, fontSize: 15 }}>{item.name}</div>
+                                            <div style={{ color: 'var(--color-brand-600)', fontWeight: 800, fontSize: 15, flexShrink: 0 }}>${item.price.toFixed(2)}</div>
                                         </div>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                            <button onClick={() => openEdit(item)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#475569', padding: 4 }}><Pencil size={14} /></button>
-                                            <button onClick={() => deleteMut.mutate(item._id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#DC2626', padding: 4 }}><Trash2 size={14} /></button>
-                                            <Toggle checked={item.isAvailable !== false} onChange={() => toggleMut.mutate(item._id)} />
+                                        <p style={{ fontSize: 12, color: 'var(--color-ink-mute)', marginBottom: 12, lineHeight: 1.5, minHeight: 32 }}>{item.description?.slice(0, 70) || 'No description'}</p>
+                                        <div style={{ borderTop: '1px solid var(--color-line)', paddingTop: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <span className={`badge ${item.isAvailable ? 'badge-green' : 'badge-gray'}`}>{item.isAvailable ? 'Available' : 'Hidden'}</span>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                                <button onClick={() => openEdit(item)} className="btn-icon" style={{ width: 26, height: 26, padding: 0, color: 'var(--color-ink-soft)' }}><Pencil size={13} /></button>
+                                                <button onClick={() => { if (confirm(`Delete "${item.name}"?`)) deleteMut.mutate(item._id); }} className="btn-icon" style={{ width: 26, height: 26, padding: 0, color: '#c0271b' }}><Trash2 size={13} /></button>
+                                                <Toggle checked={item.isAvailable} onChange={() => toggleMut.mutate(item._id)} />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))
+                            ))}
+                        </div>
                     )}
                 </div>
             </div>
 
-            {/* Add/Edit Item Modal */}
-            <Modal isOpen={showItemModal} onClose={() => setShowItemModal(false)} title={editItem ? 'Edit Menu Item' : 'Add Menu Item'}>
+            <Modal isOpen={showItemModal} onClose={() => setShowItemModal(false)} title={editItem ? 'Edit dish' : 'Add dish'}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                    {[
-                        { label: 'Item Name', key: 'name', type: 'text', placeholder: 'e.g. Signature Ribeye' },
-                        { label: 'Price ($)', key: 'price', type: 'number', placeholder: '0.00' },
-                    ].map(f => (
-                        <div key={f.key}>
-                            <label style={{ fontSize: 13, fontWeight: 500, color: '#475569', display: 'block', marginBottom: 5 }}>{f.label}</label>
-                            <input type={f.type} placeholder={f.placeholder} value={itemForm[f.key as keyof ItemForm]} onChange={e => setItemForm(p => ({ ...p, [f.key]: e.target.value } as ItemForm))}
-                                style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E2E8F0', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
+                    <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
+                        <div onClick={() => fileRef.current?.click()} style={{ width: 84, height: 84, borderRadius: 12, background: 'var(--color-sand)', flexShrink: 0, cursor: 'pointer', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px dashed var(--color-line)' }}>
+                            {itemForm.image ? <img src={itemForm.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <ImagePlus size={22} color="#b3a89d" />}
                         </div>
-                    ))}
-                    <div>
-                        <label style={{ fontSize: 13, fontWeight: 500, color: '#475569', display: 'block', marginBottom: 5 }}>Description</label>
-                        <textarea value={itemForm.description} onChange={e => setItemForm(p => ({ ...p, description: e.target.value }))} placeholder="Describe the dish..."
-                            style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E2E8F0', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none', minHeight: 80, resize: 'vertical' }} />
+                        <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => e.target.files?.[0] && onPickImage(e.target.files[0])} />
+                        <button onClick={() => fileRef.current?.click()} disabled={uploading} className="btn btn-outline btn-sm">{uploading ? 'Uploading…' : 'Upload photo'}</button>
                     </div>
                     <div>
-                        <label style={{ fontSize: 13, fontWeight: 500, color: '#475569', display: 'block', marginBottom: 5 }}>Image URL</label>
-                        <input type="text" placeholder="https://..." value={itemForm.image} onChange={e => setItemForm(p => ({ ...p, image: e.target.value }))}
-                            style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E2E8F0', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none' }} />
+                        <label className="label">Category</label>
+                        <select value={itemForm.categoryId} onChange={(e) => setItemForm((f) => ({ ...f, categoryId: e.target.value }))} className="input">
+                            {categories.map((c) => <option key={c._id} value={c._id}>{c.name}</option>)}
+                        </select>
                     </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}>
+                        <div><label className="label">Dish name</label><input value={itemForm.name} onChange={(e) => setItemForm((f) => ({ ...f, name: e.target.value }))} placeholder="e.g. Signature Ribeye" className="input" /></div>
+                        <div><label className="label">Price ($)</label><input type="number" min="0" step="0.01" value={itemForm.price} onChange={(e) => setItemForm((f) => ({ ...f, price: e.target.value }))} placeholder="0.00" className="input" /></div>
+                    </div>
+                    <div><label className="label">Description</label><textarea value={itemForm.description} onChange={(e) => setItemForm((f) => ({ ...f, description: e.target.value }))} placeholder="Describe the dish…" className="input" style={{ minHeight: 80, resize: 'vertical' }} /></div>
                     <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
-                        <button onClick={() => setShowItemModal(false)} style={{ flex: 1, padding: '10px', border: '1px solid #E2E8F0', borderRadius: 8, background: 'white', fontSize: 14, cursor: 'pointer', fontFamily: 'Poppins' }}>Cancel</button>
-                        <button onClick={() => saveItemMut.mutate(itemForm)}
-                            style={{ flex: 1, padding: '10px', background: '#F97316', color: 'white', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins' }}>
-                            {editItem ? 'Update Item' : 'Add Item'}
+                        <button onClick={() => setShowItemModal(false)} className="btn btn-outline" style={{ flex: 1 }}>Cancel</button>
+                        <button onClick={() => saveItemMut.mutate(itemForm)} disabled={!itemForm.name || !itemForm.price || !itemForm.categoryId || saveItemMut.isPending} className="btn btn-primary" style={{ flex: 1 }}>
+                            {editItem ? 'Update dish' : 'Add dish'}
                         </button>
                     </div>
                 </div>
             </Modal>
 
-            {/* Add Category Modal */}
-            <Modal isOpen={showCatModal} onClose={() => setShowCatModal(false)} title="Add Category" width={400}>
-                <div>
-                    <label style={{ fontSize: 13, fontWeight: 500, display: 'block', marginBottom: 6 }}>Category Name</label>
-                    <input value={catName} onChange={e => setCatName(e.target.value)} placeholder="e.g. Starters"
-                        style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #E2E8F0', borderRadius: 8, fontSize: 14, fontFamily: 'Poppins', outline: 'none', marginBottom: 16 }} />
-                    <div style={{ display: 'flex', gap: 10 }}>
-                        <button onClick={() => setShowCatModal(false)} style={{ flex: 1, padding: '9px', border: '1px solid #E2E8F0', borderRadius: 8, background: 'white', cursor: 'pointer', fontFamily: 'Poppins', fontSize: 13 }}>Cancel</button>
-                        <button onClick={() => saveCatMut.mutate()} style={{ flex: 1, padding: '9px', background: '#F97316', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins', fontSize: 13 }}>Add Category</button>
-                    </div>
+            <Modal isOpen={showCatModal} onClose={() => setShowCatModal(false)} title="Add category" width={400}>
+                <label className="label">Category name</label>
+                <input value={catName} onChange={(e) => setCatName(e.target.value)} placeholder="e.g. Starters" className="input" style={{ marginBottom: 16 }} />
+                <div style={{ display: 'flex', gap: 10 }}>
+                    <button onClick={() => setShowCatModal(false)} className="btn btn-outline" style={{ flex: 1 }}>Cancel</button>
+                    <button onClick={() => saveCatMut.mutate()} disabled={!catName.trim()} className="btn btn-primary" style={{ flex: 1 }}>Add category</button>
                 </div>
             </Modal>
+            <style>{`@media (max-width: 900px) { .menu-layout { grid-template-columns: 1fr !important; } } @media (max-width: 700px) { .menu-items-grid { grid-template-columns: 1fr 1fr !important; } }`}</style>
         </div>
     );
 }
-
-const FOOD_IMGS = ['1546069901-ba9599a7e63c', '1555396273-367ea4eb4db5', '1414235077428-338989a2e8c0', '1579871494447-9811cf80d66c'];

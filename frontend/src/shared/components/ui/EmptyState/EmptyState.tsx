@@ -5,46 +5,21 @@ interface EmptyStateProps {
     icon?: React.ReactNode;
     title: string;
     message?: string;
-    action?: {
-        label: string;
-        onClick: () => void;
-    };
+    action?: { label: string; onClick: () => void };
     variant?: 'default' | 'search' | 'error';
 }
 
 export function EmptyState({ icon, title, message, action, variant = 'default' }: EmptyStateProps) {
-    const defaultIcon = variant === 'search'
-        ? <SearchX size={48} />
-        : variant === 'error'
-            ? <AlertCircle size={48} />
-            : <Inbox size={48} />;
-
+    const defaultIcon = variant === 'search' ? <SearchX size={44} /> : variant === 'error' ? <AlertCircle size={44} /> : <Inbox size={44} />;
     return (
-        <div style={{
-            display: 'flex', flexDirection: 'column', alignItems: 'center',
-            justifyContent: 'center', padding: '60px 24px', textAlign: 'center',
-            fontFamily: 'Poppins, sans-serif',
-        }}>
-            <div style={{ color: '#CBD5E1', marginBottom: 16 }}>
+        <div className="animate-fade-up" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '64px 24px', textAlign: 'center' }}>
+            <div style={{ width: 84, height: 84, borderRadius: '50%', background: 'var(--color-sand)', color: '#b3a89d', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18 }}>
                 {icon || defaultIcon}
             </div>
-            <div style={{ fontSize: 16, fontWeight: 600, color: '#475569', marginBottom: 6 }}>
-                {title}
-            </div>
-            {message && (
-                <div style={{ fontSize: 14, color: '#94A3B8', maxWidth: 320, lineHeight: 1.6 }}>
-                    {message}
-                </div>
-            )}
+            <div style={{ fontSize: 16, fontWeight: 700, color: '#1a130d', marginBottom: 6 }}>{title}</div>
+            {message && <div style={{ fontSize: 14, color: '#857a70', maxWidth: 340, lineHeight: 1.6 }}>{message}</div>}
             {action && (
-                <button
-                    onClick={action.onClick}
-                    style={{
-                        marginTop: 20, padding: '9px 22px', background: '#F97316', color: 'white',
-                        border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600,
-                        cursor: 'pointer', fontFamily: 'Poppins, sans-serif',
-                    }}
-                >
+                <button onClick={action.onClick} className="btn btn-primary" style={{ marginTop: 22 }}>
                     {action.label}
                 </button>
             )}

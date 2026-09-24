@@ -1,194 +1,69 @@
+import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { restaurantsAPI } from '../../../shared/services/api';
 import { Star, MapPin, ArrowRight } from 'lucide-react';
+import { restaurantsAPI } from '../../../shared/services/api';
 import type { Restaurant } from '../../../shared/types/restaurant.types';
+import { useScrollReveal, useRevealChildren } from '../../../shared/hooks/useScrollReveal';
 
 export default function PopularRestaurants() {
     const navigate = useNavigate();
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const gridRef = useRef<HTMLDivElement>(null);
+    useScrollReveal(sectionRef, 'reveal');
+    useRevealChildren(gridRef, 'stagger');
 
-    const { data: featuredData } = useQuery({
+    const { data, isLoading } = useQuery<{ restaurants: Restaurant[] }>({
         queryKey: ['featured-restaurants-landing'],
-        queryFn: () => restaurantsAPI.getPublic({ limit: 4 }).then(r => r.data),
+        queryFn: () => restaurantsAPI.getFeatured(4).then((r) => r.data),
+        staleTime: 60_000,
     });
-    const restaurants: Restaurant[] = featuredData?.restaurants || [];
+    const restaurants = data?.restaurants || [];
+    if (!isLoading && restaurants.length === 0) return null;
 
     return (
-        <section style={{
-            width: '100%',
-            background: '#F8FAFC',
-            padding: '72px 0 80px',
-        }}>
-            <div style={{ maxWidth: 1280, margin: '0 auto', width: '100%', padding: '0 48px' }}>
-                <div style={{
-                    display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32,
-                }}>
-                <h2 style={{
-                    fontSize: 28, fontWeight: 800, color: '#0F172A', letterSpacing: '-0.5px',
-                }}>
-                    Popular Restaurants <span style={{ color: '#F97316' }}>Near You</span>
-                </h2>
-                <span
-                    onClick={() => navigate('/restaurants')}
-                    style={{
-                        color: '#F97316', fontSize: 14, cursor: 'pointer',
-                        display: 'flex', alignItems: 'center', gap: 6, fontWeight: 600,
-                    }}
-                >
-                    View All Restaurants <ArrowRight size={15} />
-                </span>
-            </div>
+        <section style={{ background: 'var(--color-cream)', padding: '72px 0 80px' }}>
+            <div ref={sectionRef} style={{ maxWidth: 1280, margin: '0 auto', padding: '0 40px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 32, flexWrap: 'wrap', gap: 12 }}>
+                    <h2 style={{ fontSize: 'clamp(24px,3vw,32px)', fontWeight: 700, color: 'var(--color-ink)' }}>
+                        Popular restaurants <span className="text-gradient">near you</span>
+                    </h2>
+                    <button onClick={() => navigate('/restaurants')} className="btn btn-ghost" style={{ color: 'var(--color-brand-600)' }}>
+                        View all <ArrowRight size={15} />
+                    </button>
+                </div>
 
-            <div className="restaurants-grid" style={{
-                display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20,
-            }}>
-                {restaurants.map((r: Restaurant) => (
-                    <div
-                        key={r._id}
-                        onClick={() => navigate(`/restaurants/${r._id}`)}
-                        className="restaurant-card card-lift"
-                        style={{
-                            border: '1px solid #E2E8F0', borderRadius: 14, overflow: 'hidden',
-                            cursor: 'pointer', background: 'white',
-                        }}
-                    >
-                        <div style={{ position: 'relative' }}>
-                            <img
-                                src={r.images?.[0] || 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=500&q=80'}
-                                alt={r.name}
-                                style={{ width: '100%', height: 170, objectFit: 'cover' }}
-                                loading="lazy"
-                            />
-                            <span style={{
-                                position: 'absolute', top: 10, left: 10,
-                                background: r.status === 'active' ? '#16A34A' : '#DC2626',
-                                color: 'white', fontSize: 10.5, fontWeight: 700,
-                                padding: '3px 10px', borderRadius: 9999,
-                                display: 'flex', alignItems: 'center', gap: 4,
-                            }}>
-                                <span style={{ fontSize: 7 }}>●</span>
-                                {r.status === 'active' ? 'Open' : 'Closed'}
-                            </span>
-                        </div>
-                        <div style={{ padding: '14px 16px 16px' }}>
-                            <div style={{
-                                display: 'flex', justifyContent: 'space-between', marginBottom: 4,
-                            }}>
-                                <span style={{
-                                    fontWeight: 700, fontSize: 15, color: '#0F172A',
-                                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                                }}>
-                                    {r.name}
-                                </span>
-                                <span style={{
-                                    display: 'flex', alignItems: 'center', gap: 3,
-                                    fontSize: 13, color: '#475569', fontWeight: 500, flexShrink: 0,
-                                }}>
-                                    <Star size={13} fill="#F59E0B" color="#F59E0B" />
-                                    {r.rating || 'N/A'}
-                                </span>
-                            </div>
-                            <div style={{
-                                fontSize: 12.5, color: '#94A3B8', marginBottom: 4,
-                                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                            }}>
-                                {r.cuisineType || 'Various'} · {r.priceRange || '$$'}
-                            </div>
-                            <div style={{
-                                display: 'flex', alignItems: 'center', gap: 4,
-                                fontSize: 12, color: '#94A3B8', marginBottom: 14,
-                            }}>
-                                <MapPin size={12} />
-                                {r.city || r.address || 'Location'}
-                            </div>
-                            <div style={{ display: 'flex', gap: 8 }}>
-                                <button
-                                    style={{
-                                        flex: 1, padding: '8px', border: '1px solid #E2E8F0', borderRadius: 8,
-                                        background: 'white', fontSize: 12, cursor: 'pointer',
-                                        fontFamily: 'Poppins', fontWeight: 600, color: '#475569',
-                                        transition: 'all 0.2s',
-                                    }}
-                                    onClick={e => { e.stopPropagation(); navigate(`/restaurants/${r._id}`); }}
-                                    onMouseEnter={e => { e.currentTarget.style.borderColor = '#F97316'; e.currentTarget.style.color = '#F97316'; }}
-                                    onMouseLeave={e => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.color = '#475569'; }}
-                                >
-                                    View Menu
-                                </button>
-                                <button
-                                    style={{
-                                        flex: 1, padding: '8px', border: 'none', borderRadius: 8,
-                                        background: '#F97316', color: 'white', fontSize: 12,
-                                        cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 600,
-                                        transition: 'background 0.2s',
-                                    }}
-                                    onClick={e => { e.stopPropagation(); navigate(`/restaurants/${r._id}`); }}
-                                    onMouseEnter={e => e.currentTarget.style.background = '#EA580C'}
-                                    onMouseLeave={e => e.currentTarget.style.background = '#F97316'}
-                                >
-                                    Book
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-
-                {/* Fallback cards if no API data */}
-                {restaurants.length === 0 && [
-                    { name: 'L\'atelier de la Cuisine', cuisine: 'French', city: 'New York', rating: 4.8, price: '$$$', img: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=500&q=80' },
-                    { name: 'Spice Route', cuisine: 'Indian', city: 'Chicago', rating: 4.6, price: '$$', img: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500&q=80' },
-                    { name: 'Sakura Sushi', cuisine: 'Japanese', city: 'San Francisco', rating: 4.9, price: '$$$', img: 'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=500&q=80' },
-                    { name: 'Mama Africa', cuisine: 'African', city: 'Houston', rating: 4.7, price: '$$', img: 'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=500&q=80' },
-                ].map((r, i) => (
-                    <div
-                        key={`fallback-${i}`}
-                        onClick={() => navigate('/restaurants')}
-                        className="restaurant-card card-lift"
-                        style={{
-                            border: '1px solid #E2E8F0', borderRadius: 14, overflow: 'hidden',
-                            cursor: 'pointer', background: 'white',
-                        }}
-                    >
-                        <div style={{ position: 'relative' }}>
-                            <img src={r.img} alt={r.name} style={{ width: '100%', height: 170, objectFit: 'cover' }} loading="lazy" />
-                            <span style={{
-                                position: 'absolute', top: 10, left: 10, background: '#16A34A',
-                                color: 'white', fontSize: 10.5, fontWeight: 700,
-                                padding: '3px 10px', borderRadius: 9999,
-                                display: 'flex', alignItems: 'center', gap: 4,
-                            }}>
-                                <span style={{ fontSize: 7 }}>●</span> Open
-                            </span>
-                        </div>
-                        <div style={{ padding: '14px 16px 16px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                                <span style={{ fontWeight: 700, fontSize: 15, color: '#0F172A' }}>{r.name}</span>
-                                <span style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 13, color: '#475569', fontWeight: 500 }}>
-                                    <Star size={13} fill="#F59E0B" color="#F59E0B" /> {r.rating}
-                                </span>
-                            </div>
-                            <div style={{ fontSize: 12.5, color: '#94A3B8', marginBottom: 4 }}>{r.cuisine} · {r.price}</div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: '#94A3B8', marginBottom: 14 }}>
-                                <MapPin size={12} /> {r.city}
-                            </div>
-                            <div style={{ display: 'flex', gap: 8 }}>
-                                <button style={{ flex: 1, padding: '8px', border: '1px solid #E2E8F0', borderRadius: 8, background: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 600, color: '#475569' }}>View Menu</button>
-                                <button style={{ flex: 1, padding: '8px', border: 'none', borderRadius: 8, background: '#F97316', color: 'white', fontSize: 12, cursor: 'pointer', fontFamily: 'Poppins', fontWeight: 600 }}>Book</button>
-                            </div>
-                        </div>
-                    </div>
-                ))}
+                <div ref={gridRef} className="stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
+                    {isLoading
+                        ? Array.from({ length: 4 }).map((_, i) => <div key={i} className="skeleton" style={{ height: 290, borderRadius: 18 }} />)
+                        : restaurants.map((r) => (
+                              <div key={r._id} onClick={() => navigate(`/restaurants/${r._id}`)} className="card card-hover" style={{ overflow: 'hidden', cursor: 'pointer' }}>
+                                  <div style={{ position: 'relative', height: 160 }}>
+                                      <img src={r.images?.[0]} alt={r.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                                      <span className={`badge ${(r as any).openNow !== false ? 'badge-green' : 'badge-gray'}`} style={{ position: 'absolute', top: 10, left: 10 }}>
+                                          {(r as any).openNow !== false ? 'Open now' : 'Closed'}
+                                      </span>
+                                  </div>
+                                  <div style={{ padding: '14px 16px 16px' }}>
+                                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 4 }}>
+                                          <span style={{ fontWeight: 700, fontSize: 15, color: 'var(--color-ink)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.name}</span>
+                                          <span style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 13, color: 'var(--color-ink-soft)', fontWeight: 600, flexShrink: 0 }}>
+                                              <Star size={13} fill="#f9691a" color="#f9691a" /> {r.rating || '—'}
+                                          </span>
+                                      </div>
+                                      <div style={{ fontSize: 12.5, color: 'var(--color-ink-mute)', marginBottom: 4 }}>{r.cuisineType} · {r.priceRange}</div>
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--color-ink-mute)', marginBottom: 14 }}>
+                                          <MapPin size={12} /> {r.city}
+                                      </div>
+                                      <div style={{ display: 'flex', gap: 8 }}>
+                                          <button className="btn btn-outline btn-sm" style={{ flex: 1 }} onClick={(e) => { e.stopPropagation(); navigate(`/restaurants/${r._id}?tab=menu`); }}>Menu</button>
+                                          <button className="btn btn-primary btn-sm" style={{ flex: 1 }} onClick={(e) => { e.stopPropagation(); navigate(`/restaurants/${r._id}?tab=book`); }}>Book</button>
+                                      </div>
+                                  </div>
+                              </div>
+                          ))}
                 </div>
             </div>
-
-            <style>{`
-                @media (max-width: 1024px) {
-                    .restaurants-grid { grid-template-columns: repeat(2, 1fr) !important; }
-                }
-                @media (max-width: 480px) {
-                    .restaurants-grid { grid-template-columns: 1fr !important; }
-                }
-            `}</style>
         </section>
     );
 }

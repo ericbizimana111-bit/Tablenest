@@ -56,6 +56,9 @@ export class Restaurant {
   @Prop({ default: null })
   email: string;
 
+  @Prop({ default: null })
+  website: string;
+
   @Prop({ default: 0 })
   seatingCapacity: number;
 
@@ -95,6 +98,24 @@ export class Restaurant {
 
   @Prop({ default: false })
   delivery: boolean;
+
+  @Prop({ default: false })
+  pickup: boolean;
+
+  @Prop({ default: true })
+  acceptingOrders: boolean;
+
+  @Prop({ default: 2.99, min: 0 })
+  deliveryFee: number;
+
+  @Prop({ default: 0, min: 0 })
+  minOrder: number;
+
+  @Prop({ default: 0.08, min: 0, max: 0.4 })
+  taxRate: number;
+
+  @Prop({ default: 30, min: 5 })
+  prepTime: number;
 
   @Prop({ default: null })
   commissionRate: number;

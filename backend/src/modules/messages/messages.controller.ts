@@ -14,13 +14,13 @@ export class MessagesController {
     }
 
     @Get('conversations/:id')
-    getMessages(@Param('id', MongoIdValidationPipe) id: string) {
-        return this.messagesService.getMessages(id);
+    getMessages(@Request() req, @Param('id', MongoIdValidationPipe) id: string) {
+        return this.messagesService.getMessages(req.user._id.toString(), id);
     }
 
     @Post('conversations')
-    createConversation(@Body() body: { participants: string[]; restaurantId?: string }) {
-        return this.messagesService.createConversation(body.participants, body.restaurantId);
+    createConversation(@Request() req, @Body() body: { participants: string[]; restaurantId?: string }) {
+        return this.messagesService.createConversation(req.user._id.toString(), body.participants, body.restaurantId);
     }
 
     @Post('send')

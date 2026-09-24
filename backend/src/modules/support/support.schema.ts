@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document, Types, Schema as MongooseSchema } from 'mongoose';
 
 export type SupportTicketDocument = SupportTicket & Document;
 
@@ -26,7 +26,7 @@ export enum TicketPriority {
 
 @Schema({ timestamps: true })
 export class SupportTicket {
-  @Prop({ required: true })
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId })
   userId: Types.ObjectId;
 
   @Prop({ required: true })
@@ -44,10 +44,10 @@ export class SupportTicket {
   @Prop({ default: TicketPriority.MEDIUM, enum: TicketPriority })
   priority: TicketPriority;
 
-  @Prop({ default: null })
+  @Prop({ default: null, type: MongooseSchema.Types.ObjectId })
   assignedTo: Types.ObjectId;
 
-  @Prop({ type: [{ authorId: Types.ObjectId, message: String, createdAt: Date }], default: [] })
+  @Prop({ type: [{ authorId: MongooseSchema.Types.ObjectId, message: String, createdAt: Date }], default: [] })
   responses: Array<{ authorId: Types.ObjectId; message: string; createdAt: Date }>;
 }
 
