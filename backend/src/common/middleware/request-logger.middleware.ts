@@ -9,7 +9,7 @@ const logger = new Logger('HTTP');
  * Only method, path (without query string), status, duration and user id are logged — never
  * bodies, headers or tokens.
  */
-export function requestLogger(req: Request & { id?: string; user?: { _id?: unknown } }, res: Response, next: NextFunction) {
+export function requestLogger(req: Request & { id?: string; user?: { _id?: { toString(): string } } }, res: Response, next: NextFunction) {
   const incoming = req.headers['x-request-id'];
   req.id = typeof incoming === 'string' && /^[\w-]{8,64}$/.test(incoming) ? incoming : randomUUID();
   res.setHeader('X-Request-Id', req.id);
@@ -18,7 +18,7 @@ export function requestLogger(req: Request & { id?: string; user?: { _id?: unkno
   res.on('finish', () => {
     const ms = Number(process.hrtime.bigint() - start) / 1e6;
     const path = (req.originalUrl || req.url).split('?')[0];
-    const uid = req.user?._id ? ` uid=${String(req.user._id)}` : '';
+    const uid = req.user?._id ? ` uid=${req.user._id.toString()}` : '';
     const line = `${req.method} ${path} ${res.statusCode} ${ms.toFixed(1)}ms${uid} rid=${req.id}`;
     if (res.statusCode >= 500) logger.error(line);
     else if (res.statusCode >= 400) logger.warn(line);

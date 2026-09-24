@@ -122,7 +122,7 @@ export class OrdersService {
       if (!d.isAvailable || d.isSoldOut) throw new BadRequestException(`"${d.name}" is currently unavailable`);
       const line = merged.get(d._id.toString())!;
       return {
-        menuItemId: d._id as Types.ObjectId,
+        menuItemId: d._id,
         name: d.name,
         price: d.price,
         quantity: line.quantity,
@@ -163,7 +163,7 @@ export class OrdersService {
       if (resolved) {
         discount = Math.min(resolved.amount, subtotal);
         promoCode = resolved.promo.code || null;
-        promotionId = resolved.promo._id as Types.ObjectId;
+        promotionId = resolved.promo._id;
       }
     }
 
@@ -177,7 +177,7 @@ export class OrdersService {
 
     return {
       restaurant,
-      items: items.map(({ categoryId: _c, ...rest }) => rest),
+      items: items.map((i) => ({ menuItemId: i.menuItemId, name: i.name, price: i.price, quantity: i.quantity, image: i.image, notes: i.notes })),
       subtotal,
       discount,
       promoCode,

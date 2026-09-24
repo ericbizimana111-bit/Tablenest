@@ -48,7 +48,7 @@ export class PlatformCharge {
   @Prop({ required: true })
   description: string;
 
-  @Prop({ default: null, enum: ['order', 'reservation', 'plan', 'sponsorship', null] })
+  @Prop({ type: String, default: null, enum: ['order', 'reservation', 'plan', 'sponsorship', null] })
   sourceType: string | null;
 
   @Prop({ default: null, type: MongooseSchema.Types.ObjectId })
@@ -61,8 +61,8 @@ export class PlatformCharge {
   @Prop({ default: ChargeStatus.UNPAID, enum: ChargeStatus, index: true })
   status: ChargeStatus;
 
-  @Prop({ default: null })
-  paidAt: Date;
+  @Prop({ type: Date, default: null })
+  paidAt: Date | null;
 
   @Prop({ type: Object, default: {} })
   meta: Record<string, unknown>;

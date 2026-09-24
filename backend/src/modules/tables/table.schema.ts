@@ -26,16 +26,16 @@ export class Table {
   status: TableStatus;
 
   @Prop({ default: null, type: MongooseSchema.Types.ObjectId, ref: 'User' })
-  currentGuestId: Types.ObjectId;
+  currentGuestId: Types.ObjectId | null;
 
-  @Prop({ default: null })
-  seatedAt: Date;
+  @Prop({ type: Date, default: null })
+  seatedAt: Date | null;
 
-  @Prop({ default: null })
-  serverNotes: string;
+  @Prop({ type: String, default: null })
+  serverNotes: string | null;
 
-  @Prop({ default: null })
-  qrCode: string;
+  @Prop({ type: String, default: null })
+  qrCode: string | null;
 }
 
 export const TableSchema = SchemaFactory.createForClass(Table);

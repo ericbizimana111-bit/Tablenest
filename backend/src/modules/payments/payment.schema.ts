@@ -18,13 +18,13 @@ export class Payment {
   userId: Types.ObjectId;
 
   @Prop({ default: null, type: MongooseSchema.Types.ObjectId, ref: 'Order', unique: true, sparse: true })
-  orderId: Types.ObjectId;
+  orderId: Types.ObjectId | null;
 
   @Prop({ required: true, min: 0 })
   amount: number;
 
-  @Prop({ default: null })
-  currency: string;
+  @Prop({ type: String, default: null })
+  currency: string | null;
 
   @Prop({ default: PaymentStatus.PENDING, enum: PaymentStatus })
   status: PaymentStatus;
@@ -33,8 +33,8 @@ export class Payment {
   method: string;
 
   /** Gateway reference, once an online payment provider is integrated. */
-  @Prop({ default: null })
-  transactionId: string;
+  @Prop({ type: String, default: null })
+  transactionId: string | null;
 }
 
 export const PaymentSchema = SchemaFactory.createForClass(Payment);

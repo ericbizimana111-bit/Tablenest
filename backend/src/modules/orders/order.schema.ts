@@ -40,20 +40,20 @@ export class Order {
   @Prop({ default: undefined })
   clientRequestId: string;
 
-  @Prop({ default: null })
-  customerName: string;
+  @Prop({ type: String, default: null })
+  customerName: string | null;
 
-  @Prop({ default: null })
-  customerPhone: string;
+  @Prop({ type: String, default: null })
+  customerPhone: string | null;
 
   @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'Restaurant', index: true })
   restaurantId: Types.ObjectId;
 
-  @Prop({ default: null })
-  restaurantName: string;
+  @Prop({ type: String, default: null })
+  restaurantName: string | null;
 
-  @Prop({ default: null })
-  restaurantImage: string;
+  @Prop({ type: String, default: null })
+  restaurantImage: string | null;
 
   @Prop({
     type: [
@@ -77,8 +77,8 @@ export class Order {
   @Prop({ default: 0 })
   discount: number;
 
-  @Prop({ default: null })
-  promoCode: string;
+  @Prop({ type: String, default: null })
+  promoCode: string | null;
 
   @Prop({ default: 0 })
   deliveryFee: number;
@@ -96,8 +96,8 @@ export class Order {
   @Prop({ required: true })
   total: number;
 
-  @Prop({ default: null })
-  currency: string;
+  @Prop({ type: String, default: null })
+  currency: string | null;
 
   /** Platform commission fixed at checkout (rate × food subtotal after discount). Not shown to customers. */
   @Prop({ default: 0, select: false })
@@ -107,11 +107,11 @@ export class Order {
   commissionAmount: number;
 
   /** Loyalty voucher consumed by this order, restored if the order is cancelled. */
-  @Prop({ default: null, select: false })
-  voucherCode: string;
+  @Prop({ type: String, default: null, select: false })
+  voucherCode: string | null;
 
   @Prop({ default: null, type: MongooseSchema.Types.ObjectId, select: false })
-  promotionId: Types.ObjectId;
+  promotionId: Types.ObjectId | null;
 
   @Prop({ default: OrderType.DELIVERY, enum: OrderType })
   orderType: OrderType;
@@ -122,26 +122,26 @@ export class Order {
   @Prop({ default: 'pending', enum: ['pending', 'paid', 'refunded'] })
   paymentStatus: string;
 
-  @Prop({ default: null })
-  cardLast4: string;
+  @Prop({ type: String, default: null })
+  cardLast4: string | null;
 
   @Prop({ default: OrderStatus.PLACED, enum: OrderStatus, index: true })
   status: OrderStatus;
 
-  @Prop({ default: null })
-  deliveryAddress: string;
+  @Prop({ type: String, default: null })
+  deliveryAddress: string | null;
 
-  @Prop({ default: null })
-  estimatedDelivery: Date;
+  @Prop({ type: Date, default: null })
+  estimatedDelivery: Date | null;
 
-  @Prop({ default: null })
-  notes: string;
+  @Prop({ type: String, default: null })
+  notes: string | null;
 
   @Prop({ default: null, type: MongooseSchema.Types.ObjectId, ref: 'Table' })
-  tableId: Types.ObjectId;
+  tableId: Types.ObjectId | null;
 
-  @Prop({ default: null })
-  tableNumber: string;
+  @Prop({ type: String, default: null })
+  tableNumber: string | null;
 
   @Prop({ default: false })
   reviewed: boolean;

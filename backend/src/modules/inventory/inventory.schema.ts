@@ -20,14 +20,14 @@ export class InventoryItem {
   @Prop({ default: 0 })
   minQuantity: number;
 
-  @Prop({ default: null })
-  supplier: string;
+  @Prop({ type: String, default: null })
+  supplier: string | null;
 
-  @Prop({ default: null })
-  cost: number;
+  @Prop({ type: Number, default: null })
+  cost: number | null;
 
-  @Prop({ default: null })
-  lastRestocked: Date;
+  @Prop({ type: Date, default: null })
+  lastRestocked: Date | null;
 }
 
 export const InventoryItemSchema = SchemaFactory.createForClass(InventoryItem);

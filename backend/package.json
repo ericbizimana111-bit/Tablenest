@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "0.0.1",
-  "description": "",
+  "description": "TableNest API — restaurant discovery, table booking and food ordering",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
@@ -12,14 +12,18 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "lint": "eslint \"{src,test}/**/*.ts\"",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:e2e": "jest --config ./test/jest-e2e.json --runInBand",
     "seed": "ts-node -r tsconfig-paths/register src/seed.ts",
-    "migrate:ids": "ts-node -r tsconfig-paths/register src/migrate-objectids.ts"
+    "migrate:ids": "ts-node -r tsconfig-paths/register src/scripts/migrate-objectids.ts",
+    "lint:fix": "eslint \"{src,test}/**/*.ts\" --fix",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test:all": "npm test && npm run test:e2e",
+    "migrate": "ts-node -r tsconfig-paths/register src/scripts/migrate.ts",
+    "admin:grant": "ts-node -r tsconfig-paths/register src/scripts/grant-admin.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.24",

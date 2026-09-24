@@ -45,7 +45,7 @@ export class SupportTicket {
   priority: TicketPriority;
 
   @Prop({ default: null, type: MongooseSchema.Types.ObjectId })
-  assignedTo: Types.ObjectId;
+  assignedTo: Types.ObjectId | null;
 
   @Prop({ type: [{ authorId: MongooseSchema.Types.ObjectId, message: String, createdAt: Date }], default: [] })
   responses: Array<{ authorId: Types.ObjectId; message: string; createdAt: Date }>;

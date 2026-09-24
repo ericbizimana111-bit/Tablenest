@@ -15,15 +15,15 @@ export class MenuItem {
   @Prop({ required: true, trim: true })
   name: string;
 
-  @Prop({ default: null })
-  description: string;
+  @Prop({ type: String, default: null })
+  description: string | null;
 
   /** Current price. Orders snapshot the price at checkout, so changing it never alters past orders. */
   @Prop({ required: true, min: 0 })
   price: number;
 
-  @Prop({ default: null })
-  image: string;
+  @Prop({ type: String, default: null })
+  image: string | null;
 
   @Prop({ default: true })
   isAvailable: boolean;

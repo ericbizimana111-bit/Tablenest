@@ -26,7 +26,7 @@ export class SettingsService {
       { $setOnInsert: { key: 'platform' } },
       { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
     );
-    const o = doc!.toObject();
+    const o = doc.toObject();
     const value: Settings = {
       currency: o.currency,
       requireRestaurantApproval: o.requireRestaurantApproval,

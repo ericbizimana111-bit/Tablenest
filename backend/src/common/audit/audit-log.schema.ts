@@ -9,15 +9,15 @@ export class AuditLog {
   @Prop({ default: null, type: MongooseSchema.Types.ObjectId, ref: 'User', index: true })
   actorId: Types.ObjectId | null;
 
-  @Prop({ default: null })
-  actorRole: string;
+  @Prop({ type: String, default: null })
+  actorRole: string | null;
 
   /** Dotted verb, e.g. `order.status_changed`, `admin.user_updated`. */
   @Prop({ required: true, index: true })
   action: string;
 
-  @Prop({ default: null })
-  targetType: string;
+  @Prop({ type: String, default: null })
+  targetType: string | null;
 
   @Prop({ default: null, type: MongooseSchema.Types.ObjectId, index: true })
   targetId: Types.ObjectId | null;

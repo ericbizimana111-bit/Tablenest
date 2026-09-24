@@ -5,7 +5,7 @@ import { isValidObjectId } from 'mongoose';
 export class MongoIdValidationPipe implements PipeTransform<string, string> {
     transform(value: string) {
         if (!value || !isValidObjectId(value)) {
-            throw new BadRequestException(`Invalid MongoDB ObjectId: ${value}`);
+            throw new BadRequestException('Invalid id');
         }
         return value;
     }

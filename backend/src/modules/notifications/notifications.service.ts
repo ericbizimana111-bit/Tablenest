@@ -14,12 +14,13 @@ export class NotificationsService {
   async findByUser(userId: string, query: { type?: string; page?: number; limit?: number }) {
     const page = Math.max(1, query.page || 1);
     const limit = Math.min(100, Math.max(1, query.limit || 20));
-    const filter: Record<string, unknown> = { userId: new Types.ObjectId(userId) };
+    const uid = new Types.ObjectId(userId);
+    const filter: Record<string, unknown> = { userId: uid };
     if (query.type && query.type !== 'all') filter.type = query.type;
     const [notifications, total, unread] = await Promise.all([
       this.notificationModel.find(filter).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit),
       this.notificationModel.countDocuments(filter),
-      this.notificationModel.countDocuments({ userId: filter.userId, isRead: false }),
+      this.notificationModel.countDocuments({ userId: uid, isRead: false }),
     ]);
     return { notifications, total, unread, page, pages: Math.ceil(total / limit) };
   }

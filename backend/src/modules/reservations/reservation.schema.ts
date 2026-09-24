@@ -25,22 +25,22 @@ export class Reservation {
   restaurantId: Types.ObjectId;
 
   @Prop({ default: null, type: MongooseSchema.Types.ObjectId, ref: 'Table' })
-  tableId: Types.ObjectId;
+  tableId: Types.ObjectId | null;
 
-  @Prop({ default: null })
-  tableNumber: string;
+  @Prop({ type: String, default: null })
+  tableNumber: string | null;
 
-  @Prop({ default: null })
-  restaurantName: string;
+  @Prop({ type: String, default: null })
+  restaurantName: string | null;
 
-  @Prop({ default: null })
-  restaurantImage: string;
+  @Prop({ type: String, default: null })
+  restaurantImage: string | null;
 
-  @Prop({ default: null })
-  customerName: string;
+  @Prop({ type: String, default: null })
+  customerName: string | null;
 
-  @Prop({ default: null })
-  customerPhone: string;
+  @Prop({ type: String, default: null })
+  customerPhone: string | null;
 
   /** UTC midnight of the booking's calendar day (in the restaurant's time zone), so the date never shifts. */
   @Prop({ required: true, index: true })
@@ -56,14 +56,14 @@ export class Reservation {
   @Prop({ default: ReservationStatus.PENDING, enum: ReservationStatus })
   status: ReservationStatus;
 
-  @Prop({ default: null })
-  specialRequests: string;
+  @Prop({ type: String, default: null })
+  specialRequests: string | null;
 
-  @Prop({ default: null })
-  cancelReason: string;
+  @Prop({ type: String, default: null })
+  cancelReason: string | null;
 
-  @Prop({ default: null, unique: true, sparse: true })
-  bookingRef: string;
+  @Prop({ type: String, default: null, unique: true, sparse: true })
+  bookingRef: string | null;
 
   @Prop({ type: [{ status: String, time: Date, by: String, _id: false }], default: [] })
   statusHistory: Array<{ status: string; time: Date; by: string }>;

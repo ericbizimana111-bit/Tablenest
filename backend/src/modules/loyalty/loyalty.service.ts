@@ -43,7 +43,7 @@ export class LoyaltyService {
 
   async getByUser(userId: string) {
     const [loyalty, { currency }] = await Promise.all([this.ensure(userId), this.settings.get()]);
-    const obj = loyalty!.toObject();
+    const obj = loyalty.toObject();
     const lifetime = Math.max(obj.lifetimePoints || 0, obj.points || 0);
     const tier = [...TIERS].reverse().find((t) => lifetime >= t.min) || TIERS[0];
     const next = TIERS[TIERS.findIndex((t) => t.name === tier.name) + 1] || null;

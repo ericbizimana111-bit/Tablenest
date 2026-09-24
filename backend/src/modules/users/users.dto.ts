@@ -1,3 +1,4 @@
+import { ApiHideProperty } from '@nestjs/swagger';
 import { IsBoolean, IsEmpty, IsIn, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 import { EmptyToNull, IMAGE_URL_RE, Trim } from '../../common/validation/validators';
 
@@ -119,10 +120,12 @@ export class UpdateAddressDto {
  */
 export class PaymentMethodDto {
   @IsEmpty({ message: 'Never send full card numbers to TableNest — only last4, brand and expiry' })
-  cardNumber?: never;
+  @ApiHideProperty()
+  cardNumber?: string;
 
   @IsEmpty({ message: 'Never send card security codes to TableNest' })
-  cvv?: never;
+  @ApiHideProperty()
+  cvv?: string;
 
   @Matches(/^\d{4}$/, { message: 'last4 must be the last 4 digits of the card' })
   last4: string;

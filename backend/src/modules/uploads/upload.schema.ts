@@ -6,7 +6,7 @@ export type UploadDocument = Upload & Document;
 /** Every stored file, who uploaded it and where it lives. Entities reference files by `url`. */
 @Schema({ timestamps: true })
 export class Upload {
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'User', index: true })
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'User' })
   ownerId: Types.ObjectId;
 
   /** Storage key (server-generated file name). Never derived from client input. */
@@ -22,11 +22,12 @@ export class Upload {
   @Prop({ required: true })
   size: number;
 
-  @Prop({ default: null })
-  originalName: string;
+  @Prop({ type: String, default: null })
+  originalName: string | null;
 
   @Prop({ default: 'local' })
   driver: string;
 }
 
 export const UploadSchema = SchemaFactory.createForClass(Upload);
+UploadSchema.index({ ownerId: 1, createdAt: -1 }, { name: 'upload_owner' });

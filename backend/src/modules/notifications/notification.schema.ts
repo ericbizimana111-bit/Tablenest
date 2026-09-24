@@ -32,8 +32,8 @@ export class Notification {
   @Prop({ default: false })
   isRead: boolean;
 
-  @Prop({ default: null })
-  link: string;
+  @Prop({ type: String, default: null })
+  link: string | null;
 
   @Prop({
     type: Object,

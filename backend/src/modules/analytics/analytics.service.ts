@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { ACTIVE_STATUSES } from '../orders/orders.service';
 import { Order, OrderDocument, OrderStatus } from '../orders/order.schema';
 import { Reservation, ReservationDocument, ReservationStatus } from '../reservations/reservation.schema';
@@ -40,7 +40,7 @@ export class AnalyticsService {
   }
 
   async getRestaurantDashboard(restaurant: RestaurantDocument) {
-    const rid = restaurant._id as Types.ObjectId;
+    const rid = restaurant._id;
     const timezone = this.tz(restaurant);
     const local = zonedNow(timezone);
     const startOfDay = startOfLocalDay(timezone);
@@ -101,7 +101,7 @@ export class AnalyticsService {
 
   async getOverview(restaurant: RestaurantDocument, days = 30) {
     days = Math.min(180, Math.max(7, days));
-    const rid = restaurant._id as Types.ObjectId;
+    const rid = restaurant._id;
     const timezone = this.tz(restaurant);
     const since = new Date(startOfLocalDay(timezone).getTime() - (days - 1) * DAY);
     const live = { restaurantId: rid, status: { $ne: OrderStatus.CANCELLED }, createdAt: { $gte: since } };

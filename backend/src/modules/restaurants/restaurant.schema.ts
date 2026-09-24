@@ -31,17 +31,17 @@ export class Restaurant {
   name: string;
 
   /** One restaurant per owner account. */
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'User', unique: true })
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'User' })
   ownerId: Types.ObjectId;
 
-  @Prop({ default: null })
-  description: string;
+  @Prop({ type: String, default: null })
+  description: string | null;
 
   @Prop({ required: true, trim: true })
   cuisineType: string;
 
-  @Prop({ default: null })
-  logo: string;
+  @Prop({ type: String, default: null })
+  logo: string | null;
 
   @Prop({ type: [String], default: [] })
   images: string[];
@@ -49,20 +49,20 @@ export class Restaurant {
   @Prop({ required: true })
   address: string;
 
-  @Prop({ default: null })
-  city: string;
+  @Prop({ type: String, default: null })
+  city: string | null;
 
-  @Prop({ default: null })
-  country: string;
+  @Prop({ type: String, default: null })
+  country: string | null;
 
-  @Prop({ default: null })
-  phone: string;
+  @Prop({ type: String, default: null })
+  phone: string | null;
 
-  @Prop({ default: null })
-  email: string;
+  @Prop({ type: String, default: null })
+  email: string | null;
 
-  @Prop({ default: null })
-  website: string;
+  @Prop({ type: String, default: null })
+  website: string | null;
 
   @Prop({ default: 0, min: 0 })
   seatingCapacity: number;
@@ -83,8 +83,8 @@ export class Restaurant {
   openingHours: Record<string, { open: string; close: string; closed: boolean }>;
 
   /** IANA zone (e.g. Africa/Kigali) used for opening hours and booking times. */
-  @Prop({ default: null })
-  timezone: string;
+  @Prop({ type: String, default: null })
+  timezone: string | null;
 
   @Prop({ default: true })
   dineIn: boolean;
@@ -110,7 +110,7 @@ export class Restaurant {
   @Prop({ default: 30, min: 5 })
   prepTime: number;
 
-  @Prop({ default: RestaurantPlan.STARTER, enum: RestaurantPlan })
+  @Prop({ type: String, default: RestaurantPlan.STARTER, enum: RestaurantPlan })
   plan: RestaurantPlan;
 
   /** Admin-negotiated commission override. `null` → the plan's rate applies. */
@@ -118,20 +118,21 @@ export class Restaurant {
   commissionRate: number | null;
 
   /** Paid placement: listed first in discovery while in the future. */
-  @Prop({ default: null, index: true })
-  sponsoredUntil: Date;
+  @Prop({ type: Date, default: null, index: true })
+  sponsoredUntil: Date | null;
 
   @Prop({ type: LocationSchema, default: () => ({ latitude: 0, longitude: 0 }) })
   location: Location;
 
-  @Prop({ default: null })
-  approvedAt: Date;
+  @Prop({ type: Date, default: null })
+  approvedAt: Date | null;
 
-  @Prop({ default: null })
-  rejectionReason: string;
+  @Prop({ type: String, default: null })
+  rejectionReason: string | null;
 }
 
 export const RestaurantSchema = SchemaFactory.createForClass(Restaurant);
+RestaurantSchema.index({ ownerId: 1 }, { unique: true, name: 'owner_unique' });
 RestaurantSchema.index({ status: 1, rating: -1, totalReviews: -1 });
 RestaurantSchema.index({ status: 1, cuisineType: 1 });
 RestaurantSchema.index({ status: 1, city: 1 });

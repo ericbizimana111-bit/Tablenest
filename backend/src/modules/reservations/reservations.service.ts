@@ -123,13 +123,13 @@ export class ReservationsService {
    * safe under concurrency: of two simultaneous requests for the last table, exactly one wins.
    */
   private async claim(restaurant: RestaurantDocument, date: string, startMin: number, guests: number, reservationId: Types.ObjectId) {
-    const key = { restaurantId: restaurant._id as Types.ObjectId, date: dayStart(date) };
+    const key = { restaurantId: restaurant._id, date: dayStart(date) };
     if (await this.tableModel.exists({ restaurantId: restaurant._id })) {
       const tables = await this.tableModel
         .find({ restaurantId: restaurant._id, status: { $ne: TableStatus.BLOCKED }, capacity: { $gte: guests } })
         .sort({ capacity: 1, tableNumber: 1 });
       for (const table of tables) {
-        if (await this.locks.lockTable(key, table._id as Types.ObjectId, startMin, guests, reservationId)) return { ok: true, table };
+        if (await this.locks.lockTable(key, table._id, startMin, guests, reservationId)) return { ok: true, table };
       }
       return { ok: false, table: null };
     }
@@ -151,7 +151,7 @@ export class ReservationsService {
 
     const [tables, locks] = await Promise.all([
       this.tableModel.find({ restaurantId: restaurant._id, status: { $ne: TableStatus.BLOCKED } }).lean(),
-      this.locks.forDay({ restaurantId: restaurant._id as Types.ObjectId, date: dayStart(date) }),
+      this.locks.forDay({ restaurantId: restaurant._id, date: dayStart(date) }),
     ]);
     const hasTables = tables.length > 0 || !!(await this.tableModel.exists({ restaurantId: restaurant._id }));
     const tableTaken = new Set(locks.filter((l) => l.tableId).map((l) => `${String(l.tableId)}:${l.slot}`));
@@ -258,7 +258,7 @@ export class ReservationsService {
     const time = dto.time ?? existing.time;
     const guests = dto.guests ?? existing.guests;
     const m = this.assertBookable(restaurant, date, time);
-    const rid = existing._id as Types.ObjectId;
+    const rid = existing._id;
 
     let table: TableDocument | null = null;
     if (await this.tableModel.exists({ restaurantId: restaurant._id })) {
@@ -266,7 +266,7 @@ export class ReservationsService {
       const res = await this.claim(restaurant, date, m, guests, rid);
       if (!res.ok) throw new ConflictException('That time is not available. Please choose another slot.');
       table = res.table;
-      await this.locks.releaseAll(rid, existing.guests, { tableId: table!._id as Types.ObjectId, date: dayStart(date), slots: slotsFor(m) });
+      await this.locks.releaseAll(rid, existing.guests, { tableId: table!._id, date: dayStart(date), slots: slotsFor(m) });
     } else {
       await this.locks.releaseAll(rid, existing.guests);
       const res = await this.claim(restaurant, date, m, guests, rid);
@@ -363,7 +363,7 @@ export class ReservationsService {
     const updated = await this.reservationModel.findOneAndUpdate({ _id: r._id, status: r.status }, update, { returnDocument: 'after' });
     if (!updated) throw new ConflictException('This booking was just updated — refresh and try again');
 
-    if (TERMINAL.includes(status)) await this.locks.releaseAll(r._id as Types.ObjectId, r.guests);
+    if (TERMINAL.includes(status)) await this.locks.releaseAll(r._id, r.guests);
     if (r.tableId) {
       if (status === ReservationStatus.ARRIVED) {
         await this.tableModel.updateOne({ _id: r.tableId }, { status: TableStatus.OCCUPIED, seatedAt: new Date(), currentGuestId: r.customerId });

@@ -11,8 +11,8 @@ export class Promotion {
   @Prop({ required: true, trim: true })
   name: string;
 
-  @Prop({ default: null })
-  description: string;
+  @Prop({ type: String, default: null })
+  description: string | null;
 
   @Prop({ default: 'percentage', enum: ['percentage', 'flat'] })
   discountType: string;
@@ -41,8 +41,8 @@ export class Promotion {
   @Prop({ default: true })
   isActive: boolean;
 
-  @Prop({ default: null, uppercase: true, trim: true })
-  code: string;
+  @Prop({ type: String, default: null, uppercase: true, trim: true })
+  code: string | null;
 }
 
 export const PromotionSchema = SchemaFactory.createForClass(Promotion);

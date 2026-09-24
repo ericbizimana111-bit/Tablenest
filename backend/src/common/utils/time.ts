@@ -64,18 +64,21 @@ export function startOfLocalDay(timeZone: string, now = new Date()) {
 /** Whether a restaurant is open at `now`, evaluated in the restaurant's own time zone. */
 export function isOpenAt(hours: WeeklyHours | undefined, timeZone: string, now = new Date()): boolean {
   const local = zonedNow(timeZone, now);
-  const today = hours?.[DAYS[local.dow]];
-  if (!today) return true; // no schedule configured → assume open
+  const mins = local.minutes;
+  if (!hours || !Object.keys(hours).length) return true; // no schedule configured → assume open
+
+  // Still inside yesterday's overnight shift (e.g. Friday 18:00 → 02:00, now Saturday 01:30)?
+  const yesterday = hours[DAYS[(local.dow + 6) % 7]];
+  if (yesterday && !yesterday.closed) {
+    const yOpen = toMinutes(yesterday.open || '00:00');
+    const yClose = toMinutes(yesterday.close || '23:59');
+    if (yClose <= yOpen && mins < yClose) return true;
+  }
+
+  const today = hours[DAYS[local.dow]];
+  if (!today) return true; // day not configured → assume open (previous behaviour)
   if (today.closed) return false;
   const open = toMinutes(today.open || '00:00');
   const close = toMinutes(today.close || '23:59');
-  const mins = local.minutes;
-  if (close > open) return mins >= open && mins < close;
-  // Overnight hours (e.g. 18:00 → 02:00). Also honour yesterday's overnight tail.
-  if (mins >= open) return true;
-  const yesterday = hours?.[DAYS[(local.dow + 6) % 7]];
-  if (!yesterday || yesterday.closed) return false;
-  const yOpen = toMinutes(yesterday.open || '00:00');
-  const yClose = toMinutes(yesterday.close || '23:59');
-  return yClose <= yOpen && mins < yClose;
+  return close > open ? mins >= open && mins < close : mins >= open; // overnight: open until midnight today
 }

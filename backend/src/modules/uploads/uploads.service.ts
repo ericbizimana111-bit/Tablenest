@@ -12,7 +12,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types, isValidObjectId } from 'mongoose';
 import { randomUUID } from 'crypto';
 import { Upload, UploadDocument } from './upload.schema';
-import { STORAGE_DRIVER, StorageDriver } from './storage/storage.driver';
+import { STORAGE_DRIVER } from './storage/storage.driver';
+import type { StorageDriver } from './storage/storage.driver';
 import { detectImage } from './image-signature';
 import { Restaurant, RestaurantDocument } from '../restaurants/restaurant.schema';
 import { MenuItem, MenuItemDocument } from '../menu/menu.schema';
@@ -106,7 +107,7 @@ export class UploadsService {
   }
 
   async listMine(user: Actor, page: number, limit: number) {
-    const filter = { ownerId: user._id };
+    const filter = { ownerId: new Types.ObjectId(user._id.toString()) };
     const [items, total] = await Promise.all([
       this.uploadModel.find(filter).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit),
       this.uploadModel.countDocuments(filter),

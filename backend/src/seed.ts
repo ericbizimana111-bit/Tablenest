@@ -321,7 +321,15 @@ function hours() {
   );
 }
 
+/**
+ * DEVELOPMENT ONLY. Wipes the target database and loads demo data. Refuses to run in production
+ * and requires an explicit `--wipe` flag so it can never be triggered by accident.
+ */
 async function seed() {
+  if (process.env.NODE_ENV === 'production') throw new Error('Refusing to seed: NODE_ENV=production');
+  if (!process.argv.includes('--wipe')) {
+    throw new Error(`Seeding DELETES every document in ${MONGODB_URI.replace(/\/\/[^@]*@/, '//***@')}.\nRe-run with: npm run seed -- --wipe`);
+  }
   console.log('Seeding TableNest database…');
   const conn = await mongoose.connect(MONGODB_URI);
   const m = (name: string): any => mongoose.model<any>(name, loose());
@@ -337,7 +345,7 @@ async function seed() {
   const custPw = await bcrypt.hash('customer123', 10);
   const customer: any = await User.create({
     fullName: 'Alex Thompson', email: 'customer@tablenest.com', password: custPw, role: 'customer', isActive: true,
-    phone: '+1 555 010 2030', activePlan: 'Gourmet Pro',
+    phone: '+1 555 010 2030', 
     notificationPrefs: { bookingConfirmation: true, marketing: false, orderTracking: true },
     addresses: [{ label: 'Home', street: '14 Maple Street', city: 'New York', state: 'NY', zip: '10001', isDefault: true }],
     paymentMethods: [{ brand: 'Visa', last4: '4242', expiryMonth: '12', expiryYear: '2030', isDefault: true }],
@@ -351,7 +359,7 @@ async function seed() {
 
   for (const spec of SPECS) {
     const owner: any = await User.create({
-      fullName: spec.owner.name, email: spec.owner.email, password: ownerPw, role: 'owner', isActive: true, activePlan: 'Business',
+      fullName: spec.owner.name, email: spec.owner.email, password: ownerPw, role: 'owner', isActive: true,
       notificationPrefs: { bookingConfirmation: true, marketing: false, orderTracking: true },
     });
     const restaurant: any = await Restaurant.create({

@@ -8,32 +8,32 @@ export class Review {
   @Prop({ required: true, type: MongooseSchema.Types.ObjectId, index: true })
   customerId: Types.ObjectId;
 
-  @Prop({ default: null })
-  customerName: string;
+  @Prop({ type: String, default: null })
+  customerName: string | null;
 
   @Prop({ required: true, type: MongooseSchema.Types.ObjectId, index: true })
   restaurantId: Types.ObjectId;
 
   @Prop({ default: null, type: MongooseSchema.Types.ObjectId })
-  orderId: Types.ObjectId;
+  orderId: Types.ObjectId | null;
 
   @Prop({ default: null, type: MongooseSchema.Types.ObjectId })
-  reservationId: Types.ObjectId;
+  reservationId: Types.ObjectId | null;
 
   @Prop({ required: true, min: 1, max: 5 })
   rating: number;
 
-  @Prop({ default: null })
-  comment: string;
+  @Prop({ type: String, default: null })
+  comment: string | null;
 
   @Prop({ type: [String], default: [] })
   images: string[];
 
-  @Prop({ default: null })
-  ownerReply: string;
+  @Prop({ type: String, default: null })
+  ownerReply: string | null;
 
-  @Prop({ default: null })
-  ownerRepliedAt: Date;
+  @Prop({ type: Date, default: null })
+  ownerRepliedAt: Date | null;
 }
 
 export const ReviewSchema = SchemaFactory.createForClass(Review);

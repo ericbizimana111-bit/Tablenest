@@ -9,7 +9,7 @@ export class Staff {
   restaurantId: Types.ObjectId;
 
   @Prop({ default: null, type: MongooseSchema.Types.ObjectId })
-  userId: Types.ObjectId;
+  userId: Types.ObjectId | null;
 
   @Prop({ required: true })
   name: string;
@@ -17,8 +17,8 @@ export class Staff {
   @Prop({ required: true })
   email: string;
 
-  @Prop({ default: null })
-  phone: string;
+  @Prop({ type: String, default: null })
+  phone: string | null;
 
   @Prop({ default: 'Server' })
   role: string;
@@ -26,8 +26,8 @@ export class Staff {
   @Prop({ default: true })
   isActive: boolean;
 
-  @Prop({ default: null })
-  avatar: string;
+  @Prop({ type: String, default: null })
+  avatar: string | null;
 }
 
 export const StaffSchema = SchemaFactory.createForClass(Staff);

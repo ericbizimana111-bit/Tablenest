@@ -35,20 +35,20 @@ export class User {
   @Prop({ default: UserRole.CUSTOMER, enum: UserRole, index: true })
   role: UserRole;
 
-  @Prop({ default: null })
-  phone: string;
+  @Prop({ type: String, default: null })
+  phone: string | null;
 
-  @Prop({ default: null })
-  avatar: string;
+  @Prop({ type: String, default: null })
+  avatar: string | null;
 
-  @Prop({ default: null })
-  address: string;
+  @Prop({ type: String, default: null })
+  address: string | null;
 
   @Prop({ default: true, index: true })
   isActive: boolean;
 
   @Prop({ default: null, type: MongooseSchema.Types.ObjectId, ref: 'Restaurant' })
-  restaurantId: Types.ObjectId;
+  restaurantId: Types.ObjectId | null;
 
   @Prop({ type: Object, default: { bookingConfirmation: true, marketing: false, orderTracking: true } })
   notificationPrefs: {
@@ -57,11 +57,11 @@ export class User {
     orderTracking: boolean;
   };
 
-  @Prop({ default: null, select: false })
-  resetPasswordToken: string;
+  @Prop({ type: String, default: null, select: false })
+  resetPasswordToken: string | null;
 
-  @Prop({ default: null, select: false })
-  resetPasswordExpires: Date;
+  @Prop({ type: Date, default: null, select: false })
+  resetPasswordExpires: Date | null;
 
   /** Bumped on password change/reset, logout-all and deactivation — invalidates every issued JWT. */
   @Prop({ default: 0, select: false })
@@ -70,11 +70,11 @@ export class User {
   @Prop({ default: 0, select: false })
   failedLoginAttempts: number;
 
-  @Prop({ default: null, select: false })
-  lockUntil: Date;
+  @Prop({ type: Date, default: null, select: false })
+  lockUntil: Date | null;
 
-  @Prop({ default: null })
-  lastLoginAt: Date;
+  @Prop({ type: Date, default: null })
+  lastLoginAt: Date | null;
 
   @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Restaurant' }], default: [] })
   favoriteRestaurantIds: Types.ObjectId[];

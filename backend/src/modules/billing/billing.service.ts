@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model, Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { ChargeStatus, ChargeType, PlatformCharge, PlatformChargeDocument } from './platform-charge.schema';
 import { Restaurant, RestaurantDocument, RestaurantStatus } from '../restaurants/restaurant.schema';
 import { RestaurantPlan } from '../settings/platform-settings.schema';
@@ -22,7 +22,7 @@ type OrderLike = {
   subtotal: number;
   discount: number;
 };
-type ReservationLike = { _id: unknown; restaurantId: Types.ObjectId; guests: number; bookingRef?: string };
+type ReservationLike = { _id: unknown; restaurantId: Types.ObjectId; guests: number; bookingRef?: string | null };
 
 @Injectable()
 export class BillingService {
@@ -97,19 +97,19 @@ export class BillingService {
   async chargeSubscriptions(actor: Actor, period = currentPeriod()) {
     if (!PERIOD_RE.test(period)) throw new BadRequestException('period must be YYYY-MM');
     const { plans } = await this.settings.get();
-    const paidPlans = Object.entries(plans).filter(([, p]) => p.monthlyFee > 0).map(([k]) => k);
+    const paidPlans = Object.entries(plans).filter(([, p]) => p.monthlyFee > 0).map(([k]) => k as RestaurantPlan);
     const restaurants = await this.restaurantModel.find({ status: RestaurantStatus.ACTIVE, plan: { $in: paidPlans } }).select('_id plan name');
     let created = 0;
     for (const r of restaurants) {
       const before = await this.chargeModel.exists({ dedupeKey: `subscription:${r._id.toString()}:${period}` });
       await this.add({
-        restaurantId: r._id as Types.ObjectId,
+        restaurantId: r._id,
         type: ChargeType.SUBSCRIPTION,
         amount: plans[r.plan].monthlyFee,
         period,
         description: `${r.plan[0].toUpperCase()}${r.plan.slice(1)} plan — ${period}`,
         sourceType: 'plan',
-        sourceId: r._id as Types.ObjectId,
+        sourceId: r._id,
         dedupeKey: `subscription:${r._id.toString()}:${period}`,
       });
       if (!before) created++;
@@ -138,7 +138,7 @@ export class BillingService {
     await this.restaurantModel.updateOne({ _id: restaurant._id }, { sponsoredUntil: until });
     const grantId = new Types.ObjectId();
     await this.add({
-      restaurantId: restaurant._id as Types.ObjectId,
+      restaurantId: restaurant._id,
       type: ChargeType.SPONSORSHIP,
       amount: sponsoredWeeklyFee * weeks,
       period: currentPeriod(),
@@ -152,7 +152,7 @@ export class BillingService {
     return { sponsoredUntil: until };
   }
 
-  private summarise(charges: Array<{ type: string; amount: number; status: string }>) {
+  private summarise(charges: Array<{ type: string; amount: number; status: ChargeStatus }>) {
     const byType: Record<string, number> = {};
     let unpaid = 0;
     let paid = 0;
@@ -193,7 +193,7 @@ export class BillingService {
   }
 
   async listCharges(filter: { restaurantId?: string; period?: string; status?: ChargeStatus; type?: ChargeType }, page: number, limit: number) {
-    const q: FilterQuery<PlatformChargeDocument> = {};
+    const q: Record<string, unknown> = {};
     if (filter.restaurantId) q.restaurantId = new Types.ObjectId(filter.restaurantId);
     if (filter.period) q.period = filter.period;
     if (filter.status) q.status = filter.status;
@@ -239,7 +239,7 @@ export class BillingService {
 
   /** Records payment received from a restaurant — for specific charges or a whole month. */
   async markPaid(actor: Actor, sel: { ids?: string[]; restaurantId?: string; period?: string }) {
-    const q: FilterQuery<PlatformChargeDocument> = { status: ChargeStatus.UNPAID };
+    const q: Record<string, unknown> = { status: ChargeStatus.UNPAID };
     if (sel.ids?.length) q._id = { $in: sel.ids.map((i) => new Types.ObjectId(i)) };
     else if (sel.restaurantId && sel.period) Object.assign(q, { restaurantId: new Types.ObjectId(sel.restaurantId), period: sel.period });
     else throw new BadRequestException('Provide charge ids, or restaurantId and period');

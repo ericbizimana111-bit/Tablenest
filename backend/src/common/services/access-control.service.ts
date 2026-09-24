@@ -40,13 +40,13 @@ export class AccessControlService {
   async managesRestaurant(user: Actor, restaurantId: string) {
     if (user.role === UserRole.ADMIN) return true;
     if (user.role !== UserRole.OWNER) return false;
-    return !!(await this.restaurantModel.exists({ _id: restaurantId, ownerId: user._id }));
+    return !!(await this.restaurantModel.exists({ _id: restaurantId, ownerId: user._id.toString() }));
   }
 
   /** The restaurant an owner manages. Always resolved from the database, never from client input. */
   async getOwnerRestaurantId(user: Actor): Promise<string> {
     if (user.role !== UserRole.OWNER) throw new ForbiddenException('Restaurant owner access required');
-    const restaurant = await this.restaurantModel.findOne({ ownerId: user._id }).select('_id');
+    const restaurant = await this.restaurantModel.findOne({ ownerId: user._id.toString() }).select('_id');
     if (!restaurant) throw new NotFoundException('Create your restaurant profile first');
     return restaurant._id.toString();
   }
