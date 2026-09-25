@@ -7,6 +7,7 @@ import { orderApi } from '@/lib/api';
 import { errorMessage } from '@/lib/http';
 import { cn, formatDateTime, timeAgo } from '@/lib/format';
 import { useMoney } from '@/lib/settings';
+import { useNow } from '@/lib/useNow';
 import type { Order, OrderStatus } from '@/lib/types';
 import { DashHead } from '@/layouts/DashboardLayout';
 import { OwnerGate } from '@/components/OwnerGate';
@@ -47,7 +48,8 @@ function Ticket({ o, onMove, onCancel, busy }: { o: Order; onMove: (s: OrderStat
   const money = useMoney();
   const next = nextStep(o);
   const Icon = TYPE_ICON[o.orderType];
-  const mins = Math.floor((Date.now() - new Date(o.createdAt).getTime()) / 60000);
+  const now = useNow();
+  const mins = Math.floor((now - new Date(o.createdAt).getTime()) / 60000);
   const late = o.status === 'placed' ? mins >= 5 : mins >= 40;
   return (
     <motion.article

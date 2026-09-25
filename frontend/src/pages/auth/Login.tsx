@@ -17,7 +17,8 @@ const schema = z.object({
 type Form = z.infer<typeof schema>;
 
 /** Only internal paths are allowed as a post-login destination. */
-export const safeNext = (next: string | null) => (next && next.startsWith('/') && !next.startsWith('//') ? next : null);
+/** Only same-site paths: rejects "//host", "/\host" (browsers treat both as another origin) and absolute URLs. */
+export const safeNext = (next: string | null) => (next && /^\/(?!\/)/.test(next) && !next.includes('\\') ? next : null);
 
 export default function Login() {
   const { signIn } = useAuth();

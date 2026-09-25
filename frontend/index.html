@@ -10,10 +10,19 @@
     <meta property="og:description" content="Discover restaurants, book a table and order food, all in one place." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..700,50;1,9..144,400..700,50&family=Instrument+Sans:wght@400..700&display=swap"
-      rel="stylesheet"
-    />
+    <!--
+      Brand fonts load after the page does, so a slow or blocked font CDN can never hold up first paint
+      (text renders in the fallback stack, then swaps). TODO when online: self-host via
+      @fontsource-variable/fraunces and @fontsource-variable/instrument-sans and drop this script.
+    -->
+    <script>
+      window.addEventListener('load', function () {
+        var l = document.createElement('link');
+        l.rel = 'stylesheet';
+        l.href = 'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..700,50;1,9..144,400..700,50&family=Instrument+Sans:wght@400..700&display=swap';
+        document.head.appendChild(l);
+      });
+    </script>
     <title>TableNest — Your table is ready</title>
   </head>
   <body>

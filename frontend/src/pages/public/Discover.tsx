@@ -53,7 +53,13 @@ export default function Discover() {
     if (date || guests) bookingIntent.set({ date: date || undefined, guests: guests ? Number(guests) : undefined });
   }, [params]);
 
-  useEffect(() => setDraft(params.get('search') || ''), [params]);
+  // Keep the search box in step with the URL (back/forward, links from elsewhere).
+  const urlSearch = params.get('search') || '';
+  const [syncedSearch, setSyncedSearch] = useState(urlSearch);
+  if (urlSearch !== syncedSearch) {
+    setSyncedSearch(urlSearch);
+    setDraft(urlSearch);
+  }
 
   const set = (key: string, value: string | undefined) => {
     const next = new URLSearchParams(params);

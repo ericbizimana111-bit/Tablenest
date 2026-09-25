@@ -44,7 +44,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           id={fid}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? `${fid}-err` : hint ? `${fid}-hint` : undefined}
-          className={cn('input-base', leading && 'pl-11', trailing && 'pr-12', error && 'border-tomato-400 focus:border-tomato-500 focus:ring-tomato-500/10')}
+          className={cn('input-base', !!leading && 'pl-11', !!trailing && 'pr-12', error && 'border-tomato-400 focus:border-tomato-500 focus:ring-tomato-500/10')}
           {...rest}
         />
         {trailing && <span className="absolute top-1/2 right-2 -translate-y-1/2">{trailing}</span>}

@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'motion/react';
@@ -78,7 +78,11 @@ export function DashboardLayout({ area }: { area: 'owner' | 'admin' }) {
   const hasRestaurant = area === 'owner' && !!restaurant;
   const active = useQuery({ queryKey: ['owner', 'orders', 'active-count'], queryFn: () => orderApi.kitchen({ status: 'placed', limit: 1 }), enabled: hasRestaurant, refetchInterval: 20_000 });
   const pending = useQuery({ queryKey: ['owner', 'res-stats'], queryFn: reservationApi.stats, enabled: hasRestaurant, refetchInterval: 30_000 });
-  useEffect(() => setMenu(false), [pathname]);
+  const [menuPath, setMenuPath] = useState(pathname);
+  if (menuPath !== pathname) {
+    setMenuPath(pathname);
+    setMenu(false);
+  }
 
   const groups: Array<{ title: string; items: Item[] }> =
     area === 'owner'

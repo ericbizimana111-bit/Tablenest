@@ -36,7 +36,7 @@ function IntentSearch() {
   const days = [
     { v: isoDay(0), l: 'Today' },
     { v: isoDay(1), l: 'Tomorrow' },
-    ...[2, 3, 4, 5].map((n) => ({ v: isoDay(n), l: new Date(Date.now() + n * 864e5).toLocaleDateString(undefined, { weekday: 'long' }) })),
+    ...[2, 3, 4, 5].map((n) => ({ v: isoDay(n), l: new Date(`${isoDay(n)}T12:00:00`).toLocaleDateString(undefined, { weekday: 'long' }) })),
   ];
 
   return (
@@ -204,11 +204,11 @@ export function Hero() {
 
           {star && (
             <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.85, ease: EASE }} className="absolute top-[16%] -left-4 sm:-left-14">
-              <Link to={`/restaurants/${star._id}`} className="group flex w-64 items-center gap-3 rounded-[20px] border border-line bg-card/95 p-2.5 pr-4 shadow-[var(--shadow-lift)] backdrop-blur transition hover:-translate-y-1">
+              <Link to={`/restaurants/${star._id}`} className="group flex w-72 items-center gap-3 rounded-[20px] border border-line bg-card/95 p-2.5 pr-4 shadow-[var(--shadow-lift)] backdrop-blur transition hover:-translate-y-1">
                 <Photo src={star.images?.[0]} alt={star.name} label={star.name} className="size-14 shrink-0 rounded-2xl" />
                 <div className="min-w-0 flex-1">
                   <p className="text-[10.5px] font-semibold tracking-[0.16em] text-ink-4 uppercase">Tonight's pick</p>
-                  <p className="truncate font-display text-[16px] text-ink">{star.name}</p>
+                  <p className="line-clamp-2 font-display text-[16px] leading-tight text-ink">{star.name}</p>
                   <p className={cn('text-[12px] font-semibold', openState(star).open ? 'text-herb-600' : 'text-ink-4')}>
                     {openState(star).label}
                     {star.city && <span className="font-normal text-ink-4"> · {star.city}</span>}

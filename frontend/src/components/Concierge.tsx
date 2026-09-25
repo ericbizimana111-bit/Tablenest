@@ -1,14 +1,15 @@
-import { Fragment, useEffect, useRef, useState, type ReactNode } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowUp, RotateCcw, Sparkles, X } from 'lucide-react';
+import { ArrowUp, RotateCcw, Sparkles, Star, X } from 'lucide-react';
 import { conciergeApi, type ConciergeMessage } from '@/lib/api';
 import { errorMessage } from '@/lib/http';
 import { cn } from '@/lib/format';
 import type { ConciergeSuggestion } from '@/lib/types';
 import { useExperience } from '@/stores/experience';
 import { Photo } from '@/ui/bits';
+import { RichText } from './RichText';
 import { LogoMark } from '@/ui/Logo';
 
 type Turn = ConciergeMessage & { suggestions?: ConciergeSuggestion[]; error?: boolean };
@@ -23,49 +24,6 @@ const load = (): Turn[] => {
   }
 };
 
-/** Renders the assistant's light markdown: **bold**, line breaks, lists and [links](/internal). No raw HTML. */
-function Rich({ text }: { text: string }) {
-  const inline = (s: string, key: string): ReactNode[] => {
-    const out: ReactNode[] = [];
-    const re = /\*\*([^*]+)\*\*|\[([^\]]+)\]\(([^)\s]+)\)/g;
-    let last = 0;
-    let m: RegExpExecArray | null;
-    let i = 0;
-    while ((m = re.exec(s))) {
-      if (m.index > last) out.push(s.slice(last, m.index));
-      if (m[1]) out.push(<strong key={`${key}b${i++}`}>{m[1]}</strong>);
-      else if (m[3].startsWith('/')) {
-        out.push(
-          <Link key={`${key}l${i++}`} to={m[3]} className="font-semibold text-herb-700 underline decoration-saffron-300 decoration-2 underline-offset-2">
-            {m[2]}
-          </Link>,
-        );
-      } else out.push(m[2]);
-      last = re.lastIndex;
-    }
-    if (last < s.length) out.push(s.slice(last));
-    return out;
-  };
-  const lines = text.split('\n');
-  return (
-    <>
-      {lines.map((line, i) => {
-        const bullet = /^\s*[-*•]\s+/.test(line);
-        const content = inline(line.replace(/^\s*[-*•]\s+/, ''), `k${i}`);
-        if (!line.trim()) return <div key={i} className="h-2" />;
-        return bullet ? (
-          <div key={i} className="flex gap-2 pl-1">
-            <span className="mt-2 size-1 shrink-0 rounded-full bg-saffron-500" />
-            <span>{content}</span>
-          </div>
-        ) : (
-          <p key={i}>{content}</p>
-        );
-      })}
-    </>
-  );
-}
-
 function Suggestion({ s }: { s: ConciergeSuggestion }) {
   return (
     <Link to={`/restaurants/${s._id}`} className="group w-48 shrink-0 overflow-hidden rounded-2xl border border-line bg-card transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
@@ -75,7 +33,15 @@ function Suggestion({ s }: { s: ConciergeSuggestion }) {
         <p className="truncate text-[12px] text-ink-3">
           {[s.cuisineType, s.priceRange, s.city].filter(Boolean).join(' · ')}
         </p>
-        <p className={cn('mt-1 text-[11px] font-semibold', s.openNow ? 'text-herb-600' : 'text-ink-4')}>{s.openNow ? 'Open now' : 'Closed now'}{s.rating ? ` · ★ ${s.rating.toFixed(1)}` : ''}</p>
+        <p className={cn('mt-1 inline-flex items-center gap-1 text-[11px] font-semibold', s.openNow ? 'text-herb-600' : 'text-ink-4')}>
+          {s.openNow ? 'Open now' : 'Closed now'}
+          {!!s.rating && (
+            <>
+              <span aria-hidden>·</span>
+              <Star className="size-3 fill-saffron-400 text-saffron-400" aria-hidden /> {s.rating.toFixed(1)}
+            </>
+          )}
+        </p>
       </div>
     </Link>
   );
@@ -140,14 +106,14 @@ export function Concierge() {
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
             transition={{ type: 'spring', stiffness: 380, damping: 26, delay: 0.4 }}
             onClick={() => setConcierge(true)}
-            className="group fixed right-4 bottom-[calc(max(10px,env(safe-area-inset-bottom))+84px)] z-40 flex items-center gap-2.5 rounded-full bg-herb-900 py-2.5 pr-5 pl-2.5 text-paper shadow-[var(--shadow-pop)] transition hover:bg-herb-800 md:right-6 md:bottom-6"
+            className="group fixed right-4 bottom-[calc(max(10px,env(safe-area-inset-bottom))+84px)] z-40 flex items-center gap-2.5 rounded-full bg-herb-900 p-2 text-paper md:py-2.5 md:pr-5 md:pl-2.5 shadow-[var(--shadow-pop)] transition hover:bg-herb-800 md:right-6 md:bottom-6"
             aria-label="Ask the TableNest concierge"
           >
             <span className="relative grid size-9 place-items-center rounded-full bg-saffron-400 text-herb-950">
               <Sparkles className="size-[18px] transition-transform duration-500 group-hover:rotate-[20deg]" />
               <span className="absolute inset-0 animate-ping rounded-full bg-saffron-400/40 [animation-duration:2.6s]" />
             </span>
-            <span className="text-sm font-semibold">Ask TableNest</span>
+            <span className="hidden text-sm font-semibold md:inline">Ask TableNest</span>
           </motion.button>
         )}
       </AnimatePresence>
@@ -213,7 +179,7 @@ export function Concierge() {
                         t.role === 'user' ? 'rounded-br-md bg-herb-900 text-paper' : t.error ? 'rounded-bl-md bg-tomato-50 text-tomato-700' : 'rounded-bl-md border border-line bg-card text-ink-2',
                       )}
                     >
-                      {t.role === 'user' ? t.content : <Rich text={t.content} />}
+                      {t.role === 'user' ? t.content : <RichText text={t.content} />}
                     </div>
                   </motion.div>
                   {!!t.suggestions?.length && (

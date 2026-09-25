@@ -18,5 +18,10 @@ export default defineConfig([
     languageOptions: {
       globals: globals.browser,
     },
+    rules: {
+      // Shared helpers (status labels, route tables) intentionally live next to their components.
+      // This only affects hot-reload granularity in development, so keep it visible as a warning.
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+    },
   },
 ])

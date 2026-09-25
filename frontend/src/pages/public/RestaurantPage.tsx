@@ -90,8 +90,14 @@ export default function RestaurantPage() {
           </div>
         )}
         {/* Gallery */}
-        <div className="grid h-[260px] gap-2 overflow-hidden rounded-[28px] sm:h-[380px] md:grid-cols-[2fr_1fr] md:grid-rows-2">
-          <motion.div initial={{ opacity: 0, scale: 1.03 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.9 }} className="relative md:row-span-2">
+        {/* One photo fills the frame, two sit side by side, three or more get the feature layout — never empty slots. */}
+        <div
+          className={cn(
+            'grid h-[260px] gap-2 overflow-hidden rounded-[28px] sm:h-[380px]',
+            images.length >= 3 ? 'md:grid-cols-[2fr_1fr] md:grid-rows-2' : images.length === 2 ? 'md:grid-cols-[3fr_2fr]' : '',
+          )}
+        >
+          <motion.div initial={{ opacity: 0, scale: 1.03 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.9 }} className={cn('relative', images.length >= 3 && 'md:row-span-2')}>
             <Photo src={images[0]} alt={r.name} label={r.name} className="size-full" />
           </motion.div>
           {images.slice(1, 3).map((img, i) => (
@@ -99,12 +105,6 @@ export default function RestaurantPage() {
               <Photo src={img} alt="" className="size-full" />
             </motion.div>
           ))}
-          {images.length < 3 &&
-            Array.from({ length: 3 - Math.max(1, images.length) }, (_, i) => (
-              <div key={i} className="hidden bg-paper-2 md:grid md:place-items-center">
-                <UtensilsCrossed className="size-8 text-line-2" />
-              </div>
-            ))}
         </div>
 
         {/* Title block */}

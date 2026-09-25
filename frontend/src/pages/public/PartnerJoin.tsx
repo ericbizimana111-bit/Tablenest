@@ -149,9 +149,8 @@ export default function PartnerJoin() {
       /* ignore */
     }
   }, [d]);
-  useEffect(() => {
-    if (user?.role === 'owner' && step === 0) setStep(1);
-  }, [user, step]);
+  // Signed up (or signed in) as an owner mid-wizard: the account step is done.
+  if (user?.role === 'owner' && step === 0) setStep(1);
 
   if (user && user.role !== 'owner') {
     return (

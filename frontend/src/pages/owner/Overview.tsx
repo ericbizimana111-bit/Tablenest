@@ -74,7 +74,7 @@ function Body({ r }: { r: Restaurant }) {
                     <CartesianGrid vertical={false} stroke={gridStroke} strokeDasharray="3 3" />
                     <XAxis dataKey="label" tickLine={false} axisLine={false} tick={axisTick} />
                     <YAxis tickLine={false} axisLine={false} tick={axisTick} width={56} />
-                    <Tooltip {...chartTooltip} formatter={(v: number, n: string) => (n === 'revenue' ? [money(v), 'Sales'] : [v, 'Orders'])} />
+                    <Tooltip {...chartTooltip} formatter={(v, n) => (n === 'revenue' ? [money(Number(v)), 'Sales'] : [v, 'Orders'])} />
                     <Area type="monotone" dataKey="revenue" stroke="#1d4a37" strokeWidth={2.5} fill="url(#rev)" />
                   </AreaChart>
                 </ResponsiveContainer>

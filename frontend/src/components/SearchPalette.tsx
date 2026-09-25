@@ -84,10 +84,23 @@ export function SearchPalette({ open, onClose }: { open: boolean; onClose: () =>
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [term, restaurants.data, dishes.data, money]);
 
+  // Reset the query each time the palette opens, and the highlight whenever the term changes.
+  const [wasOpen, setWasOpen] = useState(open);
+  if (open !== wasOpen) {
+    setWasOpen(open);
+    if (open) {
+      setQ('');
+      setActive(0);
+    }
+  }
+  const [prevTerm, setPrevTerm] = useState(term);
+  if (term !== prevTerm) {
+    setPrevTerm(term);
+    setActive(0);
+  }
+
   useEffect(() => {
     if (!open) return;
-    setQ('');
-    setActive(0);
     const t = setTimeout(() => input.current?.focus(), 40);
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -97,12 +110,16 @@ export function SearchPalette({ open, onClose }: { open: boolean; onClose: () =>
     };
   }, [open]);
 
-  useEffect(() => setActive(0), [term]);
-
   const onKey = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') onClose();
-    if (e.key === 'ArrowDown') (e.preventDefault(), setActive((a) => Math.min(rows.length - 1, a + 1)));
-    if (e.key === 'ArrowUp') (e.preventDefault(), setActive((a) => Math.max(0, a - 1)));
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActive((a) => Math.min(rows.length - 1, a + 1));
+    }
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActive((a) => Math.max(0, a - 1));
+    }
     if (e.key === 'Enter') rows[active]?.run();
   };
 

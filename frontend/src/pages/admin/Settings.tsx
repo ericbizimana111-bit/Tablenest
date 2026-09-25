@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Save } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -15,12 +15,14 @@ const pct = (n: number) => String(Math.round(n * 10000) / 100);
 const frac = (s: string) => Math.max(0, Number(s) || 0) / 100;
 
 export default function AdminSettings() {
-  const qc = useQueryClient();
   const { data } = useQuery({ queryKey: ['admin', 'settings'], queryFn: adminApi.settings });
-  const [f, setF] = useState<Record<string, string | boolean> | null>(null);
-  useEffect(() => {
-    if (data && !f)
-      setF({
+  if (!data) return <Skeleton className="h-96" />;
+  return <SettingsForm data={data} />;
+}
+
+function SettingsForm({ data }: { data: PlatformSettings }) {
+  const qc = useQueryClient();
+  const [f, setF] = useState<Record<string, string | boolean>>(() => ({
         currency: data.currency,
         serviceFeeRate: pct(data.serviceFeeRate),
         serviceFeeCap: String(data.serviceFeeCap),
@@ -31,12 +33,11 @@ export default function AdminSettings() {
         bookingFeePerCover: String(data.bookingFeePerCover),
         sponsoredWeeklyFee: String(data.sponsoredWeeklyFee),
         loyaltyPointsPerUnit: String(data.loyaltyPointsPerUnit),
-        requireRestaurantApproval: data.requireRestaurantApproval,
-      });
-  }, [data, f]);
+    requireRestaurantApproval: data.requireRestaurantApproval,
+  }));
   const save = useMutation({
     mutationFn: () => {
-      const s = f!;
+      const s = f;
       const body: Partial<PlatformSettings> = {
         currency: String(s.currency).trim().toUpperCase(),
         serviceFeeRate: frac(String(s.serviceFeeRate)),
@@ -60,7 +61,6 @@ export default function AdminSettings() {
     onError: (e) => toast.error(errorMessage(e)),
   });
 
-  if (!f) return <Skeleton className="h-96" />;
   const field = (k: string) => ({ value: String(f[k]), onChange: (e: React.ChangeEvent<HTMLInputElement>) => setF({ ...f, [k]: e.target.value }) });
 
   return (
