@@ -53,8 +53,8 @@ function IntentSearch() {
           ]}
         />
       </div>
-      <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-        <label className="flex h-14 items-center gap-3 rounded-2xl bg-paper px-4 focus-within:ring-2 focus-within:ring-herb-500/30 sm:col-span-3">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+        <label className="col-span-2 flex h-14 items-center gap-3 rounded-2xl bg-paper px-4 focus-within:ring-2 focus-within:ring-herb-500/30 sm:col-span-3">
           <Search className="size-5 shrink-0 text-ink-3" />
           <input
             value={q}
@@ -106,7 +106,7 @@ function IntentSearch() {
             </button>
           ))
         )}
-        <Button type="submit" variant="primary" size="lg" className="h-14 sm:px-8" trail={<ArrowRight className="size-4" />}>
+        <Button type="submit" variant="primary" size="lg" className="col-span-2 h-14 sm:col-span-1 sm:px-8" trail={<ArrowRight className="size-4" />}>
           {mode === 'book' ? 'Find a table' : 'Find food'}
         </Button>
       </div>
