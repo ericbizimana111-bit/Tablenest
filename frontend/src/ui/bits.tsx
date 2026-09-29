@@ -112,7 +112,7 @@ export function Stars({ value, size = 14, onChange }: { value: number; size?: nu
 /** Image with a composed, on-brand fallback when a record has no photo (never a broken icon). */
 export function Photo({ src, alt, className, label }: { src: string | null | undefined; alt: string; className?: string; label?: string }) {
   const [failed, setFailed] = useState(false);
-  const patternId = `tn-dots-${useId()}`;
+  const patternId = `tn-dots-${useId().replace(/[^\w-]/g, '')}`;
   const url = assetUrl(src);
   if (!url || failed) {
     return (

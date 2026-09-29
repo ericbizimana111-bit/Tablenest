@@ -15,7 +15,8 @@ import { Input, PasswordInput, Select, Textarea, Toggle } from '@/ui/Field';
 import { Segmented } from '@/ui/bits';
 import { PageLoader } from '@/ui/Loader';
 import { GalleryUploader } from '@/components/ImageUploader';
-import { DEFAULT_HOURS, HoursEditor, browserZone, zoneOptions } from '@/components/HoursEditor';
+import { DEFAULT_HOURS, HoursEditor } from '@/components/HoursEditor';
+import { browserZone, zoneOptions } from '@/lib/timezones';
 import { PasswordHints, passwordRule } from '@/pages/auth/Register';
 
 const CUISINES = ['African', 'American', 'Asian', 'Bakery', 'Barbecue', 'Brunch', 'Burgers', 'Café', 'Chinese', 'Ethiopian', 'French', 'Fusion', 'Grill', 'Indian', 'Italian', 'Japanese', 'Korean', 'Lebanese', 'Mediterranean', 'Mexican', 'Pizza', 'Seafood', 'Steakhouse', 'Thai', 'Vegan', 'Vegetarian'];

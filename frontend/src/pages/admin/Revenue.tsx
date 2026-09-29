@@ -176,17 +176,21 @@ export default function AdminRevenue() {
           </div>
           <div className="grid gap-6 xl:grid-cols-[1.5fr_1fr]">
             <Panel title="By month">
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={data.byPeriod} margin={{ top: 8, right: 4, left: -8, bottom: 0 }}>
-                    <CartesianGrid vertical={false} stroke={gridStroke} strokeDasharray="3 3" />
-                    <XAxis dataKey="period" tickLine={false} axisLine={false} tick={axisTick} />
-                    <YAxis tickLine={false} axisLine={false} tick={axisTick} width={60} />
-                    <Tooltip {...chartTooltip} cursor={{ fill: 'rgba(15,42,32,0.05)' }} formatter={(v) => [money(Number(v)), 'Revenue']} />
-                    <Bar dataKey="amount" fill="#1d4a37" radius={[8, 8, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
+              {data.byPeriod.some((p) => p.amount > 0) ? (
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={data.byPeriod} margin={{ top: 8, right: 4, left: -8, bottom: 0 }}>
+                      <CartesianGrid vertical={false} stroke={gridStroke} strokeDasharray="3 3" />
+                      <XAxis dataKey="period" tickLine={false} axisLine={false} tick={axisTick} />
+                      <YAxis tickLine={false} axisLine={false} tick={axisTick} width={60} />
+                      <Tooltip {...chartTooltip} cursor={{ fill: 'rgba(15,42,32,0.05)' }} formatter={(v) => [money(Number(v)), 'Revenue']} />
+                      <Bar dataKey="amount" fill="#1d4a37" radius={[8, 8, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <p className="py-8 text-center text-sm text-ink-3">No revenue in this range.</p>
+              )}
             </Panel>
             <Panel title="By source">
               {data.byType.length ? (
@@ -200,7 +204,7 @@ export default function AdminRevenue() {
                       <div className="mt-1.5 h-1.5 rounded-full bg-paper-2">
                         <div className="h-full rounded-full bg-saffron-400" style={{ width: `${(t.amount / (data.total || 1)) * 100}%` }} />
                       </div>
-                      <p className="mt-1 text-[12px] text-ink-4">{t.count} entries</p>
+                      <p className="mt-1 text-[12px] text-ink-4">{pluralize(t.count, 'entry', 'entries')}</p>
                     </li>
                   ))}
                 </ul>
