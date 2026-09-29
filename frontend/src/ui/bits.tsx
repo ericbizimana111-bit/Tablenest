@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import { motion } from 'motion/react';
 import { Minus, Plus, Star, UtensilsCrossed } from 'lucide-react';
 import { cn, initials, pluralize } from '@/lib/format';
@@ -112,17 +112,18 @@ export function Stars({ value, size = 14, onChange }: { value: number; size?: nu
 /** Image with a composed, on-brand fallback when a record has no photo (never a broken icon). */
 export function Photo({ src, alt, className, label }: { src: string | null | undefined; alt: string; className?: string; label?: string }) {
   const [failed, setFailed] = useState(false);
+  const patternId = `tn-dots-${useId()}`;
   const url = assetUrl(src);
   if (!url || failed) {
     return (
       <div className={cn('relative grid place-items-center overflow-hidden bg-herb-800 text-herb-200', className)} role="img" aria-label={alt}>
         <svg className="absolute inset-0 size-full opacity-[0.12]" aria-hidden>
           <defs>
-            <pattern id="tn-dots" width="18" height="18" patternUnits="userSpaceOnUse">
+            <pattern id={patternId} width="18" height="18" patternUnits="userSpaceOnUse">
               <circle cx="2" cy="2" r="1.4" fill="currentColor" />
             </pattern>
           </defs>
-          <rect width="100%" height="100%" fill="url(#tn-dots)" />
+          <rect width="100%" height="100%" fill={`url(#${patternId})`} />
         </svg>
         <div className="relative flex flex-col items-center gap-2">
           {label ? <span className="font-display text-4xl text-paper/90 italic">{initials(label)}</span> : <UtensilsCrossed className="size-8" />}
@@ -183,7 +184,7 @@ export function Segmented<T extends string>({
   options,
   className,
   size = 'md',
-  id = 'seg',
+  id,
 }: {
   value: T;
   onChange: (v: T) => void;
@@ -192,6 +193,8 @@ export function Segmented<T extends string>({
   size?: 'sm' | 'md';
   id?: string;
 }) {
+  const auto = useId();
+  const group = id ?? auto;
   return (
     <div className={cn('inline-flex rounded-full bg-paper-2 p-1', className)} role="tablist">
       {options.map((o) => {
@@ -209,7 +212,7 @@ export function Segmented<T extends string>({
               active ? 'text-paper' : 'text-ink-2 hover:text-ink',
             )}
           >
-            {active && <motion.span layoutId={`seg-${id}`} className="absolute inset-0 rounded-full bg-herb-900" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+            {active && <motion.span layoutId={`seg-${group}`} className="absolute inset-0 rounded-full bg-herb-900" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
             <span className="relative inline-flex items-center gap-2">
               {o.icon}
               {o.label}

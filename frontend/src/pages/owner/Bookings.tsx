@@ -13,6 +13,7 @@ import { Button } from '@/ui/Button';
 import { BookingStatusBadge, EmptyState, Segmented } from '@/ui/bits';
 import { Confirm } from '@/ui/Overlay';
 import { Skeleton } from '@/ui/Loader';
+import { Select } from '@/ui/Field';
 
 /** Moves the restaurant can make from each status (mirrors RESERVATION_FLOW on the server). */
 const ACTIONS: Partial<Record<ReservationStatus, Array<{ to: ReservationStatus; label: string; variant: 'dark' | 'outline' | 'ghost' | 'primary'; dayOf?: boolean }>>> = {
@@ -176,9 +177,9 @@ function Book({ r }: { r: Restaurant }) {
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-3.5">
           <p className="font-display text-lg text-ink">
             {mode === 'day' ? formatBookingDate(day, { weekday: 'long', day: 'numeric', month: 'long' }) : 'Upcoming'}
-            {!!rows.length && <span className="ml-2 font-sans text-sm text-ink-3">{covers} covers</span>}
+            {!!rows.length && <span className="ml-2 font-sans text-sm text-ink-3">{pluralize(covers, 'cover')}</span>}
           </p>
-          <select value={status} onChange={(e) => setStatus(e.target.value)} className="input-base !h-9 !w-auto !py-0 text-sm" aria-label="Filter by status">
+          <Select compact value={status} onChange={(e) => setStatus(e.target.value)} className="w-48" aria-label="Filter by status">
             <option value="">All statuses</option>
             <option value="pending">Waiting to confirm</option>
             <option value="confirmed">Confirmed</option>
@@ -186,7 +187,7 @@ function Book({ r }: { r: Restaurant }) {
             <option value="completed">Finished</option>
             <option value="cancelled">Cancelled</option>
             <option value="no_show">No-show</option>
-          </select>
+          </Select>
         </div>
         {list.isLoading ? (
           <Skeleton className="m-5 h-40" />
