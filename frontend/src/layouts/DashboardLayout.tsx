@@ -248,7 +248,7 @@ export function Stat({ label, value, hint, icon, tone = 'plain' }: { label: stri
         tone === 'dark' ? 'border-herb-900 bg-herb-900 text-paper' : tone === 'saffron' ? 'border-saffron-200 bg-saffron-50' : 'border-line bg-card',
       )}
     >
-      <div className="flex items-center justify-between">
+      <div className="flex min-h-8 items-center justify-between gap-3">
         <p className={cn('text-[13px] font-semibold', tone === 'dark' ? 'text-paper/70' : 'text-ink-3')}>{label}</p>
         {icon && <span className={cn('grid size-8 place-items-center rounded-full', tone === 'dark' ? 'bg-paper/10 text-saffron-300' : 'bg-paper-2 text-herb-700')}>{icon}</span>}
       </div>

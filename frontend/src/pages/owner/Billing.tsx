@@ -10,6 +10,7 @@ import { OwnerGate } from '@/components/OwnerGate';
 import { LinkButton } from '@/ui/Button';
 import { Badge, EmptyState } from '@/ui/bits';
 import { Skeleton } from '@/ui/Loader';
+import { Select } from '@/ui/Field';
 
 const TYPE_LABEL: Record<Charge['type'], string> = {
   commission: 'Order commission',
@@ -46,13 +47,13 @@ function Statement() {
         title="Billing"
         lead="Exactly what TableNest charges and why — every line is tied to a real order, booking or plan."
         action={
-          <select value={period} onChange={(e) => setPeriod(e.target.value)} className="input-base !h-10 !w-auto" aria-label="Statement month">
+          <Select compact value={period} onChange={(e) => setPeriod(e.target.value)} className="w-52" aria-label="Statement month">
             {periods.map((p) => (
               <option key={p} value={p}>
                 {monthName(p)}
               </option>
             ))}
-          </select>
+          </Select>
         }
       />
       {isLoading || !data ? (

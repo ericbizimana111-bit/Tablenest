@@ -27,6 +27,8 @@ function Shell({ id, label, hint, error, className, optional, children }: FieldS
   );
 }
 
+const describedBy = (id: string, error?: string, hint?: ReactNode) => (error ? `${id}-err` : hint ? `${id}-hint` : undefined);
+
 type InputProps = FieldShell & InputHTMLAttributes<HTMLInputElement> & { leading?: ReactNode; trailing?: ReactNode };
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
@@ -43,7 +45,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           ref={ref}
           id={fid}
           aria-invalid={error ? true : undefined}
-          aria-describedby={error ? `${fid}-err` : hint ? `${fid}-hint` : undefined}
+          aria-describedby={describedBy(fid, error, hint)}
           className={cn('input-base', !!leading && 'pl-11', !!trailing && (typeof trailing === 'string' ? 'pr-16' : 'pr-12'), error && 'border-tomato-400 focus:border-tomato-500 focus:ring-tomato-500/10')}
           {...rest}
         />
@@ -92,6 +94,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, FieldShell & TextareaHTM
         ref={ref}
         id={fid}
         aria-invalid={error ? true : undefined}
+        aria-describedby={describedBy(fid, error, hint)}
         className={cn('input-base min-h-28 resize-y py-3 leading-relaxed', error && 'border-tomato-400')}
         {...rest}
       />
@@ -99,8 +102,8 @@ export const Textarea = forwardRef<HTMLTextAreaElement, FieldShell & TextareaHTM
   );
 });
 
-export const Select = forwardRef<HTMLSelectElement, FieldShell & SelectHTMLAttributes<HTMLSelectElement>>(function Select(
-  { label, hint, error, className, optional, id, children, ...rest },
+export const Select = forwardRef<HTMLSelectElement, FieldShell & SelectHTMLAttributes<HTMLSelectElement> & { compact?: boolean }>(function Select(
+  { label, hint, error, className, optional, id, compact, children, ...rest },
   ref,
 ) {
   const auto = useId();
@@ -108,7 +111,15 @@ export const Select = forwardRef<HTMLSelectElement, FieldShell & SelectHTMLAttri
   return (
     <Shell id={fid} label={label} hint={hint} error={error} className={className} optional={optional}>
       <div className="relative">
-        <select ref={ref} id={fid} className={cn('input-base appearance-none pr-10', error && 'border-tomato-400')} {...rest}>
+        <select
+          ref={ref}
+          id={fid}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={describedBy(fid, error, hint)}
+          // Compact: a toolbar filter sized to sit beside pill buttons.
+          className={cn('input-base appearance-none pr-10', compact && '!h-10 rounded-full pl-4 text-sm font-semibold', error && 'border-tomato-400')}
+          {...rest}
+        >
           {children}
         </select>
         <ChevronDown className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-ink-3" />
