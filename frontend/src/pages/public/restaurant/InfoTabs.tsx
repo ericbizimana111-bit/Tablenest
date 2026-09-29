@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Clock, Globe, Mail, MapPin, MessageSquare, Phone } from 'lucide-react';
 import { reviewApi } from '@/lib/api';
-import { cn, DAYS, timeAgo } from '@/lib/format';
+import { cn, DAYS, timeAgo, pluralize } from '@/lib/format';
 import { useMoney } from '@/lib/settings';
 import type { Restaurant } from '@/lib/types';
 import { Button } from '@/ui/Button';
@@ -22,7 +22,7 @@ export function ReviewsTab({ restaurant }: { restaurant: Restaurant }) {
         <div className="sticky top-[150px] rounded-[24px] border border-line bg-card p-6">
           <p className="font-display text-6xl text-ink">{data.avgRating.toFixed(1)}</p>
           <Stars value={Math.round(data.avgRating)} size={18} />
-          <p className="mt-2 text-sm text-ink-3">{data.total} reviews from real guests</p>
+          <p className="mt-2 text-sm text-ink-3">{pluralize(data.total, 'review')} from real guests</p>
           <div className="mt-5 space-y-2">
             {[5, 4, 3, 2, 1].map((n) => (
               <div key={n} className="flex items-center gap-2 text-[13px]">

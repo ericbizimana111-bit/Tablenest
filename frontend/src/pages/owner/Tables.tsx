@@ -5,7 +5,7 @@ import { Armchair, Plus, QrCode, Trash2, Users } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { tableApi } from '@/lib/api';
 import { errorMessage } from '@/lib/http';
-import { cn, timeAgo } from '@/lib/format';
+import { cn, timeAgo, pluralize } from '@/lib/format';
 import type { DiningTable, Restaurant, TableStatus } from '@/lib/types';
 import { DashHead } from '@/layouts/DashboardLayout';
 import { OwnerGate } from '@/components/OwnerGate';
@@ -90,7 +90,7 @@ function Floor({ r }: { r: Restaurant }) {
     <>
       <DashHead
         title="Floor & tables"
-        lead={tables.length ? `${tables.length} tables · ${seats} seats. Bookings are matched to the smallest free table that fits the party.` : 'Tables power online bookings — guests can only book when a table fits their party.'}
+        lead={tables.length ? `${pluralize(tables.length, 'table')} · ${pluralize(seats, 'seat')}. Bookings are matched to the smallest free table that fits the party.` : 'Tables power online bookings — guests can only book when a table fits their party.'}
         action={
           <>
             {!!tables.length && (

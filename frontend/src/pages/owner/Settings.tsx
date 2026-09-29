@@ -9,9 +9,10 @@ import type { Restaurant } from '@/lib/types';
 import { DashHead, Panel } from '@/layouts/DashboardLayout';
 import { OwnerGate, StatusBanner } from '@/components/OwnerGate';
 import { GalleryUploader, SingleImageUploader } from '@/components/ImageUploader';
-import { DEFAULT_HOURS, HoursEditor, timezones } from '@/components/HoursEditor';
+import { DEFAULT_HOURS, HoursEditor, zoneOptions } from '@/components/HoursEditor';
 import { Button } from '@/ui/Button';
 import { Input, Select, Textarea, Toggle } from '@/ui/Field';
+import { usePublicSettings } from '@/lib/settings';
 
 const CUISINES = ['African', 'Rwandan', 'Ethiopian', 'Italian', 'French', 'Indian', 'Chinese', 'Japanese', 'Mexican', 'American', 'Mediterranean', 'Middle Eastern', 'Thai', 'Vegetarian', 'Seafood', 'Grill', 'Café', 'Bakery', 'Fusion'];
 
@@ -32,6 +33,7 @@ function Section({ title, desc, children }: { title: string; desc?: string; chil
 }
 
 function Editor({ r }: { r: Restaurant }) {
+  const currency = usePublicSettings().data?.currency || 'USD';
   const qc = useQueryClient();
   const [f, setF] = useState<Form>({ ...r, openingHours: Object.keys(r.openingHours ?? {}).length ? r.openingHours : DEFAULT_HOURS, taxPct: String(Math.round((r.taxRate ?? 0) * 10000) / 100) });
   const [dirty, setDirty] = useState(false);
@@ -137,7 +139,7 @@ function Editor({ r }: { r: Restaurant }) {
         <Section title="Opening hours" desc="Bookings and orders are only accepted inside these hours, in your restaurant's time zone.">
           <Select label="Time zone" className="mb-4 max-w-sm" value={f.timezone ?? ''} onChange={(e) => set({ timezone: e.target.value })}>
             {!f.timezone && <option value="">Choose…</option>}
-            {timezones.map((z) => (
+            {zoneOptions(f.timezone).map((z) => (
               <option key={z}>{z}</option>
             ))}
           </Select>
@@ -160,8 +162,8 @@ function Editor({ r }: { r: Restaurant }) {
           </div>
           {noService && <p className="mb-4 rounded-xl bg-tomato-50 p-3 text-sm text-tomato-700">Turn on at least one way to serve guests.</p>}
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <Input label="Delivery fee" type="number" min={0} step="0.01" disabled={!f.delivery} value={f.deliveryFee ?? 0} onChange={(e) => set({ deliveryFee: Number(e.target.value) })} />
-            <Input label="Minimum order" type="number" min={0} step="0.01" value={f.minOrder ?? 0} onChange={(e) => set({ minOrder: Number(e.target.value) })} />
+            <Input label="Delivery fee" type="number" min={0} step="0.01" disabled={!f.delivery} value={f.deliveryFee ?? 0} onChange={(e) => set({ deliveryFee: Number(e.target.value) })} trailing={currency} />
+            <Input label="Minimum order" type="number" min={0} step="0.01" value={f.minOrder ?? 0} onChange={(e) => set({ minOrder: Number(e.target.value) })} trailing={currency} />
             <Input label="Tax" type="number" min={0} max={40} step="0.01" value={f.taxPct} onChange={(e) => set({ taxPct: e.target.value })} trailing="%" />
             <Input label="Usual prep time" type="number" min={5} max={240} value={f.prepTime ?? 20} onChange={(e) => set({ prepTime: Number(e.target.value) })} trailing="min" />
           </div>

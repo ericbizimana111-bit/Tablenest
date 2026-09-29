@@ -5,7 +5,7 @@ import { CalendarDays, ChevronLeft, ChevronRight, MessageSquareText, Phone, User
 import toast from 'react-hot-toast';
 import { reservationApi } from '@/lib/api';
 import { errorMessage } from '@/lib/http';
-import { cn, formatBookingDate, formatTime, isoDay } from '@/lib/format';
+import { cn, formatBookingDate, formatTime, isoDay, pluralize } from '@/lib/format';
 import type { Reservation, ReservationStatus, Restaurant } from '@/lib/types';
 import { DashHead, Stat } from '@/layouts/DashboardLayout';
 import { OwnerGate } from '@/components/OwnerGate';
@@ -134,9 +134,9 @@ function Book({ r }: { r: Restaurant }) {
         }
       />
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
-        <Stat label="Today" value={stats.data?.todayTotal ?? '—'} hint={`${stats.data?.todayGuests ?? 0} guests expected`} icon={<CalendarDays className="size-4" />} tone="dark" />
+        <Stat label="Today" value={stats.data?.todayTotal ?? '—'} hint={`${pluralize(stats.data?.todayGuests ?? 0, 'guest')} expected`} icon={<CalendarDays className="size-4" />} tone="dark" />
         <Stat label="Waiting for you" value={stats.data?.pending ?? '—'} hint="Requests to confirm" tone={stats.data?.pending ? 'saffron' : 'plain'} />
-        <Stat label="Confirmed ahead" value={stats.data?.confirmed ?? '—'} hint={`${stats.data?.total ?? 0} bookings all-time`} />
+        <Stat label="Confirmed ahead" value={stats.data?.confirmed ?? '—'} hint={`${pluralize(stats.data?.total ?? 0, 'booking')} all-time`} />
       </div>
 
       {mode === 'day' && (

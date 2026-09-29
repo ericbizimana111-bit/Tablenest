@@ -19,6 +19,12 @@ describe('openState', () => {
     expect(openState(r, now).label).toBe('Paused');
   });
 
+  it('derives the state from opening hours when a record has no live openNow (e.g. favourites)', () => {
+    const r = { openingHours: week('11:00', '21:00'), timezone: 'Africa/Kigali', acceptingOrders: true };
+    expect(openState(r, now)).toEqual({ open: true, label: 'Open now', detail: 'until 21:00' });
+    expect(openState({ ...r, acceptingOrders: false }, now).label).toBe('Paused');
+  });
+
   it('handles hours that run past midnight', () => {
     const r = { openingHours: week('18:00', '02:00'), timezone: 'UTC', acceptingOrders: true, openNow: false };
     expect(openState(r, new Date('2026-09-23T01:00:00Z')).label).toBe('Paused'); // within 18:00–02:00

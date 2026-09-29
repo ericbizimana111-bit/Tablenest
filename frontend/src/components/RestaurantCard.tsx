@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Armchair, ArrowUpRight, Bike, Heart, ShoppingBag, Sparkles } from 'lucide-react';
 import type { Restaurant } from '@/lib/types';
-import { cn, openState } from '@/lib/format';
+import { cn, openState, pluralize } from '@/lib/format';
 import { Photo, RatingSeal } from '@/ui/bits';
 import { useFavorites } from '@/features/favorites';
 
@@ -76,7 +76,7 @@ export function RestaurantCard({ restaurant: r, index = 0, className }: { restau
           </Link>
         </h3>
         <p className="mt-1.5 text-[13px] font-medium tracking-wide text-ink-3">{location}</p>
-        {r.totalReviews > 0 && <p className="mt-1 text-[12px] text-ink-4">{r.totalReviews} reviews</p>}
+        {r.totalReviews > 0 && <p className="mt-1 text-[12px] text-ink-4">{pluralize(r.totalReviews, 'review')}</p>}
       </div>
 
       {/* Perforation + stub */}

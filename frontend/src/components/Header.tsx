@@ -7,7 +7,7 @@ import { homeFor } from '@/auth/AuthProvider';
 import { cartCount, useCart } from '@/stores/cart';
 import { useShell } from '@/stores/shell';
 import { useExperience } from '@/stores/experience';
-import { cn } from '@/lib/format';
+import { cn, pluralize } from '@/lib/format';
 import { Logo } from '@/ui/Logo';
 import { IconButton, LinkButton } from '@/ui/Button';
 import { Drawer } from '@/ui/Overlay';
@@ -20,6 +20,8 @@ export const NAV = [
   { to: '/restaurants?service=delivery', label: 'Order in', icon: Bike, match: (_p: string, s: string) => s.includes('service=delivery') },
   { to: '/partner', label: 'For restaurants', icon: Store, match: (p: string) => p.startsWith('/partner') },
 ];
+
+const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
 
 export function Header() {
   const { user } = useAuth();
@@ -80,14 +82,14 @@ export function Header() {
             >
               <Search className="size-4" />
               <span className="w-32 text-left lg:w-40">Search food…</span>
-              <kbd className="rounded-md bg-paper-2 px-1.5 py-0.5 text-[11px] font-semibold text-ink-3">⌘K</kbd>
+              <kbd className="rounded-md bg-paper-2 px-1.5 py-0.5 text-[11px] font-semibold text-ink-3">{IS_MAC ? '⌘K' : 'Ctrl K'}</kbd>
             </button>
             <IconButton label="Search" onClick={() => setSearch(true)} className="md:hidden">
               <Search className="size-5" />
             </IconButton>
 
             {(!user || user.role === 'customer') && (
-              <IconButton label={count ? `Your bag, ${count} items` : 'Your bag'} onClick={() => setCart(true)}>
+              <IconButton label={count ? `Your bag, ${pluralize(count, 'item')}` : 'Your bag'} onClick={() => setCart(true)}>
                 <ShoppingBag className="size-5" />
                 <AnimatePresence>
                   {count > 0 && (
@@ -124,7 +126,7 @@ export function Header() {
               </div>
             )}
 
-            <IconButton label="Open menu" onClick={() => setMenu(true)} className="md:hidden">
+            <IconButton label="Open menu" onClick={() => setMenu(true)} className="lg:hidden">
               <Menu className="size-5" />
             </IconButton>
           </div>

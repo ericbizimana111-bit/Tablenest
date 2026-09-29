@@ -76,13 +76,17 @@ export function openState(r: Pick<Restaurant, 'openingHours' | 'timezone' | 'acc
   const hours: WeeklyHours = r.openingHours || {};
   const { dow, minutes } = localNow(r.timezone || 'UTC', now);
   const today: DayHours | undefined = hours[DAYS[dow]];
-  const open = r.openNow ?? false;
-  if (!today) return { open, label: open ? 'Open now' : 'Closed', detail: '' };
+  if (!today) {
+    const open = r.openNow ?? false;
+    return { open, label: open ? 'Open now' : 'Closed', detail: '' };
+  }
   if (today.closed) return { open: false, label: 'Closed today', detail: nextOpening(hours, dow) };
   const o = toMin(today.open);
   const c = toMin(today.close);
-  if (open) return { open: true, label: 'Open now', detail: `until ${today.close}` };
   const withinHours = c > o ? minutes >= o && minutes < c : minutes >= o || minutes < c;
+  // Some endpoints (e.g. favourites) return the stored record without the server's live `openNow`; derive it then.
+  const open = r.openNow ?? (withinHours && r.acceptingOrders !== false);
+  if (open) return { open: true, label: 'Open now', detail: `until ${today.close}` };
   if (withinHours) return { open: false, label: 'Paused', detail: 'not taking orders right now' };
   if (minutes < o) return { open: false, label: 'Opens later', detail: `at ${today.open}` };
   return { open: false, label: 'Closed now', detail: nextOpening(hours, dow) };

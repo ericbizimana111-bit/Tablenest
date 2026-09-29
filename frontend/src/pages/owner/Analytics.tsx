@@ -3,8 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Repeat, ShoppingBag, Users, Wallet } from 'lucide-react';
 import { analyticsApi } from '@/lib/api';
-import { axisTick, chartTooltip, gridStroke, PALETTE } from '@/lib/chart';
-import { cn } from '@/lib/format';
+import { axisTick, chartTooltip, gridStroke, PALETTE, dayLabel, dayTick } from '@/lib/chart';
+import { cn, pluralize } from '@/lib/format';
 import { useMoney } from '@/lib/settings';
 import type { Restaurant } from '@/lib/types';
 import { DashHead, Panel, Stat } from '@/layouts/DashboardLayout';
@@ -47,7 +47,7 @@ function Heatmap({ r }: { r: Restaurant }) {
                   {span.map((h) => {
                     const v = at(di, h);
                     return (
-                      <td key={h} title={`${d} ${h}:00 — ${v} bookings`} className="size-8 rounded-md" style={{ background: v ? `rgba(29, 74, 55, ${0.12 + (v / max) * 0.88})` : '#efe6d6' }}>
+                      <td key={h} title={`${d} ${h}:00 — ${pluralize(v, 'booking')}`} className="size-8 rounded-md" style={{ background: v ? `rgba(29, 74, 55, ${0.12 + (v / max) * 0.88})` : '#efe6d6' }}>
                         {v > 0 && <span className={cn('block text-center font-semibold', v / max > 0.5 ? 'text-paper' : 'text-herb-900')}>{v}</span>}
                       </td>
                     );
@@ -90,7 +90,7 @@ function Charts({ r }: { r: Restaurant }) {
       ) : (
         <div className="space-y-6">
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <Stat tone="dark" label="Sales" value={money(data.revenue)} hint={`Last ${data.days} days`} icon={<Wallet className="size-4" />} />
+            <Stat tone="dark" label="Sales" value={money(data.revenue)} hint={`Last ${pluralize(data.days, 'day')}`} icon={<Wallet className="size-4" />} />
             <Stat label="Orders" value={data.orders} hint={`Average ${money(data.averageOrder)}`} icon={<ShoppingBag className="size-4" />} />
             <Stat label="Guests who ordered" value={data.customers} icon={<Users className="size-4" />} />
             <Stat label="Came back" value={`${Math.round(data.repeatRate)}%`} hint="Ordered more than once" icon={<Repeat className="size-4" />} />
@@ -107,9 +107,9 @@ function Charts({ r }: { r: Restaurant }) {
                     </linearGradient>
                   </defs>
                   <CartesianGrid vertical={false} stroke={gridStroke} strokeDasharray="3 3" />
-                  <XAxis dataKey="label" tickLine={false} axisLine={false} tick={axisTick} minTickGap={16} />
+                  <XAxis dataKey="date" tickLine={false} axisLine={false} tick={axisTick} minTickGap={24} interval="preserveStartEnd" tickFormatter={dayTick(Number(days))} />
                   <YAxis tickLine={false} axisLine={false} tick={axisTick} width={60} />
-                  <Tooltip {...chartTooltip} formatter={(v) => [money(Number(v)), 'Sales']} />
+                  <Tooltip {...chartTooltip} labelFormatter={dayLabel} formatter={(v) => [money(Number(v)), 'Sales']} />
                   <Area type="monotone" dataKey="revenue" stroke="#1d4a37" strokeWidth={2.5} fill="url(#an-rev)" />
                 </AreaChart>
               </ResponsiveContainer>
@@ -122,9 +122,9 @@ function Charts({ r }: { r: Restaurant }) {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={data.bookingsDaily} margin={{ top: 8, right: 4, left: -20, bottom: 0 }}>
                     <CartesianGrid vertical={false} stroke={gridStroke} strokeDasharray="3 3" />
-                    <XAxis dataKey="label" tickLine={false} axisLine={false} tick={axisTick} minTickGap={16} />
+                    <XAxis dataKey="date" tickLine={false} axisLine={false} tick={axisTick} minTickGap={24} interval="preserveStartEnd" tickFormatter={dayTick(Number(days))} />
                     <YAxis tickLine={false} axisLine={false} tick={axisTick} allowDecimals={false} />
-                    <Tooltip {...chartTooltip} cursor={{ fill: 'rgba(15,42,32,0.05)' }} formatter={(v, n) => [v, n === 'guests' ? 'Guests' : 'Bookings']} />
+                    <Tooltip {...chartTooltip} labelFormatter={dayLabel} cursor={{ fill: 'rgba(15,42,32,0.05)' }} formatter={(v, n) => [v, n === 'guests' ? 'Guests' : 'Bookings']} />
                     <Bar dataKey="guests" fill="#edb041" radius={[6, 6, 0, 0]} />
                     <Bar dataKey="bookings" fill="#1d4a37" radius={[6, 6, 0, 0]} />
                   </BarChart>
@@ -151,7 +151,7 @@ function Charts({ r }: { r: Restaurant }) {
                       <li key={t.type} className="flex items-center gap-3 text-sm">
                         <span className="size-3 rounded-full" style={{ background: PALETTE[i % PALETTE.length] }} />
                         <span className="flex-1 font-semibold text-ink">{TYPE_LABEL[t.type]}</span>
-                        <span className="text-ink-3">{t.orders} orders</span>
+                        <span className="text-ink-3">{pluralize(t.orders, 'order')}</span>
                         <span className="w-24 text-right font-semibold tabular-nums">{money(t.revenue)}</span>
                       </li>
                     ))}

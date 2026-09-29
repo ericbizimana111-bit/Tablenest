@@ -5,7 +5,7 @@ import { Eye, EyeOff, Pencil, Plus, Trash2, UtensilsCrossed } from 'lucide-react
 import toast from 'react-hot-toast';
 import { menuApi } from '@/lib/api';
 import { errorMessage } from '@/lib/http';
-import { cn } from '@/lib/format';
+import { cn, pluralize } from '@/lib/format';
 import { useMoney } from '@/lib/settings';
 import type { MenuCategory, MenuItem, Restaurant } from '@/lib/types';
 import { DashHead } from '@/layouts/DashboardLayout';
@@ -124,7 +124,7 @@ function MenuBoard({ r }: { r: Restaurant }) {
     <>
       <DashHead
         title="Menu"
-        lead={`${all.length} dishes in ${categories.length} sections. Prices you set here are what guests pay — totals are always calculated on our side.`}
+        lead={`${pluralize(all.length, 'dish', 'dishes')} in ${pluralize(categories.length, 'section')}. Prices you set here are what guests pay — totals are always calculated on our side.`}
         action={
           <Button variant="primary" size="sm" icon={<Plus className="size-4" />} disabled={!categories.length} onClick={() => setEditing({ categoryId: categories[0]?._id, isAvailable: true })}>
             Add dish

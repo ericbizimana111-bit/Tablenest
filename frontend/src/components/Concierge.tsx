@@ -8,6 +8,7 @@ import { errorMessage } from '@/lib/http';
 import { cn } from '@/lib/format';
 import type { ConciergeSuggestion } from '@/lib/types';
 import { useExperience } from '@/stores/experience';
+import { cartCount, useCart } from '@/stores/cart';
 import { Photo } from '@/ui/bits';
 import { RichText } from './RichText';
 import { LogoMark } from '@/ui/Logo';
@@ -55,6 +56,7 @@ export function Concierge() {
   const list = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLTextAreaElement>(null);
   const { pathname } = useLocation();
+  const bagCount = useCart((s) => cartCount(s.lines));
   const status = useQuery({ queryKey: ['concierge', 'status'], queryFn: conciergeApi.status, staleTime: 5 * 60_000, enabled: open });
 
   useEffect(() => {
@@ -95,6 +97,10 @@ export function Concierge() {
   }, [open, pendingQuestion]);
 
   const disabled = status.data && !status.data.enabled;
+  // On a restaurant page the launcher shrinks to its icon so it never covers the bag panel, and on
+  // phones it lifts above the "View bag" bar once dishes are in the bag.
+  const onRestaurant = /^\/restaurants\/[^/]+/.test(pathname);
+  const bagBar = onRestaurant && bagCount > 0;
 
   return (
     <>
@@ -106,14 +112,18 @@ export function Concierge() {
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
             transition={{ type: 'spring', stiffness: 380, damping: 26, delay: 0.4 }}
             onClick={() => setConcierge(true)}
-            className="group fixed right-4 bottom-[calc(max(10px,env(safe-area-inset-bottom))+84px)] z-40 flex items-center gap-2.5 rounded-full bg-herb-900 p-2 text-paper md:py-2.5 md:pr-5 md:pl-2.5 shadow-[var(--shadow-pop)] transition hover:bg-herb-800 md:right-6 md:bottom-6"
+            className={cn(
+              'group fixed right-4 z-40 flex items-center gap-2.5 rounded-full bg-herb-900 p-2 text-paper shadow-[var(--shadow-pop)] transition hover:bg-herb-800 md:right-6 md:bottom-6',
+              bagBar ? 'bottom-[calc(max(10px,env(safe-area-inset-bottom))+150px)]' : 'bottom-[calc(max(10px,env(safe-area-inset-bottom))+84px)]',
+              !onRestaurant && 'md:py-2.5 md:pr-5 md:pl-2.5',
+            )}
             aria-label="Ask the TableNest concierge"
           >
             <span className="relative grid size-9 place-items-center rounded-full bg-saffron-400 text-herb-950">
               <Sparkles className="size-[18px] transition-transform duration-500 group-hover:rotate-[20deg]" />
               <span className="absolute inset-0 animate-ping rounded-full bg-saffron-400/40 [animation-duration:2.6s]" />
             </span>
-            <span className="hidden text-sm font-semibold md:inline">Ask TableNest</span>
+            <span className={cn('hidden text-sm font-semibold', !onRestaurant && 'md:inline')}>Ask TableNest</span>
           </motion.button>
         )}
       </AnimatePresence>

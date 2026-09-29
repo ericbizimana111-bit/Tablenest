@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { motion } from 'motion/react';
 import { Minus, Plus, Star, UtensilsCrossed } from 'lucide-react';
-import { cn, initials } from '@/lib/format';
+import { cn, initials, pluralize } from '@/lib/format';
 import { assetUrl } from '@/lib/http';
 import type { OrderStatus, ReservationStatus } from '@/lib/types';
 
@@ -67,7 +67,7 @@ export function RatingSeal({ rating, count, className, size = 'md' }: { rating: 
     return <span className={cn('inline-flex items-center rounded-full bg-paper-2 px-2.5 py-1 text-[11px] font-semibold text-ink-3', className)}>New</span>;
   }
   return (
-    <span className={cn('inline-flex items-center gap-1.5', className)} aria-label={`Rated ${rating.toFixed(1)} out of 5${count ? ` from ${count} reviews` : ''}`}>
+    <span className={cn('inline-flex items-center gap-1.5', className)} aria-label={`Rated ${rating.toFixed(1)} out of 5${count ? ` from ${pluralize(count, 'review')}` : ''}`}>
       <span
         className={cn(
           'relative grid place-items-center rounded-full bg-saffron-400 font-display font-semibold text-herb-950 shadow-[inset_0_-2px_0_rgb(0_0_0/0.12)]',
@@ -76,7 +76,7 @@ export function RatingSeal({ rating, count, className, size = 'md' }: { rating: 
       >
         {rating.toFixed(1)}
       </span>
-      {count !== undefined && <span className="text-[12px] text-ink-3">{count} reviews</span>}
+      {count !== undefined && <span className="text-[12px] text-ink-3">{pluralize(count, 'review')}</span>}
     </span>
   );
 }

@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'motion/react';
-import { ArrowLeft, ArrowRight, Armchair, Bike, Check, PartyPopper, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Armchair, Bike, Check, Mail, PartyPopper, Phone, ShoppingBag, UserRound } from 'lucide-react';
 import { restaurantApi } from '@/lib/api';
 import { errorMessage } from '@/lib/http';
-import { cn } from '@/lib/format';
+import { cn, pluralize } from '@/lib/format';
 import { useMoney, usePublicSettings } from '@/lib/settings';
 import type { WeeklyHours } from '@/lib/types';
 import { useAuth } from '@/auth/useAuth';
@@ -15,7 +15,7 @@ import { Input, PasswordInput, Select, Textarea, Toggle } from '@/ui/Field';
 import { Segmented } from '@/ui/bits';
 import { PageLoader } from '@/ui/Loader';
 import { GalleryUploader } from '@/components/ImageUploader';
-import { DEFAULT_HOURS, HoursEditor, browserZone, timezones } from '@/components/HoursEditor';
+import { DEFAULT_HOURS, HoursEditor, browserZone, zoneOptions } from '@/components/HoursEditor';
 import { PasswordHints, passwordRule } from '@/pages/auth/Register';
 
 const CUISINES = ['African', 'American', 'Asian', 'Bakery', 'Barbecue', 'Brunch', 'Burgers', 'Café', 'Chinese', 'Ethiopian', 'French', 'Fusion', 'Grill', 'Indian', 'Italian', 'Japanese', 'Korean', 'Lebanese', 'Mediterranean', 'Mexican', 'Pizza', 'Seafood', 'Steakhouse', 'Thai', 'Vegan', 'Vegetarian'];
@@ -106,11 +106,11 @@ function AccountStep({ onDone }: { onDone: () => void }) {
   };
   return (
     <form onSubmit={submit} className="space-y-4" noValidate>
-      <Input label="Your name" value={f.fullName} onChange={(e) => setF({ ...f, fullName: e.target.value })} error={err.fullName} autoComplete="name" />
-      <Input label="Work email" type="email" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} error={err.email} autoComplete="email" />
-      <Input label="Phone" optional type="tel" value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} autoComplete="tel" />
+      <Input label="Your name" leading={<UserRound className="size-4" />} placeholder="Full name" value={f.fullName} onChange={(e) => setF({ ...f, fullName: e.target.value })} error={err.fullName} autoComplete="name" />
+      <Input label="Work email" type="email" leading={<Mail className="size-4" />} placeholder="you@yourrestaurant.com" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} error={err.email} autoComplete="email" />
+      <Input label="Phone" optional type="tel" leading={<Phone className="size-4" />} placeholder="For account updates" value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} autoComplete="tel" />
       <div>
-        <PasswordInput label="Password" value={f.password} onChange={(e) => setF({ ...f, password: e.target.value })} error={err.password} autoComplete="new-password" />
+        <PasswordInput label="Password" placeholder="Create a password" value={f.password} onChange={(e) => setF({ ...f, password: e.target.value })} error={err.password} autoComplete="new-password" />
         <PasswordHints value={f.password} />
       </div>
       {error && <p className="rounded-2xl bg-tomato-50 p-3.5 text-sm text-tomato-700">{error}</p>}
@@ -321,7 +321,7 @@ export default function PartnerJoin() {
               </div>
               <Input label="Website" optional value={d.website} onChange={(e) => set('website', e.target.value)} error={errors.website} placeholder="https://" />
               <Select label="Time zone" hint="Used for your hours and booking times." value={d.timezone} onChange={(e) => set('timezone', e.target.value)}>
-                {timezones.map((z) => (
+                {zoneOptions(d.timezone).map((z) => (
                   <option key={z} value={z}>
                     {z.replace(/_/g, ' ')}
                   </option>
@@ -375,7 +375,7 @@ export default function PartnerJoin() {
               <dl className="divide-y divide-line rounded-[20px] border border-line bg-card text-sm">
                 {[
                   ['Name', d.name],
-                  ['Cuisine', `${d.cuisineType} · ${d.priceRange} · ${d.seatingCapacity} seats`],
+                  ['Cuisine', `${d.cuisineType} · ${d.priceRange} · ${pluralize(d.seatingCapacity, 'seat')}`],
                   ['Address', [d.address, d.city, d.country].filter(Boolean).join(', ')],
                   ['Serving', [d.dineIn && 'Tables', d.delivery && 'Delivery', d.pickup && 'Pickup'].filter(Boolean).join(', ')],
                   d.delivery ? ['Delivery', `${money(d.deliveryFee)} fee · ${d.minOrder ? `${money(d.minOrder)} minimum` : 'no minimum'}`] : null,

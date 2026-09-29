@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'motion/react';
-import { Armchair, ArrowRight, Bike, CalendarDays, MapPin, Search, ShoppingBag, Users } from 'lucide-react';
+import { Armchair, ArrowRight, Bike, CalendarDays, ChevronDown, MapPin, Search, ShoppingBag, Users } from 'lucide-react';
 import { menuApi, restaurantApi } from '@/lib/api';
 import { cn, isoDay, openState } from '@/lib/format';
 import { useMoney } from '@/lib/settings';
@@ -53,60 +53,60 @@ function IntentSearch() {
           ]}
         />
       </div>
-      <div className="grid gap-2 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_auto]">
-        <label className="flex h-14 items-center gap-3 rounded-2xl bg-paper px-4 focus-within:ring-2 focus-within:ring-herb-500/30">
+      <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+        <label className="flex h-14 items-center gap-3 rounded-2xl bg-paper px-4 focus-within:ring-2 focus-within:ring-herb-500/30 sm:col-span-3">
           <Search className="size-5 shrink-0 text-ink-3" />
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder={mode === 'book' ? 'Cuisine, restaurant or area' : 'What are you craving?'}
-            className="w-full bg-transparent text-[15px] text-ink outline-none placeholder:text-ink-4"
+            className="w-full min-w-0 bg-transparent text-[15px] text-ink outline-none placeholder:text-ink-4"
             aria-label="What are you looking for"
           />
         </label>
         {mode === 'book' ? (
-          <div className="grid grid-cols-[1fr_auto] gap-2">
-            <label className="flex h-14 items-center gap-2 rounded-2xl bg-paper px-3.5">
+          <>
+            <label className="relative flex h-14 min-w-0 items-center gap-2 rounded-2xl bg-paper pr-9 pl-4 focus-within:ring-2 focus-within:ring-herb-500/30">
               <CalendarDays className="size-4 shrink-0 text-ink-3" />
-              <select value={day} onChange={(e) => setDay(e.target.value)} className="w-full appearance-none bg-transparent text-[14.5px] font-semibold text-ink outline-none" aria-label="Date">
+              <select value={day} onChange={(e) => setDay(e.target.value)} className="w-full min-w-0 appearance-none truncate bg-transparent text-[14.5px] font-semibold text-ink outline-none" aria-label="Date">
                 {days.map((d) => (
                   <option key={d.v} value={d.v}>
                     {d.l}
                   </option>
                 ))}
               </select>
+              <ChevronDown className="pointer-events-none absolute right-3.5 size-4 text-ink-3" />
             </label>
-            <label className="flex h-14 items-center gap-2 rounded-2xl bg-paper px-3.5">
+            <label className="relative flex h-14 min-w-0 items-center gap-2 rounded-2xl bg-paper pr-9 pl-4 focus-within:ring-2 focus-within:ring-herb-500/30">
               <Users className="size-4 shrink-0 text-ink-3" />
-              <select value={guests} onChange={(e) => setGuests(Number(e.target.value))} className="appearance-none bg-transparent text-[14.5px] font-semibold text-ink outline-none" aria-label="Guests">
+              <select value={guests} onChange={(e) => setGuests(Number(e.target.value))} className="w-full min-w-0 appearance-none truncate bg-transparent text-[14.5px] font-semibold text-ink outline-none" aria-label="Guests">
                 {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => (
                   <option key={n} value={n}>
                     {n} {n === 1 ? 'guest' : 'guests'}
                   </option>
                 ))}
               </select>
+              <ChevronDown className="pointer-events-none absolute right-3.5 size-4 text-ink-3" />
             </label>
-          </div>
+          </>
         ) : (
-          <div className="grid grid-cols-2 gap-2">
-            {(['delivery', 'pickup'] as const).map((h) => (
-              <button
-                key={h}
-                type="button"
-                onClick={() => setHow(h)}
-                aria-pressed={how === h}
-                className={cn(
-                  'flex h-14 items-center justify-center gap-2 rounded-2xl text-[14px] font-semibold transition',
-                  how === h ? 'bg-herb-900 text-paper' : 'bg-paper text-ink-2 hover:text-ink',
-                )}
-              >
-                {h === 'delivery' ? <Bike className="size-4" /> : <ShoppingBag className="size-4" />}
-                {h === 'delivery' ? 'Delivery' : 'Pickup'}
-              </button>
-            ))}
-          </div>
+          (['delivery', 'pickup'] as const).map((h) => (
+            <button
+              key={h}
+              type="button"
+              onClick={() => setHow(h)}
+              aria-pressed={how === h}
+              className={cn(
+                'flex h-14 items-center justify-center gap-2 rounded-2xl text-[14px] font-semibold transition',
+                how === h ? 'bg-herb-900 text-paper' : 'bg-paper text-ink-2 hover:text-ink',
+              )}
+            >
+              {h === 'delivery' ? <Bike className="size-4" /> : <ShoppingBag className="size-4" />}
+              {h === 'delivery' ? 'Delivery' : 'Pickup'}
+            </button>
+          ))
         )}
-        <Button type="submit" variant="primary" size="lg" className="h-14 md:px-8" trail={<ArrowRight className="size-4" />}>
+        <Button type="submit" variant="primary" size="lg" className="h-14 sm:px-8" trail={<ArrowRight className="size-4" />}>
           {mode === 'book' ? 'Find a table' : 'Find food'}
         </Button>
       </div>
@@ -196,15 +196,15 @@ export function Hero() {
           <motion.img
             src={sidePhoto}
             alt=""
-            className="absolute -bottom-6 -left-6 size-32 rounded-full border-[6px] border-card object-cover shadow-[var(--shadow-lift)] sm:size-40"
+            className="absolute -bottom-6 -left-2 size-28 rounded-full border-[6px] border-card object-cover shadow-[var(--shadow-lift)] sm:-left-6 sm:size-40"
             initial={{ opacity: 0, scale: 0.6, rotate: -20 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             transition={{ duration: 0.9, delay: 0.6, ease: EASE }}
           />
 
           {star && (
-            <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.85, ease: EASE }} className="absolute top-[16%] -left-4 sm:-left-14">
-              <Link to={`/restaurants/${star._id}`} className="group flex w-72 items-center gap-3 rounded-[20px] border border-line bg-card/95 p-2.5 pr-4 shadow-[var(--shadow-lift)] backdrop-blur transition hover:-translate-y-1">
+            <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.85, ease: EASE }} className="absolute top-[16%] left-2 sm:-left-14">
+              <Link to={`/restaurants/${star._id}`} className="group flex w-[min(18rem,calc(100vw-3rem))] items-center gap-3 rounded-[20px] border border-line bg-card/95 p-2.5 pr-4 shadow-[var(--shadow-lift)] backdrop-blur transition hover:-translate-y-1">
                 <Photo src={star.images?.[0]} alt={star.name} label={star.name} className="size-14 shrink-0 rounded-2xl" />
                 <div className="min-w-0 flex-1">
                   <p className="text-[10.5px] font-semibold tracking-[0.16em] text-ink-4 uppercase">Tonight's pick</p>

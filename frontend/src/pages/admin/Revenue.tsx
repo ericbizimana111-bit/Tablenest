@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import { adminApi } from '@/lib/api';
 import { axisTick, chartTooltip, gridStroke } from '@/lib/chart';
 import { errorMessage } from '@/lib/http';
-import { cn, formatBookingDate, formatMoney } from '@/lib/format';
+import { cn, formatBookingDate, formatMoney, pluralize } from '@/lib/format';
 import type { Charge } from '@/lib/types';
 import { DashHead, Panel, Stat } from '@/layouts/DashboardLayout';
 import { Badge, Chip, EmptyState, Pager } from '@/ui/bits';
@@ -138,7 +138,7 @@ export default function AdminRevenue() {
   });
   const reconcile = useMutation({
     mutationFn: adminApi.reconcile,
-    onSuccess: (r) => (toast.success(`Checked ${r.ordersChecked ?? 0} orders and ${r.reservationsChecked} bookings`), qc.invalidateQueries({ queryKey: ['admin'] })),
+    onSuccess: (r) => (toast.success(`Checked ${pluralize(r.ordersChecked ?? 0, 'order')} and ${pluralize(r.reservationsChecked, 'booking')}`), qc.invalidateQueries({ queryKey: ['admin'] })),
     onError: (e) => toast.error(errorMessage(e)),
   });
   const money = (n: number) => formatMoney(n, data?.currency);

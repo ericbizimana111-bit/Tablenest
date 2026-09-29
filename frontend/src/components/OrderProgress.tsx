@@ -29,15 +29,18 @@ export function OrderProgress({ order, compact }: { order: Order; compact?: bool
   }
   const steps = stepsFor(order);
   const current = Math.max(0, steps.findIndex((s) => s.status === order.status));
-  const pct = (current / (steps.length - 1)) * 100;
+  // The rail runs between the centres of the first and last icons: each sits in the middle of an equal grid column.
+  const inset = 50 / steps.length;
+  const fill = (current / (steps.length - 1)) * (100 - inset * 2);
 
   return (
     <div className="relative">
-      <div className={cn('absolute right-[5%] left-[5%] h-1 rounded-full bg-line', compact ? 'top-4' : 'top-6')} />
+      <div className={cn('absolute h-1 -translate-y-1/2 rounded-full bg-line', compact ? 'top-[18px]' : 'top-6')} style={{ left: `${inset}%`, right: `${inset}%` }} />
       <motion.div
-        className={cn('absolute left-[5%] h-1 rounded-full bg-herb-600', compact ? 'top-4' : 'top-6')}
+        className={cn('absolute h-1 -translate-y-1/2 rounded-full bg-herb-600', compact ? 'top-[18px]' : 'top-6')}
+        style={{ left: `${inset}%` }}
         initial={{ width: 0 }}
-        animate={{ width: `${pct * 0.9}%` }}
+        animate={{ width: `${fill}%` }}
         transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
       />
       <ol className="relative grid" style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0,1fr))` }}>
@@ -63,7 +66,11 @@ export function OrderProgress({ order, compact }: { order: Order; compact?: bool
           );
         })}
       </ol>
-      {compact && <p className="mt-2 text-[12.5px] font-semibold text-ink-2">{steps[current]?.label}</p>}
+      {compact && (
+        <p className="mt-3 text-[12.5px] text-ink-3">
+          <span className="font-semibold text-ink">{steps[current]?.label}</span> · {steps[current]?.line}
+        </p>
+      )}
     </div>
   );
 }

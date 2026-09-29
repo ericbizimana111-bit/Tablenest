@@ -5,7 +5,7 @@ import { CornerDownRight, MessageSquare } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { reviewApi } from '@/lib/api';
 import { errorMessage } from '@/lib/http';
-import { timeAgo } from '@/lib/format';
+import { timeAgo, pluralize } from '@/lib/format';
 import type { Restaurant, Review } from '@/lib/types';
 import { DashHead } from '@/layouts/DashboardLayout';
 import { OwnerGate } from '@/components/OwnerGate';
@@ -61,7 +61,7 @@ function List({ r }: { r: Restaurant }) {
               <RatingSeal rating={data.avgRating} />
               <div>
                 <p className="font-display text-3xl text-ink">{data.avgRating.toFixed(1)}</p>
-                <p className="text-sm text-ink-3">{data.total} reviews</p>
+                <p className="text-sm text-ink-3">{pluralize(data.total, 'review')}</p>
               </div>
             </div>
             <div className="mt-6 space-y-2">

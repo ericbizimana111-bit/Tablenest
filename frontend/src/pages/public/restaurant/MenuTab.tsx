@@ -6,7 +6,7 @@ import { BadgePercent, Plus, ShoppingBag, UtensilsCrossed } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { menuApi, promotionApi } from '@/lib/api';
 import type { MenuItem, Restaurant } from '@/lib/types';
-import { cn } from '@/lib/format';
+import { cn, pluralize } from '@/lib/format';
 import { useMoney } from '@/lib/settings';
 import { cartCount, cartSubtotal, useCart } from '@/stores/cart';
 import { useShell } from '@/stores/shell';
@@ -114,7 +114,7 @@ function BagPanel({ restaurant }: { restaurant: Restaurant }) {
     <div className="rounded-[24px] border border-line bg-card p-5">
       <div className="flex items-center justify-between">
         <p className="font-display text-xl text-ink">Your bag</p>
-        {mine.length > 0 && <span className="text-[13px] text-ink-3">{cartCount(mine)} items</span>}
+        {mine.length > 0 && <span className="text-[13px] text-ink-3">{pluralize(cartCount(mine), 'item')}</span>}
       </div>
       {mine.length === 0 ? (
         <div className="py-8 text-center">

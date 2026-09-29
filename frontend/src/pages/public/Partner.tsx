@@ -82,7 +82,8 @@ export default function Partner() {
         </div>
       </section>
 
-      <section id="plans" className="scroll-mt-24 bg-herb-950 py-24 text-paper">
+      {/* Runs straight into the (equally dark) footer instead of leaving a cream band between them. */}
+      <section id="plans" className="-mb-24 scroll-mt-24 border-b border-paper/10 bg-herb-950 py-24 text-paper">
         <div className="container-page">
           <p className="text-[11px] font-semibold tracking-[0.22em] text-saffron-300 uppercase">Plans</p>
           <h2 className="mt-3 text-[40px] leading-tight sm:text-[52px]">
@@ -95,7 +96,7 @@ export default function Partner() {
                 const p = plans[key];
                 const pro = key === 'pro';
                 return (
-                  <div key={key} className={pro ? 'relative rounded-[28px] bg-paper p-8 text-ink' : 'rounded-[28px] p-8 ring-1 ring-paper/15'}>
+                  <div key={key} className={pro ? 'relative flex flex-col rounded-[28px] bg-paper p-8 text-ink' : 'flex flex-col rounded-[28px] p-8 ring-1 ring-paper/15'}>
                     {pro && (
                       <span className="absolute -top-3 left-8 inline-flex items-center gap-1 rounded-full bg-saffron-400 px-3 py-1 text-[12px] font-bold text-herb-950">
                         <Sparkles className="size-3.5" /> For busy kitchens
@@ -107,14 +108,14 @@ export default function Partner() {
                       <span className={pro ? 'text-ink-3' : 'text-paper/60'}>of food sales</span>
                     </p>
                     <p className={pro ? 'mt-1 text-ink-3' : 'mt-1 text-paper/60'}>{p.monthlyFee > 0 ? `+ ${money(p.monthlyFee)} per month` : 'No monthly fee'}</p>
-                    <ul className="mt-7 space-y-2.5 text-[15px]">
+                    <ul className="mt-7 mb-8 space-y-2.5 text-[15px]">
                       {['Unlimited bookings and orders', 'Menu, tables and photos', 'Live kitchen screen', 'Analytics and monthly statement', ...(pro ? ['Lower commission on every order', 'Eligible for featured placement'] : [])].map((f) => (
                         <li key={f} className="flex items-center gap-2.5">
-                          <Check className={pro ? 'size-4 text-herb-600' : 'size-4 text-saffron-300'} /> {f}
+                          <Check className={pro ? 'size-4 shrink-0 text-herb-600' : 'size-4 shrink-0 text-saffron-300'} /> {f}
                         </li>
                       ))}
                     </ul>
-                    <LinkButton to={ctaTo} variant={pro ? 'primary' : 'light'} size="lg" block className="mt-8">
+                    <LinkButton to={ctaTo} variant={pro ? 'primary' : 'light'} size="lg" block className="mt-auto">
                       {user?.role === 'owner' ? 'Open dashboard' : pro ? 'Start, upgrade anytime' : 'Start free'}
                     </LinkButton>
                   </div>

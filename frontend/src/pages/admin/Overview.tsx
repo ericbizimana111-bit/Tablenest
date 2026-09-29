@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowRight, CalendarDays, Receipt, Store, Users, Wallet } from 'lucide-react';
 import { adminApi } from '@/lib/api';
-import { formatMoney, timeAgo } from '@/lib/format';
+import { formatMoney, timeAgo, pluralize } from '@/lib/format';
 import { DashHead, Panel, Stat } from '@/layouts/DashboardLayout';
 import { orderStatusLabel, Badge, EmptyState } from '@/ui/bits';
 import { LinkButton } from '@/ui/Button';
@@ -48,8 +48,8 @@ export default function AdminOverview() {
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <Stat tone="dark" label="Our revenue this month" value={money(s.platformRevenueThisMonth.total)} hint={`${money(s.platformRevenueThisMonth.collected)} collected · ${money(s.platformRevenueThisMonth.outstanding)} outstanding`} icon={<Wallet className="size-4" />} />
             <Stat label="Completed order value" value={money(s.grossMerchandiseValue)} hint="All-time, delivered orders" icon={<Receipt className="size-4" />} />
-            <Stat label="Last 24 hours" value={s.ordersLast24h} hint={`orders · ${s.reservationsLast24h} bookings`} icon={<CalendarDays className="size-4" />} />
-            <Stat label="People" value={sum(s.users)} hint={`${s.users.customer ?? 0} guests · ${s.users.owner ?? 0} owners`} icon={<Users className="size-4" />} />
+            <Stat label="Last 24 hours" value={s.ordersLast24h} hint={`${s.ordersLast24h === 1 ? 'order' : 'orders'} · ${pluralize(s.reservationsLast24h, 'booking')}`} icon={<CalendarDays className="size-4" />} />
+            <Stat label="People" value={sum(s.users)} hint={`${pluralize(s.users.customer ?? 0, 'guest')} · ${pluralize(s.users.owner ?? 0, 'owner')}`} icon={<Users className="size-4" />} />
           </div>
 
           <Panel

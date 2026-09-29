@@ -171,7 +171,7 @@ export default function Bookings() {
                     )}
                   </div>
                 </div>
-                <Photo src={b.restaurantImage} alt="" label={b.restaurantName || ''} className="hidden w-40 shrink-0 md:block" />
+                <Photo src={b.restaurantImage} alt="" label={b.restaurantName || ''} className="hidden w-40 shrink-0 md:grid" />
               </li>
             );
           })}

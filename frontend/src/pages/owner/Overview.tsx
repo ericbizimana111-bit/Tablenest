@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { ArrowRight, Armchair, CalendarDays, ChefHat, Star, Wallet } from 'lucide-react';
 import { analyticsApi } from '@/lib/api';
-import { formatTime, timeAgo } from '@/lib/format';
+import { formatTime, timeAgo, pluralize } from '@/lib/format';
 import { useMoney } from '@/lib/settings';
 import type { Restaurant } from '@/lib/types';
 import { DashHead, Panel, Stat } from '@/layouts/DashboardLayout';
@@ -54,10 +54,10 @@ function Body({ r }: { r: Restaurant }) {
       ) : (
         <div className="space-y-6">
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <Stat tone="dark" label="Today's sales" value={money(data.todayRevenue)} hint={`${data.todayOrders} orders · ${money(data.monthRevenue)} this month`} icon={<Wallet className="size-4" />} />
+            <Stat tone="dark" label="Today's sales" value={money(data.todayRevenue)} hint={`${pluralize(data.todayOrders, 'order')} · ${money(data.monthRevenue)} completed this month`} icon={<Wallet className="size-4" />} />
             <Stat label="Waiting to accept" value={data.pendingOrders} hint={data.pendingOrders ? 'Guests are waiting — accept or decline' : 'Nothing waiting'} icon={<ChefHat className="size-4" />} tone={data.pendingOrders ? 'saffron' : 'plain'} />
             <Stat label="Bookings today" value={data.todayReservations} hint={`${data.pendingReservations} awaiting confirmation`} icon={<CalendarDays className="size-4" />} />
-            <Stat label="Tables in use" value={`${data.activeTables}/${data.totalTables}`} hint={data.rating ? `Rated ${data.rating.toFixed(1)} from ${data.totalReviews} reviews` : 'No reviews yet'} icon={<Armchair className="size-4" />} />
+            <Stat label="Tables in use" value={`${data.activeTables}/${data.totalTables}`} hint={data.rating ? `Rated ${data.rating.toFixed(1)} from ${pluralize(data.totalReviews, 'review')}` : 'No reviews yet'} icon={<Armchair className="size-4" />} />
           </div>
 
           <div className="grid gap-6 xl:grid-cols-[1.6fr_1fr]">
@@ -80,7 +80,7 @@ function Body({ r }: { r: Restaurant }) {
                 </ResponsiveContainer>
               </div>
             </Panel>
-            <Panel title="Best sellers this month">
+            <Panel title="Best sellers · last 90 days">
               {data.topItems.length ? (
                 <ol className="space-y-3">
                   {data.topItems.map((t, i) => (
@@ -136,7 +136,7 @@ function Body({ r }: { r: Restaurant }) {
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-semibold text-ink">{b.customerName || 'Guest'}</p>
                         <p className="text-[12px] text-ink-3">
-                          {b.guests} guests{b.tableNumber ? ` · table ${b.tableNumber}` : ''}
+                          {pluralize(b.guests, 'guest')}{b.tableNumber ? ` · table ${b.tableNumber}` : ''}
                         </p>
                       </div>
                       <BookingStatusBadge status={b.status} />

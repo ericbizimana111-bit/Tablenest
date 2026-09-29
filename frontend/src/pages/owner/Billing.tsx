@@ -21,7 +21,9 @@ const TYPE_LABEL: Record<Charge['type'], string> = {
 
 function lastMonths(n: number) {
   const out: string[] = [];
-  const d = new Date();
+  // Anchor on the 1st: stepping back from e.g. the 29th–31st would overflow short months (Feb 29 → Mar 1).
+  const now = new Date();
+  const d = new Date(now.getFullYear(), now.getMonth(), 1);
   for (let i = 0; i < n; i++) {
     out.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
     d.setMonth(d.getMonth() - 1);

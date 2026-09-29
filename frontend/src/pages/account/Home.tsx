@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'motion/react';
 import { ArrowRight, Armchair, Bike, CalendarDays, Check, Gift, Heart, MapPin, Receipt, Sparkles, UtensilsCrossed } from 'lucide-react';
 import { loyaltyApi, orderApi, reservationApi, restaurantApi, userApi } from '@/lib/api';
-import { cn, formatBookingDate, formatTime } from '@/lib/format';
+import { cn, formatBookingDate, formatTime, pluralize } from '@/lib/format';
 import { useAuth } from '@/auth/useAuth';
 import { useExperience } from '@/stores/experience';
 import { useFavorites } from '@/features/favorites';
@@ -140,7 +140,7 @@ export default function Home() {
                 <motion.div className="h-full rounded-full bg-saffron-400" initial={{ width: 0 }} animate={{ width: `${loyalty.data.tierProgress}%` }} transition={{ duration: 1.2 }} />
               </div>
               <p className="mt-2 text-[12.5px] text-paper/60">
-                {loyalty.data.nextTier.pointsNeeded} points to {loyalty.data.nextTier.name}
+                {pluralize(loyalty.data.nextTier.pointsNeeded, 'point')} to {loyalty.data.nextTier.name}
               </p>
             </div>
           )}

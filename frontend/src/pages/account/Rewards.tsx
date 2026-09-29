@@ -4,7 +4,7 @@ import { Bike, Copy, Crown, Gift, Percent, Ticket } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { loyaltyApi } from '@/lib/api';
 import { errorMessage } from '@/lib/http';
-import { cn, formatBookingDate, timeAgo } from '@/lib/format';
+import { cn, formatBookingDate, timeAgo, pluralize } from '@/lib/format';
 import { PageHead } from '@/layouts/AccountLayout';
 import { Button } from '@/ui/Button';
 import { Skeleton } from '@/ui/Loader';
@@ -95,7 +95,7 @@ export default function Rewards() {
                 </div>
                 <p className="mt-4 font-display text-xl text-ink">{r.title}</p>
                 <p className="mt-1 flex-1 text-[13.5px] text-ink-3">
-                  {r.description}. Valid {r.validDays} days.
+                  {r.description}. Valid {pluralize(r.validDays, 'day')}.
                 </p>
                 <Button
                   className="mt-4"

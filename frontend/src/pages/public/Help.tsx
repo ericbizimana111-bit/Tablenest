@@ -104,6 +104,7 @@ export default function Help() {
   const [q, setQ] = useState('');
   const [open, setOpen] = useState<string | null>(FAQ[0].q);
   const ask = useExperience((s) => s.ask);
+  const { user } = useAuth();
   const list = FAQ.filter((f) => !q.trim() || `${f.q} ${f.a} ${f.topic}`.toLowerCase().includes(q.toLowerCase()));
 
   return (
@@ -150,7 +151,8 @@ export default function Help() {
         )}
       </div>
 
-      <section id="contact" className="mx-auto mt-20 max-w-5xl scroll-mt-24">
+      {/* Signed in, the form and ticket history sit side by side and need the extra width; otherwise line up with the FAQ. */}
+      <section id="contact" className={cn('mx-auto mt-20 scroll-mt-24', user ? 'max-w-5xl' : 'max-w-3xl')}>
         <h2 className="mb-6 flex items-center gap-3 text-[32px] text-ink">
           <LifeBuoy className="size-7 text-tomato-500" /> Still stuck? Talk to us
         </h2>
