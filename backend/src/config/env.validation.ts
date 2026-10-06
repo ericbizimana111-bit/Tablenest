@@ -1,4 +1,5 @@
 import { isValidTimeZone } from '../common/utils/time';
+import { cloudinaryCredentials } from '../modules/uploads/storage/cloudinary-storage.driver';
 
 /** Values that appeared in committed example files — never acceptable as a real secret. */
 const KNOWN_WEAK_SECRETS = new Set([
@@ -41,8 +42,11 @@ export function validateEnv(config: Record<string, unknown>): Record<string, unk
   if (env.DEFAULT_TIMEZONE && !isValidTimeZone(env.DEFAULT_TIMEZONE)) {
     errors.push(`DEFAULT_TIMEZONE "${env.DEFAULT_TIMEZONE}" is not a valid IANA time zone`);
   }
-  if (env.UPLOAD_DRIVER && env.UPLOAD_DRIVER !== 'local') {
-    errors.push(`UPLOAD_DRIVER "${env.UPLOAD_DRIVER}" is not supported (supported: local)`);
+  if (env.UPLOAD_DRIVER && !['local', 'cloudinary'].includes(env.UPLOAD_DRIVER)) {
+    errors.push(`UPLOAD_DRIVER "${env.UPLOAD_DRIVER}" is not supported (supported: local, cloudinary)`);
+  }
+  if (env.UPLOAD_DRIVER === 'cloudinary' && !cloudinaryCredentials((k) => env[k])) {
+    errors.push('UPLOAD_DRIVER=cloudinary needs CLOUDINARY_URL (cloudinary://<key>:<secret>@<cloud>) or CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET');
   }
 
   if (errors.length) {

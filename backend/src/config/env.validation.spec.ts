@@ -24,4 +24,12 @@ describe('validateEnv', () => {
     expect(() => validateEnv({ UPLOAD_DRIVER: 's3' })).toThrow(/UPLOAD_DRIVER/);
     expect(() => validateEnv({ MAX_UPLOAD_MB: '500' })).toThrow(/MAX_UPLOAD_MB/);
   });
+
+  it('accepts cloudinary uploads only with credentials', () => {
+    expect(() => validateEnv({ UPLOAD_DRIVER: 'cloudinary' })).toThrow(/CLOUDINARY_URL/);
+    expect(() => validateEnv({ UPLOAD_DRIVER: 'cloudinary', CLOUDINARY_URL: 'not-a-url' })).toThrow(/CLOUDINARY_URL/);
+    expect(validateEnv({ UPLOAD_DRIVER: 'cloudinary', CLOUDINARY_URL: 'cloudinary://123:abc@demo' }).UPLOAD_DRIVER).toBe('cloudinary');
+    const split = { CLOUDINARY_CLOUD_NAME: 'demo', CLOUDINARY_API_KEY: '123', CLOUDINARY_API_SECRET: 'abc' };
+    expect(validateEnv({ UPLOAD_DRIVER: 'cloudinary', ...split }).UPLOAD_DRIVER).toBe('cloudinary');
+  });
 });

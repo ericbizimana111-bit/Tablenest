@@ -1,0 +1,40 @@
+# Render Blueprint for the TableNest API. In Render: New → Blueprint → pick this repo.
+# Values marked `sync: false` are prompted for on first deploy (secrets never live in git).
+services:
+  - type: web
+    name: tablenest-api
+    runtime: node
+    rootDir: backend
+    plan: free
+    # devDependencies (Nest CLI, TypeScript) are needed to build even though NODE_ENV=production.
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: node dist/main
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false # MongoDB Atlas connection string, including the database name
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: CORS_ORIGINS
+        sync: false # e.g. https://tablenest.vercel.app (comma-separate several)
+      - key: FRONTEND_URL
+        sync: false # e.g. https://tablenest.vercel.app (used in password-reset emails)
+      - key: TRUST_PROXY
+        value: "1"
+      - key: DEFAULT_TIMEZONE
+        value: Africa/Kigali
+      - key: UPLOAD_DRIVER
+        value: cloudinary
+      - key: CLOUDINARY_URL
+        sync: false # cloudinary://<api_key>:<api_secret>@<cloud_name>
+      - key: CLOUDINARY_FOLDER
+        value: tablenest
+      - key: MAX_UPLOAD_MB
+        value: "5"
